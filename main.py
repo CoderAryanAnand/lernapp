@@ -64,7 +64,8 @@ def register():
         new_user = User(username=username, password=hashed_password, email=email)
         db.session.add(new_user)
         db.session.commit()
-        return redirect(url_for("login"))
+        session["username"] = username  # Store session data
+        return redirect(url_for("home"))
 
     return render_template("register.html")
 
@@ -72,6 +73,21 @@ def register():
 def logout():
     """Logout route: Removes user session data and redirects to home."""
     session.pop("username", None)
+    return redirect(url_for("home"))
+
+@app.route("/settings")
+def settings():
+    """Settings route: Goes to the general settings of the account and page."""
+    return render_template("settings.html")
+
+@app.route("/settings/delete_account")
+def delete_account():
+    """Delete account route: Deletes user account currently in session."""
+    current_user = session["username"]
+    print(User.query.filter_by(username=current_user).first())
+    db.session.delete(User.query.filter_by(username=current_user).first())
+    db.session.commit()
+    session.clear()
     return redirect(url_for("home"))
 
 # Run the application

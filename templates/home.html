@@ -11,6 +11,7 @@
     {% if logged_in %}
         <h3>Welcome, {{ username }}!</h3>
         <a href="/logout"><button>Logout</button></a>
+        <a href="/settings"><button>Settings</button></a>
     {% else %}
         <a href="/login"><button>Login</button></a>
         <a href="/register"><button>Register</button></a>
