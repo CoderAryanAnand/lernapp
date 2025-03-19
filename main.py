@@ -39,6 +39,7 @@ def login():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        email = request.form["email"]
         user = User.query.filter_by(username=username).first()
 
         if user and bcrypt.check_password_hash(user.password, password):
@@ -54,13 +55,14 @@ def register():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        email = request.form["email"]
 
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
             return "User already exists. Choose another username."
 
         hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")  # Securely hash password
-        new_user = User(username=username, password=hashed_password)
+        new_user = User(username=username, password=hashed_password, email=email)
         db.session.add(new_user)
         db.session.commit()
         return redirect(url_for("login"))
