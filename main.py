@@ -84,11 +84,33 @@ def settings():
 def delete_account():
     """Delete account route: Deletes user account currently in session."""
     current_user = session["username"]
-    print(User.query.filter_by(username=current_user).first())
     db.session.delete(User.query.filter_by(username=current_user).first())
     db.session.commit()
     session.clear()
     return redirect(url_for("home"))
+
+@app.route("/settings/change_password", methods=["GET", "POST"])
+def change_password():
+    """Change password route: Changes the password of the user currently in session."""
+    if request.method == "POST":
+        old_password = request.form["ogpw"]
+        new_password = request.form["newpw"]
+        confirm_password = request.form["confirm"]
+
+        if not bcrypt.check_password_hash(User.query.filter_by(username=session["username"]).first().password, old_password):
+            return "Incorrect old password. Try again."
+
+        if new_password != confirm_password:
+            return "Passwords do not match. Try again."
+        
+        hashed_password = bcrypt.generate_password_hash(new_password).decode("utf-8")
+        User.query.filter_by(username=session["username"]).first().password = hashed_password
+        db.session.commit()
+        return redirect(url_for("home"))
+
+    return render_template("change_password.html")    
+
+
 
 # Run the application
 if __name__ == "__main__":
