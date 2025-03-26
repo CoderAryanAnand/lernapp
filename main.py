@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from flask_mailman import Mail, EmailMessage
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -10,9 +11,18 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"  # SQLite database 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Disable modification tracking for performance
 app.secret_key = "your_secret_key"  # Secret key for session management
 
+# Mail configuration settings
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USE_SSL"] = False
+app.config["MAIL_USERNAME"] = "kantikoala@gmail.com"
+app.config["MAIL_PASSWORD"] = "your_password"
+
 # Initialize database and bcrypt for password hashing
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+mail = Mail(app)
 
 # Define the User model for the database
 class User(db.Model):
