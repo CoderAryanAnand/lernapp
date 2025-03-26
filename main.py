@@ -43,6 +43,7 @@ def home():
         return render_template("home.html", username=session["username"], logged_in=True)
     return render_template("home.html", logged_in=False)
 
+# User authentication routes
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Login route: Handles login form submission and user authentication."""
@@ -85,6 +86,7 @@ def logout():
     session.pop("username", None)
     return redirect(url_for("home"))
 
+# Account settings routes
 @app.route("/settings")
 def settings():
     """Settings route: Goes to the general settings of the account and page."""
@@ -119,6 +121,13 @@ def change_password():
         return redirect(url_for("home"))
 
     return render_template("change_password.html")    
+
+
+# Features
+@app.route("/agenda")
+def agenda():
+    """Agenda route: Displays the agenda of the user currently in session."""
+    return render_template("agenda.html")
 
 
 
