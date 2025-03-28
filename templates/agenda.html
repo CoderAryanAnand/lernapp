@@ -4,8 +4,88 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agenda</title>
+    <!-- FullCalendar JS -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f9;
+        }
+
+        #calendar-container {
+            width: 90%; /* Slightly larger width */
+            max-width: 1200px; /* Increased max width */
+            margin: 20px auto;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        #calendar {
+            height: 100%; /* Ensure the calendar takes up the full height */
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+    </style>
 </head>
 <body>
-    
+    <div id="calendar-container">
+        <h1>Your Weekly Agenda</h1>
+        <div id="calendar"></div>
+    </div>
+
+    <!-- FullCalendar Initialization -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const calendarEl = document.getElementById('calendar');
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'timeGridWeek,timeGridDay' // Allow switching between week and day views
+                },
+                height: 'auto', // Automatically adjust height to fit content
+                slotLabelFormat: { // Format for time slots (24-hour format)
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                },
+                eventTimeFormat: { // Format for event times (24-hour format)
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                },
+                events: async function (fetchInfo, successCallback, failureCallback) {
+                    try {
+                        const response = await fetch('/api/events');
+                        const events = await response.json();
+                        successCallback(events);
+                    } catch (error) {
+                        console.error('Error fetching events:', error);
+                        failureCallback(error);
+                    }
+                },
+                eventColor: function(event) {
+                    return event.color;
+                }
+            });
+            calendar.render();
+        });
+    </script>
 </body>
 </html>

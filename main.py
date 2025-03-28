@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_mailman import Mail, EmailMessage
@@ -32,9 +32,62 @@ class User(db.Model):
     password = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
 
+
+# Define the Event model for the database
+class Event(db.Model):
+    """Event model for storing user events."""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)  # User ID to associate events with users
+    title = db.Column(db.String(100), nullable=False)
+    start = db.Column(db.String(50), nullable=False)  # Start datetime in ISO format
+    end = db.Column(db.String(50), nullable=True)     # End datetime in ISO format
+    color = db.Column(db.String(7), nullable=False)    # Event color (e.g., #ff0000)
+    priority = db.Column(db.Integer, nullable=False)   # Event priority (1-3)
+
 # Ensure database tables are created
 with app.app_context():
     db.create_all()
+
+# FullCalendar API routes
+@app.route('/api/events', methods=['GET'])
+def get_events():
+    logged_in_user = User.query.filter_by(username=session.get('username')).first()
+    if not logged_in_user:
+        return jsonify([])  # Return an empty list if no user is logged in
+    logged_in_user_id = logged_in_user.id
+
+    # Query the database for events belonging to the logged-in user
+    user_events = Event.query.filter_by(user_id=logged_in_user_id).all()
+
+    # Convert events to a format FullCalendar understands
+    events = [
+        {
+            "title": event.title,
+            "start": event.start,
+            "end": event.end,
+            "color": event.color,
+            "priority": event.priority
+        }
+        for event in user_events
+    ]
+
+    # Return events as JSON
+    return jsonify(events)
+
+# Add an event to the database for testing purposes
+@app.route('/api/populate', methods=["GET", 'POST'])
+def populate_events():
+    # Example events for user_id 1
+    event1 = Event(user_id=1, title="Meeting", start="2025-03-28T10:00:00", end="2025-03-28T12:00:00", color="#ff0000", priority=1)
+    event2 = Event(user_id=1, title="Workshop", start="2025-03-29T14:00:00", end="2025-03-29T16:00:00", color="#00ff00", priority=2)
+
+    # Example events for user_id 2
+    event3 = Event(user_id=2, title="Conference", start="2025-03-30T09:00:00", end="2025-03-30T11:00:00", color="#0000ff", priority=3)
+
+    db.session.add_all([event1, event2, event3])
+    db.session.commit()
+
+    return "Events populated!", 201
 
 @app.route("/")
 def home():
