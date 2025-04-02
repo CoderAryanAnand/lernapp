@@ -62,6 +62,7 @@ def get_events():
     # Convert events to a format FullCalendar understands
     events = [
         {
+            "id": event.id,
             "title": event.title,
             "start": event.start,
             "end": event.end,
@@ -73,6 +74,39 @@ def get_events():
 
     # Return events as JSON
     return jsonify(events)
+
+@app.route('/api/events', methods=['POST'])
+def create_event():
+    data = request.json
+    new_event = Event(
+        title=data['title'],
+        start=data['start'],
+        end=data.get('end'),
+        color=data['color'],
+        user_id=User.query.filter_by(username=session['username']).first().id
+    )
+    db.session.add(new_event)
+    db.session.commit()
+    return jsonify({"message": "Event created"}), 201
+
+@app.route('/api/events', methods=['PUT'])
+def update_event():
+    data = request.json
+    print(data)
+    event = Event.query.get(data['id'])
+    event.title = data['title']
+    event.start = data['start']
+    event.end = data.get('end')
+    event.color = data['color']
+    db.session.commit()
+    return jsonify({"message": "Event updated"}), 200
+
+@app.route('/api/events/<int:event_id>', methods=['DELETE'])
+def delete_event(event_id):
+    event = Event.query.get(event_id)
+    db.session.delete(event)
+    db.session.commit()
+    return jsonify({"message": "Event deleted"}), 200
 
 # Add an event to the database for testing purposes
 @app.route('/api/populate', methods=["GET", 'POST'])
