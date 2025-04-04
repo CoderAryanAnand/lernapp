@@ -33,11 +33,14 @@ class User(db.Model):
     password = db.Column(db.String(100), nullable=False)  # Hashed password
     email = db.Column(db.String(100), unique=True, nullable=False)  # Unique email address
 
+    # Relationship to events with cascade delete
+    events = db.relationship("Event", backref="user", lazy=True, cascade="all, delete-orphan")
+
 # Define the Event model for the database
 class Event(db.Model):
     """Event model for storing user events."""
     id = db.Column(db.Integer, primary_key=True)  # Primary key
-    user_id = db.Column(db.Integer, nullable=False)  # User ID to associate events with users
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", onupdate="CASCADE"), nullable=False)  # User ID to associate events with users
     title = db.Column(db.String(100), nullable=False)  # Event title
     start = db.Column(db.String(50), nullable=False)  # Start datetime in ISO format
     end = db.Column(db.String(50), nullable=True)  # End datetime in ISO format
@@ -47,6 +50,7 @@ class Event(db.Model):
 # Ensure database tables are created
 with app.app_context():
     db.create_all()
+    db.engine.execute('PRAGMA foreign_keys=ON')
 
 # FullCalendar API route to fetch events
 @app.route('/api/events', methods=['GET'])
@@ -86,7 +90,8 @@ def create_event():
         start=data['start'],
         end=data.get('end'),
         color=data['color'],
-        user_id=User.query.filter_by(username=session['username']).first().id  # Associate with the logged-in user
+        user_id=User.query.filter_by(username=session['username']).first().id,  # Associate with the logged-in user
+        priority=1
     )
     db.session.add(new_event)  # Add the event to the database
     db.session.commit()  # Commit the changes
