@@ -50,7 +50,8 @@ class Event(db.Model):
 # Ensure database tables are created
 with app.app_context():
     db.create_all()
-    db.engine.execute('PRAGMA foreign_keys=ON')
+    with db.engine.connect() as connection:  # Use a connection object
+        connection.execute("PRAGMA foreign_keys=ON")  # Enable foreign key constraints
 
 # FullCalendar API route to fetch events
 @app.route('/api/events', methods=['GET'])
