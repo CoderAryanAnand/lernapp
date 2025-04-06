@@ -4,6 +4,10 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_mailman import Mail, EmailMessage
 
+import uuid
+from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta # for monthly recurrence
+
 # Initialize Flask app
 app = Flask(__name__)
 
@@ -46,6 +50,8 @@ class Event(db.Model):
     end = db.Column(db.String(50), nullable=True)  # End datetime in ISO format
     color = db.Column(db.String(7), nullable=False)  # Event color (e.g., #ff0000)
     priority = db.Column(db.Integer, nullable=False)  # Event priority (1-3)
+    recurrence = db.Column(db.String(50), nullable=True)  # Recurrence pattern (e.g., "daily", "weekly", etc.)
+    recurrence_id = db.Column(db.String(36), nullable=True)  # ID for recurrence events
 
 # Ensure database tables are created
 with app.app_context():
@@ -73,7 +79,9 @@ def get_events():
             "start": event.start,
             "end": event.end,
             "color": event.color,
-            "priority": event.priority
+            "priority": event.priority,
+            "recurrence": event.recurrence,
+            "recurrence_id": event.recurrence_id
         }
         for event in user_events
     ]
@@ -86,13 +94,62 @@ def get_events():
 def create_event():
     """Create a new event."""
     data = request.json  # Get event data from the request
+    if data["recurrence"] != "none":
+        # Generate a unique recurrence ID for the event
+        recurrence_id = str(uuid.uuid4().int)  # Use UUID to ensure uniqueness
+
+        # Create recurring events based on the recurrence pattern
+        if data["recurrence"] == "daily":
+            for i in range(7):  # Create events for the next 7 days
+                new_event = Event(
+                    title=data['title'],
+                    start=(datetime.fromisoformat(data['start']) + timedelta(days=i)).isoformat(),
+                    end=(datetime.fromisoformat(data['end']) + timedelta(days=i)).isoformat() if data.get('end') else None,
+                    color=data['color'],
+                    user_id=User.query.filter_by(username=session['username']).first().id,
+                    priority=data.get('priority', 1),
+                    recurrence=data['recurrence'],
+                    recurrence_id=recurrence_id
+                )
+                db.session.add(new_event)
+        elif data["recurrence"] == "weekly":
+            for i in range(4):  # Create events for the next 4 weeks
+                new_event = Event(
+                    title=data['title'],
+                    start=(datetime.fromisoformat(data['start']) + timedelta(weeks=i)).isoformat(),
+                    end=(datetime.fromisoformat(data['end']) + timedelta(weeks=i)).isoformat() if data.get('end') else None,
+                    color=data['color'],
+                    user_id=User.query.filter_by(username=session['username']).first().id,
+                    priority=data.get('priority', 1),
+                    recurrence=data['recurrence'],
+                    recurrence_id=recurrence_id
+                )
+                db.session.add(new_event)
+        elif data["recurrence"] == "monthly":
+            for i in range(12):
+                new_event = Event(
+                    title=data['title'],
+                    start=(datetime.fromisoformat(data['start']) + timedelta(weeks=i*4)).isoformat(),
+                    end=(datetime.fromisoformat(data['end']) + timedelta(weeks=i*4)).isoformat() if data.get('end') else None,
+                    color=data['color'],
+                    user_id=User.query.filter_by(username=session['username']).first().id,
+                    priority=data.get('priority', 1),
+                    recurrence=data['recurrence'],
+                    recurrence_id=recurrence_id
+                )
+                db.session.add(new_event)
+        db.session.commit()
+        return jsonify({"message": "Recurring events created"}), 201
+
     new_event = Event(
         title=data['title'],
         start=data['start'],
         end=data.get('end'),
         color=data['color'],
         user_id=User.query.filter_by(username=session['username']).first().id,  # Associate with the logged-in user
-        priority=1
+        priority=1,
+        recurrence="None",
+        recurrence_id="0"
     )
     db.session.add(new_event)  # Add the event to the database
     db.session.commit()  # Commit the changes
@@ -103,13 +160,67 @@ def create_event():
 def update_event():
     """Update an existing event."""
     data = request.json  # Get updated event data from the request
-    event = Event.query.get(data['id'])  # Find the event by ID
-    event.title = data['title']  # Update title
-    event.start = data['start']  # Update start time
-    event.end = data.get('end')  # Update end time
-    event.color = data['color']  # Update color
-    db.session.commit()  # Commit the changes
-    return jsonify({"message": "Event updated"}), 200
+    # Check if the event is a single event or part of a recurrence
+    # If the event is not part of a recurrence or if it is the only event in the recurrence, which would happen if all other recurrences were deleted
+    if data["edit-recurrence"] != "all" and data["recurrence-id"] == "0" or len(Event.query.filter_by(recurrence_id=data['recurrence-id']).all()) == 1:
+        # Update a single event
+        event = Event.query.get(data['id'])  # Find the event by ID
+        event.title = data['title']  # Update title
+        event.start = data['start']  # Update start time
+        event.end = data.get('end')  # Update end time
+        event.color = data['color']  # Update color
+        event.recurrence = "None"  # Set recurrence to None, as it is not recurring anymore
+        event.recurrence_id = "0"  # Set recurrence ID to 0, as it is not recurring anymore
+        db.session.commit()  # Commit the changes
+        return jsonify({"message": "Event updated"}), 200
+    else:
+        # Update all events with the same recurrence ID
+        events = Event.query.filter_by(recurrence_id=data['recurrence-id']).all() # Find all events with the same recurrence ID
+
+        # Parse the new start time and date
+        new_start_datetime = datetime.fromisoformat(data['start'])
+        new_start_time = new_start_datetime.time()
+        new_start_date = new_start_datetime.date()
+
+        # Determine the recurrence pattern
+        recurrence_pattern = events[0].recurrence
+
+        for i, event in enumerate(events):
+            # Update the title and color for all events
+            event.title = data['title']
+            event.color = data['color']
+
+            # Update the start time and date for each event based on the recurrence pattern
+            current_start_datetime = datetime.fromisoformat(event.start)
+            if recurrence_pattern == "daily":
+                updated_start_datetime = datetime.combine(
+                    new_start_date + timedelta(days=i),  # Adjust the date for daily recurrence
+                    new_start_time
+                )
+            elif recurrence_pattern == "weekly":
+                updated_start_datetime = datetime.combine(
+                    new_start_date + timedelta(weeks=i),  # Adjust the date for weekly recurrence
+                    new_start_time
+                )
+            elif recurrence_pattern == "monthly":
+                updated_start_datetime = datetime.combine(
+                    new_start_date + relativedelta(months=i),  # Adjust for monthly recurrence
+                    new_start_time
+                )
+            else:
+                return jsonify({"message": "Unsupported recurrence pattern"}), 400
+
+            event.start = updated_start_datetime.isoformat()
+
+            # Update the end time if provided
+            if event.end:
+                current_end_datetime = datetime.fromisoformat(event.end)
+                duration = current_end_datetime - current_start_datetime
+                updated_end_datetime = updated_start_datetime + duration
+                event.end = updated_end_datetime.isoformat()
+
+        db.session.commit()  # Commit the changes
+        return jsonify({"message": "Recurring events updated"}), 200
 
 # API route to delete an event
 @app.route('/api/events/<int:event_id>', methods=['DELETE'])
