@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_mailman import Mail, EmailMessage
-
+import icalendar
 import uuid
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta # for monthly recurrence
@@ -343,6 +343,49 @@ def change_password():
 def agenda():
     """Agenda route: Displays the agenda of the user currently in session."""
     return render_template("agenda.html")
+
+# API route to import events from an .ics file
+@app.route('/api/import-ics', methods=['POST'])
+def import_ics():
+    """Import events from an .ics file."""
+    data = request.json
+    ics_content = data.get('ics')
+
+    if not ics_content:
+        return jsonify({"message": "No .ics content provided"}), 400
+
+    try:
+        calendar = icalendar.Calendar.from_ical(ics_content)
+        for component in calendar.walk():
+            if component.name == "VEVENT":
+                title = str(component.get('SUMMARY', 'Untitled Event'))
+                start = component.get('DTSTART').dt
+                end = component.get('DTEND').dt if component.get('DTEND') else None
+                color = "#fcba03"  # Default color for imported events
+
+                # Save the event to the database
+                logged_in_user = User.query.filter_by(username=session.get('username')).first()
+                if not logged_in_user:
+                    return jsonify({"message": "No logged-in user found"}), 400
+
+                new_event = Event(
+                    title=title,
+                    start=start.isoformat(),
+                    end=end.isoformat() if end else None,
+                    color=color,
+                    user_id=logged_in_user.id,  # Use the logged-in user's ID
+                    priority=1,
+                    recurrence="None",
+                    recurrence_id=0
+                )
+                db.session.add(new_event)
+
+
+        db.session.commit()
+        return jsonify({"message": "Events imported successfully"}), 200
+    except Exception as e:
+        print("Error importing .ics file:", e)
+        return jsonify({"message": "Failed to import .ics file"}), 500
 
 # Run the application
 if __name__ == "__main__":
