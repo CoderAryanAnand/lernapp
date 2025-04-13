@@ -67,6 +67,12 @@
             <input type="text" id="event-title" name="title" required><br>
             <label for="event-color">Color:</label>
             <input type="color" id="event-color" name="color"><br>
+            <label for="edit-event-priority">Priority:</label>
+            <select id="edit-event-priority" name="priority">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select><br>
             <label for="event-start">Start:</label>
             <input type="datetime-local" id="event-start" name="start" required><br>
             <label for="event-end">End:</label>
@@ -90,6 +96,12 @@
             <input type="text" id="create-title" name="title" required><br>
             <label for="create-color">Color:</label>
             <input type="color" id="create-color" name="color"><br>
+            <label for="create-event-priority">Priority:</label>
+            <select id="create-event-priority" name="priority">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+            </select><br>
             <label for="create-start">Start:</label>
             <input type="datetime-local" id="create-start" name="start" required><br>
             <label for="create-end">End:</label>
@@ -159,6 +171,7 @@
                 const popup = document.getElementById('event-popup');
                 document.getElementById('event-id').value = event.id; // Set event ID
                 document.getElementById('recurrence-id').value = event.extendedProps.recurrence_id; // Set recurrence ID
+                document.getElementById('edit-event-priority').value = event.extendedProps.priority; // Set recurrence ID
                 document.getElementById('event-title').value = event.title; // Set event title
                 document.getElementById('event-color').value = event.backgroundColor; // Set event color
                 document.getElementById('event-start').value = event.start.toISOString().slice(0, 16); // Set start time

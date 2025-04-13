@@ -107,7 +107,7 @@ def create_event():
                     end=(datetime.fromisoformat(data['end']) + timedelta(days=i)).isoformat() if data.get('end') else None,
                     color=data['color'],
                     user_id=User.query.filter_by(username=session['username']).first().id,
-                    priority=data.get('priority', 1),
+                    priority=data['priority'],
                     recurrence=data['recurrence'],
                     recurrence_id=recurrence_id
                 )
@@ -120,7 +120,7 @@ def create_event():
                     end=(datetime.fromisoformat(data['end']) + timedelta(weeks=i)).isoformat() if data.get('end') else None,
                     color=data['color'],
                     user_id=User.query.filter_by(username=session['username']).first().id,
-                    priority=data.get('priority', 1),
+                    priority=data['priority'],
                     recurrence=data['recurrence'],
                     recurrence_id=recurrence_id
                 )
@@ -133,7 +133,7 @@ def create_event():
                     end=(datetime.fromisoformat(data['end']) + timedelta(weeks=i*4)).isoformat() if data.get('end') else None,
                     color=data['color'],
                     user_id=User.query.filter_by(username=session['username']).first().id,
-                    priority=data.get('priority', 1),
+                    priority=data['priority'],
                     recurrence=data['recurrence'],
                     recurrence_id=recurrence_id
                 )
@@ -147,7 +147,7 @@ def create_event():
         end=data.get('end'),
         color=data['color'],
         user_id=User.query.filter_by(username=session['username']).first().id,  # Associate with the logged-in user
-        priority=1,
+        priority=data['priority'],
         recurrence="None",
         recurrence_id="0"
     )
@@ -169,6 +169,7 @@ def update_event():
         event.start = data['start']  # Update start time
         event.end = data.get('end')  # Update end time
         event.color = data['color']  # Update color
+        event.priority = data['priority']  # Update priority
         event.recurrence = "None"  # Set recurrence to None, as it is not recurring anymore
         event.recurrence_id = "0"  # Set recurrence ID to 0, as it is not recurring anymore
         db.session.commit()  # Commit the changes
@@ -186,9 +187,10 @@ def update_event():
         recurrence_pattern = events[0].recurrence
 
         for i, event in enumerate(events):
-            # Update the title and color for all events
+            # Update the title, color, and priority for all events
             event.title = data['title']
             event.color = data['color']
+            event.priority = data['priority']
 
             # Update the start time and date for each event based on the recurrence pattern
             current_start_datetime = datetime.fromisoformat(event.start)
