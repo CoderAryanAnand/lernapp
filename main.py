@@ -6,6 +6,7 @@ from flask_mailman import Mail, EmailMessage
 import icalendar
 import uuid
 from datetime import datetime, timedelta
+from itsdangerous import URLSafeTimedSerializer
 from dateutil.relativedelta import relativedelta # for monthly recurrence
 
 # Initialize Flask app
@@ -284,6 +285,57 @@ def login():
         return "Invalid credentials. Try again."
 
     return render_template("login.html")
+
+# Forgot password route
+@app.route("/forgot_password", methods=["GET", "POST"])
+def forgot_password():
+    """Forgot password route: Handles password reset requests."""
+    if request.method == "POST":
+        email = request.form["email"]
+        user = User.query.filter_by(email=email).first()
+
+        if user:
+            # Generate a password reset token
+            serializer = URLSafeTimedSerializer(app.secret_key)
+            token = serializer.dumps(email, salt=bcrypt.generate_password_hash(user.password).decode("utf-8"), max_age=900) # 15 minutes expiration
+            reset_link = url_for("reset_password", token=token, _external=True)
+            # Send email with reset link (using Flask-Mailman)
+            msg = EmailMessage(
+                subject="Password Reset Request",
+                body=f"Click the link to reset your password: {reset_link}",
+                to=[email],
+                from_email=app.config["MAIL_USERNAME"],
+            )
+            msg.send()  # Send the email
+            return "Password reset link sent to your email."
+        return "Email not found. Try again."
+    else:
+        return render_template("forgot_password.html")
+    
+# Reset password route
+@app.route("/reset_password/<token>", methods=["GET", "POST"])
+def reset_password(token):
+    """Reset password route: Handles password reset form submission."""
+    serializer = URLSafeTimedSerializer(app.secret_key)
+
+    if request.method == "POST":
+        try:
+            email = serializer.loads(token, salt=bcrypt.generate_password_hash(User.query.filter_by(user=request.form["username"]).first().password).decode("utf-8"))
+        except Exception as e:
+            return "Invalid or expired token."
+        if request.form["new_password"] == request.form["confirm_password"]:
+            # Update the user's password in the database
+            new_password = request.form["new_password"]
+            user = User.query.filter_by(email=email).first()
+            if user:
+                hashed_password = bcrypt.generate_password_hash(new_password).decode("utf-8")
+                user.password = hashed_password
+                db.session.commit()  # Commit the changes
+        else:
+            return "Passwords do not match. Try again."
+        return redirect(url_for("login"))  # Redirect to login after password reset
+    else:  
+        return render_template("reset_password.html", token=token)
 
 # Register route
 @app.route("/register", methods=["GET", "POST"])
