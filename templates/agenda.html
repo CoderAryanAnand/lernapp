@@ -84,6 +84,7 @@
             </select><br>
             <button type="submit">Save</button>
             <button type="button" onclick="deleteEvent()">Delete</button>
+            <button type="button" onclick="deleteRecurringEvents()">Delete Recurring Events</button>
             <button type="button" onclick="closePopup('event-popup')">Cancel</button>
         </form>
     </div>
@@ -199,6 +200,13 @@
         async function deleteEvent() {
             const eventId = document.getElementById('event-id').value; // Get event ID
             await fetch(`/api/events/${eventId}`, { method: 'DELETE' }); // Send DELETE request to the server
+            location.reload(); // Reload the page to reflect changes
+        }
+
+        // Delete recurring events function
+        async function deleteRecurringEvents() {
+            const recurrenceId = document.getElementById('recurrence-id').value; // Get event ID
+            await fetch(`/api/events/recurring/${recurrenceId}`, { method: 'DELETE' }); // Send DELETE request to the server
             location.reload(); // Reload the page to reflect changes
         }
 

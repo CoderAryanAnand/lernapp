@@ -233,6 +233,18 @@ def delete_event(event_id):
     db.session.commit()  # Commit the changes
     return jsonify({"message": "Event deleted"}), 200
 
+@app.route('/api/events/recurring/<recurrence_id>', methods=['DELETE'])
+def delete_recurring_events(recurrence_id):
+    """Delete all events with the same recurrence ID."""
+    logged_in_user = User.query.filter_by(username=session.get('username')).first()
+    if not logged_in_user:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    # Delete all events with the given recurrence ID for the logged-in user
+    Event.query.filter_by(recurrence_id=recurrence_id, user_id=logged_in_user.id).delete()
+    db.session.commit()
+    return jsonify({"message": "Recurring events deleted"}), 200
+
 # Route to populate the database with example events
 @app.route('/api/populate', methods=["GET", 'POST'])
 def populate_events():
