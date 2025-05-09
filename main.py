@@ -23,7 +23,7 @@ app.config["MAIL_PORT"] = 587  # Port for TLS
 app.config["MAIL_USE_TLS"] = True  # Enable TLS
 app.config["MAIL_USE_SSL"] = False  # Disable SSL
 app.config["MAIL_USERNAME"] = "kantikoala@gmail.com"  # Email username
-app.config["MAIL_PASSWORD"] = "your_password"  # Email password
+app.config["MAIL_PASSWORD"] = "ebvxtonhfkxvlgcj "  # Email password
 
 # Initialize database, bcrypt for password hashing, and mail for email functionality
 db = SQLAlchemy(app)
@@ -297,7 +297,9 @@ def forgot_password():
         if user:
             # Generate a password reset token
             serializer = URLSafeTimedSerializer(app.secret_key)
-            token = serializer.dumps(email, salt=bcrypt.generate_password_hash(user.password).decode("utf-8"), max_age=900) # 15 minutes expiration
+            token = serializer.dumps(email, salt=user.password)  # Generate token
+            print(token)
+            print(user.password)
             reset_link = url_for("reset_password", token=token, _external=True)
             # Send email with reset link (using Flask-Mailman)
             msg = EmailMessage(
@@ -320,7 +322,9 @@ def reset_password(token):
 
     if request.method == "POST":
         try:
-            email = serializer.loads(token, salt=bcrypt.generate_password_hash(User.query.filter_by(user=request.form["username"]).first().password).decode("utf-8"))
+            user = User.query.filter_by(username=request.form["username"]).first()
+            print(user.password)
+            email = serializer.loads(request.form["token"], salt=user.password, max_age=900)  # Validate token
         except Exception as e:
             return "Invalid or expired token."
         if request.form["new_password"] == request.form["confirm_password"]:
@@ -331,9 +335,10 @@ def reset_password(token):
                 hashed_password = bcrypt.generate_password_hash(new_password).decode("utf-8")
                 user.password = hashed_password
                 db.session.commit()  # Commit the changes
+                return redirect(url_for("login"))  # Redirect to login after password reset
+            return "User not found. Try again."
         else:
             return "Passwords do not match. Try again."
-        return redirect(url_for("login"))  # Redirect to login after password reset
     else:  
         return render_template("reset_password.html", token=token)
 
