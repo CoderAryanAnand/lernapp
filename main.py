@@ -266,9 +266,18 @@ def populate_events():
 @app.route("/")
 def home():
     """Home route: Displays login/register buttons or welcome message if logged in."""
+    # Read tips from the file
+    try:
+        with open("tips/tips.txt", "r") as file:
+            tips = file.readlines()
+    except FileNotFoundError:  
+        tips = ["No tips available."]
+
+    tip_of_the_day = tips[datetime.now().timetuple().tm_yday % len(tips)].strip()  # Select a random tip based on the current day
+
     if "username" in session:
-        return render_template("home.html", username=session["username"], logged_in=True)
-    return render_template("home.html", logged_in=False)
+        return render_template("home.html", username=session["username"], logged_in=True, tip=tip_of_the_day)
+    return render_template("home.html", logged_in=False, tip=tip_of_the_day)
 
 # Login route
 @app.route("/login", methods=["GET", "POST"])

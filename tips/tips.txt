@@ -1,0 +1,5 @@
+Stay hydrated while coding.
+Use meaningful variable names.
+Take regular breaks to stay productive.
+Write comments to explain complex code.
+Keep your code DRY (Don't Repeat Yourself).
