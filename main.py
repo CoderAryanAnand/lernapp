@@ -8,14 +8,26 @@ import uuid
 from datetime import datetime, timedelta
 from itsdangerous import URLSafeTimedSerializer
 from dateutil.relativedelta import relativedelta # for monthly recurrence
+from dotenv import load_dotenv
+import os   
+
+# Load environment variables from .env file
+load_dotenv()
+
+"""
+Contents of the .env file:
+DATABASE_URL=sqlite:///./test.db
+SECRET_KEY=your_secret_key
+MAIL_PASSWORD=ebvxtonhfkxvlgcj
+"""
 
 # Initialize Flask app
 app = Flask(__name__)
 
 # Configuration settings for the app
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"  # SQLite database file
+app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")  # SQLite database file
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Disable modification tracking for performance
-app.secret_key = "your_secret_key"  # Secret key for session management
+app.secret_key = os.getenv("SECRET_KEY")  # Secret key for session management
 
 # Mail configuration settings
 app.config["MAIL_SERVER"] = "smtp.gmail.com"  # Mail server
@@ -23,7 +35,7 @@ app.config["MAIL_PORT"] = 587  # Port for TLS
 app.config["MAIL_USE_TLS"] = True  # Enable TLS
 app.config["MAIL_USE_SSL"] = False  # Disable SSL
 app.config["MAIL_USERNAME"] = "kantikoala@gmail.com"  # Email username
-app.config["MAIL_PASSWORD"] = "ebvxtonhfkxvlgcj "  # Email password
+app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")  # Email password
 
 # Initialize database, bcrypt for password hashing, and mail for email functionality
 db = SQLAlchemy(app)
