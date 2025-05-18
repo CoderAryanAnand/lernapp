@@ -69,8 +69,9 @@ class Event(db.Model):
 # Ensure database tables are created
 with app.app_context():
     db.create_all()
-    with db.engine.connect() as connection:  # Use a connection object
-        connection.execute(db.text("PRAGMA foreign_keys=ON"))  # Enable foreign key constraints
+    if app.config["SQLALCHEMY_DATABASE_URI"].startswith("sqlite"):
+        with db.engine.connect() as connection:
+            connection.execute(db.text("PRAGMA foreign_keys=ON"))
 
 # FullCalendar API route to fetch events
 @app.route('/api/events', methods=['GET'])
