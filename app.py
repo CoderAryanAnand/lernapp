@@ -14,13 +14,6 @@ import os
 # Load environment variables from .env file
 load_dotenv()
 
-"""
-Contents of the .env file:
-DATABASE_URL=sqlite:///./test.db
-SECRET_KEY=your_secret_key
-MAIL_PASSWORD=ebvxtonhfkxvlgcj
-"""
-
 # Initialize Flask app
 app = Flask(__name__)
 
