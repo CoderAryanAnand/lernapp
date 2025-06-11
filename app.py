@@ -57,7 +57,7 @@ class Event(db.Model):
     color = db.Column(db.String(7), nullable=False)  # Event color (e.g., #ff0000)
     priority = db.Column(db.Integer, nullable=False)  # Event priority (1-3)
     recurrence = db.Column(db.String(50), nullable=True)  # Recurrence pattern (e.g., "daily", "weekly", etc.)
-    recurrence_id = db.Column(db.String(36), nullable=True)  # ID for recurrence events
+    recurrence_id = db.Column(db.String(50), nullable=True)  # ID for recurrence events
 
 # Ensure database tables are created
 with app.app_context():
