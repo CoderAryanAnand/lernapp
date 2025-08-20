@@ -18,7 +18,7 @@ load_dotenv()
 app = Flask(__name__)
 
 # Configuration settings for the app
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL")  # SQLite database file
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db" # os.getenv("DATABASE_URL")  # SQLite database file
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Disable modification tracking for performance
 app.secret_key = os.getenv("SECRET_KEY")  # Secret key for session management
 
