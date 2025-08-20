@@ -45,6 +45,7 @@ class User(db.Model):
 
     # Relationship to events with cascade delete
     events = db.relationship("Event", backref="user", lazy=True, cascade="all, delete-orphan")
+    semesters = db.relationship("Semester", backref="user", lazy=True, cascade="all, delete-orphan")
 
 # Define the Event model for the database
 class Event(db.Model):
@@ -59,6 +60,36 @@ class Event(db.Model):
     recurrence = db.Column(db.String(50), nullable=True)  # Recurrence pattern (e.g., "daily", "weekly", etc.)
     recurrence_id = db.Column(db.String(50), nullable=True)  # ID for recurrence events
     all_day = db.Column(db.Boolean, nullable=False, default=False)  # Whether the event is all-day
+
+# Define the Semester model for the database
+class Semester(db.Model):
+    """Semester model for storing academic semesters."""
+    id = db.Column(db.Integer, primary_key=True)  # Primary key
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)  # User ID to associate semesters with users
+    name = db.Column(db.String(100), nullable=False)  # Semester name (e.g., "Fall 2023")
+
+    # Relationship to subjects with cascade delete
+    subjects = db.relationship("Subject", backref="semester", lazy=True, cascade="all, delete-orphan")
+
+# Define the Subject model for the database
+class Subject(db.Model):
+    """Subject model for storing subjects within a semester."""
+    id = db.Column(db.Integer, primary_key=True)  # Primary key
+    semester_id = db.Column(db.Integer, db.ForeignKey("semester.id"), nullable=False)  # Semester ID to associate subjects with semesters
+    name = db.Column(db.String(100), nullable=False)  # Subject name (e.g., "Mathematics 101")
+
+    # Relationship to grades with cascade delete
+    grades = db.relationship("Grade", backref="subject", lazy=True, cascade="all, delete-orphan")
+
+# Define the Grade model for the database
+class Grade(db.Model):
+    """Grade model for storing grades for subjects."""
+    id = db.Column(db.Integer, primary_key=True)  # Primary key
+    subject_id = db.Column(db.Integer, db.ForeignKey("subject.id"), nullable=False)  # Subject ID to associate grades with subjects
+    name = db.Column(db.String(100), nullable=False)  # Grade name (e.g., "Midterm Exam")
+    value = db.Column(db.Float, nullable=False)  # Grade value (e.g., 85.5)
+    weight = db.Column(db.Float, nullable=False)  # Weight of the grade in the overall calculation
+    counts = db.Column(db.Boolean, nullable=False, default=True)  # Whether the grade counts towards the final score
 
 # Ensure database tables are created
 with app.app_context():
@@ -491,6 +522,69 @@ def import_ics():
     except Exception as e:
         print("Error importing .ics file:", e)
         return jsonify({"message": "Failed to import .ics file"}), 500
+
+@app.route("/noten")
+def noten():
+    if "username" not in session:
+        return redirect(url_for("login"))
+    return render_template("noten.html")
+
+@app.route("/api/noten", methods=["GET"])
+def get_noten():
+    if "username" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+    semesters = Semester.query.filter_by(user_id=session["username"]).all()
+    data = []
+    for sem in semesters:
+        sem_data = {"id": sem.id, "name": sem.name, "subjects": []}
+        for subj in sem.subjects:
+            subj_data = {"id": subj.id, "name": subj.name, "grades": []}
+            for grade in subj.grades:
+                subj_data["grades"].append({
+                    "id": grade.id,
+                    "name": grade.name,
+                    "value": grade.value,
+                    "weight": grade.weight,
+                    "counts": grade.counts
+                })
+            sem_data["subjects"].append(subj_data)
+        data.append(sem_data)
+    return jsonify(data)
+
+@app.route("/api/noten", methods=["POST"])
+def save_noten():
+    if "username" not in session:
+        return jsonify({"error": "Not logged in"}), 401
+    data = request.json
+    user = User.query.filter_by(username=session["username"]).first()
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    # Remove all existing semesters, subjects, and grades for this user
+    Semester.query.filter_by(user_id=user.id).delete()
+    db.session.commit()
+
+    # Re-create all semesters, subjects, and grades from the posted data
+    for sem in data:
+        semester = Semester(user_id=user.id, name=sem["name"])
+        db.session.add(semester)
+        db.session.flush()  # Get semester.id
+
+        for subj in sem.get("subjects", []):
+            subject = Subject(semester_id=semester.id, name=subj["name"])
+            db.session.add(subject)
+            db.session.flush()  # Get subject.id
+
+            for grade in subj.get("grades", []):
+                db.session.add(Grade(
+                    subject_id=subject.id,
+                    name=grade["name"],
+                    value=grade["value"],
+                    weight=grade["weight"],
+                    counts=grade["counts"]
+                ))
+    db.session.commit()
+    return jsonify({"status": "success"})
 
 # Run the application
 if __name__ == "__main__":
