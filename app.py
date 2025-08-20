@@ -58,6 +58,7 @@ class Event(db.Model):
     priority = db.Column(db.Integer, nullable=False)  # Event priority (1-3)
     recurrence = db.Column(db.String(50), nullable=True)  # Recurrence pattern (e.g., "daily", "weekly", etc.)
     recurrence_id = db.Column(db.String(50), nullable=True)  # ID for recurrence events
+    all_day = db.Column(db.Boolean, nullable=False, default=False)  # Whether the event is all-day
 
 # Ensure database tables are created
 with app.app_context():
@@ -65,6 +66,15 @@ with app.app_context():
     if app.config["SQLALCHEMY_DATABASE_URI"].startswith("sqlite"):
         with db.engine.connect() as connection:
             connection.execute(db.text("PRAGMA foreign_keys=ON"))
+
+# Function to convert Javascript string to boolean
+def str_to_bool(val):
+    if isinstance(val, bool):
+        return val
+    if isinstance(val, str):
+        return val.lower() == "true"
+    return False
+
 
 # FullCalendar API route to fetch events
 @app.route('/api/events', methods=['GET'])
@@ -88,7 +98,8 @@ def get_events():
             "color": event.color,
             "priority": event.priority,
             "recurrence": event.recurrence,
-            "recurrence_id": event.recurrence_id
+            "recurrence_id": event.recurrence_id,
+            "allDay": event.all_day
         }
         for event in user_events
     ]
@@ -101,6 +112,8 @@ def get_events():
 def create_event():
     """Create a new event."""
     data = request.json  # Get event data from the request
+    all_day = str_to_bool(data.get('all_day', False))
+
     if data["recurrence"] != "none":
         # Generate a unique recurrence ID for the event
         recurrence_id = str(uuid.uuid4().int)  # Use UUID to ensure uniqueness
@@ -116,7 +129,8 @@ def create_event():
                     user_id=User.query.filter_by(username=session['username']).first().id,
                     priority=data['priority'],
                     recurrence=data['recurrence'],
-                    recurrence_id=recurrence_id
+                    recurrence_id=recurrence_id,
+                    all_day=all_day
                 )
                 db.session.add(new_event)
         elif data["recurrence"] == "weekly":
@@ -129,7 +143,8 @@ def create_event():
                     user_id=User.query.filter_by(username=session['username']).first().id,
                     priority=data['priority'],
                     recurrence=data['recurrence'],
-                    recurrence_id=recurrence_id
+                    recurrence_id=recurrence_id,
+                    all_day=all_day
                 )
                 db.session.add(new_event)
         elif data["recurrence"] == "monthly":
@@ -142,7 +157,8 @@ def create_event():
                     user_id=User.query.filter_by(username=session['username']).first().id,
                     priority=data['priority'],
                     recurrence=data['recurrence'],
-                    recurrence_id=recurrence_id
+                    recurrence_id=recurrence_id,
+                    all_day=all_day
                 )
                 db.session.add(new_event)
         db.session.commit()
@@ -156,7 +172,8 @@ def create_event():
         user_id=User.query.filter_by(username=session['username']).first().id,  # Associate with the logged-in user
         priority=data['priority'],
         recurrence="None",
-        recurrence_id="0"
+        recurrence_id="0",
+        all_day=all_day
     )
     db.session.add(new_event)  # Add the event to the database
     db.session.commit()  # Commit the changes
@@ -179,6 +196,7 @@ def update_event():
         event.priority = data['priority']  # Update priority
         event.recurrence = "None"  # Set recurrence to None, as it is not recurring anymore
         event.recurrence_id = "0"  # Set recurrence ID to 0, as it is not recurring anymore
+        event.all_day = str_to_bool(data.get('all_day', False))  # Update all-day status
         db.session.commit()  # Commit the changes
         return jsonify({"message": "Event updated"}), 200
     else:
@@ -198,6 +216,7 @@ def update_event():
             event.title = data['title']
             event.color = data['color']
             event.priority = data['priority']
+            event.all_day = str_to_bool(data.get('all_day', False))  # Update all-day status
 
             # Update the start time and date for each event based on the recurrence pattern
             current_start_datetime = datetime.fromisoformat(event.start)

@@ -77,6 +77,8 @@
             <input type="datetime-local" id="event-start" name="start" required><br>
             <label for="event-end">End:</label>
             <input type="datetime-local" id="event-end" name="end"><br>
+            <label for="edit-all-day">All Day:</label>
+            <input type="checkbox" id="edit-all-day" name="all_day"><br>
             <label for="edit-recurrence">Edit Recurrence:</label>
             <select id="edit-recurrence" name="edit-recurrence">
                 <option value="this">Only This Event</option>
@@ -114,6 +116,8 @@
                 <option value="weekly">Weekly</option>
                 <option value="monthly">Monthly</option>
             </select><br>
+            <label for="all-day">All Day:</label>
+            <input type="checkbox" id="all-day" name="all_day"><br>
             <button type="submit">Create</button>
             <button type="button" onclick="closePopup('create-popup')">Cancel</button>
         </form>
@@ -177,6 +181,7 @@
                 document.getElementById('event-color').value = event.backgroundColor; // Set event color
                 document.getElementById('event-start').value = event.start.toISOString().slice(0, 16); // Set start time
                 document.getElementById('event-end').value = event.end ? event.end.toISOString().slice(0, 16) : ''; // Set end time
+                document.getElementById('edit-all-day').checked = !!event.allDay; // Set all-day checkbox
                 popup.style.display = 'block'; // Show the popup
             }
 
@@ -185,6 +190,7 @@
                 const popup = document.getElementById('create-popup');
                 document.getElementById('create-start').value = dateStr; // Set start time
                 document.getElementById('create-end').value = endTime; // Set end time
+                document.getElementById('all-day').checked = false; // Uncheck all-day checkbox
                 popup.style.display = 'block'; // Show the popup
             }
         });
@@ -214,6 +220,7 @@
         document.getElementById('edit-event-form').addEventListener('submit', async function (e) {
             e.preventDefault(); // Prevent default form submission
             const formData = new FormData(e.target); // Get form data
+            formData.set('all_day', document.getElementById('edit-all-day').checked);
             await fetch('/api/events', {
                 method: 'PUT', // Send PUT request to update the event
                 body: JSON.stringify(Object.fromEntries(formData)), // Convert form data to JSON
@@ -226,6 +233,7 @@
         document.getElementById('create-event-form').addEventListener('submit', async function (e) {
             e.preventDefault(); // Prevent default form submission
             const formData = new FormData(e.target); // Get form data
+            formData.set('all_day', document.getElementById('all-day').checked);
             await fetch('/api/events', {
                 method: 'POST', // Send POST request to create a new event
                 body: JSON.stringify(Object.fromEntries(formData)), // Convert form data to JSON
