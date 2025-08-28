@@ -533,7 +533,8 @@ def noten():
 def get_noten():
     if "username" not in session:
         return jsonify({"error": "Not logged in"}), 401
-    semesters = Semester.query.filter_by(user_id=session["username"]).all()
+    user = User.query.filter_by(username=session["username"]).first()
+    semesters = Semester.query.filter_by(user_id=user.id).all()
     data = []
     for sem in semesters:
         sem_data = {"id": sem.id, "name": sem.name, "subjects": []}
@@ -561,7 +562,9 @@ def save_noten():
         return jsonify({"error": "User not found"}), 404
 
     # Remove all existing semesters, subjects, and grades for this user
-    Semester.query.filter_by(user_id=user.id).delete()
+    semesters = Semester.query.filter_by(user_id=user.id).all()
+    for sem in semesters:
+        db.session.delete(sem)
     db.session.commit()
 
     # Re-create all semesters, subjects, and grades from the posted data

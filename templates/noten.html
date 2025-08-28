@@ -148,6 +148,7 @@
             semesterDiv.appendChild(header);
             semesterDiv.appendChild(content);
             document.getElementById("semesters").appendChild(semesterDiv);
+            saveAllSemestersToBackend();
         }
 
         function addSubject(container, subjectName, semesterId) {
@@ -203,7 +204,7 @@
             const deleteBtn = document.createElement("button");
             deleteBtn.textContent = "Delete Subject";
             deleteBtn.className = "delete-btn";
-            deleteBtn.onclick = function() { subjectDiv.remove(); updateSemesterAverage(semesterId); };
+            deleteBtn.onclick = function() { subjectDiv.remove(); updateSemesterAverage(semesterId); saveAllSemestersToBackend(); };
             content.appendChild(deleteBtn);
 
             subjectDiv.appendChild(header);
@@ -216,6 +217,7 @@
             if (subjectName) {
                 addSubject(container, subjectName, semesterId);
             }
+            saveAllSemestersToBackend();
         }
 
         function openGradePopup(editRow = null) {
@@ -354,6 +356,7 @@
                 }
             }
             closeSubjectPopup();
+            saveAllSemestersToBackend();
         }
         function closeSubjectPopup() {
             document.getElementById("subject-popup").style.display = "none";
@@ -374,7 +377,72 @@
             const container = document.getElementById("semesters");
             container.innerHTML = "";
             // Loop through semesters and render as before, using the loaded data
-            // (You can adapt your existing rendering code here)
+            semesters.forEach(sem => {
+                semesterCount++;
+                const semesterDiv = document.createElement("div");
+                semesterDiv.className = "semester";
+                semesterDiv.id = `semester-${semesterCount}`;
+
+                // Dropdown header for semester
+                const header = document.createElement("div");
+                header.className = "dropdown-header";
+                header.innerHTML = `<span>${sem.name}</span><span class="average" id="semester-avg-${semesterCount}">Average: 0</span>`;
+                header.onclick = function() {
+                    header.classList.toggle("open");
+                    content.style.display = header.classList.contains("open") ? "block" : "none";
+                };
+
+                // Dropdown content for semester
+                const content = document.createElement("div");
+                content.className = "dropdown-content";
+                content.style.display = "none";
+
+                sem.subjects.forEach(subject => {
+                    addSubject(content, subject.name, semesterCount);
+                    // Now add grades to the subject
+                    const subjectDivs = content.getElementsByClassName("subject");
+                    const currentSubjectDiv = subjectDivs[subjectDivs.length - 1];
+                    const gradesList = currentSubjectDiv.querySelector(".grades-list");
+                    subject.grades.forEach(grade => {
+                        const gradeRow = document.createElement("div");
+                        gradeRow.className = "grade-row";
+                        gradeRow.innerHTML = `
+                            <span class="grade-name"><strong>${grade.name}</strong></span>
+                            <span class="grade-value">Grade: ${grade.value}</span>
+                            <span class="grade-weight">Weight: ${grade.weight}</span>
+                            <span class="grade-counts">${grade.counts ? "Counts" : "Doesn't count"}</span>
+                            <button class="edit-btn" onclick="editGradeRow(this)">Edit</button>
+                            <button class="delete-btn" onclick="this.parentElement.remove(); updateSubjectAverage(currentSubjectForGrade.gradesList, currentSubjectForGrade.avgSpan, currentSubjectForGrade.semesterId); saveAllSemestersToBackend();">Delete</button>
+                        `;
+                        gradeRow.dataset.name = grade.name;
+                        gradeRow.dataset.value = grade.value;  
+                        gradeRow.dataset.weight = grade.weight;
+                        gradeRow.dataset.counts = grade.counts;
+                        gradeRow.querySelector('.edit-btn').onclick = function() {
+                            currentSubjectForGrade.gradesList = gradeRow.parentElement;
+                            currentSubjectForGrade.avgSpan = currentSubjectForGrade.gradesList.parentElement.parentElement.querySelector('.average');
+                            currentSubjectForGrade.semesterId = currentSubjectForGrade.avgSpan.id.split('-')[2];
+                            openGradePopup(gradeRow);
+                        };
+                        gradeRow.querySelector('.delete-btn').onclick = function() {
+                            gradeRow.remove();
+                            updateSubjectAverage(currentSubjectForGrade.gradesList, currentSubjectForGrade.avgSpan, currentSubjectForGrade.semesterId);
+                            saveAllSemestersToBackend();
+                        };
+                        gradesList.appendChild(gradeRow);
+                    });
+                    updateSubjectAverage(gradesList, currentSubjectDiv.querySelector(".average"), semesterCount);
+                });
+                const addSubjectBtn = document.createElement("button");
+                addSubjectBtn.textContent = "Add Subject";
+                addSubjectBtn.className = "add-btn";
+                addSubjectBtn.onclick = function() { addSubjectPrompt(content, semesterCount); };
+                content.appendChild(addSubjectBtn);
+                semesterDiv.appendChild(header);
+                semesterDiv.appendChild(content);
+                container.appendChild(semesterDiv);
+                updateSemesterAverage(semesterCount);
+            });
         }
 
         document.addEventListener("DOMContentLoaded", async function() {
