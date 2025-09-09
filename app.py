@@ -589,6 +589,11 @@ def save_noten():
     db.session.commit()
     return jsonify({"status": "success"})
 
+@app.route("/lerntimer")
+def lerntimer():
+    # User does not need to be logged in to access this page
+    return render_template("lerntimer.html")
+
 # Run the application
 if __name__ == "__main__":
     app.run(debug=True)
