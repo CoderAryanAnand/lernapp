@@ -107,6 +107,79 @@ def str_to_bool(val):
     return False
 
 
+# Main Algorithm for setting learning times
+def learning_time_algorithm(events):
+    # This function should analyze the user's events and suggest optimal learning times
+    
+
+    # Only loop through events that are in the future
+    now = datetime.now()
+    exams = {}
+    for event in events:
+        event_start = datetime.fromisoformat(event.start)
+        if event_start < now:
+            continue
+        if "test" in event.title.lower():
+            # If an event is a test or exam, suggest learning times before it
+            # Get the date of the exam
+            event_date = datetime.fromisoformat(event.start).date()
+            event_priority = event.priority
+            event_name = event.title
+            exams[event_name] = {"date": event_date, "priority": event_priority}
+    
+    # Sort exams by priority (1 is highest)
+    sorted_exams = dict(sorted(exams.items(), key=lambda item: item[1]["priority"]))
+
+    learn_time_based_on_priority = {"1": 14, "2": 7, "3": 3}  # Hours to learn before the exam based on priority
+    # Go backwards from the exam date and create learning time slots going back a week
+    learning_slots = []
+    for exam, details in sorted_exams.items():
+        exam_date = details["date"]
+        priority = str(details["priority"])
+        hours_to_learn = learn_time_based_on_priority.get(priority)
+        average_daily_learning = hours_to_learn // 7  # Spread learning over a week
+        if not average_daily_learning:
+            average_daily_learning = 0.5  # Minimum of 30 minutes if less than 1 hour
+        for day in range(7):
+            # Go back 7 days from the exam date
+            learn_date = exam_date - timedelta(days=day)
+            
+            # Check what events are on that day
+            day_events = [e for e in events if datetime.fromisoformat(e.start).date() == learn_date]
+            extra_hours = 0
+            if day_events:
+                # If there are events on that day, find free time slots
+                busy_times = [(datetime.fromisoformat(e.start), datetime.fromisoformat(e.end) if e.end else datetime.fromisoformat(e.start) + timedelta(hours=1)) for e in day_events]
+                busy_times.sort()
+                free_start = datetime.combine(learn_date, datetime.min.time()) + timedelta(hours=8)  # Start looking for free time from 8 AM
+                free_end = datetime.combine(learn_date, datetime.min.time()) + timedelta(hours=22)  # End looking for free time at 10 PM
+                for start, end in busy_times:
+                    if free_start < start:
+                        # There's a free slot before this busy time
+                        free_slot_duration = (start - free_start).total_seconds() / 3600  # Duration in hours
+                        if free_slot_duration >= average_daily_learning + extra_hours:
+                            learning_slots.append({
+                                "title": f"Study for {exam}",
+                                "start": free_start.isoformat(),
+                                "end": (free_start + timedelta(hours=average_daily_learning + extra_hours)).isoformat(),
+                                "color": "#03fcba",  # Teal color for learning slots
+                                "priority": details["priority"],
+                                "all_day": False
+                            })
+                            break
+                        elif free_slot_duration >= 0.5:
+                            learning_slots.append({
+                                "title": f"Study for {exam}",
+                                "start": free_start.isoformat(),
+                                "end": (free_start + timedelta(hours=free_slot_duration)).isoformat(),
+                                "color": "#03fcba",  # Teal color for learning slots
+                                "priority": details["priority"],
+                                "all_day": False
+                            })
+                            extra_hours += average_daily_learning - free_slot_duration
+                            
+
+
 # FullCalendar API route to fetch events
 @app.route('/api/events', methods=['GET'])
 def get_events():
