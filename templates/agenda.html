@@ -192,11 +192,19 @@
                 const popup = document.getElementById('event-popup');
                 document.getElementById('event-id').value = event.id; // Set event ID
                 document.getElementById('recurrence-id').value = event.extendedProps.recurrence_id; // Set recurrence ID
-                document.getElementById('edit-event-priority').value = event.extendedProps.priority; // Set recurrence ID
+                document.getElementById('edit-event-priority').value = event.extendedProps.priority; // Set priority
                 document.getElementById('event-title').value = event.title; // Set event title
                 document.getElementById('event-color').value = event.backgroundColor; // Set event color
-                document.getElementById('event-start').value = event.start.toISOString().slice(0, 16); // Set start time
-                document.getElementById('event-end').value = event.end ? event.end.toISOString().slice(0, 16) : ''; // Set end time
+
+                // Convert UTC date to local date string for input[type="datetime-local"]
+                function toLocalInputValue(date) {
+                    if (!date) return '';
+                    const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+                    return local.toISOString().slice(0, 16);
+                }
+                document.getElementById('event-start').value = toLocalInputValue(event.start);
+                document.getElementById('event-end').value = event.end ? toLocalInputValue(event.end) : '';
+
                 document.getElementById('edit-all-day').checked = !!event.allDay; // Set all-day checkbox
                 popup.style.display = 'block'; // Show the popup
             }
