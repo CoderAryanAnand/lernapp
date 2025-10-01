@@ -40,13 +40,6 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 mail = Mail(app)
 
-# ---------------------- Constants ----------------------
-PRIORITY_COLORS = {
-    1: "#770000",  # Red for high priority
-    2: "#ca8300",  # Orange for medium priority
-    3: "#097200",  # Green for low priority
-}
-
 # ---------------------- Database Models ----------------------
 
 
@@ -57,6 +50,12 @@ class User(db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)  # Hashed password
     email = db.Column(db.String(100), unique=True, nullable=False)
+    priority1_color = db.Column(db.String(7), default="#770000")
+    priority2_color = db.Column(db.String(7), default="#ca8300")
+    priority3_color = db.Column(db.String(7), default="#097200")
+    learn_on_saturday = db.Column(db.Boolean, default=False)
+    learn_on_sunday = db.Column(db.Boolean, default=False)
+    preferred_learning_time = db.Column(db.String(20), default="18:00")
 
     # Relationships
     events = db.relationship(
@@ -274,9 +273,16 @@ def get_events():
 def create_event():
     """Create a new event."""
     data = request.json
+    user = User.query.filter_by(username=session["username"]).first()
     all_day = str_to_bool(data.get("all_day", False))
     if int(data["priority"]) != 4:
-        data["color"] = PRIORITY_COLORS[int(data["priority"])]
+        match int(data["priority"]):
+            case 1:
+                data["color"] = user.priority1_color
+            case 2:
+                data["color"] = user.priority2_color
+            case 3:
+                data["color"] = user.priority3_color
     # Handle recurring events
     if data["recurrence"] != "none":
         recurrence_id = str(uuid.uuid4().int)
@@ -295,9 +301,7 @@ def create_event():
                         else None
                     ),
                     color=data["color"],
-                    user_id=User.query.filter_by(username=session["username"])
-                    .first()
-                    .id,
+                    user_id=user.id,
                     priority=data["priority"],
                     recurrence=data["recurrence"],
                     recurrence_id=recurrence_id,
@@ -319,9 +323,7 @@ def create_event():
                         else None
                     ),
                     color=data["color"],
-                    user_id=User.query.filter_by(username=session["username"])
-                    .first()
-                    .id,
+                    user_id=user.id,
                     priority=data["priority"],
                     recurrence=data["recurrence"],
                     recurrence_id=recurrence_id,
@@ -343,9 +345,7 @@ def create_event():
                         else None
                     ),
                     color=data["color"],
-                    user_id=User.query.filter_by(username=session["username"])
-                    .first()
-                    .id,
+                    user_id=user.id,
                     priority=data["priority"],
                     recurrence=data["recurrence"],
                     recurrence_id=recurrence_id,
@@ -361,7 +361,7 @@ def create_event():
         start=data["start"],
         end=data.get("end"),
         color=data["color"],
-        user_id=User.query.filter_by(username=session["username"]).first().id,
+        user_id=user.id,
         priority=data["priority"],
         recurrence="None",
         recurrence_id="0",
@@ -376,6 +376,7 @@ def create_event():
 def update_event():
     """Update an existing event."""
     data = request.json
+    user = User.query.filter_by(username=session["username"]).first()
     # Single event or only one left in recurrence
     if (
         data["edit-recurrence"] != "all"
@@ -386,7 +387,13 @@ def update_event():
         old_priority = event.priority
         if int(data["priority"]) != old_priority:
             if int(data["priority"]) != 4:
-                data["color"] = PRIORITY_COLORS[int(data["priority"])]
+                match int(data["priority"]):
+                    case 1:
+                        data["color"] = user.priority1_color
+                    case 2:
+                        data["color"] = user.priority2_color
+                    case 3:
+                        data["color"] = user.priority3_color
         event.title = data["title"]
         event.start = data["start"]
         event.end = data.get("end")
@@ -623,10 +630,29 @@ def logout():
     return redirect(url_for("home"))
 
 
-@app.route("/settings")
+@app.route("/settings", methods=["GET", "POST"])
 def settings():
-    """Settings route: Goes to the general settings of the account and page."""
-    return render_template("settings.html")
+    """Settings route: View and update user settings."""
+    user = User.query.filter_by(username=session["username"]).first()
+    if request.method == "POST":
+        # Get data from form
+        user.priority1_color = request.form.get("priority1_color", user.priority1_color)
+        user.priority2_color = request.form.get("priority2_color", user.priority2_color)
+        user.priority3_color = request.form.get("priority3_color", user.priority3_color)
+        user.learn_on_saturday = "learn_on_saturday" in request.form
+        user.learn_on_sunday = "learn_on_sunday" in request.form
+        user.preferred_learning_time = request.form.get("learning_time", user.preferred_learning_time)
+        db.session.commit()
+        return redirect(url_for("settings"))
+    return render_template(
+        "settings.html",
+        priority1_color=user.priority1_color,
+        priority2_color=user.priority2_color,
+        priority3_color=user.priority3_color,
+        learn_on_saturday=user.learn_on_saturday,
+        learn_on_sunday=user.learn_on_sunday,
+        preferred_learning_time=user.preferred_learning_time
+    )
 
 
 @app.route("/settings/delete_account")

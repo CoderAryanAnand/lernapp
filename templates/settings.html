@@ -7,7 +7,25 @@
 </head>
 <body>
     <h2>Settings</h2>
+    <h3>General</h3>
     <a id="chg_pw" href="/settings/change_password"><button>Change Password</button></a>
     <a id="del_acc" href="/settings/delete_account"><button>Delete account</button></a>
+    <h3>Agenda Settings</h3>
+    <!-- Form to select default priority colors, to select if Saturday and/or Sunday can be used for learning (for the algorithm), and preferred learning time in a day -->
+    <form method="post">
+        <label for="priority1">High Priority Color:</label>
+        <input type="color" id="priority1" name="priority1_color" value="{{ priority1_color }}"><br><br>
+        <label for="priority2">Medium Priority Color:</label>
+        <input type="color" id="priority2" name="priority2_color" value="{{ priority2_color }}"><br><br>
+        <label for="priority3">Low Priority Color:</label>
+        <input type="color" id="priority3" name="priority3_color" value="{{ priority3_color }}"><br><br>
+        <input type="checkbox" id="saturday" name="learn_on_saturday" {% if learn_on_saturday %}checked{% endif %}>
+        <label for="saturday">Include Saturday for learning</label><br><br>
+        <input type="checkbox" id="sunday" name="learn_on_sunday" {% if learn_on_sunday %}checked{% endif %}>
+        <label for="sunday">Include Sunday for learning</label><br><br>
+        <label for="learning_time">Preferred daily learning start time:</label>
+        <input type="time" id="learning_time" name="learning_time" value="{{ preferred_learning_time }}"><br><br>
+        <input type="submit" value="Save Settings">
+    </form>
 </body>
 </html>
