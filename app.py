@@ -40,6 +40,13 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 mail = Mail(app)
 
+# ---------------------- Constants ----------------------
+PRIORITY_COLORS = {
+    1: "#770000",  # Red for high priority
+    2: "#ca8300",  # Orange for medium priority
+    3: "#097200",  # Green for low priority
+}
+
 # ---------------------- Database Models ----------------------
 
 
@@ -268,6 +275,8 @@ def create_event():
     """Create a new event."""
     data = request.json
     all_day = str_to_bool(data.get("all_day", False))
+    if int(data["priority"]) != 4:
+        data["color"] = PRIORITY_COLORS[int(data["priority"])]
     # Handle recurring events
     if data["recurrence"] != "none":
         recurrence_id = str(uuid.uuid4().int)
@@ -374,6 +383,10 @@ def update_event():
         or len(Event.query.filter_by(recurrence_id=data["recurrence-id"]).all()) == 1
     ):
         event = Event.query.get(data["id"])
+        old_priority = event.priority
+        if int(data["priority"]) != old_priority:
+            if int(data["priority"]) != 4:
+                data["color"] = PRIORITY_COLORS[int(data["priority"])]
         event.title = data["title"]
         event.start = data["start"]
         event.end = data.get("end")
@@ -685,7 +698,7 @@ def import_ics():
                     end=end.isoformat() if end else None,
                     color=color,
                     user_id=logged_in_user.id,
-                    priority=1,
+                    priority=4,
                     recurrence="None",
                     recurrence_id=0,
                 )

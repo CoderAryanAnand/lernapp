@@ -44,6 +44,18 @@
             color: #333;
             margin-bottom: 20px;
         }
+
+        .color-info {
+            cursor: pointer;
+            margin-left: 4px;
+            font-size: 1.1em;
+            vertical-align: middle;
+        }
+
+        input[type="color"] {
+            vertical-align: middle;
+        }
+
     </style>
 </head>
 <body>
@@ -66,12 +78,14 @@
             <label for="event-title">Title:</label>
             <input type="text" id="event-title" name="title" required><br>
             <label for="event-color">Color:</label>
-            <input type="color" id="event-color" name="color"><br>
+            <input type="color" id="event-color" name="color">
+            <span class="color-info" title="The color will only be used if the priority is level 4.">ℹ️</span><br>
             <label for="edit-event-priority">Priority:</label>
             <select id="edit-event-priority" name="priority">
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
+                <option value="4">4 (Not learning related)</option>
             </select><br>
             <label for="event-start">Start:</label>
             <input type="datetime-local" id="event-start" name="start" required><br>
@@ -98,12 +112,14 @@
             <label for="create-title">Title:</label>
             <input type="text" id="create-title" name="title" required><br>
             <label for="create-color">Color:</label>
-            <input type="color" id="create-color" name="color"><br>
+            <input type="color" id="create-color" name="color">
+            <span class="color-info" title="The color will only be used if the priority is level 4.">ℹ️</span><br>
             <label for="create-event-priority">Priority:</label>
             <select id="create-event-priority" name="priority">
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
+                <option value="4">4 (Not learning related)</option>
             </select><br>
             <label for="create-start">Start:</label>
             <input type="datetime-local" id="create-start" name="start" required><br>
