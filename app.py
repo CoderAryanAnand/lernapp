@@ -258,8 +258,8 @@ def learning_time_algorithm(events):
 # ---------------------- API Endpoints for Events ----------------------
 
 
-@login_required
 @app.route("/api/events", methods=["GET"])
+@login_required
 def get_events():
     """Fetch events for the logged-in user."""
     logged_in_user = User.query.filter_by(username=session.get("username")).first()
@@ -284,8 +284,8 @@ def get_events():
     return jsonify(events)
 
 
-@login_required
 @app.route("/api/events", methods=["POST"])
+@login_required
 def create_event():
     """Create a new event."""
     data = request.json
@@ -388,8 +388,8 @@ def create_event():
     return jsonify({"message": "Event created"}), 201
 
 
-@login_required
 @app.route("/api/events", methods=["PUT"])
+@login_required
 def update_event():
     """Update an existing event."""
     data = request.json
@@ -458,8 +458,8 @@ def update_event():
         return jsonify({"message": "Recurring events updated"}), 200
 
 
-@login_required
 @app.route("/api/events/<int:event_id>", methods=["DELETE"])
+@login_required
 def delete_event(event_id):
     """Delete an event."""
     event = Event.query.get(event_id)
@@ -468,8 +468,8 @@ def delete_event(event_id):
     return jsonify({"message": "Event deleted"}), 200
 
 
-@login_required
 @app.route("/api/events/recurring/<recurrence_id>", methods=["DELETE"])
+@login_required
 def delete_recurring_events(recurrence_id):
     """Delete all events with the same recurrence ID."""
     logged_in_user = User.query.filter_by(username=session.get("username")).first()
@@ -482,8 +482,8 @@ def delete_recurring_events(recurrence_id):
     return jsonify({"message": "Recurring events deleted"}), 200
 
 
-@login_required
 @app.route("/api/populate", methods=["GET", "POST"])
+@login_required
 def populate_events():
     """Populate the database with example events."""
     event1 = Event(
@@ -640,16 +640,16 @@ def register():
     return render_template("register.html")
 
 
-@login_required
 @app.route("/logout")
+@login_required
 def logout():
     """Logout route: Removes user session data and redirects to home."""
     session.pop("username", None)
     return redirect(url_for("home"))
 
 
-@login_required
 @app.route("/settings", methods=["GET", "POST"])
+@login_required
 def settings():
     """Settings route: View and update user settings."""
     user = User.query.filter_by(username=session["username"]).first()
@@ -674,8 +674,8 @@ def settings():
     )
 
 
-@login_required
 @app.route("/settings/delete_account")
+@login_required
 def delete_account():
     """Delete account route: Deletes user account currently in session."""
     current_user = session["username"]
@@ -685,8 +685,8 @@ def delete_account():
     return redirect(url_for("home"))
 
 
-@login_required
 @app.route("/settings/change_password", methods=["GET", "POST"])
+@login_required
 def change_password():
     """Change password route: Changes the password of the user currently in session."""
     if request.method == "POST":
@@ -713,15 +713,15 @@ def change_password():
     return render_template("change_password.html")
 
 
-@login_required
 @app.route("/agenda")
+@login_required
 def agenda():
     """Agenda route: Displays the agenda of the user currently in session."""
     return render_template("agenda.html")
 
 
-@login_required
 @app.route("/api/import-ics", methods=["POST"])
+@login_required
 def import_ics():
     """Import events from an .ics file."""
     data = request.json
@@ -761,8 +761,8 @@ def import_ics():
 # ---------------------- Noten (Grades) API ----------------------
 
 
-@login_required
 @app.route("/noten")
+@login_required
 def noten():
     """Noten route: Displays the noten (grades) page."""
     if "username" not in session:
@@ -770,8 +770,8 @@ def noten():
     return render_template("noten.html")
 
 
-@login_required
 @app.route("/api/noten", methods=["GET"])
+@login_required
 def get_noten():
     """API endpoint to get all semesters, subjects, and grades for the user."""
     if "username" not in session:
@@ -798,8 +798,8 @@ def get_noten():
     return jsonify(data)
 
 
-@login_required
 @app.route("/api/noten", methods=["POST"])
+@login_required
 def save_noten():
     """API endpoint to save all semesters, subjects, and grades for the user."""
     if "username" not in session:
