@@ -7,9 +7,9 @@ import icalendar
 import uuid
 from datetime import datetime, timedelta
 from itsdangerous import URLSafeTimedSerializer
-from dateutil.relativedelta import relativedelta # for monthly recurrence
+from dateutil.relativedelta import relativedelta  # for monthly recurrence
 from dotenv import load_dotenv
-import os   
+import os
 
 # Load environment variables from .env file
 load_dotenv()
@@ -17,102 +17,105 @@ load_dotenv()
 # Initialize Flask app
 app = Flask(__name__)
 
-# Configuration settings for the app
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db" # os.getenv("DATABASE_URL")  # SQLite database file
+# ---------------------- Flask App Configuration ----------------------
+
+# Database configuration
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"  # Use SQLite by default
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False  # Disable modification tracking for performance
 app.secret_key = os.getenv("SECRET_KEY")  # Secret key for session management
 
-# Mail configuration settings
-app.config["MAIL_SERVER"] = "smtp.gmail.com"  # Mail server
-app.config["MAIL_PORT"] = 587  # Port for TLS
-app.config["MAIL_USE_TLS"] = True  # Enable TLS
-app.config["MAIL_USE_SSL"] = False  # Disable SSL
-app.config["MAIL_USERNAME"] = "kantikoala@gmail.com"  # Email username
-app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")  # Email password
+# Mail configuration
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USE_SSL"] = False
+app.config["MAIL_USERNAME"] = "kantikoala@gmail.com"
+app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 
-# Initialize database, bcrypt for password hashing, and mail for email functionality
+# ---------------------- Initialize Extensions ----------------------
+
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 mail = Mail(app)
 
-# Define the User model for the database
+# ---------------------- Database Models ----------------------
+
 class User(db.Model):
     """User model for storing authentication details."""
-    id = db.Column(db.Integer, primary_key=True)  # Primary key
-    username = db.Column(db.String(100), unique=True, nullable=False)  # Unique username
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)  # Hashed password
-    email = db.Column(db.String(100), unique=True, nullable=False)  # Unique email address
+    email = db.Column(db.String(100), unique=True, nullable=False)
 
-    # Relationship to events with cascade delete
+    # Relationships
     events = db.relationship("Event", backref="user", lazy=True, cascade="all, delete-orphan")
     semesters = db.relationship("Semester", backref="user", lazy=True, cascade="all, delete-orphan")
 
-# Define the Event model for the database
 class Event(db.Model):
     """Event model for storing user events."""
-    id = db.Column(db.Integer, primary_key=True)  # Primary key
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id", onupdate="CASCADE"), nullable=False)  # User ID to associate events with users
-    title = db.Column(db.String(100), nullable=False)  # Event title
-    start = db.Column(db.String(50), nullable=False)  # Start datetime in ISO format
-    end = db.Column(db.String(50), nullable=True)  # End datetime in ISO format
-    color = db.Column(db.String(7), nullable=False)  # Event color (e.g., #ff0000)
-    priority = db.Column(db.Integer, nullable=False)  # Event priority (1-3)
-    recurrence = db.Column(db.String(50), nullable=True)  # Recurrence pattern (e.g., "daily", "weekly", etc.)
-    recurrence_id = db.Column(db.String(50), nullable=True)  # ID for recurrence events
-    all_day = db.Column(db.Boolean, nullable=False, default=False)  # Whether the event is all-day
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id", onupdate="CASCADE"), nullable=False)
+    title = db.Column(db.String(100), nullable=False)
+    start = db.Column(db.String(50), nullable=False)  # ISO format
+    end = db.Column(db.String(50), nullable=True)
+    color = db.Column(db.String(7), nullable=False)
+    priority = db.Column(db.Integer, nullable=False)
+    recurrence = db.Column(db.String(50), nullable=True)
+    recurrence_id = db.Column(db.String(50), nullable=True)
+    all_day = db.Column(db.Boolean, nullable=False, default=False)
 
-# Define the Semester model for the database
 class Semester(db.Model):
     """Semester model for storing academic semesters."""
-    id = db.Column(db.Integer, primary_key=True)  # Primary key
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)  # User ID to associate semesters with users
-    name = db.Column(db.String(100), nullable=False)  # Semester name (e.g., "Fall 2023")
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
 
     # Relationship to subjects with cascade delete
     subjects = db.relationship("Subject", backref="semester", lazy=True, cascade="all, delete-orphan")
 
-# Define the Subject model for the database
 class Subject(db.Model):
     """Subject model for storing subjects within a semester."""
-    id = db.Column(db.Integer, primary_key=True)  # Primary key
-    semester_id = db.Column(db.Integer, db.ForeignKey("semester.id"), nullable=False)  # Semester ID to associate subjects with semesters
-    name = db.Column(db.String(100), nullable=False)  # Subject name (e.g., "Mathematics 101")
+    id = db.Column(db.Integer, primary_key=True)
+    semester_id = db.Column(db.Integer, db.ForeignKey("semester.id"), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
 
     # Relationship to grades with cascade delete
     grades = db.relationship("Grade", backref="subject", lazy=True, cascade="all, delete-orphan")
 
-# Define the Grade model for the database
 class Grade(db.Model):
     """Grade model for storing grades for subjects."""
-    id = db.Column(db.Integer, primary_key=True)  # Primary key
-    subject_id = db.Column(db.Integer, db.ForeignKey("subject.id"), nullable=False)  # Subject ID to associate grades with subjects
-    name = db.Column(db.String(100), nullable=False)  # Grade name (e.g., "Midterm Exam")
-    value = db.Column(db.Float, nullable=False)  # Grade value (e.g., 85.5)
-    weight = db.Column(db.Float, nullable=False)  # Weight of the grade in the overall calculation
-    counts = db.Column(db.Boolean, nullable=False, default=True)  # Whether the grade counts towards the final score
+    id = db.Column(db.Integer, primary_key=True)
+    subject_id = db.Column(db.Integer, db.ForeignKey("subject.id"), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    value = db.Column(db.Float, nullable=False)
+    weight = db.Column(db.Float, nullable=False)
+    counts = db.Column(db.Boolean, nullable=False, default=True)
 
-# Ensure database tables are created
+# ---------------------- Database Initialization ----------------------
+
 with app.app_context():
     db.create_all()
+    # Enable foreign key support for SQLite
     if app.config["SQLALCHEMY_DATABASE_URI"].startswith("sqlite"):
         with db.engine.connect() as connection:
             connection.execute(db.text("PRAGMA foreign_keys=ON"))
 
-# Function to convert Javascript string to boolean
+# ---------------------- Utility Functions ----------------------
+
 def str_to_bool(val):
+    """Convert a string or boolean value to a boolean."""
     if isinstance(val, bool):
         return val
     if isinstance(val, str):
         return val.lower() == "true"
     return False
 
+# ---------------------- Learning Time Algorithm ----------------------
 
-# Main Algorithm for setting learning times
 def learning_time_algorithm(events):
-    # This function should analyze the user's events and suggest optimal learning times
-    
-
-    # Only loop through events that are in the future
+    """
+    Analyze the user's events and suggest optimal learning times before exams.
+    """
     now = datetime.now()
     exams = {}
     for event in events:
@@ -120,18 +123,13 @@ def learning_time_algorithm(events):
         if event_start < now:
             continue
         if "test" in event.title.lower():
-            # If an event is a test or exam, suggest learning times before it
-            # Get the date of the exam
             event_date = datetime.fromisoformat(event.start).date()
             event_priority = event.priority
             event_name = event.title
             exams[event_name] = {"date": event_date, "priority": event_priority}
-    
     # Sort exams by priority (1 is highest)
     sorted_exams = dict(sorted(exams.items(), key=lambda item: item[1]["priority"]))
-
     learn_time_based_on_priority = {"1": 14, "2": 7, "3": 3}  # Hours to learn before the exam based on priority
-    # Go backwards from the exam date and create learning time slots going back a week
     learning_slots = []
     for exam, details in sorted_exams.items():
         exam_date = details["date"]
@@ -141,28 +139,26 @@ def learning_time_algorithm(events):
         if not average_daily_learning:
             average_daily_learning = 0.5  # Minimum of 30 minutes if less than 1 hour
         for day in range(7):
-            # Go back 7 days from the exam date
             learn_date = exam_date - timedelta(days=day)
-            
-            # Check what events are on that day
             day_events = [e for e in events if datetime.fromisoformat(e.start).date() == learn_date]
             extra_hours = 0
             if day_events:
-                # If there are events on that day, find free time slots
-                busy_times = [(datetime.fromisoformat(e.start), datetime.fromisoformat(e.end) if e.end else datetime.fromisoformat(e.start) + timedelta(hours=1)) for e in day_events]
+                busy_times = [
+                    (datetime.fromisoformat(e.start), datetime.fromisoformat(e.end) if e.end else datetime.fromisoformat(e.start) + timedelta(hours=1))
+                    for e in day_events
+                ]
                 busy_times.sort()
-                free_start = datetime.combine(learn_date, datetime.min.time()) + timedelta(hours=8)  # Start looking for free time from 8 AM
-                free_end = datetime.combine(learn_date, datetime.min.time()) + timedelta(hours=22)  # End looking for free time at 10 PM
+                free_start = datetime.combine(learn_date, datetime.min.time()) + timedelta(hours=8)  # 8 AM
+                free_end = datetime.combine(learn_date, datetime.min.time()) + timedelta(hours=22)  # 10 PM
                 for start, end in busy_times:
                     if free_start < start:
-                        # There's a free slot before this busy time
-                        free_slot_duration = (start - free_start).total_seconds() / 3600  # Duration in hours
+                        free_slot_duration = (start - free_start).total_seconds() / 3600
                         if free_slot_duration >= average_daily_learning + extra_hours:
                             learning_slots.append({
                                 "title": f"Study for {exam}",
                                 "start": free_start.isoformat(),
                                 "end": (free_start + timedelta(hours=average_daily_learning + extra_hours)).isoformat(),
-                                "color": "#03fcba",  # Teal color for learning slots
+                                "color": "#03fcba",
                                 "priority": details["priority"],
                                 "all_day": False
                             })
@@ -172,27 +168,22 @@ def learning_time_algorithm(events):
                                 "title": f"Study for {exam}",
                                 "start": free_start.isoformat(),
                                 "end": (free_start + timedelta(hours=free_slot_duration)).isoformat(),
-                                "color": "#03fcba",  # Teal color for learning slots
+                                "color": "#03fcba",
                                 "priority": details["priority"],
                                 "all_day": False
                             })
                             extra_hours += average_daily_learning - free_slot_duration
-                            
 
+# ---------------------- API Endpoints for Events ----------------------
 
-# FullCalendar API route to fetch events
 @app.route('/api/events', methods=['GET'])
 def get_events():
     """Fetch events for the logged-in user."""
-    logged_in_user = User.query.filter_by(username=session.get('username')).first()  # Get the logged-in user
+    logged_in_user = User.query.filter_by(username=session.get('username')).first()
     if not logged_in_user:
-        return jsonify([])  # Return an empty list if no user is logged in
+        return jsonify([])
     logged_in_user_id = logged_in_user.id
-
-    # Query the database for events belonging to the logged-in user
     user_events = Event.query.filter_by(user_id=logged_in_user_id).all()
-
-    # Convert events to a format FullCalendar understands
     events = [
         {
             "id": event.id,
@@ -207,24 +198,18 @@ def get_events():
         }
         for event in user_events
     ]
-
-    # Return events as JSON
     return jsonify(events)
 
-# API route to create a new event
 @app.route('/api/events', methods=['POST'])
 def create_event():
     """Create a new event."""
-    data = request.json  # Get event data from the request
+    data = request.json
     all_day = str_to_bool(data.get('all_day', False))
-
+    # Handle recurring events
     if data["recurrence"] != "none":
-        # Generate a unique recurrence ID for the event
-        recurrence_id = str(uuid.uuid4().int)  # Use UUID to ensure uniqueness
-
-        # Create recurring events based on the recurrence pattern
+        recurrence_id = str(uuid.uuid4().int)
         if data["recurrence"] == "daily":
-            for i in range(7):  # Create events for the next 7 days
+            for i in range(7):
                 new_event = Event(
                     title=data['title'],
                     start=(datetime.fromisoformat(data['start']) + timedelta(days=i)).isoformat(),
@@ -238,7 +223,7 @@ def create_event():
                 )
                 db.session.add(new_event)
         elif data["recurrence"] == "weekly":
-            for i in range(4):  # Create events for the next 4 weeks
+            for i in range(4):
                 new_event = Event(
                     title=data['title'],
                     start=(datetime.fromisoformat(data['start']) + timedelta(weeks=i)).isoformat(),
@@ -268,99 +253,75 @@ def create_event():
         db.session.commit()
         return jsonify({"message": "Recurring events created"}), 201
 
+    # Create a single event
     new_event = Event(
         title=data['title'],
         start=data['start'],
         end=data.get('end'),
         color=data['color'],
-        user_id=User.query.filter_by(username=session['username']).first().id,  # Associate with the logged-in user
+        user_id=User.query.filter_by(username=session['username']).first().id,
         priority=data['priority'],
         recurrence="None",
         recurrence_id="0",
         all_day=all_day
     )
-    db.session.add(new_event)  # Add the event to the database
-    db.session.commit()  # Commit the changes
+    db.session.add(new_event)
+    db.session.commit()
     return jsonify({"message": "Event created"}), 201
 
-# API route to update an existing event
 @app.route('/api/events', methods=['PUT'])
 def update_event():
     """Update an existing event."""
-    data = request.json  # Get updated event data from the request
-    # Check if the event is a single event or part of a recurrence
-    # If the event is not part of a recurrence or if it is the only event in the recurrence, which would happen if all other recurrences were deleted
+    data = request.json
+    # Single event or only one left in recurrence
     if data["edit-recurrence"] != "all" and data["recurrence-id"] == "0" or len(Event.query.filter_by(recurrence_id=data['recurrence-id']).all()) == 1:
-        # Update a single event
-        event = Event.query.get(data['id'])  # Find the event by ID
-        event.title = data['title']  # Update title
-        event.start = data['start']  # Update start time
-        event.end = data.get('end')  # Update end time
-        event.color = data['color']  # Update color
-        event.priority = data['priority']  # Update priority
-        event.recurrence = "None"  # Set recurrence to None, as it is not recurring anymore
-        event.recurrence_id = "0"  # Set recurrence ID to 0, as it is not recurring anymore
-        event.all_day = str_to_bool(data.get('all_day', False))  # Update all-day status
-        db.session.commit()  # Commit the changes
+        event = Event.query.get(data['id'])
+        event.title = data['title']
+        event.start = data['start']
+        event.end = data.get('end')
+        event.color = data['color']
+        event.priority = data['priority']
+        event.recurrence = "None"
+        event.recurrence_id = "0"
+        event.all_day = str_to_bool(data.get('all_day', False))
+        db.session.commit()
         return jsonify({"message": "Event updated"}), 200
     else:
-        # Update all events with the same recurrence ID
-        events = Event.query.filter_by(recurrence_id=data['recurrence-id']).all() # Find all events with the same recurrence ID
-
-        # Parse the new start time and date
+        # Update all events in recurrence
+        events = Event.query.filter_by(recurrence_id=data['recurrence-id']).all()
         new_start_datetime = datetime.fromisoformat(data['start'])
         new_start_time = new_start_datetime.time()
         new_start_date = new_start_datetime.date()
-
-        # Determine the recurrence pattern
         recurrence_pattern = events[0].recurrence
-
         for i, event in enumerate(events):
-            # Update the title, color, and priority for all events
             event.title = data['title']
             event.color = data['color']
             event.priority = data['priority']
-            event.all_day = str_to_bool(data.get('all_day', False))  # Update all-day status
-
-            # Update the start time and date for each event based on the recurrence pattern
+            event.all_day = str_to_bool(data.get('all_day', False))
             current_start_datetime = datetime.fromisoformat(event.start)
             if recurrence_pattern == "daily":
-                updated_start_datetime = datetime.combine(
-                    new_start_date + timedelta(days=i),  # Adjust the date for daily recurrence
-                    new_start_time
-                )
+                updated_start_datetime = datetime.combine(new_start_date + timedelta(days=i), new_start_time)
             elif recurrence_pattern == "weekly":
-                updated_start_datetime = datetime.combine(
-                    new_start_date + timedelta(weeks=i),  # Adjust the date for weekly recurrence
-                    new_start_time
-                )
+                updated_start_datetime = datetime.combine(new_start_date + timedelta(weeks=i), new_start_time)
             elif recurrence_pattern == "monthly":
-                updated_start_datetime = datetime.combine(
-                    new_start_date + relativedelta(months=i),  # Adjust for monthly recurrence
-                    new_start_time
-                )
+                updated_start_datetime = datetime.combine(new_start_date + relativedelta(months=i), new_start_time)
             else:
                 return jsonify({"message": "Unsupported recurrence pattern"}), 400
-
             event.start = updated_start_datetime.isoformat()
-
-            # Update the end time if provided
             if event.end:
                 current_end_datetime = datetime.fromisoformat(event.end)
                 duration = current_end_datetime - current_start_datetime
                 updated_end_datetime = updated_start_datetime + duration
                 event.end = updated_end_datetime.isoformat()
-
-        db.session.commit()  # Commit the changes
+        db.session.commit()
         return jsonify({"message": "Recurring events updated"}), 200
 
-# API route to delete an event
 @app.route('/api/events/<int:event_id>', methods=['DELETE'])
 def delete_event(event_id):
     """Delete an event."""
-    event = Event.query.get(event_id)  # Find the event by ID
-    db.session.delete(event)  # Delete the event
-    db.session.commit()  # Commit the changes
+    event = Event.query.get(event_id)
+    db.session.delete(event)
+    db.session.commit()
     return jsonify({"message": "Event deleted"}), 200
 
 @app.route('/api/events/recurring/<recurrence_id>', methods=['DELETE'])
@@ -369,29 +330,22 @@ def delete_recurring_events(recurrence_id):
     logged_in_user = User.query.filter_by(username=session.get('username')).first()
     if not logged_in_user:
         return jsonify({"error": "Unauthorized"}), 401
-
-    # Delete all events with the given recurrence ID for the logged-in user
     Event.query.filter_by(recurrence_id=recurrence_id, user_id=logged_in_user.id).delete()
     db.session.commit()
     return jsonify({"message": "Recurring events deleted"}), 200
 
-# Route to populate the database with example events
 @app.route('/api/populate', methods=["GET", 'POST'])
 def populate_events():
     """Populate the database with example events."""
-    # Example events for user_id 1
     event1 = Event(user_id=1, title="Meeting", start="2025-03-28T10:00:00", end="2025-03-28T12:00:00", color="#ff0000", priority=1)
     event2 = Event(user_id=1, title="Workshop", start="2025-03-29T14:00:00", end="2025-03-29T16:00:00", color="#00ff00", priority=2)
-
-    # Example events for user_id 2
     event3 = Event(user_id=2, title="Conference", start="2025-03-30T09:00:00", end="2025-03-30T11:00:00", color="#0000ff", priority=3)
-
-    db.session.add_all([event1, event2, event3])  # Add events to the database
-    db.session.commit()  # Commit the changes
-
+    db.session.add_all([event1, event2, event3])
+    db.session.commit()
     return "Events populated!", 201
 
-# Home route
+# ---------------------- Main Routes ----------------------
+
 @app.route("/")
 def home():
     """Home route: Displays login/register buttons or welcome message if logged in."""
@@ -399,7 +353,7 @@ def home():
     try:
         with open("tips/tips.txt", "r") as file:
             tips = file.readlines()
-    except FileNotFoundError:  
+    except FileNotFoundError:
         tips = ["No tips available."]
 
     tip_of_the_day = tips[datetime.now().timetuple().tm_yday % len(tips)].strip()  # Select a random tip based on the current day
@@ -408,7 +362,6 @@ def home():
         return render_template("home.html", username=session["username"], logged_in=True, tip=tip_of_the_day)
     return render_template("home.html", logged_in=False, tip=tip_of_the_day)
 
-# Login route
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """Login route: Handles login form submission and user authentication."""
@@ -418,13 +371,11 @@ def login():
         user = User.query.filter_by(username=username).first()
 
         if user and bcrypt.check_password_hash(user.password, password):
-            session["username"] = username  # Store session data
+            session["username"] = username
             return redirect(url_for("home"))
         return "Invalid credentials. Try again."
-
     return render_template("login.html")
 
-# Forgot password route
 @app.route("/forgot_password", methods=["GET", "POST"])
 def forgot_password():
     """Forgot password route: Handles password reset requests."""
@@ -452,7 +403,6 @@ def forgot_password():
     else:
         return render_template("forgot_password.html")
     
-# Reset password route
 @app.route("/reset_password/<token>", methods=["GET", "POST"])
 def reset_password(token):
     """Reset password route: Handles password reset form submission."""
@@ -480,7 +430,6 @@ def reset_password(token):
     else:  
         return render_template("reset_password.html", token=token)
 
-# Register route
 @app.route("/register", methods=["GET", "POST"])
 def register():
     """Register route: Handles user registration with password hashing."""
@@ -502,20 +451,17 @@ def register():
 
     return render_template("register.html")
 
-# Logout route
 @app.route("/logout")
 def logout():
     """Logout route: Removes user session data and redirects to home."""
     session.pop("username", None)
     return redirect(url_for("home"))
 
-# Settings route
 @app.route("/settings")
 def settings():
     """Settings route: Goes to the general settings of the account and page."""
     return render_template("settings.html")
 
-# Delete account route
 @app.route("/settings/delete_account")
 def delete_account():
     """Delete account route: Deletes user account currently in session."""
@@ -525,7 +471,6 @@ def delete_account():
     session.clear()
     return redirect(url_for("home"))
 
-# Change password route
 @app.route("/settings/change_password", methods=["GET", "POST"])
 def change_password():
     """Change password route: Changes the password of the user currently in session."""
@@ -547,22 +492,18 @@ def change_password():
 
     return render_template("change_password.html")    
 
-# Agenda route
 @app.route("/agenda")
 def agenda():
     """Agenda route: Displays the agenda of the user currently in session."""
     return render_template("agenda.html")
 
-# API route to import events from an .ics file
 @app.route('/api/import-ics', methods=['POST'])
 def import_ics():
     """Import events from an .ics file."""
     data = request.json
     ics_content = data.get('ics')
-
     if not ics_content:
         return jsonify({"message": "No .ics content provided"}), 400
-
     try:
         calendar = icalendar.Calendar.from_ical(ics_content)
         for component in calendar.walk():
@@ -570,40 +511,39 @@ def import_ics():
                 title = str(component.get('SUMMARY', 'Untitled Event'))
                 start = component.get('DTSTART').dt
                 end = component.get('DTEND').dt if component.get('DTEND') else None
-                color = "#fcba03"  # Default color for imported events
-
-                # Save the event to the database
+                color = "#fcba03"
                 logged_in_user = User.query.filter_by(username=session.get('username')).first()
                 if not logged_in_user:
                     return jsonify({"message": "No logged-in user found"}), 400
-
                 new_event = Event(
                     title=title,
                     start=start.isoformat(),
                     end=end.isoformat() if end else None,
                     color=color,
-                    user_id=logged_in_user.id,  # Use the logged-in user's ID
+                    user_id=logged_in_user.id,
                     priority=1,
                     recurrence="None",
                     recurrence_id=0
                 )
                 db.session.add(new_event)
-
-
         db.session.commit()
         return jsonify({"message": "Events imported successfully"}), 200
     except Exception as e:
         print("Error importing .ics file:", e)
         return jsonify({"message": "Failed to import .ics file"}), 500
 
+# ---------------------- Noten (Grades) API ----------------------
+
 @app.route("/noten")
 def noten():
+    """Noten route: Displays the noten (grades) page."""
     if "username" not in session:
         return redirect(url_for("login"))
     return render_template("noten.html")
 
 @app.route("/api/noten", methods=["GET"])
 def get_noten():
+    """API endpoint to get all semesters, subjects, and grades for the user."""
     if "username" not in session:
         return jsonify({"error": "Not logged in"}), 401
     user = User.query.filter_by(username=session["username"]).first()
@@ -627,30 +567,27 @@ def get_noten():
 
 @app.route("/api/noten", methods=["POST"])
 def save_noten():
+    """API endpoint to save all semesters, subjects, and grades for the user."""
     if "username" not in session:
         return jsonify({"error": "Not logged in"}), 401
     data = request.json
     user = User.query.filter_by(username=session["username"]).first()
     if not user:
         return jsonify({"error": "User not found"}), 404
-
     # Remove all existing semesters, subjects, and grades for this user
     semesters = Semester.query.filter_by(user_id=user.id).all()
     for sem in semesters:
         db.session.delete(sem)
     db.session.commit()
-
     # Re-create all semesters, subjects, and grades from the posted data
     for sem in data:
         semester = Semester(user_id=user.id, name=sem["name"])
         db.session.add(semester)
-        db.session.flush()  # Get semester.id
-
+        db.session.flush()
         for subj in sem.get("subjects", []):
             subject = Subject(semester_id=semester.id, name=subj["name"])
             db.session.add(subject)
-            db.session.flush()  # Get subject.id
-
+            db.session.flush()
             for grade in subj.get("grades", []):
                 db.session.add(Grade(
                     subject_id=subject.id,
@@ -664,9 +601,10 @@ def save_noten():
 
 @app.route("/lerntimer")
 def lerntimer():
-    # User does not need to be logged in to access this page
+    """Pomodoro timer route."""
     return render_template("lerntimer.html")
 
-# Run the application
+# ---------------------- Run the Application ----------------------
+
 if __name__ == "__main__":
     app.run(debug=True)
