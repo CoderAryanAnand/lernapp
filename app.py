@@ -568,8 +568,6 @@ def forgot_password():
             # Generate a password reset token
             serializer = URLSafeTimedSerializer(app.secret_key)
             token = serializer.dumps(email, salt=user.password)  # Generate token
-            print(token)
-            print(user.password)
             reset_link = url_for("reset_password", token=token, _external=True)
             # Send email with reset link (using Flask-Mailman)
             msg = EmailMessage(
@@ -757,7 +755,6 @@ def import_ics():
         db.session.commit()
         return jsonify({"message": "Events imported successfully"}), 200
     except Exception as e:
-        print("Error importing .ics file:", e)
         return jsonify({"message": "Failed to import .ics file"}), 500
 
 
