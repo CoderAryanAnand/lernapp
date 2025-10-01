@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_mailman import Mail, EmailMessage
+from functools import wraps
 import icalendar
 import uuid
 from datetime import datetime, timedelta
@@ -141,6 +142,19 @@ def str_to_bool(val):
     return False
 
 
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if "username" not in session:
+            # If it's an API request (e.g., starts with /api/), return JSON error
+            if request.path.startswith("/api/"):
+                return jsonify({"error": "Not logged in"}), 401
+            # Otherwise, redirect to login page
+            return redirect(url_for("login"))
+        return f(*args, **kwargs)
+    return decorated_function
+
+
 # ---------------------- Learning Time Algorithm ----------------------
 
 
@@ -244,6 +258,7 @@ def learning_time_algorithm(events):
 # ---------------------- API Endpoints for Events ----------------------
 
 
+@login_required
 @app.route("/api/events", methods=["GET"])
 def get_events():
     """Fetch events for the logged-in user."""
@@ -269,6 +284,7 @@ def get_events():
     return jsonify(events)
 
 
+@login_required
 @app.route("/api/events", methods=["POST"])
 def create_event():
     """Create a new event."""
@@ -372,6 +388,7 @@ def create_event():
     return jsonify({"message": "Event created"}), 201
 
 
+@login_required
 @app.route("/api/events", methods=["PUT"])
 def update_event():
     """Update an existing event."""
@@ -441,6 +458,7 @@ def update_event():
         return jsonify({"message": "Recurring events updated"}), 200
 
 
+@login_required
 @app.route("/api/events/<int:event_id>", methods=["DELETE"])
 def delete_event(event_id):
     """Delete an event."""
@@ -450,6 +468,7 @@ def delete_event(event_id):
     return jsonify({"message": "Event deleted"}), 200
 
 
+@login_required
 @app.route("/api/events/recurring/<recurrence_id>", methods=["DELETE"])
 def delete_recurring_events(recurrence_id):
     """Delete all events with the same recurrence ID."""
@@ -463,6 +482,7 @@ def delete_recurring_events(recurrence_id):
     return jsonify({"message": "Recurring events deleted"}), 200
 
 
+@login_required
 @app.route("/api/populate", methods=["GET", "POST"])
 def populate_events():
     """Populate the database with example events."""
@@ -573,7 +593,6 @@ def reset_password(token):
     if request.method == "POST":
         try:
             user = User.query.filter_by(username=request.form["username"]).first()
-            print(user.password)
             email = serializer.loads(
                 request.form["token"], salt=user.password, max_age=900
             )  # Validate token
@@ -623,6 +642,7 @@ def register():
     return render_template("register.html")
 
 
+@login_required
 @app.route("/logout")
 def logout():
     """Logout route: Removes user session data and redirects to home."""
@@ -630,6 +650,7 @@ def logout():
     return redirect(url_for("home"))
 
 
+@login_required
 @app.route("/settings", methods=["GET", "POST"])
 def settings():
     """Settings route: View and update user settings."""
@@ -655,6 +676,7 @@ def settings():
     )
 
 
+@login_required
 @app.route("/settings/delete_account")
 def delete_account():
     """Delete account route: Deletes user account currently in session."""
@@ -665,6 +687,7 @@ def delete_account():
     return redirect(url_for("home"))
 
 
+@login_required
 @app.route("/settings/change_password", methods=["GET", "POST"])
 def change_password():
     """Change password route: Changes the password of the user currently in session."""
@@ -692,12 +715,14 @@ def change_password():
     return render_template("change_password.html")
 
 
+@login_required
 @app.route("/agenda")
 def agenda():
     """Agenda route: Displays the agenda of the user currently in session."""
     return render_template("agenda.html")
 
 
+@login_required
 @app.route("/api/import-ics", methods=["POST"])
 def import_ics():
     """Import events from an .ics file."""
@@ -739,6 +764,7 @@ def import_ics():
 # ---------------------- Noten (Grades) API ----------------------
 
 
+@login_required
 @app.route("/noten")
 def noten():
     """Noten route: Displays the noten (grades) page."""
@@ -747,6 +773,7 @@ def noten():
     return render_template("noten.html")
 
 
+@login_required
 @app.route("/api/noten", methods=["GET"])
 def get_noten():
     """API endpoint to get all semesters, subjects, and grades for the user."""
@@ -774,6 +801,7 @@ def get_noten():
     return jsonify(data)
 
 
+@login_required
 @app.route("/api/noten", methods=["POST"])
 def save_noten():
     """API endpoint to save all semesters, subjects, and grades for the user."""
