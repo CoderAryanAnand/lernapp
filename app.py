@@ -6,7 +6,7 @@ from flask_mailman import Mail, EmailMessage
 from functools import wraps
 import icalendar
 import uuid
-from datetime import datetime, timedelta, to_dt, time as dtime
+from datetime import datetime, timedelta, time as dtime
 from itsdangerous import URLSafeTimedSerializer
 from dateutil.relativedelta import relativedelta  # for monthly recurrence
 from dotenv import load_dotenv
@@ -41,6 +41,14 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 mail = Mail(app)
 
+# ----------------------- Defaults -----------------------
+DEFAULT_SETTINGS = {"learn_on_saturday": False, "learn_on_sunday": False, "preferred_learning_time": "18:00", "study_block_color": "#0000FF",
+                    "priority_settings": {1: {"color": "#770000", "days_to_learn": 14, "max_hours_per_day": 2.0, "total_hours_to_learn": 14.0},
+                                          2: {"color": "#ca8300", "days_to_learn": 7, "max_hours_per_day": 1.5, "total_hours_to_learn": 7.0},
+                                          3: {"color": "#097200", "days_to_learn": 4, "max_hours_per_day": 1.0, "total_hours_to_learn": 4.0}
+                    }
+}
+
 # ---------------------- Database Models ----------------------
 
 
@@ -51,12 +59,6 @@ class User(db.Model):
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)  # Hashed password
     email = db.Column(db.String(100), unique=True, nullable=False)
-    priority1_color = db.Column(db.String(7), default="#770000")
-    priority2_color = db.Column(db.String(7), default="#ca8300")
-    priority3_color = db.Column(db.String(7), default="#097200")
-    learn_on_saturday = db.Column(db.Boolean, default=False)
-    learn_on_sunday = db.Column(db.Boolean, default=False)
-    preferred_learning_time = db.Column(db.String(20), default="18:00")
 
     # Relationships
     events = db.relationship(
@@ -65,6 +67,34 @@ class User(db.Model):
     semesters = db.relationship(
         "Semester", backref="user", lazy=True, cascade="all, delete-orphan"
     )
+    settings = db.relationship(
+        "Settings", backref="user", lazy=True, cascade="all, delete-orphan"
+    )
+
+
+class Settings(db.Model):
+    """Settings model for storing user-specific settings."""
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    learn_on_saturday = db.Column(db.Boolean, default=False)
+    learn_on_sunday = db.Column(db.Boolean, default=False)
+    preferred_learning_time = db.Column(db.String(20), default="18:00")
+    study_block_color = db.Column(db.String(7), default="#0000FF")
+
+    priority_settings = db.relationship(
+        "PrioritySetting", backref="settings", lazy=True, cascade="all, delete-orphan"
+    )
+
+
+class PrioritySetting(db.Model):
+    """PrioritySetting model for storing user-specific priority settings."""
+    id = db.Column(db.Integer, primary_key=True)
+    settings_id = db.Column(db.Integer, db.ForeignKey("settings.id"), nullable=False)
+    priority_level = db.Column(db.Integer, nullable=False)
+    color = db.Column(db.String(7), nullable=False)
+    days_to_learn = db.Column(db.Integer, nullable=False)
+    max_hours_per_day = db.Column(db.Float, nullable=False)
+    total_hours_to_learn = db.Column(db.Float, nullable=False)
 
 
 class Event(db.Model):
@@ -187,6 +217,9 @@ def free_slots(events, day):
     for event in events_today:
         event_start = to_dt(event.start)
         event_end = to_dt(event.end)
+        if event.all_day:
+            free_slots = []  # No free slots if there's an all-day event
+            return free_slots
 
         # Check if there's a free slot before the current event
         if current_start <= event_start - timedelta(minutes=30):
@@ -202,250 +235,356 @@ def free_slots(events, day):
     return free_slots
 
 def learning_time_algorithm(events, user):
-    """Algorithm to determine optimal learning times based on user events."""
-    sat_learn = user.learn_on_saturday
-    sun_learn = user.learn_on_sunday
-    preferred_time = datetime.strptime(user.preferred_learning_time, "%H:%M").time()
+    """
+    Determines and schedules optimal learning times for a user based on their exams,
+    existing events, and personalized study settings.
 
-    # Fetch all exams
+    The algorithm iterates through exams by priority, calculates the required study
+    hours, deletes existing non-locked study blocks (recycling), and attempts to
+    re-schedule the required hours. It prioritizes the user's preferred learning time
+    and respects daily maximum hours and existing event conflicts.
+
+    Args:
+        events (list): A list of all calendar Event objects (including exams, sports,
+                       and existing study blocks) for the user. This list is updated
+                       in-place as new study blocks are created.
+        user (User): The current user object, used to fetch settings.
+
+    Returns:
+        tuple: A dictionary summary of scheduling activity and a dictionary of
+               exam-specific success/failure messages.
+    """
+
+    # --- Configuration and Initialization ---
+
+    # Fetch user settings and priority configurations
+    settings = Settings.query.filter_by(user_id=user.id).first()
+    priority_settings = {p.priority_level: p for p in settings.priority_settings}
+    if not priority_settings:
+        return {"error": "No priority settings found"}, {}
+
+    max_exam_priority = max(priority_settings.keys())
+
+    # Load scheduling preferences from settings
+    sat_learn = settings.learn_on_saturday
+    sun_learn = settings.learn_on_sunday
+    preferred_time = datetime.strptime(settings.preferred_learning_time, "%H:%M").time()
+    study_block_color = settings.study_block_color if settings.study_block_color else "#0000FF"
+
+    # Define constants (assuming these are defined elsewhere in app.py)
+    # DAY_END: The latest time a block can end (e.g., 22:00)
+    # SESSION: The minimum session duration in hours (e.g., 0.5 hours or 30 mins)
+    DAY_END = dtime(22, 0)
+    SESSION = 0.5
+
+    # Identify all events flagged as exams (priority > 0)
     exams = sorted(
-        [event for event in events if int(event.priority) < 4],
-        key=lambda event: (int(event.priority), datetime.fromisoformat(event.start))
+        [event for event in events if int(event.priority) > 0 and int(event.priority) <= max_exam_priority],
+        key=lambda event: (int(event.priority), datetime.fromisoformat(event.start)) # Sort by priority, then date
     )
 
     summary = {"exams_processed": 0, "blocks_added": 0, "hours_added": 0.0}
     successes = {}
 
-    for exam in exams:
-        summary["exams_processed"] += 1
-        total = TOTAL_H[int(exam.priority)]
+    # --- Main Exam Loop: Process each exam by priority ---
 
-        # All planner blocks for this exam (3-week window)
-        window_start = to_dt(exam.start) - timedelta(days=21)
+    for exam in exams:
+        prio = int(exam.priority)
+        prio_setting = priority_settings.get(prio)
+        if not prio_setting:
+            continue
+
+        summary["exams_processed"] += 1
+        total = prio_setting.total_hours_to_learn
+
+        # Define the learning window
+        window_days = prio_setting.days_to_learn
+        max_per_day = prio_setting.max_hours_per_day
+
+        window_start = to_dt(exam.start) - timedelta(days=window_days)
         window_end = to_dt(exam.start)
 
-        all_blocks = [
-            event for event in events if event.exam_id == exam.id
-            and window_start <= to_dt(event.start) < window_end
+        # Separate study blocks related to this exam
+        exam_blocks = [event for event in events if event.exam_id == exam.id]
+        past_blocks = [block for block in exam_blocks if to_dt(block.start) < datetime.now()]
+        future_blocks = [
+            block for block in exam_blocks
+            if to_dt(block.start) >= datetime.now()
+            and window_start <= to_dt(block.start) < window_end
         ]
 
-        past_blocks = [block for block in all_blocks if to_dt(block.start) < datetime.now()]
-        future_blocks = [block for block in all_blocks if to_dt(block.start) >= datetime.now()]
-
+        # Calculate hours completed in the past
         hours_done = sum((to_dt(block.end) - to_dt(block.start)).total_seconds() / 3600 for block in past_blocks)
-        hours_scheduled = sum((to_dt(block.end) - to_dt(block.start)).total_seconds() / 3600 for block in future_blocks)
-        hours_left = max(0, total - hours_done - hours_scheduled)
-        if hours_left == 0:
-            continue  # This exam is already fully scheduled
 
-        # Remove all future blocks (will re-add them)
+        # ------------------------------------------------------------------
+        # Recycling Logic (Ensure non-locked blocks are always deleted first)
+        # ------------------------------------------------------------------
+        
+        # 1. Separate locked and recyclable future blocks
+        locked_future_blocks = [block for block in future_blocks if block.locked]
         recyclable_blocks = [block for block in future_blocks if not block.locked]
+        
+        # 2. Delete all recyclable blocks from the database and the global event list.
         for block in recyclable_blocks:
             db.session.delete(block)
-            events.remove(block)
+            events.remove(block) # Crucial: Keeps the global list up-to-date
         db.session.commit()
+        
+        # 3. Recalculate hours_scheduled based ONLY on remaining locked blocks
+        hours_scheduled_locked = sum(
+            (to_dt(block.end) - to_dt(block.start)).total_seconds() / 3600 for block in locked_future_blocks
+        )
+        
+        # 4. Calculate final hours_left for scheduling
+        hours_left = max(0, total - hours_done - hours_scheduled_locked)
+        
+        if hours_left == 0:
+            # If all required hours are covered by past or locked blocks, skip this exam.
+            continue
+        # ------------------------------------------------------------------
 
-        # Refill going backwards from exam date
+        # --- Scheduling Loop: Schedule remaining hours backwards from exam date ---
+        
         new_scheduled = 0.0
-        days_left = min(WINDOW_DAYS[int(exam.priority)], (window_end - datetime.now()).days)
-        for day in range(days_left):
-            current_day = window_end - timedelta(days=day+1)
+        days_left_until_exam = (window_end.date() - datetime.now().date()).days
+        
+        # Iterate backwards day by day within the learning window
+        for day_offset in range(1, days_left_until_exam + 1):
+            current_day = window_end - timedelta(days=day_offset)
 
-            if current_day.date() <= (window_start.date() + timedelta(days=7)):
-                break  # No more days left in the window
-            if not sat_learn and current_day.weekday() == 5:
-                continue
-            if not sun_learn and current_day.weekday() == 6:
-                continue
-            if new_scheduled >= hours_left:
-                break
-
-            today_max = min(MAX_PER_DAY[int(exam.priority)], hours_left - new_scheduled)
-            if today_max <= 0:
+            if current_day.date() < window_start.date():
+                continue # Outside the user-defined learning window
+            
+            # Check weekend settings
+            if (not sat_learn and current_day.weekday() == 5) or (not sun_learn and current_day.weekday() == 6):
                 continue
             
-            events_today = [event for event in events if to_dt(event.start).date() == current_day]
+            if new_scheduled >= hours_left:
+                break # Stop if all required hours have been scheduled
 
-            # First try the preferred time slot
-            # Calculate preferred start and end times
-            preferred_start = datetime.combine(current_day, preferred_time)
+            # Calculate hours scheduled *for this specific exam* on current_day
+            # This ensures the daily max for the exam is respected, even with new blocks added.
+            scheduled_today_for_exam = sum(
+                (to_dt(block.end) - to_dt(block.start)).total_seconds() / 3600
+                for block in events
+                if block.exam_id == exam.id and to_dt(block.start).date() == current_day.date()
+            )
+
+            # Determine max time to schedule today
+            today_max = min(max_per_day - scheduled_today_for_exam, hours_left - new_scheduled)
+            if today_max <= SESSION:
+                continue # Not enough time for a minimum session
+
+            # Filter today's events dynamically from the updated 'events' list
+            events_today = [event for event in events if to_dt(event.start).date() == current_day.date()]
+
+            # 1. Attempt to schedule in the preferred time slot
+            preferred_start = datetime.combine(current_day.date(), preferred_time)
             preferred_end = preferred_start + timedelta(hours=today_max)
             if preferred_end.time() > DAY_END:
-                preferred_end = datetime.combine(current_day, DAY_END)
-                preferred_start = preferred_end - timedelta(hours=today_max)
-            
-            # Determine if the preferred slot is free (At least halfhour before and after)
+                preferred_end = datetime.combine(current_day.date(), DAY_END)
+
+            preferred_slot_duration = (preferred_end - preferred_start).total_seconds() / 3600
             slot_free = True
-            for event in events_today:
-                event_start = to_dt(event.start)
-                event_end = to_dt(event.end)
-                if not (preferred_end <= event_start - timedelta(minutes=30) or preferred_start >= event_end + timedelta(minutes=30)):
-                    slot_free = False
-                    break
-            if slot_free:
-                new_block = Event(
-                    title=f"Learning for {exam.title}",
-                    start=to_iso(preferred_start),
-                    end=to_iso(preferred_end),
-                    color=STUDY_BLOCK_COLOR,
-                    user_id=exam.user_id,
-                    priority=4,
-                    recurrence="None",
-                    recurrence_id="0",
-                    all_day=False,
-                    locked=False,
-                    exam_id=exam.id
-                )
-                db.session.add(new_block)
-                db.session.commit()
-                events.append(new_block)
-                new_scheduled += (preferred_end - preferred_start).total_seconds() / 3600
-                summary["blocks_added"] += 1
-                summary["hours_added"] += (preferred_end - preferred_start).total_seconds() / 3600
-                continue
-        
-            # If preferred slot not free, try to find other slots
-            slots = free_slots(events, current_day)
-            slots.sort(key=lambda slot: slot[1] - slots[0], reverse=True)  # Sort by duration descending
-            for slot_start, slot_end in slots:
-                slot_duration = (slot_end - slot_start).total_seconds() / 3600
-                if slot_duration < SESSION:
-                    continue  # Slot too small
-
-                allocatable = min(slot_duration, hours_left - new_scheduled, today_max)
-                if allocatable <= 0:
-                    break
-
-                block_start = slot_start
-                block_end = slot_start + timedelta(hours=allocatable)
-
-                new_block = Event(
-                    title=f"Learning for {exam.title}",
-                    start=to_iso(block_start),
-                    end=to_iso(block_end),
-                    color=STUDY_BLOCK_COLOR,
-                    user_id=exam.user_id,
-                    priority=4,
-                    recurrence="None",
-                    recurrence_id="0",
-                    all_day=False,
-                    locked=False,
-                    exam_id=exam.id
-                )
-                db.session.add(new_block)
-                db.session.commit()
-                events.append(new_block)
-                new_scheduled += allocatable
-                summary["blocks_added"] += 1
-                summary["hours_added"] += allocatable
-
-                if new_scheduled >= hours_left:
-                    break
             
-        # Safety, extend up to 21 days (while >= today), if even possible
-        while new_scheduled < hours_left:
-            if (window_end - datetime.now()).days > 14:
-                for day in range(15, 22):
-                    current_day = window_end - timedelta(days=day)
-            if not sat_learn and current_day.weekday() == 5:
-                continue
-            if not sun_learn and current_day.weekday() == 6:
-                continue
-            if new_scheduled >= hours_left:
-                break
-
-            today_max = min(MAX_PER_DAY[int(exam.priority)], hours_left - new_scheduled)
-            if today_max <= 0:
-                continue
-            
-            events_today = [event for event in events if to_dt(event.start).date() == current_day]
-
-            # First try the preferred time slot
-            # Calculate preferred start and end times
-            preferred_start = datetime.combine(current_day, preferred_time)
-            preferred_end = preferred_start + timedelta(hours=today_max)
-            if preferred_end.time() > DAY_END:
-                preferred_end = datetime.combine(current_day, DAY_END)
-                preferred_start = preferred_end - timedelta(hours=today_max)
-            
-            # Determine if the preferred slot is free (At least halfhour before and after)
-            slot_free = True
-            for event in events_today:
-                event_start = to_dt(event.start)
-                event_end = to_dt(event.end)
-                if not (preferred_end <= event_start - timedelta(minutes=30) or preferred_start >= event_end + timedelta(minutes=30)):
-                    slot_free = False
-                    break
-            if slot_free:
-                new_block = Event(
-                    title=f"Learning for {exam.title}",
-                    start=to_iso(preferred_start),
-                    end=to_iso(preferred_end),
-                    color=STUDY_BLOCK_COLOR,
-                    user_id=exam.user_id,
-                    priority=4,
-                    recurrence="None",
-                    recurrence_id="0",
-                    all_day=False,
-                    locked=False,
-                    exam_id=exam.id
-                )
-                db.session.add(new_block)
-                db.session.commit()
-                events.append(new_block)
-                new_scheduled += (preferred_end - preferred_start).total_seconds() / 3600
-                summary["blocks_added"] += 1
-                summary["hours_added"] += (preferred_end - preferred_start).total_seconds() / 3600
-                continue
-        
-            # If preferred slot not free, try to find other slots
-            slots = free_slots(events, current_day)
-            slots.sort(key=lambda slot: slot[1] - slots[0], reverse=True)  # Sort by duration descending
-            for slot_start, slot_end in slots:
-                slot_duration = (slot_end - slot_start).total_seconds() / 3600
-                if slot_duration < SESSION:
-                    continue  # Slot too small
-
-                allocatable = min(slot_duration, hours_left - new_scheduled, today_max)
-                if allocatable <= 0:
-                    break
-
-                block_start = slot_start
-                block_end = slot_start + timedelta(hours=allocatable)
-
-                new_block = Event(
-                    title=f"Learning for {exam.title}",
-                    start=to_iso(block_start),
-                    end=to_iso(block_end),
-                    color=STUDY_BLOCK_COLOR,
-                    user_id=exam.user_id,
-                    priority=4,
-                    recurrence="None",
-                    recurrence_id="0",
-                    all_day=False,
-                    locked=False,
-                    exam_id=exam.id
-                )
-                db.session.add(new_block)
-                db.session.commit()
-                events.append(new_block)
-                new_scheduled += allocatable
-                summary["blocks_added"] += 1
-                summary["hours_added"] += allocatable
-
-                if new_scheduled >= hours_left:
-                    break
-
+            if preferred_slot_duration >= SESSION:
+                # Check for overlap against all events_today (including newly scheduled study blocks)
+                for event in events_today:
+                    event_start = to_dt(event.start)
+                    event_end = to_dt(event.end)
+                    # Overlap condition: Checks if the preferred slot overlaps with any event,
+                    # leaving at least a 30-minute buffer (SESSION / 2) on either side.
+                    if not (preferred_end <= event_start - timedelta(minutes=30) or preferred_start >= event_end + timedelta(minutes=30)):
+                        slot_free = False
+                        break
             else:
-                break
-        if new_scheduled >= hours_left:
-            successes[exam.title] = [True, f"Successfully scheduled all {hours_left:.1f} hours."]
-        else:
-            successes[exam.title] = [False, f"Could only schedule {new_scheduled:.1f} out of {hours_left:.1f} hours."]
-    return summary, successes
+                 slot_free = False
+
+            if slot_free:
+                # Create and save the new study block
+                new_block = Event(
+                    title=f"Learning for {exam.title}",
+                    start=to_iso(preferred_start),
+                    end=to_iso(preferred_end),
+                    color=study_block_color,
+                    user_id=exam.user_id,
+                    exam_id=exam.id,
+                    all_day=False,
+                    priority=0,
+                    locked=False,
+                    recurrence="None",
+                    recurrence_id="0",
+                )
+                db.session.add(new_block)
+                db.session.commit()
+                events.append(new_block) # Update global list
+                new_scheduled += preferred_slot_duration
+                summary["blocks_added"] += 1
+                summary["hours_added"] += preferred_slot_duration
+                continue # Move to next day
         
+            # 2. If preferred slot is busy, search for the largest available free slot
+            
+            # The 'free_slots' helper function should use the current (updated) 'events' list
+            slots = free_slots(events, current_day.date())
+            slots.sort(key=lambda slot: slot[1] - slot[0], reverse=True) # Sort by duration descending
 
+            for slot_start, slot_end in slots:
+                slot_duration = (slot_end - slot_start).total_seconds() / 3600
+                if slot_duration < SESSION:
+                    continue
 
+                # Allocate the maximum possible time (limited by slot duration, hours_left, and today_max)
+                allocatable = min(slot_duration, hours_left - new_scheduled, today_max)
+                if allocatable < SESSION:
+                    continue
+
+                block_start = slot_start
+                block_end = slot_start + timedelta(hours=allocatable)
+
+                # Create and save the new study block
+                new_block = Event(
+                    title=f"Learning for {exam.title}",
+                    start=to_iso(block_start),
+                    end=to_iso(block_end),
+                    color=study_block_color,
+                    user_id=exam.user_id,
+                    exam_id=exam.id,
+                    all_day=False,
+                    priority=0,
+                    locked=False,
+                    recurrence="None",
+                    recurrence_id="0",
+                )
+                db.session.add(new_block)
+                db.session.commit()
+                events.append(new_block) # Update global list
+                new_scheduled += allocatable
+                summary["blocks_added"] += 1
+                summary["hours_added"] += allocatable
+
+                if new_scheduled >= hours_left:
+                    break
+                
+                break
+            
+        # --- Safety / Extra Days Extension (Beyond Initial Window) ---
+
+        if new_scheduled < hours_left:
+            # Check days outside the initial window (e.g., from day 15 up to day 21 back)
+            for day_offset in range(window_days + 1, min(22, days_left_until_exam + 1)): 
+                current_day = window_end - timedelta(days=day_offset)
+
+                if new_scheduled >= hours_left:
+                    break
+                
+                # ... (Scheduling logic mirrors the main loop for preferred and free slots) ...
+                # (Includes dynamic recalculation of scheduled_today_for_exam and events_today)
+
+                scheduled_today_for_exam = sum(
+                    (to_dt(block.end) - to_dt(block.start)).total_seconds() / 3600
+                    for block in events
+                    if block.exam_id == exam.id and to_dt(block.start).date() == current_day.date()
+                )
+                
+                today_max = min(max_per_day - scheduled_today_for_exam, hours_left - new_scheduled)
+                if today_max <= SESSION:
+                    continue
+
+                events_today = [event for event in events if to_dt(event.start).date() == current_day.date()]
+
+                # Preferred slot check
+                preferred_start = datetime.combine(current_day.date(), preferred_time)
+                preferred_end = preferred_start + timedelta(hours=today_max)
+                if preferred_end.time() > DAY_END:
+                    preferred_end = datetime.combine(current_day.date(), DAY_END)
+
+                preferred_slot_duration = (preferred_end - preferred_start).total_seconds() / 3600
+                slot_free = True
+                if preferred_slot_duration >= SESSION:
+                    for event in events_today:
+                        event_start = to_dt(event.start)
+                        event_end = to_dt(event.end)
+                        if not (preferred_end <= event_start - timedelta(minutes=30) or preferred_start >= event_end + timedelta(minutes=30)):
+                            slot_free = False
+                            break
+                else:
+                    slot_free = False
+
+                if slot_free:
+                    # Create and save preferred block
+                    new_block = Event(
+                        title=f"Learning for {exam.title}",
+                        start=to_iso(preferred_start),
+                        end=to_iso(preferred_end),
+                        color=study_block_color,
+                        user_id=exam.user_id,
+                        exam_id=exam.id,
+                        all_day=False,
+                        priority=0,
+                        locked=False,
+                        recurrence="None",
+                        recurrence_id="0",
+                    )
+                    db.session.add(new_block)
+                    db.session.commit()
+                    events.append(new_block) # Update global list
+                    new_scheduled += preferred_slot_duration
+                    summary["blocks_added"] += 1
+                    summary["hours_added"] += preferred_slot_duration
+                    continue
+
+                # General slot search
+                slots = free_slots(events, current_day.date())
+                slots.sort(key=lambda slot: slot[1] - slot[0], reverse=True)
+                for slot_start, slot_end in slots:
+                    slot_duration = (slot_end - slot_start).total_seconds() / 3600
+                    if slot_duration < SESSION:
+                        continue
+
+                    allocatable = min(slot_duration, hours_left - new_scheduled, today_max)
+                    if allocatable < SESSION:
+                        continue
+
+                    block_start = slot_start
+                    block_end = slot_start + timedelta(hours=allocatable)
+
+                    # Create and save general block
+                    new_block = Event(
+                        title=f"Learning for {exam.title}",
+                        start=to_iso(block_start),
+                        end=to_iso(block_end),
+                        color=study_block_color,
+                        user_id=exam.user_id,
+                        exam_id=exam.id,
+                        all_day=False,
+                        priority=0,
+                        locked=False,
+                        recurrence="None",
+                        recurrence_id="0",
+                    )
+                    db.session.add(new_block)
+                    db.session.commit()
+                    events.append(new_block) # Update global list
+                    new_scheduled += allocatable
+                    summary["blocks_added"] += 1
+                    summary["hours_added"] += allocatable
+
+                    if new_scheduled >= hours_left:
+                        break
+                    break # Move to next day after filling one slot
+        
+        # --- Final Status Update ---
+
+        total_scheduled = new_scheduled + hours_scheduled_locked
+        total_required = max(0, total - hours_done)
+
+        if total_scheduled >= total_required:
+            successes[exam.title] = [True, f"Successfully scheduled all {total_required:.1f} hours."]
+        else:
+            successes[exam.title] = [False, f"Could only schedule {total_scheduled:.1f} out of {total_required:.1f} hours."]
+    
+    return summary, successes
 # ---------------------- API Endpoints for Events ----------------------
 
 
@@ -482,14 +621,13 @@ def create_event():
     data = request.json
     user = User.query.filter_by(username=session["username"]).first()
     all_day = str_to_bool(data.get("all_day", False))
-    if int(data["priority"]) != 4:
-        match int(data["priority"]):
-            case 1:
-                data["color"] = user.priority1_color
-            case 2:
-                data["color"] = user.priority2_color
-            case 3:
-                data["color"] = user.priority3_color
+    if int(data["priority"]) > 0:
+        prio_setting = PrioritySetting.query.join(Settings).filter(
+            Settings.user_id == user.id,
+            PrioritySetting.priority_level == int(data["priority"])
+        ).first()
+        if prio_setting:
+            data["color"] = prio_setting.color
     # Handle recurring events
     if data["recurrence"] != "none":
         recurrence_id = str(uuid.uuid4().int)
@@ -602,14 +740,13 @@ def update_event():
         event = Event.query.get(data["id"])
         old_priority = event.priority
         if int(data["priority"]) != old_priority:
-            if int(data["priority"]) != 4:
-                match int(data["priority"]):
-                    case 1:
-                        data["color"] = user.priority1_color
-                    case 2:
-                        data["color"] = user.priority2_color
-                    case 3:
-                        data["color"] = user.priority3_color
+            if int(data["priority"]) > 0:
+                prio_setting = PrioritySetting.query.join(Settings).filter(
+                    Settings.user_id == user.id,
+                    PrioritySetting.priority_level == int(data["priority"])
+                ).first()
+                if prio_setting:
+                    data["color"] = prio_setting.color
         event.title = data["title"]
         event.start = data["start"]
         event.end = data.get("end")
@@ -683,37 +820,144 @@ def delete_recurring_events(recurrence_id):
     return jsonify({"message": "Recurring events deleted"}), 200
 
 
-@app.route("/api/populate", methods=["GET", "POST"])
+@app.route('/api/run-learning-algorithm', methods=['POST'])
 @login_required
-def populate_events():
-    """Populate the database with example events."""
-    event1 = Event(
-        user_id=1,
-        title="Meeting",
-        start="2025-03-28T10:00:00",
-        end="2025-03-28T12:00:00",
-        color="#ff0000",
-        priority=1,
-    )
-    event2 = Event(
-        user_id=1,
-        title="Workshop",
-        start="2025-03-29T14:00:00",
-        end="2025-03-29T16:00:00",
-        color="#00ff00",
-        priority=2,
-    )
-    event3 = Event(
-        user_id=2,
-        title="Conference",
-        start="2025-03-30T09:00:00",
-        end="2025-03-30T11:00:00",
-        color="#0000ff",
-        priority=3,
-    )
-    db.session.add_all([event1, event2, event3])
+def run_learning_algorithm():
+    user = User.query.filter_by(username=session["username"]).first()
+    events = Event.query.filter_by(user_id=user.id).all()
+    summary, successes = learning_time_algorithm(events, user)
+    return jsonify({"status": "success", 
+                    "summary": summary, 
+                    "results": successes
+                    })
+
+
+@app.route("/api/populate_test_algorithm", methods=["GET", "POST"])
+@login_required
+def populate_test_algorithm():
+    """Populate the database with a good set of events to test the learning time algorithm."""
+    user = User.query.filter_by(username=session["username"]).first()
+    user_id = user.id
+
+    # Clear all existing events for this user
+    Event.query.filter_by(user_id=user_id).delete()
     db.session.commit()
-    return "Events populated!", 201
+
+    # Today and future dates
+    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    # Exams: priority 1 (in 10 days), priority 2 (in 7 days), priority 3 (in 4 days)
+    exam1 = Event(
+        user_id=user_id,
+        title="Math Exam",
+        start=(today + timedelta(days=10, hours=9)).isoformat(),
+        end=(today + timedelta(days=10, hours=11)).isoformat(),
+        color="#770000",
+        priority=1,
+        recurrence="None",
+        recurrence_id="0",
+        all_day=False,
+        locked=True,
+        exam_id=None,
+    )
+    exam2 = Event(
+        user_id=user_id,
+        title="History Exam",
+        start=(today + timedelta(days=7, hours=13)).isoformat(),
+        end=(today + timedelta(days=7, hours=15)).isoformat(),
+        color="#ca8300",
+        priority=2,
+        recurrence="None",
+        recurrence_id="0",
+        all_day=False,
+        locked=True,
+        exam_id=None,
+    )
+    exam3 = Event(
+        user_id=user_id,
+        title="Biology Exam",
+        start=(today + timedelta(days=4, hours=8)).isoformat(),
+        end=(today + timedelta(days=4, hours=10)).isoformat(),
+        color="#097200",
+        priority=3,
+        recurrence="None",
+        recurrence_id="0",
+        all_day=False,
+        locked=True,
+        exam_id=None,
+    )
+
+    # Add some busy events (classes, appointments)
+    busy1 = Event(
+        user_id=user_id,
+        title="Class: English",
+        start=(today + timedelta(days=1, hours=10)).isoformat(),
+        end=(today + timedelta(days=1, hours=12)).isoformat(),
+        color="#4287f5",
+        priority=5,
+        recurrence="None",
+        recurrence_id="0",
+        all_day=False,
+        locked=True,
+        exam_id=None,
+    )
+    busy2 = Event(
+        user_id=user_id,
+        title="Doctor Appointment",
+        start=(today + timedelta(days=2, hours=15)).isoformat(),
+        end=(today + timedelta(days=2, hours=16)).isoformat(),
+        color="#8e44ad",
+        priority=5,
+        recurrence="None",
+        recurrence_id="0",
+        all_day=False,
+        locked=True,
+        exam_id=None,
+    )
+    busy3 = Event(
+        user_id=user_id,
+        title="Class: Chemistry",
+        start=(today + timedelta(days=5, hours=9)).isoformat(),
+        end=(today + timedelta(days=5, hours=11)).isoformat(),
+        color="#16a085",
+        priority=5,
+        recurrence="None",
+        recurrence_id="0",
+        all_day=False,
+        locked=True,
+        exam_id=None,
+    )
+    busy4 = Event(
+        user_id=user_id,
+        title="Sports Practice",
+        start=(today + timedelta(days=6, hours=17)).isoformat(),
+        end=(today + timedelta(days=6, hours=19)).isoformat(),
+        color="#e67e22",
+        priority=5,
+        recurrence="None",
+        recurrence_id="0",
+        all_day=False,
+        locked=True,
+        exam_id=None,
+    )
+
+    # Add a non-exam event with priority 0 (should be ignored by the algorithm)
+    non_exam = Event(
+        user_id=user_id,
+        title="Read a book",
+        start=(today + timedelta(days=3, hours=18)).isoformat(),
+        end=(today + timedelta(days=3, hours=19)).isoformat(),
+        color="#888888",
+        priority=0,
+        recurrence="None",
+        recurrence_id="0",
+        all_day=False,
+        locked=True,
+        exam_id=None,
+    )
+
+    db.session.add_all([exam1, exam2, exam3, busy1, busy2, busy3, busy4, non_exam])
+    db.session.commit()
+    return "Test events for the learning time algorithm have been populated!", 201
 
 
 # ---------------------- Main Routes ----------------------
@@ -835,6 +1079,29 @@ def register():
         new_user = User(username=username, password=hashed_password, email=email)
         db.session.add(new_user)
         db.session.commit()
+
+        # Create default settings for the new user
+        default_settings = Settings(
+            user_id=new_user.id,
+            learn_on_saturday=DEFAULT_SETTINGS["learn_on_saturday"],
+            learn_on_sunday=DEFAULT_SETTINGS["learn_on_sunday"],
+            preferred_learning_time=DEFAULT_SETTINGS["preferred_learning_time"],
+            study_block_color=DEFAULT_SETTINGS["study_block_color"],
+        )
+        db.session.add(default_settings)
+        db.session.flush()
+        for level in [1, 2, 3]:
+            priority = DEFAULT_SETTINGS["priority_settings"][level]
+            db.session.add(PrioritySetting(
+                settings_id=default_settings.id,
+                priority_level=level,
+                color=priority["color"],
+                days_to_learn=priority["days_to_learn"],
+                max_hours_per_day=priority["max_hours_per_day"],
+                total_hours_to_learn=priority["total_hours_to_learn"],   
+            ))
+        db.session.commit()
+
         session["username"] = username  # Store session data
         return redirect(url_for("home"))
 
@@ -852,26 +1119,67 @@ def logout():
 @app.route("/settings", methods=["GET", "POST"])
 @login_required
 def settings():
-    """Settings route: View and update user settings."""
     user = User.query.filter_by(username=session["username"]).first()
+    settings = Settings.query.filter_by(user_id=user.id).first()
     if request.method == "POST":
-        # Get data from form
-        user.priority1_color = request.form.get("priority1_color", user.priority1_color)
-        user.priority2_color = request.form.get("priority2_color", user.priority2_color)
-        user.priority3_color = request.form.get("priority3_color", user.priority3_color)
-        user.learn_on_saturday = "learn_on_saturday" in request.form
-        user.learn_on_sunday = "learn_on_sunday" in request.form
-        user.preferred_learning_time = request.form.get("learning_time", user.preferred_learning_time)
+        # Handle add/remove priority
+        if "add_priority" in request.form:
+            # Find the next available priority level (highest + 1)
+            existing_levels = [p.priority_level for p in settings.priority_settings]
+            next_level = max(existing_levels, default=0) + 1
+
+            # Move up all events with priority >= next_level (but not 0, which is reserved for learning blocks)
+            user_events = Event.query.filter(
+                Event.user_id == user.id,
+                Event.priority >= next_level
+            ).all()
+            for event in user_events:
+                event.priority += 1
+
+            # Now add the new priority at next_level
+            new_prio = PrioritySetting(
+                settings_id=settings.id,
+                priority_level=next_level,
+                color="#000000",
+                days_to_learn=7,
+                max_hours_per_day=2.0,
+                total_hours_to_learn=7.0,
+            )
+            db.session.add(new_prio)
+            db.session.commit()
+            return redirect(url_for("settings"))
+        elif "remove_priority" in request.form:
+            level_to_remove = int(request.form["remove_priority"])
+            prio_setting = PrioritySetting.query.filter_by(settings_id=settings.id, priority_level=level_to_remove).first()
+            if prio_setting:
+                db.session.delete(prio_setting)
+                # Shift down all higher priorities
+                higher_prios = PrioritySetting.query.filter(
+                    PrioritySetting.settings_id == settings.id,
+                    PrioritySetting.priority_level > level_to_remove
+                ).order_by(PrioritySetting.priority_level).all()
+                for p in higher_prios:
+                    p.priority_level -= 1
+                db.session.commit()
+            return redirect(url_for("settings"))
+        # Update general and priority settings as before
+        settings.learn_on_saturday = "learn_on_saturday" in request.form
+        settings.learn_on_sunday = "learn_on_sunday" in request.form
+        settings.preferred_learning_time = request.form.get("learning_time", settings.preferred_learning_time)
+        for prio in settings.priority_settings:
+            prio.color = request.form.get(f"priority{prio.priority_level}_color", prio.color)
+            prio.days_to_learn = int(request.form.get(f"priority{prio.priority_level}_days", prio.days_to_learn))
+            prio.max_hours_per_day = float(request.form.get(f"priority{prio.priority_level}_max_hours_per_day", prio.max_hours_per_day))
+            prio.total_hours_to_learn = float(request.form.get(f"priority{prio.priority_level}_total_hours_to_learn", prio.total_hours_to_learn))
         db.session.commit()
         return redirect(url_for("settings"))
+    # Prepare values for template
     return render_template(
         "settings.html",
-        priority1_color=user.priority1_color,
-        priority2_color=user.priority2_color,
-        priority3_color=user.priority3_color,
-        learn_on_saturday=user.learn_on_saturday,
-        learn_on_sunday=user.learn_on_sunday,
-        preferred_learning_time=user.preferred_learning_time
+        learn_on_saturday=settings.learn_on_saturday,
+        learn_on_sunday=settings.learn_on_sunday,
+        preferred_learning_time=settings.preferred_learning_time,
+        priority_settings=settings.priority_settings,
     )
 
 
@@ -918,7 +1226,13 @@ def change_password():
 @login_required
 def agenda():
     """Agenda route: Displays the agenda of the user currently in session."""
-    return render_template("agenda.html")
+    user = User.query.filter_by(username=session["username"]).first()
+    settings = Settings.query.filter_by(user_id=user.id).first()
+
+    priority_levels = settings.priority_settings
+    priority_levels = sorted(priority_levels, key=lambda x: x.priority_level)
+
+    return render_template("agenda.html", priority_levels=priority_levels)
 
 
 @app.route("/api/import-ics", methods=["POST"])
