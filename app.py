@@ -205,6 +205,7 @@ class Subject(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     semester_id = db.Column(db.Integer, db.ForeignKey("semester.id"), nullable=False)
     name = db.Column(db.String(100), nullable=False)
+    counts_towards_average = db.Column(db.Boolean, nullable=False, default=True)
 
     # Relationship to grades with cascade delete
     grades = db.relationship(
@@ -1486,7 +1487,7 @@ def get_noten():
     for sem in semesters:
         sem_data = {"id": sem.id, "name": sem.name, "subjects": []}
         for subj in sem.subjects:
-            subj_data = {"id": subj.id, "name": subj.name, "grades": []}
+            subj_data = {"id": subj.id, "name": subj.name, "counts_towards_average": subj.counts_towards_average, "grades": []}
             for grade in subj.grades:
                 subj_data["grades"].append(
                     {
@@ -1532,7 +1533,7 @@ def save_noten():
         db.session.flush() # Flush to get semester.id before adding subjects
 
         for subj in sem.get("subjects", []):
-            subject = Subject(semester_id=semester.id, name=subj["name"])
+            subject = Subject(semester_id=semester.id, name=subj["name"], counts_towards_average=subj.get("counts_towards_average", True))
             db.session.add(subject)
             db.session.flush() # Flush to get subject.id before adding grades
 
