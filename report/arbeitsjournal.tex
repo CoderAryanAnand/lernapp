@@ -1,0 +1,233 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{ifthen}
+\usepackage{graphicx}
+\geometry{left=2.5cm,right=2.5cm,top=2.5cm,bottom=2.5cm}
+
+% Command for a journal entry (no separator)
+\newcommand{\JournalEntry}[6][false]{
+    \subsection*{#2}
+    \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Gearbeitete Stunden} & #3 \\ \hline
+    \end{tabular}
+
+    \subsubsection*{\textbf{Arbeitsschritte}}
+    #4
+
+    \subsubsection*{\textbf{Ergebnisse}}
+    #5
+
+    \subsubsection*{\textbf{Begründung und Reflexion}}
+    #6
+
+    \vspace{1cm}
+
+    % Optional: Add a horizontal line to separate entries
+    \ifthenelse{\equal{#1}{true}}{
+        \hrule
+    
+    \vspace{1cm}
+    }{}
+}
+
+% Command for a day block with separator
+\newcommand{\JournalDay}[1]{
+    \section*{Datum: #1}
+    \vspace{0.3cm}
+}
+
+\begin{document}
+
+\makeatletter
+\begin{titlepage}
+    \centering
+    \vspace*{1cm}
+       { \includegraphics[width=6cm]{img/kanti-baden.png}}\\[1cm]
+
+    {\LARGE \textbf{Kanti Koala}}\\
+    {\textbf{Die Lern- und Studienhilfsapp für Schüler:innen der Kantonsschule Baden}}\\[1cm]
+
+    {Maturitätsarbeit, Kantonsschule Baden}\\
+    {Arbeitsjournal}\\[1cm]
+    
+    \textbf{Erstbetreuer: }{Michael Schneider}\\
+    \textbf{Zweitbetreuerin: }{Julia Smits}\\[1cm]
+    
+    \textbf{Geschrieben von: }{Aryan Anand (G22b), Simon Haddon (G22b)}\\[1cm]
+ 
+    \date{\large Datum: 11. November 2025}
+    {\@date\\}
+\end{titlepage}
+\makeatother
+
+% 12.03.2025
+\JournalDay{12.03.2025}
+\JournalEntry[true]{Projektstart: Vertrag und Interviewvorbereitung}{Je $\approx$3 Lektionen (Simon \& Aryan)}{Vertrag ausgefüllt. Projektplan entworfen. INTERVIEW: Angefangen, Themen und Fragen zu entwerfen (z.T. mit Hilfe von ChatGPT Ideen für Fragen geholt).}{Erster Projektplan und Vertragsentwurf erstellt. Erste Ideen für Interviewfragen gesammelt.}{Ideen von ChatGPT sind eigentlich okay, aber wahrscheinlich nicht spezifisch genug.}
+
+% 19.03.2025
+\JournalDay{19.03.2025}
+\JournalEntry[true]{Vertrag, Interviewfragen und Github-Initialisierung}{Je $\approx$3 Lektionen (Simon \& Aryan)}{Weiter am Vertrag gearbeitet. Interview-Fragen gesammelt und begründet. Eine erste Mail für die PPP-Lehrpersonen entworfen. Lizenz für Webseite gewählt. Github Repository initialisiert. Flask aufgestellt.}{Vertragsentwurf, Interviewfragen, E-Mail-Draft und Lizenzwahl abgeschlossen. Github Repository mit Flask-Grundgerüst aufgesetzt. Basic Account Management Features sind funktionsfähig.}{Wir sind gut vorangekommen, mittlerweile noch gut im Zeitplan. Basic Account Management Features waren einfacher aufzustellen, als erwartet.}
+
+% 21.03.2025
+\JournalDay{21.03.2025}
+\JournalEntry[true]{Theorie und Lagebesprechung}{Simon (ohne Stundenangabe)}{Theorie-Dokumente zu Interviews angeschaut, welche von Herr Schneider zur Verfügung gestellt wurden. Mail für Frau Suter / Herr Schmocker ausgearbeitet. Lagebesprechung mit Herr Schneider.}{Theoretische Grundlagen für Interviews und konkretes Feedback zum Arbeitsvertrag erhalten.}{Konkretes Feedback erhalten und die theoretische Grundlage für die Interviews erarbeitet.}
+
+% 26.03.2025
+\JournalDay{26.03.2025}
+\JournalEntry[true]{Code und Recherche}{Je $\approx$3 Lektionen (Simon \& Aryan)}{Aryan: Code, «Forgot Password» feature, Kalender mit Flask, E-Mail erstellt. Simon: Recherche.}{«Forgot Password»-Funktion und Flask-Kalender-Grundgerüst begonnen.}{Gute Fortschritte in der Programmierung und Recherche gemacht.}
+
+% 28.03.2025
+\JournalDay{28.03.2025}
+\JournalEntry[true]{Programmierung}{Etwa 90 Minuten (Aryan)}{Programmieren.}{Fortschritte in der Programmierung erzielt.}{}
+
+% 02.04.2025
+\JournalDay{02.04.2025}
+\JournalEntry[true]{Arbeitsvertrag, Interviewfragebogen und Agenda-Funktionalität}{Je $\approx$3 Lektionen (Aryan \& Simon)}{Simon: Arbeitsvertrag fast fertig, Interviewfragebogen angefangen (in \LaTeX / Overleaf). Aryan: Agenda Events bearbeiten, erstellen, und löschen; Strategie für eine .ical implementation.}{Arbeitsvertrag fast fertig. Interviewfragebogen in \LaTeX begonnen. Funktionen zum Bearbeiten, Erstellen und Löschen von Agenda-Events implementiert, sowie eine Strategie für die .ical-Funktionalität entwickelt.}{Wir haben gemerkt, dass das Umfragedesign nicht im Interview vorkommen muss, da das Internet und die Theoriedokumente bereits genügend gute Antworten liefern. D.h., dass wir da mehr Recherche machen als konkret fragen, was paralleles Arbeiten ermöglicht. Wir haben gemerkt, dass die Zeit schneller vergeht, als wir meinten. Copilot ist nützlich für zeitaufwendige Aufgaben wie Kommentieren und Grundlagen aufbauen.}
+
+% 04.04.2025
+\JournalDay{04.04.2025}
+\JournalEntry[true]{Bug Fixes und Wiederholbare Events}{Aryan: 2h (Aryan \& Simon)}{Simon: Interviewfragebogen ausgearbeitet, Mail zum Abschicken weiter vorbereitet. Aryan: Bug fix von Account deletion, Logik von wiederholbaren Events.}{Interviewfragebogen weiter ausgearbeitet und Mail vorbereitet. Bugfix für Account Deletion implementiert. Logik für wiederholbare Events begonnen.}{SQL hat "cascade delete", welches sehr nützlich ist um zwei Datenbanken zu verbinden. Der Bug fix lief viel besser als erwartet.}
+
+% 06.04.2025
+\JournalDay{06.04.2025}
+\JournalEntry[true]{Repeatable Events Implementierung}{2h (Aryan)}{Repeatable Events (ausser löschen) implementiert. Europäisches Datum Format implementiert. Anderer View von Agenda (Monat view) implementiert. Implementieren von repeatable Events Logik mithilfe von ChatGPT.}{Repeatable Events (ausser Löschen), europäisches Datumsformat und Monatsansicht der Agenda implementiert.}{Ich habe gelernt, wie Fullcalendar extra Infos speichert, auch die `datetime`/`dateutil`-Logik für repeatable events (wurde primär von Copilot gemacht).}
+
+% 08.04.2025
+\JournalDay{08.04.2025}
+\JournalEntry[true]{Beginn des schriftlichen Kommentars}{1.5h (Aryan)}{Fing an, den schriftlichen Kommentar zu schreiben.}{Der schriftliche Kommentar wurde begonnen.}{Lief viel besser als erwartet (kein chatGPT!). Ich weiss jedoch nicht, wo ich Quellen angeben muss.}
+
+% 10.04.2025
+\JournalDay{10.04.2025}
+\JournalEntry[true]{Bericht und .ical Feature}{2.5h (Aryan)}{Alles im Bericht, das bisher programmiert wurde, dokumentiert. .ical import feature implementiert.}{Der Bericht wurde um die bisherige Programmierung ergänzt. Das .ical Import Feature ist funktionsfähig.}{Lief alles sehr gut, das Schreiben vom Bericht ist schneller als erwartet.}
+
+% 13.04.2025
+\JournalDay{13.04.2025}
+\JournalEntry[true]{Umfrage, Server und Prioritäten}{Aryan: 0.5h (Aryan \& Simon)}{Simon: Arbeit an der Umfrage (via Microsoft Forms). Aryan: Überlegung vom Server, Priorität von Events implementiert.}{Arbeit an der Umfrage begonnen. Gedanken zur Serverimplementierung gemacht. Priorität von Events implementiert.}{Der Server wird vielleicht schwer zu implementieren und kann Kosten verursachen.}
+
+% 14.04.2025
+\JournalDay{14.04.2025}
+\JournalEntry[true]{Umfrage und Farbentheorie}{~2 Stunden (Simon)}{Weitere Arbeit an der Umfrage – Layout, Fragen, Technisches. Farbentheorie für das Umfragedesign recherchiert.}{Die Umfrage ist sehr weit fortgeschritten. Farbentheorie-Recherche für das Design durchgeführt.}{}
+
+% 15.04.2025
+\JournalDay{15.04.2025}
+\JournalEntry[true]{Logo-Skizzen}{Ohne Stundenangabe (Simon)}{Erste Arbeit am Logo, erste Skizzen und Überlegungen gemacht.}{Erste Skizzen und Überlegungen zum Logo-Design erstellt.}{}
+
+% 21.04.2025
+\JournalDay{21.04.2025 - 24.04.2025}
+\JournalEntry[true]{Recherche Lerntheorie}{$\approx$5 Stunden (Simon)}{Bücher über Lerntheorie vor den Interviews ausgeliehen (Auf Empfehlung von Herr Schmocker) und gelesen. Wichtigste Punkte daraus notiert.}{Wichtige Erkenntnisse aus der Buchrecherche zur Lerntheorie gewonnen.}{Das Ausleihen ging sehr einfach, hätten wir vielleicht schon vorher machen sollen.}
+
+% 24.04.2025
+\JournalDay{24.04.2025}
+\JournalEntry[true]{Erstes Interview}{Etwa 1 $\frac{1}{4}$ Stunden (Simon \& Aryan)}{Erstes Interview durchgeführt, mit Frau Suter, sehr positiv verlaufen.}{Das erste Interview mit Frau Suter wurde erfolgreich abgeschlossen.}{}
+
+% 30.04.2025
+\JournalDay{30.04.2025}
+\JournalEntry[true]{Recherche Daily Tipps}{0.5h (Aryan)}{Ein bisschen für Daily Tipps recherchiert.}{Recherche für Daily Tipps begonnen.}{Im MA-Archiv gibt es gute Arbeiten, aber es ist schwierig daraus Tipps zu finden.}
+
+% 07.05.2025
+\JournalDay{07.05.2025}
+\JournalEntry[true]{Programmierung und Recherche}{Je $\approx$3 Lektionen (Simon \& Aryan)}{Simon: weitere Bücherrecherche, Erkenntnisse notiert. Aryan: Forgot password implementiert (ohne Testing), repeatable events löschen.}{Bücherrecherche fortgesetzt. «Forgot password»-Funktion implementiert. Logik zum Löschen von wiederholbaren Events implementiert.}{Die Logik für «Forgot Password» war viel komplexer als gedacht, jedoch die für «repeatable events» viel einfacher.}
+
+% 08.05.2025
+\JournalDay{08.05.2025}
+\JournalEntry[true]{Zweites Interview}{~1 Stunde (Simon \& Aryan)}{Zweites Interview – jetzt mit Herr Schmocker – durchgeführt.}{Das zweite Interview mit Herr Schmocker wurde erfolgreich durchgeführt.}{Die Interviews auf Mundart durchzuführen war ein Fehler. ABER wir haben sowohl von Frau Suter wie auch Herr Schmocker sehr gutes Feedback erhalten, u.a. auch auf unsere Professionalität $\rightarrow$ Das ist gut.}
+
+% 09.05.2025
+\JournalDay{09.05.2025}
+\JournalEntry[true]{Umfrage, Testing und Daily Tipps}{3h (Simon \& Aryan)}{Simon: Umfrage-Feedback von Herr Schmocker ergänzt, Umfrage überarbeitet. Bis dahin: Auch noch mehr Bücherrecherche durchgeführt. Aryan: Testing und fixing von Forgot password, Daily tipps template.}{Umfrage überarbeitet, Bücherrecherche abgeschlossen. «Forgot password»-Funktion getestet und gefixt. Daily Tipps Template erstellt.}{Lief alles perfekt.}
+
+% 14.05.2025
+\JournalDay{14.05.2025}
+\JournalEntry[true]{Umfrage Testläufe und Serververbindung}{90 min (Aryan \& Simon)}{Simon: Umfrage nochmals überarbeitet, Klassenkameraden um erste Testläufe gefragt, um dies «praktisch» zu testen. Aryan: Probierte Serververbindung, aber nur Security stuff geschafft.}{Umfrage überarbeitet und erste Testläufe mit Klassenkameraden gestartet. Erste Schritte zur Serververbindung (Security) unternommen.}{Obwohl der gesamte Recherche-Prozess länger gebraucht hatte als gedacht, haben wir gute Resultate erzielt. In der Zukunft sollten wir aber mehr Zeit für Recherche einplanen. Serververbindung ist viel schwieriger als erwartet, aber trotzdem wichtiges Security Zeugs gemacht.}
+
+% 16.05.2025
+\JournalDay{16.05.2025}
+\JournalEntry[true]{Server-Implementierung}{2h (Aryan)}{Immernoch Server am versuchen.}{Fortschritte bei der Serverimplementierung.}{Noch nicht funktioniert, aber bin sehr nah an einer Lösung.}
+
+% 18.05.2025
+\JournalDay{18.05.2025}
+\JournalEntry[true]{Serververbindung und Quellenformatierung}{2.5h (Aryan)}{Endlich Serververbindung implementiert. Quellen für das schriftliche Kommentar formatiert (Latex).}{Funktionierende Serververbindung implementiert. Quellen für den Bericht in \LaTeX formatiert.}{Gut, dass es funktionierte.}
+
+% 20.05.2025
+\JournalDay{20.05.2025}
+\JournalEntry[true]{Umfrage-Feedback-Verarbeitung}{~30 min. (Simon)}{Weiteres Feedback von Frau Suter ergänzt/umgestaltet.}{Umfrage nach Feedback von Klassenkameraden und Frau Suter umgestaltet.}{Leider haben wir von unseren Klassenkameraden nur 3 Antworten bekommen, aber trotzdem wertvolles Feedback. Die Auswertung des Feedbacks hat einiges gezeigt, und wir sind zufrieden mit den Resultaten.}
+
+% 21.05.2025
+\JournalDay{21.05.2025}
+\JournalEntry[true]{Umfrage-Abschluss}{~1h (Simon)}{Finale Änderungen an der Umfrage gemacht, an Frau Hoffmann geschickt.}{Die finalen Änderungen an der Umfrage wurden vorgenommen und sie wurde zur Freigabe geschickt.}{Die Arbeit an der Umfrage \& Recherche hat viel länger gedauert, als erhofft / zuerst angenommen.}
+
+% 22.05.2025
+\JournalDay{22.05.2025}
+\JournalEntry[true]{Logo-Design}{Ohne Stundenangabe (Simon)}{Weitere Arbeit am Logo, von Skizzen weitergearbeitet und angefangen, erste Versionen auszuarbeiten.}{Erste Versionen des Logos basierend auf Skizzen ausgearbeitet.}{Auseinandersetzung mit «Was macht ein gutes Logo aus», wir haben, glaube ich, noch keine endgültige Version getroffen.}
+
+% 27.05.2025
+\JournalDay{27.05.2025}
+\JournalEntry[true]{Umfrage-Versand}{Ohne Stundenangabe (Simon)}{Nach letztem Feedback von Frau Hoffmann wurde die Umfrage (ENDLICH) losgeschickt.}{Die Umfrage wurde nach Freigabe versandt.}{}
+
+% 28.05.2025
+\JournalDay{28.05.2025 - 04.06.2025}
+\JournalEntry[true]{Interviews Transkribieren}{Ca. 4 Stunden (Simon)}{Interviews werden transkribiert und direkt auf Hochdeutsch übersetzt. Ebenso werden, so gut wie möglich, sprachliche Aussetzer («ähm», bspw.) entfernt, sollte aber sonst so getreu wie möglich bleiben.}{Transkription und Übersetzung der Interviews ins Hochdeutsche begonnen.}{SEHR aufwendig, in der Zukunft sollten die Interviews auf Hochdeutsch und nicht Mundart durchgeführt werden, da dies das Transkribieren erschwert, da digitale Tools nicht gut funktionieren.}
+
+% 04.06.2025
+\JournalDay{04.06.2025 - 10.06.2025}
+\JournalEntry[true]{Interviews Transkribieren}{Ca. 9 Stunden (Simon)}{Beide Interviews fertig transkribiert – insgesamt ca. 13 Stunden für die je $\approx$1-stündigen Interviews.}{Beide Interviews fertig transkribiert.}{Die Transkription wird aber definitiv sehr nützlich sein, um sowohl direkte Zitierungen wie um auch anderes (Bspw. für unsere «Daily Tipps») daraus zu nehmen.}
+
+% 11.06.2025
+\JournalDay{11.06.2025}
+\JournalEntry[true]{Arbeitsjournal-Übertragung und Umfrage-Auswertung}{Ohne Stundenangabe (Simon \& Aryan)}{Arbeitsjournal erstmals auf Word übertragen \& ausgefüllt, finale Änderungen an Dokumenten. Umfrageresultate angefangen, auszuwerten in Excel.}{Arbeitsjournal-Übertragung und finale Dokumentenänderungen abgeschlossen. Auswertung der 83 Umfrageantworten in Excel begonnen.}{Wir haben 83 Antworten erhalten auf die Umfrage, was viel positiver ist, als wir erwartet hätten. Aber: Wenn man es auf die einzelnen Stufen aufteilt, ist es immer noch nicht so viel.}
+
+
+
+% 16.06.2025 - 17.06.2025
+% 13.08.2025
+\JournalDay{13.08.2025}
+% 14.08.2025
+\JournalDay{14.08.2025}
+% 16.08.2025
+\JournalDay{16.08.2025}
+% 18.08.2025
+\JournalDay{18.08.2025}
+% 20.08.2025
+\JournalDay{20.08.2025}
+% 28.08.2025
+\JournalDay{28.08.2025}
+% 02.09.2025
+\JournalDay{02.09.2025}
+% 04.09.2025
+\JournalDay{04.09.2025}
+% 09.09.2025
+\JournalDay{09.09.2025}
+% 10.09.2025
+\JournalDay{10.09.2025}
+% 17.09.2025
+\JournalDay{17.09.2025}
+% 24.09.2025
+\JournalDay{24.09.2025}
+% 25.09.2025
+\JournalDay{25.09.2025}
+% 26.09.2025
+\JournalDay{26.09.2025}
+% 01.10.2025
+\JournalDay{01.10.2025}
+% 02.10.2025
+\JournalDay{02.10.2025}
+% 03.10.2025
+\JournalDay{03.10.2025}
+% 04.10.2025
+\JournalDay{04.10.2025}
+% 05.10.2025
+\JournalDay{05.10.2025}
+% 06.10.2025
+\JournalDay{06.10.2025}
+% 07.10.2025
+\JournalDay{07.10.2025}
+% 08.10.2025
+\JournalDay{08.10.2025}
+
+
+% Add more entries as needed
+
+\end{document}
