@@ -1046,7 +1046,7 @@ def home():
     """
     # Read tips from the file (assumes 'tips/tips.txt' exists)
     try:
-        with open("tips/tips.txt", "r") as file:
+        with open("tips/daily_tips.txt", "r") as file:
             tips = file.readlines()
     except FileNotFoundError:
         tips = ["No tips available."]
@@ -1561,6 +1561,17 @@ def lerntimer():
         str: Rendered HTML template ('lerntimer.html').
     """
     return render_template("lerntimer.html")
+
+
+@app.route("/lerntipps")
+def lerntipps():
+    """
+    Learning tips route: Renders the lerntipps page.
+
+    Returns:
+        str: Rendered HTML template ('lerntipps.html').
+    """
+    return render_template("lerntipps.html")
 
 
 # ---------------------- Run the Application ----------------------
