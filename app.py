@@ -11,6 +11,7 @@ from itsdangerous import URLSafeTimedSerializer # Used for generating secure, ti
 from dateutil.relativedelta import relativedelta  # Used for monthly recurrence calculations
 from dotenv import load_dotenv # Used to load environment variables from a .env file
 import os
+import json
 
 # Load environment variables from .env file
 load_dotenv()
@@ -1046,7 +1047,7 @@ def home():
     """
     # Read tips from the file (assumes 'tips/tips.txt' exists)
     try:
-        with open("tips/daily_tips.txt", "r") as file:
+        with open("tips/daily_tips.txt", "r", encoding="utf-8") as file:
             tips = file.readlines()
     except FileNotFoundError:
         tips = ["No tips available."]
@@ -1571,7 +1572,11 @@ def lerntipps():
     Returns:
         str: Rendered HTML template ('lerntipps.html').
     """
-    return render_template("lerntipps.html")
+
+    with open("tips/learn_tips.json", "r", encoding="utf-8") as file:
+        tips = json.load(file)
+
+    return render_template("lerntipps.html", tips=tips)
 
 
 # ---------------------- Run the Application ----------------------

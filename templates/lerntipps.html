@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lerntipps</title>
+</head>
+<body>
+    <h1>Lerntipps</h1>
+    {% for category, tips_list in tips.items() %}
+        <button onclick="toggleVisibility('{{ category|replace(' ', '_') }}')">{{ category }}</button>
+        <div id="{{ category|replace(' ', '_') }}" style="display: none;">
+            <ul>
+            {% for tip in tips_list %}
+                <li>{{ tip }}</li>
+            {% endfor %}
+            </ul>
+        </div>
+        <br>
+    {% endfor %}
+
+    <script>
+        function toggleVisibility(id) {
+            const element = document.getElementById(id);
+            if (element.style.display === "none") {
+                element.style.display = "block";
+            } else {
+                element.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>
