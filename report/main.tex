@@ -14,6 +14,7 @@
 \usepackage{longtable}
 \usepackage{anyfontsize}
 \usepackage{xurl}
+\usepackage{float}
 \usepackage[
 backend=biber,
 citestyle=authortitle,
@@ -66,7 +67,10 @@ bibstyle=mla
 
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
-Die Kanti Koala App ist eine Webanwendung, die entwickelt wurde, um Schüler:innen der Kantonsschule Baden bei der Bewältigung ihres anspruchsvollen Schulalltags zu unterstützen. Die App bietet eine zentrale, leicht verständliche Agenda zur Organisation aller Termine, Hausaufgaben und Prüfungen. Kernstück ist ein intelligenter Lernalgorithmus, der auf Basis individueller Prioritäten und gesetzter Fristen automatisch flexible Lernblöcke in den Kalender einplant. Darüber hinaus verfügt die App über ein Notenmanagement-System zur transparenten Leistungsüberwachung und liefert zusätzliche Lerntipps und Hilfestellungen. Technisch basiert Kanti Koala auf Python/Flask und einer SQLite-Datenbank und wurde mit Fokus auf Benutzerfreundlichkeit und Datenintegrität konzipiert. Ziel ist es, den Schüler:innen zu helfen, den Überblick zu behalten, Stress zu reduzieren und das Selbstmanagement zu verbessern.
+Die Kanti Koala App ist eine Webanwendung, die entwickelt wurde, um Schüler:innen der Kantonsschule Baden bei der Bewältigung ihres anspruchsvollen Schulalltags zu unterstützen. 
+Die App bietet eine zentrale, leicht verständliche Agenda zur Organisation aller Termine, Hausaufgaben und Prüfungen. 
+Kernstück ist ein intelligenter Lernalgorithmus, der auf Basis individueller Prioritäten und gesetzter Fristen automatisch flexible Lernblöcke in den Kalender einplant. 
+Darüber hinaus verfügt die App über ein Notenmanagement-System zur transparenten Leistungsüberwachung und liefert zusätzliche Lerntipps und Hilfestellungen. Technisch basiert Kanti Koala auf Python/Flask und einer SQLite-Datenbank und wurde mit Fokus auf Benutzerfreundlichkeit und Datenintegrität konzipiert. Ziel ist es, den Schüler:innen zu helfen, den Überblick zu behalten, Stress zu reduzieren und das Selbstmanagement zu verbessern.
 
 % Table of Contents
 \tableofcontents
@@ -93,28 +97,26 @@ Diese Literaturstudie diente vor allem dazu, uns einen ersten Einblick in die Th
 Zu diesem Zweck liehen wir die folgenden zwei Bücher aus der Mediothek der Kanti Baden aus, welche uns einen differenzierten Standpunkt geben sollten:
 \begin{list}{}
     \item \textbf{Effektiver Lernen für Dummies (2. Auflage)\footcite{Book1} von Dr. Birgit Ebbert}
-    \item \textbf{Lernpsychologie (6. Auflage)\footcite{Book2} von Walter Edelmann}
+    \item \textbf{Lernpsychologie (6. Auflage)\footcite{Book2} von Walter Edelmann}\linebreak
     
 \end{list}
-
-
 Diese zwei Bücher sollten uns einen guten Überblick über das Lernen aus zwei verschiedenen Perspektiven - der direkten Anwendung mit 'Effektiver Lernen für Dummies' und der wissenschaftlichen Perspektive mit 'Lernpsychologie' - geben. 
 
 % ---------KURZER ABSCHNITT ÜBER DIE BÜCHER UND WAS DARAUS GELERNT WURDE---------
 \subsection{Effektiver Lernen für Dummies (2. Auflage)}
 % --- IMAGE OF "EFFEKTIVER LERNEN FÜR DUMMIES" ---
-\begin{figure}
+\begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{img/agenda.png}
+    \rotatebox{-90}{\includegraphics[scale=0.05]{img/book1.png}}
     \caption{Das Buch}
 \end{figure}
 
 
 \subsection{Lernpsychologiest (6. Auflage)}
 % --- IMAGE OF "LERNPSYCHOLOGIE" ---
-\begin{figure}
+\begin{figure}[H]
     \centering
-    \includegraphics[width=\linewidth]{img/agenda.png}
+    \rotatebox{-90}{\includegraphics[scale=0.05]{img/book2.png}}
     \caption{Das Buch}
 \end{figure}
 
