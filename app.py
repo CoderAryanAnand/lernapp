@@ -22,7 +22,14 @@ app = Flask(__name__)
 # ---------------------- Flask App Configuration ----------------------
 
 # Database configuration
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"  # Use SQLite by default
+DATABASE_URL = os.getenv("DATABASE_URL")  # Use SQLite by default
+
+if DATABASE_URL and DATABASE_URL.startswith("postgres://"):
+    # Fix for Heroku/Railway's older 'postgres' scheme not supported by SQLAlchemy
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
+
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = (
     False  # Disable modification tracking for performance
 )
