@@ -48,7 +48,6 @@ app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 db = SQLAlchemy(app) # Initializes the SQLAlchemy ORM
 bcrypt = Bcrypt(app) # Initializes Bcrypt for password hashing
 mail = Mail(app) # Initializes the mail extension
-print(f"Mail password: {app.config['MAIL_PASSWORD']}") # Debugging line to verify mail password is loaded
 
 # ----------------------- Defaults -----------------------
 # Default settings for a new user, defining preferred study times and initial priority rules
@@ -1129,7 +1128,7 @@ def forgot_password():
                 to=[email],
                 from_email=app.config["MAIL_USERNAME"],
             )
-            mail.send(msg) # Sends the email
+            msg.send()  # Sends the email
             return "Password reset link sent to your email."
         return "Email not found. Try again."
     else:
