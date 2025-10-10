@@ -1,5 +1,10 @@
 \documentclass[12pt,a4paper]{report}
 
+% Questions to ask @Herr Schneider
+% 1 -
+
+
+
 % Packages
 \usepackage{graphicx}
 \usepackage{amsmath}
@@ -68,7 +73,7 @@ bibstyle=mla
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 Die Kanti Koala App ist eine Webanwendung, die entwickelt wurde, um Schüler:innen der Kantonsschule Baden bei der Bewältigung ihres anspruchsvollen Schulalltags zu unterstützen. 
-Die App bietet eine zentrale, leicht verständliche Agenda zur Organisation aller Termine, Hausaufgaben und Prüfungen. 
+Die App bietet eine zentrale, leicht verst-ändliche Agenda zur Organisation aller Termine, Hausaufgaben und Prüfung-en. 
 Kernstück ist ein intelligenter Lernalgorithmus, der auf Basis individueller Prioritäten und gesetzter Fristen automatisch flexible Lernblöcke in den Kalender einplant. 
 Darüber hinaus verfügt die App über ein Notenmanagement-System zur transparenten Leistungsüberwachung und liefert zusätzliche Lerntipps und Hilfestellungen. Technisch basiert Kanti Koala auf Python/Flask und einer SQLite-Datenbank und wurde mit Fokus auf Benutzerfreundlichkeit und Datenintegrität konzipiert. Ziel ist es, den Schüler:innen zu helfen, den Überblick zu behalten, Stress zu reduzieren und das Selbstmanagement zu verbessern.
 \pagebreak
@@ -101,19 +106,57 @@ Diese Literaturstudie bestand aus dem Lesen von Büchern und eine Literaturreche
 
 
 \subsection{Internet-Recherche}
-Durch die Internet-Recherche wurden wir beispielsweise auf Lernmethoden wie beispielsweise SQ3R\footcite{SQ3R} aufmerksam. Somit konnten wir die wichtigsten Themen und bereits erste Fragen für die Interviews und Umfrage ausarbeiten.
-
+In der Internet-Recherche fokussierten wir uns auf folgende Elemente, welche wir als wichtig empfanden: Lernmethoden \& -techniken, Zeit- \& Pausenmanagement und das Umfragedesign - alles wichtige Bereiche für unsere Umfrage und Web-Applikation.
+Dabei wurden wir beispielsweise auf die Lernmethode SQ3R\footcite{SQ3R} und ähnliches aufmerksam, und konnten mit den gewonnenen Informationen bereits grosse Fortschritte in unserer Interviewvorbereitung und Umfrage-Entwicklung erzielen.
 \subsubsection{Lernmethoden}
+Die folgenden Lernmethoden (strukturierte Ansätze zum Lernen\footcite{SQ3R}) kamen dabei in der Recherche bei uns in den Fokus. 
+Diese wurden hauptsächlich von \textcite{SQ3R} übernommen, und gaben uns eine gute Idee, wie solche Lernmethoden aussehen können, da wir uns überlegten, ob und wie wir dies in der Web-Applikation integrieren könnten.
+Schlussendlich aber geht es darum, 
 
+\myparagraph{SQ3R}
+Kurzform für 'Survey, Question, Read, Recite, Review', SQ3R ist eine beliebte Methode für aktiveres Textverständnis. Die fünf Schritte\footcite{SQ3R} weisen auf den Prozess, welchen man beim Lesen eines Textes durchführen soll:
+\begin{itemize}
+    \item \texttt{Survey:} Den Text zuerst überfliegen
+    \item \texttt{Question:} Sich Fragen an den Text überlegen
+    \item \texttt{Read:} Den Text Lesen
+    \item \texttt{Recite:} Nach dem Lesen versuchen, das Gelernte in eigenen Worten wiederzugeben
+    \item \texttt{Review:} Lernstoff repetieren \& erneut durch den Text durchgehen
+\end{itemize}
+
+\myparagraph{KWL}
+Die KWL-Methode\footcite{SQ3R} ('Know, Want, Learn') ist eine weitere Lernmethode welche laut \textcite{SQ3R} hauptsächlich zur Aktivierung von Vorwissen dienen soll. 
+Dabei soll man sich zuerst reflektieren, was man zum Thema schon weiss (\texttt{Know}), dann überlegen, was man lernen will (\texttt{Want}) und am Schluss den tatsächlichen Lernstoff lernen (\texttt{Learn}).
+
+\myparagraph{Das 5-Schritte-Model zur Problemlösung}
+Dies ist ein allgemeineres Modell zum Probleme, ob beim Lernen, im Schulalltag oder anderswo, zu lösen. Diese fünf Schritte sind:
+\begin{itemize}
+    \item \texttt{1 - Problem identifizieren:} Zuerst muss klar festgelegt sein, was das Problem überhaupt ist.
+    \item \texttt{2 - Informationen sammeln:} Suche nach relevantem Wissen, um das Problem zu lösen.
+    \item \texttt{3 - Lösungen entwickeln:} Basierend auf Schritt 2 passende Lösungsvorschläge erstellen.
+    \item \texttt{4 - Lösungen auswählen \& umsetzen:} Besten Lösungsansatz umsetzen.
+    \item \texttt{5 - Überprüfen \& bewerten:} Reflexion \& Rückblick auf den Lösungsprozess.
+\end{itemize}
+
+\myparagraph{LOCI-Methode}
+Die LOCI-Methode ist eine primär Ortsbezogene Lernmethode\footcite{SQ3R}, bei welcher man sich den Lernstoff aufteilt und diesem 'Stationen' zuweist.
+Diese Stationen werden so mit dem Lernstoff assoziiert und man kann diese Stationen, egal ob mental oder physisch, abgehen und so den Lernstoff durch diese Assoziation verinnerlichen.
+
+\subsubsection{Zeitmanagement}
+Ein weiteres wichtiges Thema für unsere Recherche ist das Zeitmanagement, also wie man seine Zeit einteilt. 
+Wir als Schüler haben natürlich unsere eigenen Erfahrungen damit und wussten, dass bei der Zeitplanung in unserem Umfeld oftmals Verbesserungsbedarf besteht. 
+Ob dem tatsächlich allgemein so ist, wird hauptsächlich in der Umfrage nachgegangen. Hier recherchierten wir hauptsächlich zum sogenannten Pomodoro-Timer:
+\myparagraph{Pomodoro-Timer}
+Der Pomodoro-Timer ist eine Methode, von wie man seine Zeit einplanen kann\footcite{Pomodoro}.
 
 \subsection{Literatur}
 Für die Literaturstudie liehen wir die folgenden zwei Bücher aus der Mediothek der Kanti Baden aus, welche uns einen differenzierten Standpunkt geben sollten:
-\begin{list}{}
-    \item \textbf{Effektiver Lernen für Dummies (2. Auflage)\footcite{Book1} von Dr. Birgit Ebbert}
-    \item \textbf{Lernpsychologie (6. Auflage)\footcite{Book2} von Walter Edelmann} \linebreak
+\begin{itemize}{}
+    \item \texttt{Effektiver Lernen für Dummies (2. Auflage)\footcite{Book1} von Dr. Birgit Ebbert}
+    \item \texttt{Lernpsychologie (6. Auflage)\footcite{Book2} von Walter Edelmann}
     
-\end{list}
-Diese zwei Bücher sollten uns einen guten Überblick über das Lernen aus zwei verschiedenen Perspektiven - der direkten Anwendung mit 'Effektiver Lernen für Dummies' und der wissenschaftlichen Perspektive mit 'Lernpsychologie' - geben. Dabei führten wir laufend Notizen und integrierten diese in unsere Umfrage \& unser Interviewfragendossier, welche in Abschnitt 2.3 \& 2.4 näher beschrieben werden.
+\end{itemize}
+Diese zwei Bücher sollten uns einen guten Überblick über das Lernen aus zwei verschiedenen Perspektiven - der direkten Anwendung mit 'Effektiver Lernen für Dummies' und der wissenschaftlichen Perspektive mit 'Lernpsychologie' - geben. 
+Dabei führten wir laufend Notizen und integrierten diese in unsere Umfrage \& unser Interviewfragendossier, welche in \texttt{Abschnitt 2.3 \& 2.4} näher beschrieben werden.
 
 % ---------KURZER ABSCHNITT ÜBER DIE BÜCHER UND WAS DARAUS GELERNT WURDE---------
 \subsubsection{Effektiver Lernen für Dummies (2. Auflage)}
