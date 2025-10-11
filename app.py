@@ -1588,6 +1588,6 @@ def lerntipps():
 
 # ---------------------- Run the Application ----------------------
 
-if __name__ == "__main__":
-    # Runs the Flask application. debug=True enables the reloader and debugger.
-    app.run()
+# if __name__ == "__main__":
+#     # Runs the Flask application. debug=True enables the reloader and debugger.
+#     app.run()
