@@ -2,7 +2,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from flask_mailman import Mail, EmailMessage
 from functools import wraps
 import icalendar  # Used for importing events from .ics files
 import uuid  # Used to generate unique recurrence IDs
@@ -13,6 +12,8 @@ from dotenv import load_dotenv  # Used to load environment variables from a .env
 import os
 import json
 import resend
+# Outdated gmail version
+# from flask_mailman import Mail, EmailMessage
 
 # Load environment variables from .env file
 load_dotenv()
@@ -37,12 +38,13 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = (
 app.secret_key = os.getenv("SECRET_KEY")  # Secret key for session management and token generation
 
 # Mail configuration (for password reset emails)
-app.config["MAIL_SERVER"] = "smtp.gmail.com"
-app.config["MAIL_PORT"] = 465
-app.config["MAIL_USE_TLS"] = False
-app.config["MAIL_USE_SSL"] = True
-app.config["MAIL_USERNAME"] = "kantikoala@gmail.com"
-app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
+# Outdated gmail version
+# app.config["MAIL_SERVER"] = "smtp.gmail.com"
+# app.config["MAIL_PORT"] = 465
+# app.config["MAIL_USE_TLS"] = False
+# app.config["MAIL_USE_SSL"] = True
+# app.config["MAIL_USERNAME"] = "kantikoala@gmail.com"
+# app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 
 resend.api_key = os.getenv("RESEND_API_PASSWORD")
 FROM_EMAIL = "KantiKoala <noreply@kantikoala.app>"
@@ -51,7 +53,7 @@ FROM_EMAIL = "KantiKoala <noreply@kantikoala.app>"
 
 db = SQLAlchemy(app) # Initializes the SQLAlchemy ORM
 bcrypt = Bcrypt(app) # Initializes Bcrypt for password hashing
-mail = Mail(app) # Initializes the mail extension
+# mail = Mail(app) # Initializes the mail extension
 
 # ----------------------- Defaults -----------------------
 # Default settings for a new user, defining preferred study times and initial priority rules
@@ -1129,13 +1131,14 @@ def forgot_password():
             reset_link = url_for("reset_password", token=token, _external=True)
 
             # Send email with reset link
-            msg = EmailMessage(
-                subject="Password Reset Request",
-                body=f"Click the link to reset your password: {reset_link}",
-                to=[email],
-                from_email=app.config["MAIL_USERNAME"],
-            )
-            msg.send()  # Sends the email
+            # Outdated gmail version
+            # msg = EmailMessage(
+            #     subject="Password Reset Request",
+            #     body=f"Click the link to reset your password: {reset_link}",
+            #     to=[email],
+            #     from_email=app.config["MAIL_USERNAME"],
+            # )
+            # msg.send()  # Sends the email
 
             params: resend.Emails.SendParams = {
                 "from": FROM_EMAIL,
