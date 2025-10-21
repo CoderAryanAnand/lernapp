@@ -44,7 +44,7 @@ app.config["MAIL_USE_SSL"] = True
 app.config["MAIL_USERNAME"] = "kantikoala@gmail.com"
 app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
 
-resend.api_key = os.getenv("RESEND_API_KEY")
+resend.api_key = os.getenv("RESEND_API_PASSWORD")
 FROM_EMAIL = "KantiKoala <noreply@kantikoala.app>"
 
 # ---------------------- Initialize Extensions ----------------------
