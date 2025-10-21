@@ -12,6 +12,7 @@ from dateutil.relativedelta import relativedelta   # Used for monthly recurrence
 from dotenv import load_dotenv  # Used to load environment variables from a .env file
 import os
 import json
+import resend
 
 # Load environment variables from .env file
 load_dotenv()
@@ -42,6 +43,9 @@ app.config["MAIL_USE_TLS"] = False
 app.config["MAIL_USE_SSL"] = True
 app.config["MAIL_USERNAME"] = "kantikoala@gmail.com"
 app.config["MAIL_PASSWORD"] = os.getenv("MAIL_PASSWORD")
+
+resend.api_key = os.getenv("RESEND_API_KEY")
+FROM_EMAIL = "KantiKoala <noreply@kantikoala.app>"
 
 # ---------------------- Initialize Extensions ----------------------
 
@@ -1132,6 +1136,16 @@ def forgot_password():
                 from_email=app.config["MAIL_USERNAME"],
             )
             msg.send()  # Sends the email
+
+            params: resend.Emails.SendParams = {
+                "from": FROM_EMAIL,
+                "to": [email],
+                "subject": "Password Reset Request",
+                "html": f"<strong>Click the link to reset your password: {reset_link}</strong>",
+            }
+
+            email = resend.Emails.send(params)
+
             return "Password reset link sent to your email."
         return "Email not found. Try again."
     else:
