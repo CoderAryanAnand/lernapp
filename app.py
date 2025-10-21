@@ -12,6 +12,7 @@ from dotenv import load_dotenv  # Used to load environment variables from a .env
 import os
 import json
 import resend
+import secrets
 # Outdated gmail version
 # from flask_mailman import Mail, EmailMessage
 
@@ -63,6 +64,12 @@ DEFAULT_SETTINGS = {"learn_on_saturday": False, "learn_on_sunday": False, "prefe
                                           3: {"color": "#097200", "days_to_learn": 4, "max_hours_per_day": 1.0, "total_hours_to_learn": 4.0}
                                           }
                     }
+
+@app.before_request
+def make_csrf_token():
+    """Generate and store a CSRF token in the session."""
+    if 'csrf_token' not in session:
+        session['csrf_token'] = secrets.token_hex(16)
 
 # ---------------------- Database Models ----------------------
 
@@ -301,6 +308,28 @@ def login_required(f):
         return f(*args, **kwargs)
     return decorated_function
 
+def csrf_protect(f):
+    """Decorator to protect a route from CSRF attacks."""
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        # Only check for state-changing methods
+        if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
+            token = session.get('csrf_token')
+            if not token:
+                return jsonify({"error": "CSRF token missing from session"}), 400
+
+            # Get token from form or from header (for AJAX)
+            request_token = request.form.get('csrf_token') or request.headers.get('X-CSRF-Token')
+
+            if not request_token:
+                return jsonify({"error": "CSRF token missing from request"}), 400
+
+            # Use secrets.compare_digest for secure, timing-attack-resistant comparison
+            if not secrets.compare_digest(token, request_token):
+                return jsonify({"error": "Invalid CSRF token"}), 400
+
+        return f(*args, **kwargs)
+    return decorated_function
 
 # ---------------------- Learning Time Algorithm Utilities ----------------------
 
@@ -742,6 +771,7 @@ def get_events():
 
 
 @app.route("/api/events", methods=["POST"])
+@csrf_protect
 @login_required
 def create_event():
     """
@@ -824,6 +854,7 @@ def create_event():
 
 
 @app.route("/api/events", methods=["PUT"])
+@csrf_protect
 @login_required
 def update_event():
     """
@@ -912,6 +943,7 @@ def update_event():
 
 
 @app.route("/api/events/<int:event_id>", methods=["DELETE"])
+@csrf_protect
 @login_required
 def delete_event(event_id):
     """
@@ -932,6 +964,7 @@ def delete_event(event_id):
 
 
 @app.route("/api/events/recurring/<recurrence_id>", methods=["DELETE"])
+@csrf_protect
 @login_required
 def delete_recurring_events(recurrence_id):
     """
@@ -954,6 +987,7 @@ def delete_recurring_events(recurrence_id):
 
 
 @app.route('/api/run-learning-algorithm', methods=['POST'])
+@csrf_protect
 @login_required
 def run_learning_algorithm():
     """
@@ -975,6 +1009,7 @@ def run_learning_algorithm():
 
 
 @app.route("/api/populate_test_algorithm", methods=["GET", "POST"])
+@csrf_protect
 @login_required
 def populate_test_algorithm():
     """
@@ -1084,6 +1119,7 @@ def home():
 
 
 @app.route("/login", methods=["GET", "POST"])
+@csrf_protect
 def login():
     """
     Login route: Handles user sign-in and session management.
@@ -1109,6 +1145,7 @@ def login():
 
 
 @app.route("/forgot_password", methods=["GET", "POST"])
+@csrf_protect
 def forgot_password():
     """
     Forgot password route: Handles password reset requests.
@@ -1156,6 +1193,7 @@ def forgot_password():
 
 
 @app.route("/reset_password/<token>", methods=["GET", "POST"])
+@csrf_protect
 def reset_password(token):
     """
     Reset password route: Allows a user to set a new password using a valid token.
@@ -1205,6 +1243,7 @@ def reset_password(token):
 
 
 @app.route("/register", methods=["GET", "POST"])
+@csrf_protect
 def register():
     """
     Register route: Handles new user sign-up.
@@ -1277,6 +1316,7 @@ def logout():
 
 
 @app.route("/settings", methods=["GET", "POST"])
+@csrf_protect
 @login_required
 def settings():
     """
@@ -1360,6 +1400,7 @@ def settings():
 
 
 @app.route("/settings/delete_account")
+@csrf_protect
 @login_required
 def delete_account():
     """
@@ -1377,6 +1418,7 @@ def delete_account():
 
 
 @app.route("/settings/change_password", methods=["GET", "POST"])
+@csrf_protect
 @login_required
 def change_password():
     """
@@ -1435,6 +1477,7 @@ def agenda():
 
 
 @app.route("/api/import-ics", methods=["POST"])
+@csrf_protect
 @login_required
 def import_ics():
     """
@@ -1532,6 +1575,7 @@ def get_noten():
 
 
 @app.route("/api/noten", methods=["POST"])
+@csrf_protect
 @login_required
 def save_noten():
     """

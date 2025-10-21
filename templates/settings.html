@@ -9,10 +9,17 @@
     <h2>Settings</h2>
     <h3>General</h3>
     <a id="chg_pw" href="/settings/change_password"><button>Change Password</button></a>
-    <a id="del_acc" href="/settings/delete_account"><button>Delete account</button></a>
+    
+    <!-- Changed delete link to a secure form -->
+    <form action="/settings/delete_account" method="post" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');" style="display: inline;">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        <button type="submit">Delete Account</button>
+    </form>
+
     <h3>Agenda Settings</h3>
     <!-- Form to select default priority colors, to select if Saturday and/or Sunday can be used for learning (for the algorithm), and preferred learning time in a day -->
     <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
         <!-- General settings ... -->
         <input type="checkbox" id="saturday" name="learn_on_saturday" {% if learn_on_saturday %}checked{% endif %}>
         <label for="saturday">Include Saturday for learning</label><br><br>

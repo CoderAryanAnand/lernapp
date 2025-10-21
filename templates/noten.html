@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ session.csrf_token }}">
     <title>Semester Management</title>
     <style>
         body {
@@ -720,9 +721,14 @@
                 semesters.push({ name: semesterName, subjects });
             });
 
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
             await fetch("/api/noten", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRF-Token": csrfToken
+                },
                 body: JSON.stringify(semesters)
             });
         }

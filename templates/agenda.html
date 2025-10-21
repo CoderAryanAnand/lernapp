@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Agenda</title>
     <!-- FullCalendar JS -->
     <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
@@ -237,14 +238,26 @@
         // Delete event function
         async function deleteEvent() {
             const eventId = document.getElementById('event-id').value; // Get event ID
-            await fetch(`/api/events/${eventId}`, { method: 'DELETE' }); // Send DELETE request to the server
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            await fetch(`/api/events/${eventId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-Token': csrfToken
+                }
+            }); // Send DELETE request to the server
             location.reload(); // Reload the page to reflect changes
         }
 
         // Delete recurring events function
         async function deleteRecurringEvents() {
             const recurrenceId = document.getElementById('recurrence-id').value; // Get event ID
-            await fetch(`/api/events/recurring/${recurrenceId}`, { method: 'DELETE' }); // Send DELETE request to the server
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            await fetch(`/api/events/recurring/${recurrenceId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-Token': csrfToken
+                }
+            }); // Send DELETE request to the server
             location.reload(); // Reload the page to reflect changes
         }
 
@@ -253,10 +266,14 @@
             e.preventDefault(); // Prevent default form submission
             const formData = new FormData(e.target); // Get form data
             formData.set('all_day', document.getElementById('edit-all-day').checked);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             await fetch('/api/events', {
                 method: 'PUT', // Send PUT request to update the event
                 body: JSON.stringify(Object.fromEntries(formData)), // Convert form data to JSON
-                headers: { 'Content-Type': 'application/json' }
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken
+                }
             });
             location.reload(); // Reload the page to reflect changes
         });
@@ -266,10 +283,14 @@
             e.preventDefault(); // Prevent default form submission
             const formData = new FormData(e.target); // Get form data
             formData.set('all_day', document.getElementById('all-day').checked);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             await fetch('/api/events', {
                 method: 'POST', // Send POST request to create a new event
                 body: JSON.stringify(Object.fromEntries(formData)), // Convert form data to JSON
-                headers: { 'Content-Type': 'application/json' }
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken
+                }
             });
             location.reload(); // Reload the page to reflect changes
         });
@@ -282,13 +303,17 @@
             const reader = new FileReader();
             reader.onload = async function (e) {
                 const icsContent = e.target.result; // Get the file content as text
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
                 // Send the .ics content to the backend for processing
                 try {
                     const response = await fetch('/api/import-ics', {
                         method: 'POST',
                         body: JSON.stringify({ ics: icsContent }),
-                        headers: { 'Content-Type': 'application/json' }
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-Token': csrfToken
+                        }
                     });
 
                     if (response.ok) {
@@ -310,11 +335,13 @@
         document.getElementById('run-scheduler-btn').addEventListener('click', function() {
             // Show a loading indicator if desired
             this.disabled = true; 
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             
             fetch('/api/run-learning-algorithm', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken
                 }
             })
             .then(response => response.json())
