@@ -4,12 +4,12 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_mailman import Mail, EmailMessage
 from functools import wraps
-import icalendar # Used for importing events from .ics files
-import uuid # Used to generate unique recurrence IDs
+import icalendar  # Used for importing events from .ics files
+import uuid  # Used to generate unique recurrence IDs
 from datetime import datetime, timedelta, time as dtime
-from itsdangerous import URLSafeTimedSerializer # Used for generating secure, time-sensitive tokens (e.g., password reset)
-from dateutil.relativedelta import relativedelta  # Used for monthly recurrence calculations
-from dotenv import load_dotenv # Used to load environment variables from a .env file
+from itsdangerous import URLSafeTimedSerializer  # Used for generating secure, time-sensitive tokens (e.g., password reset)
+from dateutil.relativedelta import relativedelta   # Used for monthly recurrence calculations
+from dotenv import load_dotenv  # Used to load environment variables from a .env file
 import os
 import json
 
@@ -55,8 +55,8 @@ DEFAULT_SETTINGS = {"learn_on_saturday": False, "learn_on_sunday": False, "prefe
                     "priority_settings": {1: {"color": "#770000", "days_to_learn": 14, "max_hours_per_day": 2.0, "total_hours_to_learn": 14.0},
                                           2: {"color": "#ca8300", "days_to_learn": 7, "max_hours_per_day": 1.5, "total_hours_to_learn": 7.0},
                                           3: {"color": "#097200", "days_to_learn": 4, "max_hours_per_day": 1.0, "total_hours_to_learn": 4.0}
+                                          }
                     }
-}
 
 # ---------------------- Database Models ----------------------
 
@@ -299,7 +299,8 @@ def login_required(f):
 # ---------------------- Learning Time Algorithm Utilities ----------------------
 
 # Define constants (used in the algorithm)
-DAY_START   = dtime(8, 0)         # Day earliest start time (08:00)
+DAY_START = dtime(8, 0)         # Day earliest start time (08:00)
+
 
 def to_dt(iso: str) -> datetime:
     """
@@ -313,6 +314,7 @@ def to_dt(iso: str) -> datetime:
     """
     return datetime.fromisoformat(iso)
 
+
 def to_iso(dt: datetime) -> str:
     """
     Converts a datetime object to ISO format string with seconds precision.
@@ -324,6 +326,7 @@ def to_iso(dt: datetime) -> str:
         str: The ISO formatted string.
     """
     return dt.isoformat(timespec="seconds")
+
 
 def free_slots(events, day):
     """
@@ -365,6 +368,7 @@ def free_slots(events, day):
         free_slots.append((current_start, datetime.combine(day, DAY_END)))
 
     return free_slots
+
 
 def learning_time_algorithm(events, user):
     """
@@ -479,8 +483,8 @@ def learning_time_algorithm(events, user):
                 break
 
             # ... (Rest of the scheduling logic, including preferred slot and general free slot search) ...
-            
-            # The scheduling logic checks conflicts against the updated 'events' list, 
+
+            # The scheduling logic checks conflicts against the updated 'events' list,
             # prioritizes the user's preferred time, and then finds the largest free slot,
             # ensuring blocks are at least SESSION (0.5 hours) long and do not exceed today_max.
 
@@ -513,7 +517,7 @@ def learning_time_algorithm(events, user):
                         slot_free = False
                         break
             else:
-                 slot_free = False
+                slot_free = False
 
             if slot_free:
                 # Create and save the new study block
@@ -577,11 +581,11 @@ def learning_time_algorithm(events, user):
 
                 if new_scheduled >= hours_left:
                     break
-                
+
                 break # Only schedule one block per day in the general search
 
         # --- Safety / Extra Days Extension (Beyond Initial Window) ---
-        # The logic below repeats the scheduling process outside the window_days boundary 
+        # The logic below repeats the scheduling process outside the window_days boundary
         # to ensure all required hours are scheduled if possible.
         if new_scheduled < hours_left:
             for day_offset in range(window_days + 1, min(22, days_left_until_exam + 1)):
@@ -684,7 +688,6 @@ def learning_time_algorithm(events, user):
                     if new_scheduled >= hours_left:
                         break
                     break # Move to next day after filling one slot
-
 
         # --- Final Status Update ---
 
