@@ -423,7 +423,7 @@ Die Abhängigkeiten und Kaskadenlöschungen (z.B. ein gelöschter \texttt{User} 
 
 % ------------------------------SERVER------------------------------
 \subsection{Serververbindung}
-Da es um eine Web-App handelt, müssen die SQL-Datenbanken irgendwo extern gespeichert werden, wo man sie jederzeit abrufen kann. Das heisst, die SQL-Datei muss auf ein Server gespeichert werden. Wir haben uns schliesslich für die Cloud-Applikation \enquote{Render} entschieden. Der Grund dafür war, weil unsere Erstwahl \enquote{Heroku} Probleme hatte beim Verifizieren vom Account. Wir suchten dann nach Alternativen und \enquote{Render} war die erste Option. 
+Da es um eine Web-App handelt, müssen die SQL-Datenbanken irgendwo extern gespeichert werden, wo man sie jederzeit abrufen kann. Das heisst, die SQL-Datei muss auf ein Server gespeichert werden. Wir haben uns schliesslich für die Cloud-Applikation \enquote{DigitalOcean} entschieden. Der Grund dafür war, weil wir erhalten gratis Credits mit einem Student Developer Pack. Die Domaine, die wir gekauft haben, wurde wegen dem gleichen Grund gekauft, nämlich, dass wir mit demselben Student Developer Pack die Top-Level-Domaine .app gratis erhalten haben. Die Domaine heisst \href{https://www.kantikoala.app}{kantikoala.app}.
 
 % ------------------------------AUTHENTICATION------------------------------
 \subsection{Authentifizierung}
@@ -433,7 +433,23 @@ Natürlich können wir ein Passwort nicht im Klartext speichern, denn das wäre 
 
 Sobald man sich anmeldet oder registriert, wird man auf die Startseite der Website weitergeleitet.
 
-Sehr wichtig bei jedem Anmeldesystem ist natürlich eine Option das Passwort zurückzusetzen wenn man es vergisst. Um so ein System zu haben, ist es wichtig, dass man den Link, um das Passwort zurückzusetzen, nur einmal verwenden kann. Um dies zu erreichen, haben wir den Token, welches gebraucht wird, um zu überprüfen, dass das Passwort für den richtigen User zurückgesetzt wird, mit dem Hash vom alten Passworts generiert. Wir sind dank eines Artikels\footcite{password_reset} auf diese Idee gekommen. Das Prinzip funktioniert, da das Passwort sich ändern wird, und somit kann man den gleichen Token nicht wieder verwenden.
+Sehr wichtig bei jedem Anmeldesystem ist natürlich eine Option das Passwort zurückzusetzen wenn man es vergisst. Um so ein System zu haben, ist es wichtig, dass man den Link, um das Passwort zurückzusetzen, nur einmal verwenden kann. Um dies zu erreichen, haben wir den Token, welches gebraucht wird, um zu überprüfen, dass das Passwort für den richtigen User zurückgesetzt wird, mit dem Hash vom alten Passworts generiert. Wir sind dank eines Artikels\footcite{password_reset} auf diese Idee gekommen. Das Prinzip funktioniert, da das Passwort sich ändern wird, und somit kann man den gleichen Token nicht wieder verwenden. Zudem brauchen wir, um die E-Mail zu verschicken, eine API, damit wir sie mit unserer eigenen Domaine verschicken können. Wir haben uns für die API von Resend entschieden, da sie eine kostenlose Stufe hat, die für unser Projekt ausreicht.
+
+
+% ------------------------------CSRF PROTECTION------------------------------
+\subsection{CSRF-Schutz}
+Neben der reinen Authentifizierung ist es entscheidend, die Aktionen eines angemeldeten Benutzers abzusichern. Eine der häufigsten Schwachstellen in Webanwendungen ist die Cross-Site Request Forgery (CSRF). Bei einem CSRF-Angriff bringt ein Angreifer den Browser eines authentifizierten Benutzers dazu, eine unerwünschte Aktion in einer Webanwendung auszuführen, bei der der Benutzer gerade angemeldet ist. Dies geschieht, ohne dass der Benutzer es merkt. So könnte ein Angreifer beispielsweise einen Benutzer dazu verleiten, auf einen bösartigen Link zu klicken, der im Hintergrund unbemerkt das Passwort des Benutzers ändert oder sein Konto löscht.\footcite{TestDriven_CSRF}
+
+Um dies zu verhindern, haben wir das \enquote{Synchronizer Token Pattern} implementiert, eine von OWASP empfohlene Methode\footcite{OWASP_CSRF}. Das Prinzip ist einfach, aber sehr wirksam:
+\begin{enumerate}
+    \item Für jede Benutzersitzung wird ein einzigartiges, geheimes und unvorhersehbares Token generiert und auf dem Server gespeichert.
+    \item Dieses Token wird in alle Formulare, die eine Zustandsänderung bewirken (z.B. das Ändern von Einstellungen oder das Löschen eines Kontos), als verstecktes Feld eingebettet.
+    \item Wenn der Benutzer das Formular abschickt, wird das Token zusammen mit den anderen Formulardaten an den Server gesendet.
+    \item Der Server vergleicht das vom Client gesendete Token mit dem in der Sitzung gespeicherten Token. Stimmen die beiden nicht überein, wird die Anfrage abgelehnt.
+\end{enumerate}
+Da ein Angreifer auf einer fremden Website dieses geheime Token nicht kennen kann, schlägt der Fälschungsversuch fehl.
+
+In unserer Flask-Anwendung haben wir diese Logik mithilfe eines eigenen Decorators (\texttt{@csrf\_protect}) umgesetzt. Dieser Decorator wird auf alle Routen angewendet, die Daten durch \texttt{POST}-, \texttt{PUT}- oder \texttt{DELETE}-Anfragen ändern. Bei Standard-HTML-Formularen wird das Token als verstecktes \texttt{<input>}-Feld übergeben. Für unsere dynamischen Agenda-Funktionen, die auf AJAX basieren, wird das Token aus einem Meta-Tag ausgelesen und in einem benutzerdefinierten HTTP-Header (\texttt{X-CSRF-Token}) mit jeder Anfrage gesendet. Dies stellt sicher, dass jede datenverändernde Aktion, die in unserer Applikation ausgeführt wird, legitim vom Benutzer und von unserer eigenen Webseite stammt.
 
 
 %\href{https://freelancefootprints.substack.com/p/yet-another-password-reset-tutorial}{Yet another password reset tutorial}
@@ -445,7 +461,7 @@ Jedes Ereignis sollte die folgenden Informationen enthalten: einen Titel, die St
 
 Zur Anzeige des Ereignisses haben wir ein Modul namens FullCalendar\footcite{full_calendar} verwendet, eine JavaScript-Bibliothek zur Anzeige eines Kalenders. Wir haben uns für dieses Modul entschieden, weil es das erste Ergebnis war, das bei der Suche nach einer Bibliothek mit seinen Fähigkeiten auftauchte. 
 
-Was man mit dieser Agenda auch machen kann, ist, seinen Stundenplan aus schulnetz zu importieren\footcite{icalendar}. Da jeder Kanti-Schüler seinen Stundenplan auf schulnetz hat, dachten wir, es wäre nützlich, ihn von dort zu importieren, anstatt jede Stunde manuell eingeben zu müssen. Unsere Agenda kann also Agenden im .ics-Format importieren, das ist das Format, in dem schulnetz seine Kalender exportiert.
+Was man mit dieser Agenda auch machen kann, ist, seinen Stundenplan aus dem \texttt{schulnetz}, das ist die Plattform, die von der Kantonsschule verwendet wird, um den Schüler:innen ihren Stundenplan anzuzeigen, zu importieren\footcite{icalendar}. Da jeder Kanti-Schüler seinen Stundenplan auf \texttt{schulnetz} hat, dachten wir, es wäre nützlich, ihn von dort zu importieren, anstatt jede Stunde manuell eingeben zu müssen. Unsere Agenda kann also Agenden im .ics-Format importieren, das ist das Format, in dem \texttt{schulnetz} seine Kalender exportiert.
 
 \begin{figure}
     \centering
@@ -522,8 +538,8 @@ Der Algorithmus arbeitet iterativ und bearbeitet alle als Prüfung markierten Er
 
 
 % ------------------------------DAILY TIPS------------------------------
-\subsection{Daily Tips}
-Ein relativ wichtiges Feature unserer App sind die Daily Tips. Es sollte jeden Tag ein neuer Tipp an den Nutzer gezeigt werden auf der Startseite, entweder über die Kantonsschule oder allgemeine Lerntipps. Die einfachste Möglichkeit, dies zu implementieren, ist eine simple Modulo-Rechnung. 
+\subsection{Daily Tipps}
+Ein relativ wichtiges Feature unserer App sind die Daily Tipps. Es sollte jeden Tag ein neuer Tipp an den Nutzer gezeigt werden auf der Startseite, entweder über die Kantonsschule oder allgemeine Lerntipps. Die einfachste Möglichkeit, dies zu implementieren, ist eine simple Modulo-Rechnung. 
 \[
 \text{Tipp des Tages} = (\text{Tag des Jahres}) \bmod (\text{Anzahl der Tipps})
 \]
@@ -536,9 +552,13 @@ Somit wird an einem bestimmten Tag nur einen Tipp gezeigt und über das ganze Ja
 \subsection{Notenorganisation}
 In der Kantonsschule muss man immer wieder Prüfungen schreiben. Die Noten, die man erhält, sind dann wichtig für die Promotion in die nächste Stufe. Deswegen haben wir ein Feature, in dem man seine Noten pro Semester speichern kann. Jedes Semester hat schon die jeweiligen Fächer, die man dann in diesem Semester haben würde, geladen. Man kann natürlich immer noch Fächer löschen und hinzufügen. Man kann mit diesem Feature dann seine Durchschnitte pro Fach und Semester sehen. Ebenfalls kann man mit dem Notenrechner sehen, welche Note man in einem Fach brauchen würde, um einen bestimmten Schnitt in diesem Fach zu haben.
 
-% ------------------------------LERNTIPPS/TIMER------------------------------
+% ------------------------------LERNTIMER------------------------------
+\subsection{Lerntimer}
+Ein weiteres wichtiges Feature unserer App ist der Lerntimer. Dieser Timer basiert auf der Pomodoro-Technik, welche im Recherche Teil dieses Bericht erklärt wurde. Mit der Recherche, die wir führten, fanden wir es wichtig, ein solcher Lerntimer zu implementieren, da es eine sehr effektive Lerntechnik ist. Der Timer hat die Standard-Einstellungen von 25 Minuten Lernen und 5 Minuten Pause, welche man aber auch ändern kann, falls man das möchte.
 
-
+% ------------------------------LERNTIPPS------------------------------
+\subsection{Lerntipps}
+Ein weiteres Feature unserer App sind die Lerntipps. Diese sind in verschiedene Kategorien aufgeteilt, wie zum Beispiel Zeitmanagement, Pausenmanagement, Stressmanagement und Lernmethoden. In jeder Kategorie gibt es verschiedene wissenschaftlich fundierte Tipps, welche wir aus unserer Recherche und den Interviews gesammelt haben. Diese Tipps sollen den Nutzer:innen helfen, ihr Lernverhalten zu verbessern und effektiver zu lernen.
 
 % References
 \clearpage
