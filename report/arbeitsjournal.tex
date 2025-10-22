@@ -40,6 +40,19 @@
     \vspace{0.3cm}
 }
 
+% Helper command to set the date heading for the entry
+% #1: Date (e.g., 19.03)
+\newcommand{\StandortHeader}[1]{
+    \subsection*{Standortbestimmung vom #1}
+}
+
+% Helper command to add the horizontal separator line
+\newcommand{\StandortFooter}{
+    \vspace{0.5cm}
+    \hrule
+    \vspace{0.5cm}
+}
+
 \begin{document}
 
 \makeatletter
@@ -291,5 +304,157 @@
 % 21.10.2025
 \JournalDay{21.10.2025}
 \JournalEntry[true]{Deployment Fix, E-Mail-Integration und CSRF-Schutz}{Ca. 3.5h (Aryan)}{Behebung eines Problems mit den Requirements im Deployment-Prozess. Integration der E-Mail-API von Resend als schnellen Lösungsansatz. Zusätzlich die Einrichtung des CSRF-Schutzes (Cross-Site Request Forgery) für die Applikation, unter Zuhilfenahme von Gemini.}{Der Deployment-Fehler wurde behoben. Die E-Mail-Funktionalität über Resend ist integriert, funktioniert und war einfach einzurichten. Der grundlegende CSRF-Schutz ist nun aktiv.}{Das Problem mit den Deployment-Requirements war ein unerwarteter Stolperstein. Die Einrichtung des CSRF-Schutzes erforderte Recherche, wobei Gemini bei der Implementierung unterstützte.}
+
+\section*{Standortbestimmungen}
+
+% 19.03.2025
+\StandortHeader{19.03.2025}
+\subsubsection*{Was haben wir heute erreicht?}
+\paragraph{Simon}
+\begin{itemize}
+    \item Alle Fragen für die PPP-Lehrpersonen überlegt und einen ersten Draft für die E-Mail geschrieben.
+    \item Weitere Arbeit am Arbeitsvertrag.
+    \item Consulting bei Lizenzwahl.
+\end{itemize}
+
+\paragraph{Aryan}
+\begin{itemize}
+    \item Aufstellung des Github-Repositories + Directory tree darin für Flask.
+    \item Login/Register Authentication in Flask mit SQL-Alchemy (Email, Username, Passwort für Register, nur Username und Passwort für Login).
+    \item Settings page, momentan nur Account deletion button.
+    \item Account deletion.
+\end{itemize}
+
+\subsubsection*{Reflexion}
+Wir sind gut vorangekommen, mittlerweile noch gut im Zeitplan. Basic Account Management features waren einfacher aufzustellen, als erwartet.
+
+\subsubsection*{Totaler Zeitaufwand}
+Je 3 Lektionen
+\StandortFooter
+
+% 21.03.2025
+\StandortHeader{21.03.2025}
+\subsubsection*{Was haben wir heute erreicht?}
+\begin{itemize}
+    \item Lagebesprechung mit Herr Schneider, Theorie-Dokumente für Interviews \& Umfragedesign gesammelt.
+    \begin{itemize}
+        \item Konkretes Feedback zum Arbeitsvertrag.
+    \end{itemize}
+\end{itemize}
+\StandortFooter
+
+% 02.04.2025
+\StandortHeader{02.04.2025}
+\subsubsection*{Was haben wir heute erreicht?}
+\begin{itemize}
+    \item Einen Interviewfragebogen mit \LaTeX\ erstellt, welchen wir nach einer Zusage zum Interview den Lehrpersonen schicken können.
+    \item Am Vertrag gearbeitet, warten nun auf Feedback von Herr Schneider.
+    \item Mehr Recherche um Themen, welche wichtig für das Interview \& die Umfragen sind.
+\end{itemize}
+
+\subsubsection*{Reflexion}
+\begin{itemize}
+    \item Wir haben gemerkt, dass Umfragedesign nicht im Interview vorkommen muss, da das Internet und die Theoriedokumente bereits genügend gute Antworten liefern. D.h. dass wir da mehr Recherche machen als konkret fragen. So ist die Umfrage auch weniger direkt abhängig vom Interview, welches später paralleles Arbeiten an beidem ermöglicht.
+    \item Wir haben gemerkt, dass die Zeit doch schneller vergeht, als wir gemeint hatten, vor allem wenn sonst noch Sachen los sind.
+\end{itemize}
+
+\subsubsection*{Totaler Zeitaufwand}
+Je 3 Lektionen während den vorgesehenen PRO Lektionen + noch etwa 1h Arbeit am Morgen.
+\StandortFooter
+
+% 14.05.2025
+\StandortHeader{14.05.2025}
+\subsubsection*{Programmieren: Funktionierende Features}
+\begin{itemize}
+    \item Full Authentication System (Login, Signup, Forgot/Reset Password).
+    \item Daily Tipps (ohne die eigentlichen Tipps, bis jetzt nur Filler Tipps).
+    \item Agenda, mit:
+    \begin{itemize}
+        \item Color Coding
+        \item Priority
+        \item Repeatable Events
+        \item Natürlich auch Edit und Delete
+        \item Importieren von .ical Dateien
+    \end{itemize}
+\end{itemize}
+
+\subsubsection*{Was noch fehlt}
+Was noch fehlt, welches bis zu der Zwischenpräsentation noch gemacht werden muss ist die Serververbindung. Das heisst, die SQL Datei muss im Cloud gespeichert sein.
+
+\subsubsection*{Zeitaufwand}
+Der gesamte Zeitaufwand bis jetzt für das Programmieren beträgt etwa 18.25h.
+
+\subsubsection*{Reflexion}
+Bis jetzt lief alles perfekt und ich verschwendete relativ wenig Zeit bei Bugs. Hoffentlich geht das so weiter. Ich weiss jetzt auch ziemlich gut wie ich mit Copilot arbeite, und welche Tasks ich diesem geben kann, welches es dann auch gut erledigt.
+
+\subsubsection*{Recherche}
+Wir konnten die beiden Interviews erfolgreich durchführen und haben eine Umfrage gestaltet, welche bald abgeschickt werden kann. Der gesamte Prozess hat aber länger gedauert als bisher angenommen, unter anderem wegen der zusätzlich benötigten Buchrecherche und unter anderem einem Feedback-Prozess für die Umfrage. Dennoch haben die Interviews und die Recherche gute, nutzbare Resultate geliefert.
+
+\subsubsection*{Reflexion Recherche}
+Obwohl der gesamte Recherche-Prozess länger gebraucht hatte als gedacht, haben wir gute Resultate erzielt, welche wir hoffentlich später erfolgreich umsetzen könnten. In der Zukunft sollten wir aber mehr Zeit für Recherche einplanen.
+\StandortFooter
+
+% 05.10.2025
+\StandortHeader{05.10.2025}
+\subsubsection*{Programmieren: Funktionierende Features}
+\begin{itemize}
+    \item Full Authentication System (Login, Signup, Forgot/Reset Password).
+    \item Daily Tipps (ohne die eigentlichen Tipps, bis jetzt nur Filler Tipps).
+    \item Agenda, mit:
+    \begin{itemize}
+        \item Color Coding
+        \item Priority
+        \item Repeatable Events
+        \item Natürlich auch Edit und Delete
+        \item Importieren von .ical Dateien
+        \item All Day, Multi Day Events
+    \end{itemize}
+    \item Lernzeitalgorithmus.
+    \item Settings:
+    \begin{itemize}
+        \item Verschiedene Settings für den LZA.
+        \item Auch Allgemeine Settings (Change Password, Delete Account).
+    \end{itemize}
+    \item Lerntimer.
+    \item Notenorganisation (nicht komplett fertig, aber eine gute Basis).
+    \item Daily Tipps (mit Filler Tipps für den Moment).
+\end{itemize}
+
+\subsubsection*{Was noch fehlt}
+\begin{itemize}
+    \item UI Design.
+    \item Server fix (momentan wird der Server von der Schule geblockt).
+    \item Lerntipps.
+    \item Verschiedene Tests für den Code.
+    \item Notenorganisation ganz fertig programmieren.
+    \item Evtl. noch einen Filter für den .ical Import; schauen, ob man einen solchen Filter überhaupt braucht.
+\end{itemize}
+
+\subsubsection*{Zeitaufwand}
+48.25h (excl. heute, da ich die StaBe am Anfang mache)
+
+\subsubsection*{Reflexion}
+Bis jetzt lief alles immer noch sehr gut. Mit Bugs konnte ich gut umgehen, manchmal mithilfe KI, manchmal auch ohne. Was ich noch gut gelernt habe bis jetzt, ist welche KI ich am besten brauchen kann (verschiedene KIs für verschiedene Nutzen). Es bleibt nicht viel Zeit übrig, aber es bleiben auch nicht viele Features übrig. Der schwierigste Feature, der LZA, ist programmiert, und wahrscheinlich das nächste, das viel Zeit brauchen wird, ist das Design. Am Bericht wird auch gut parallel gearbeitet, sodass das nicht am Schluss zu viel Stress verursacht.
+\StandortFooter
+
+% 10.10.2025
+\StandortHeader{10.10.2025}
+\subsubsection*{Was haben wir bis jetzt erreicht?}
+\begin{itemize}
+    \item Die Interview- und Umfrage-Analyse sind beide fertiggestellt, das heisst sie können nun für die Web-Applikation vollständig gebraucht werden.
+    \begin{itemize}
+        \item Dies markiert das Ende der Recherche-Phase, alles was noch bleibt ist dies im Schriftlichen Kommentar detailliert zu beschreiben.
+    \end{itemize}
+\end{itemize}
+
+\subsubsection*{Reflexion}
+\begin{itemize}
+    \item Die Recherche war, allen in allem, ein voller Erfolg - sie brachte uns viele nützliche Informationen und validierte das Grundkonzept unserer Web-Applikation sehr stark. Somit können wir unseren Entwicklungsprozess auch gut begründen, da dieser tatsächlich
+    \item Dieser Abschluss kommt aber sehr spät - wir haben wohl am Anfang der Arbeit wirklich unterschätzt, wie viel Arbeit dies sein würde, bzw. wir hätten zum Teil auch mehr daran arbeiten können. Diese Arbeit hat sich aber total gelohnt.
+\end{itemize}
+
+\subsubsection*{Totaler Zeitaufwand}
+Siehe Arbeitsjournaleinträge von Simon $\rightarrow$ insgesamt: 67 nachweisbare Stunden (manchmal wurde die Stundenreferenz vergessen)
+\StandortFooter
 
 \end{document}
