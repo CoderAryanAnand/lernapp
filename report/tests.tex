@@ -192,10 +192,10 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
         \item Erstellen Sie ein Ereignis (z.B. "Sporttraining").
         \item Aktivieren Sie die Wiederholungsfunktion und setzen Sie diese auf "Wöchentlich".
         \item Speichern Sie das Ereignis.
-        \item Überprüfen Sie, ob wöchentlich einzelne Instanzen des Ereignisses im Kalender erscheinen.
+        \item Überprüfen Sie, ob wöchentlich einzelne Instanzen des Ereignisses im Kalender erscheinen (für ein ganzes Jahr).
         \item Löschen Sie die Hauptserie (oder eine einzelne Instanz, falls diese Funktion implementiert ist).
     \end{enumerate}
-    \textbf{Erwartetes Resultat:} Die Ereignisse werden wöchentlich generiert. Das Löschen der Serie entfernt alle Instanzen.\\
+    \textbf{Erwartetes Resultat:} Die Ereignisse werden wöchentlich generiert (für ein ganzes Jahr). Das Löschen der Serie entfernt alle Instanzen.\\
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
@@ -204,7 +204,7 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
     \textbf{Schritte:}
     \begin{enumerate}[label=\arabic*.]
         \item Besorgen Sie sich eine einfache, gültige \texttt{.ics}-Datei mit einigen Terminen.
-        \item Nutzen Sie die Importfunktion (der Knopf über die Agenda, welches auch gekennzeichnet ist).
+        \item Nutzen Sie die gekennzeichnete Importfunktion über der Agenda..
         \item Laden Sie die \texttt{.ics}-Datei hoch.
     \end{enumerate}
     \textbf{Erwartetes Resultat:} Die Ereignisse aus der Datei werden erfolgreich in den Kalender importiert und korrekt angezeigt. Die ursprüngliche \texttt{icalendar}-Struktur wird korrekt interpretiert.\\
@@ -261,7 +261,7 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
         \item Führen Sie den Lernalgorithmus aus (z.B. über einen Button "Lernplan erstellen").
         \item Überprüfen Sie die Agenda-Ansicht.
     \end{enumerate}
-    \textbf{Erwartetes Resultat:} Neue Lernblöcke für die "Mathe-Prüfung" erscheinen im Kalender. Die Blöcke werden in den Tagen vor der Prüfung geplant, aber es wird kein Lernblock mit dem "Zahnarzt"-Termin oder in dessen Pufferzeit (30 Min. davor/danach) geplant. Die Gesamtstundenzahl der Blöcke entspricht den Vorgaben aus den Einstellungen für Priorität 1 und.\\
+    \textbf{Erwartetes Resultat:} Neue Lernblöcke für die "Mathe-Prüfung" erscheinen im Kalender. Die Blöcke werden in den Tagen vor der Prüfung geplant, aber es wird kein Lernblock mit dem "Zahnarzt"-Termin oder in dessen Pufferzeit (30 Min. davor/danach) geplant. Die Gesamtstundenzahl der Blöcke entspricht den Vorgaben aus den Einstellungen für Priorität 1.\\
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
