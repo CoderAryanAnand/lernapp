@@ -18,10 +18,10 @@
     
     {% if logged_in %}
         
-        <div class="rounded-none items-center justify-center relative bottom-2 bg-zinc-300 w-screen md:w-1/6" style="height: 90vh">
+        <div class="rounded-none items-center justify-center relative bottom-2 bg-zinc-300 w-screen md:min-w-[200px] md:w-1/6" style="height: 90vh">
             
-            <div class="absolute grid bottom-1 sm:left-[8.3vw] justify-center w-screen sm:w-[1px]">
-                <div class="sm:mx-auto py-2 sm:py-0 my-2 rounded-lg bg-zinc-400 hover:bg-slate-300 w-20 text-center">
+            <div class="absolute grid bottom-1 md:left-[8.3vw] justify-center w-screen md:w-[1px]">
+                <div class="md:mx-auto py-2 md:py-0 my-2 rounded-lg bg-zinc-400 hover:bg-slate-300 w-20 text-center">
                     <a class="px-1.5 font-bold" href="/logout"><button class="hover:italic">Logout</button></a>
                 </div>
             </div>
@@ -43,11 +43,11 @@
         
         </div>
     {% else %}
-        <div class="rounded-none relative bottom-2 bg-zinc-300 w-1/6" style="height: 90vh">
-            <div class="mx-auto py-2 sm:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 ">
+        <div class="rounded-none items-center justify-center relative bottom-2 bg-zinc-300 w-screen md:w-1/6" style="height: 90vh">
+            <div class="mx-auto py-2 sm:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 w-44 ">
                 <a class="px-1.5 font-bold" href="/login"><button class="hover:italic">Login</button></a>
             </div>
-            <div class="mx-auto py-2 sm:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 ">
+            <div class="mx-auto py-2 sm:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 w-44 ">
                 <a class="px-1.5 font-bold" href="/register"><button class="hover:italic">Registrieren</button></a>
             </div>
 
@@ -55,7 +55,7 @@
     {% endif %}
 
     <!-- margin: 20px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; background-color: #f9f9f9; -->
-    <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+    <div class="absolute inset-0 flex bottom-[50px] md:bottom-0 items-end md:items-center justify-center p-4 pointer-events-none">
         <div class="bg-zinc-400 border-4 border-zinc-500 rounded-xl p-4 shadow-lg">
             <h3 class="text-2xl font-bold mb-1">Tip of the Day</h3>
             <p class="">{{ tip }}</p>
