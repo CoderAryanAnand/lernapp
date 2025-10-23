@@ -8,10 +8,11 @@
 </head>
 <body class="bg-zinc-200">
     <div class="bg-zinc-400 relative w-screen" style="height:10vh">
-        <h2 class="mx-4 text-3xl font-extrabold uppercase">Home Page</h2>
+        <h2 class="mx-4 text-4xl font-extrabold">KantiKoala</h2>
         {% if logged_in %}
         <h3 class="mx-4 text-xl font-bold">Welcome, {{ username }}!</h3>
         {% endif %}
+        <a href="/"><input type="image" class="absolute bottom-0 right-1" src="/static/img/KantiKoalaLogoVar2.png" style="height: 10vh"></a>
     </div>
         
     
@@ -38,12 +39,12 @@
             </div>
         </div>
     {% else %}
-        <div class="rounded-none static bg-zinc-300 w-1/4" style="height:90vh">
-            <div class="rounded-lg bg-zinc-400 w-36">
-                <a class="mx-5" href="/login"><button>Login</button></a>
+        <div class="rounded-none relative bottom-2 bg-zinc-300 w-1/6" style="height: 90vh">
+            <div class="mx-4 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 ">
+                <a class="px-1.5 font-bold hover:italic" href="/login"><button>Login</button></a>
             </div>
-            <div class="rounded-lg bg-zinc-400 w-36">
-                <a class="mx-5" href="/register"><button>Register</button></a>
+            <div class="mx-4 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 ">
+                <a class="px-1.5 font-bold hover:italic" href="/register"><button class="hover:italic">Registrieren</button></a>
             </div>
 
         </div>
