@@ -811,7 +811,7 @@ def create_event():
         duration = end_dt - start_dt if end_dt else None
 
         # Logic to create multiple instances for daily, weekly, or monthly recurrence
-        num_instances = 7 if data["recurrence"] == "daily" else 4 if data["recurrence"] == "weekly" else 12
+        num_instances = 365 if data["recurrence"] == "daily" else 52 if data["recurrence"] == "weekly" else 12
         for i in range(num_instances):
             if data["recurrence"] == "daily":
                 offset = timedelta(days=i)

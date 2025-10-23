@@ -251,6 +251,20 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
+\begin{testcase}{TOOL-05}
+    \textbf{Ziel:} Der Lernalgorithmus plant automatisch Lernblöcke für eine bevorstehende Prüfung und respektiert dabei bestehende Termine.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Navigieren Sie zur Agenda (\texttt{/agenda}).
+        \item Erstellen Sie eine Prüfung (z.B. "Mathe-Prüfung") mit Priorität 1, die in 10 Tagen stattfindet.
+        \item Erstellen Sie einen weiteren, regulären Termin (z.B. "Zahnarzt") an einem Tag innerhalb des Lernfensters (z.B. in 8 Tagen von 14:00 bis 15:00 Uhr).
+        \item Führen Sie den Lernalgorithmus aus (z.B. über einen Button "Lernplan erstellen").
+        \item Überprüfen Sie die Agenda-Ansicht.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Neue Lernblöcke für die "Mathe-Prüfung" erscheinen im Kalender. Die Blöcke werden in den Tagen vor der Prüfung geplant, aber es wird kein Lernblock mit dem "Zahnarzt"-Termin oder in dessen Pufferzeit (30 Min. davor/danach) geplant. Die Gesamtstundenzahl der Blöcke entspricht den Vorgaben aus den Einstellungen für Priorität 1 und.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
 \subsection{Benutzerfreundlichkeit und Ästhetik (Usability \& Aesthetics)}
 
 \begin{testcase}{UX-01}
