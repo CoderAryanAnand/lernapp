@@ -17,10 +17,12 @@
     "url": "https://github.com/CoderAryanAnand/lernapp/issues"
   },
   "homepage": "https://github.com/CoderAryanAnand/lernapp#readme",
-  "devDependencies": {
-    "tailwindcss": "^4.1.15"
-  },
   "dependencies": {
     "dotenv": "^17.2.3"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.15",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.18"
   }
 }
