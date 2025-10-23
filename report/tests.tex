@@ -1,0 +1,279 @@
+\documentclass[11pt, a4paper]{article}
+
+% --- UNIVERSAL PREAMBLE BLOCK ---
+\usepackage[a4paper, top=2.5cm, bottom=2.5cm, left=2cm, right=2cm]{geometry}
+
+% Main language is German
+\usepackage[german, provide=*]{babel}
+
+\babelprovide[import, onchar=ids fonts]{german}
+\babelprovide[import, onchar=ids fonts]{english}
+
+% Set default/Latin font to Sans Serif in the main (rm) slot
+
+% Fix lists for non-English main language
+\usepackage{enumitem}
+
+% Packages for structure and tables
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{booktabs}
+\usepackage{xcolor} % For colored status text
+\usepackage{hyperref} % Keep this last
+
+% ---------------------------------
+
+% Define colors for status
+\definecolor{passcolor}{rgb}{0.1, 0.6, 0.1}
+\definecolor{failcolor}{rgb}{0.8, 0.1, 0.1}
+
+% Define a new environment for Test Cases
+\newenvironment{testcase}[1]{%
+    \par\vspace{1em}\noindent\begin{minipage}{\linewidth}
+    \textbf{Testfall ID:} #1 \\
+    \vspace{0.2em}
+}{\end{minipage}\par\vspace{1em}}
+
+\title{\textbf{Manuelle Testspezifikation: KantiKoala Studienhilfsapp}}
+\author{Dokumentation zur Maturaarbeit}
+\date{11. November 2025}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+
+\section{Einführung}
+Dieses Dokument dient als Protokoll für die manuelle Qualitätssicherung (Quality Assurance, QA) der KantiKoala Webanwendung. Der Testplan ist darauf ausgerichtet, die Funktionalität, Benutzerfreundlichkeit und Ästhetik des Produkts gemäß den im Vertrag festgelegten \textbf{Bewertungskriterien} zu überprüfen.
+
+\section{Abdeckung der Bewertungskriterien (Produkt)}
+Die manuelle Testspezifikation zielt primär auf die Überprüfung der Kriterien in Abschnitt 2a (Qualität der Umsetzung) und 2c (Ästhetik) des Maturaarbeitsvertrags ab.
+
+\begin{itemize}
+    \item \textbf{Funktionalität (Vollständigkeit und Korrektheit)}: Überprüfung, ob alle implementierten Features (Noten, Kalender, Timer, Login) wie in der Spezifikation erwartet funktionieren.
+    \item \textbf{Benutzerfreundlichkeit (Ergonomie, Logik, Verständlichkeit)}: Fokus auf intuitive Navigation, klare Fehlermeldungen und logische Abläufe.
+    \item \textbf{Qualitätskontrolle (Tests)}: Dieses Dokument dient als Basis zur Dokumentation der durchgeführten Tests.
+    \item \textbf{Ästhetik (Gestaltung, Layout, Typografie)}: Visuelle Überprüfung der Konsistenz, Responsive Design und ansprechenden Darstellung auf verschiedenen Geräten.
+\end{itemize}
+
+\section{Manuelle Testfälle (Testprotokoll)}
+
+Die Testfälle sind nach funktionalen Bereichen gruppiert.
+
+\subsection{Authentifizierung und Benutzerverwaltung}
+
+\begin{testcase}{AUTH-01}
+    \textbf{Ziel:} Erfolgreiche Registrierung eines neuen Benutzers und anschliessender Login.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Navigieren Sie zur Registrierungsseite.
+        \item Geben Sie eine gültige E-Mail-Adresse, einen Benutzernamen und ein sicheres Passwort ein.
+        \item Klicken Sie auf den Registrierungsbutton.
+        \item Melden Sie sich mit den neuen Zugangsdaten an.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Registrierung wird bestätigt, Benutzer wird zur Login-Seite weitergeleitet. Login ist erfolgreich, und der Benutzer wird zum Dashboard/Home-Screen umgeleitet.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{AUTH-02}
+    \textbf{Ziel:} Korrekte Handhabung von ungültigen Login-Versuchen.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Versuchen Sie sich mit einem unbekannten Benutzernamen und einem Passwort anzumelden.
+        \item Versuchen Sie sich mit korrektem Benutzernamen, aber falschem Passwort anzumelden.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} In beiden Fällen wird eine klare, nicht diskriminierende Fehlermeldung angezeigt (z.B. "Ungültiger Benutzername oder falsches Passwort").\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{AUTH-03}
+    \textbf{Ziel:} Abmelden (Logout) funktioniert korrekt.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Melden Sie sich erfolgreich an.
+        \item Klicken Sie auf den "Abmelden"-Link oder -Button.
+        \item Versuchen Sie, über die URL-Eingabe auf eine geschützte Seite (z.B. \texttt{/agenda}) zuzugreifen.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Der Benutzer wird sofort zur Login-Seite weitergeleitet. Der Zugriff auf geschützte Seiten ist nicht mehr möglich, sondern wird zur Login-Seite umgeleitet.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{AUTH-04}
+    \textbf{Ziel:} Ein Benutzer kann seine Profileinstellungen (z.B. Prioritätseinstellungen für die Agenda) ändern.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Melden Sie sich an und navigieren Sie zur Einstellungsseite (\texttt{/settings}).
+        \item Ändern Sie die Prioritätseinstellungen für die Agenda.
+        \item Speichern Sie die Änderungen.
+        \item Überprüfen Sie, ob die neuen Prioritätseinstellungen in der Agenda beim Erstellen eines neuen Termins korrekt wiedergegeben werden.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Die Änderungen werden erfolgreich gespeichert, und die neuen Prioritätseinstellungen werden in der Agenda beim Erstellen eines neuen Termins korrekt wiedergegeben.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{AUTH-05}
+    \textbf{Ziel:} Ein eingeloggter Benutzer kann sein Passwort sicher ändern.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Navigieren Sie zur Einstellungsseite und dort zum Abschnitt "Passwort ändern".
+        \item Geben Sie das aktuelle Passwort korrekt ein.
+        \item Geben Sie ein neues, sicheres Passwort ein und bestätigen Sie es.
+        \item Melden Sie sich ab und versuchen Sie, sich mit dem neuen Passwort anzumelden.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Die Passwortänderung wird bestätigt. Der Login mit dem alten Passwort schlägt fehl, während der Login mit dem neuen Passwort erfolgreich ist.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{AUTH-06}
+    \textbf{Ziel:} Ein Benutzer kann sein Passwort über die "Passwort vergessen"-Funktion zurücksetzen.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Navigieren Sie zur Login-Seite und klicken Sie auf "Passwort vergessen?".
+        \item Geben Sie die mit dem Konto verknüpfte E-Mail-Adresse ein.
+        \item Folgen Sie dem Link in der E-Mail zum Zurücksetzen des Passworts.
+        \item Geben Sie ein neues Passwort ein.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Der Benutzer erhält eine E-Mail mit einem gültigen Link. Nach Eingabe eines neuen Passworts kann sich der Benutzer erfolgreich damit anmelden.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\subsection{Notenverwaltung (Grade Management)}
+
+\begin{testcase}{GRADE-01}
+    \textbf{Ziel:} Korrekte Berechnung des gewichteten Durchschnitts.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Navigieren Sie zur Notenverwaltungsseite (\texttt{/grades}).
+        \item Erstellen Sie ein neues Fach (z.B. "Mathematik").
+        \item Fügen Sie folgende Noten hinzu:
+            \begin{itemize}
+                \item Note 1: Wert 5.0, Gewichtung 1 (z.B. Hausaufgaben)
+                \item Note 2: Wert 4.0, Gewichtung 2 (z.B. Prüfung)
+            \end{itemize}
+        \item Fügen Sie eine Note hinzu, die NICHT in den Durchschnitt zählt (setzen Sie die Gewichtung auf 0 oder das 'counts'-Flag auf False).
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Der gewichtete Durchschnitt für das Fach sollte korrekt berechnet werden: $$ \frac{(5.0 \cdot 1) + (4.0 \cdot 2)}{1+2} = \frac{13}{3} \approx 4.33 $$ Nicht zählende Noten dürfen die Berechnung nicht beeinflussen.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{GRADE-02}
+    \textbf{Ziel:} CRUD-Funktionalität für Noten, Fächer und Semester.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item \textbf{Erstellen:} Fügen Sie ein Semester, ein Fach in diesem Semester und drei Noten zum Fach hinzu.
+        \item \textbf{Lesen/Anzeigen:} Überprüfen Sie, ob alle hinzugefügten Daten korrekt auf der Übersichtsseite angezeigt werden.
+        \item \textbf{Aktualisieren:} Bearbeiten Sie den Wert einer Note und den Namen eines Fachs. Überprüfen Sie, ob die Änderung korrekt gespeichert wird und die Durchschnittsberechnung sich anpasst (siehe GRADE-01).
+        \item \textbf{Löschen:} Löschen Sie eine einzelne Note. Löschen Sie das gesamte Semester.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Alle Operationen (Erstellen, Lesen, Aktualisieren, Löschen) sind erfolgreich und die Datenkonsistenz bleibt erhalten.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\subsection{Kalender und Agenda}
+
+\begin{testcase}{CAL-01}
+    \textbf{Ziel:} Erstellung und Verwaltung eines Einzelereignisses.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Navigieren Sie zum Kalender (\texttt{/kalender}).
+        \item Erstellen Sie ein neues Ereignis mit Titel, Priorität, Datum, Start- und Endzeit.
+        \item Speichern Sie das Ereignis.
+        \item Überprüfen Sie die korrekte Darstellung im Kalender.
+        \item Bearbeiten Sie das Ereignis (z.B. die Zeit).
+        \item Löschen Sie das Ereignis.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Das Ereignis wird korrekt gespeichert, angezeigt, bearbeitet und gelöscht.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{CAL-02}
+    \textbf{Ziel:} Erstellung und Verwaltung von wiederkehrenden Ereignissen (Recurrence).\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Erstellen Sie ein Ereignis (z.B. "Sporttraining").
+        \item Aktivieren Sie die Wiederholungsfunktion und setzen Sie diese auf "Wöchentlich".
+        \item Speichern Sie das Ereignis.
+        \item Überprüfen Sie, ob wöchentlich einzelne Instanzen des Ereignisses im Kalender erscheinen.
+        \item Löschen Sie die Hauptserie (oder eine einzelne Instanz, falls diese Funktion implementiert ist).
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Die Ereignisse werden wöchentlich generiert. Das Löschen der Serie entfernt alle Instanzen.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{CAL-03}
+    \textbf{Ziel:} Import von ICS-Dateien (z.B. Stundenplan).\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Besorgen Sie sich eine einfache, gültige \texttt{.ics}-Datei mit einigen Terminen.
+        \item Nutzen Sie die Importfunktion (der Knopf über die Agenda, welches auch gekennzeichnet ist).
+        \item Laden Sie die \texttt{.ics}-Datei hoch.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Die Ereignisse aus der Datei werden erfolgreich in den Kalender importiert und korrekt angezeigt. Die ursprüngliche \texttt{icalendar}-Struktur wird korrekt interpretiert.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\subsection{Lern-Tools (Timer und Tipps)}
+
+\begin{testcase}{TOOL-01}
+    \textbf{Ziel:} Funktionalität des Pomodoro-Timers (\texttt{/lerntimer}).\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Navigieren Sie zur Lerntimer-Seite.
+        \item Starten Sie den Timer für die Arbeitsphase (z.B. 25 Minuten).
+        \item Vergewissern Sie sich, dass der Countdown korrekt läuft.
+        \item Pausieren und setzen Sie den Timer fort.
+        \item Lassen Sie den Timer bis zum Ende laufen.
+        \item Überprüfen Sie, ob ein akustisches oder visuelles Signal das Ende der Arbeitszeit anzeigt und die Pause beginnt.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Der Timer funktioniert zuverlässig, kann pausiert/fortgesetzt werden, und signalisiert den Phasenwechsel.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{TOOL-02}
+    \textbf{Ziel:} Korrekte Anzeige der Lerntipps (\texttt{/lerntipps}).\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Navigieren Sie zur Lerntipps-Seite.
+        \item Überprüfen Sie, ob alle Tipps, die in der zugrunde liegenden JSON-Datei (\texttt{tips/learn\_tips.json}) definiert sind, korrekt und leserlich dargestellt werden.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Alle Lerntipps werden mit ihren Titeln und Beschreibungen vollständig und optisch ansprechend angezeigt.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{TOOL-03}
+    \textbf{Ziel:} Die Funktion "Tipp des Tages" zeigt dynamische Inhalte auf dem Dashboard an.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Melden Sie sich an, um das Dashboard anzuzeigen.
+        \item Notieren Sie den angezeigten "Tipp des Tages".
+        \item Melden Sie sich am nächsten Tag an.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Auf dem Dashboard wird ein Lerntipp angezeigt. Der Tipp ändert sich an verschiedenen Tagen.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\subsection{Benutzerfreundlichkeit und Ästhetik (Usability \& Aesthetics)}
+
+\begin{testcase}{UX-01}
+    \textbf{Ziel:} Responsive Design und Barrierefreiheit der Navigation.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Testen Sie die Anwendung auf einem Desktop-Browser und einem mobilen Emulator/Gerät (oder verkleinern Sie das Browserfenster).
+        \item Überprüfen Sie, ob alle Elemente (Navigation, Formulare, Tabellen) sich an die Bildschirmgröße anpassen (keine horizontalen Scrollbalken).
+        \item Überprüfen Sie, ob die primäre Navigation auf dem Mobilgerät über ein Hamburger-Menü oder eine andere mobilefreundliche Lösung erreichbar ist.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Die App ist auf allen Geräten vollständig funktional und ästhetisch ansprechend (\textbf{Ästhetik}, \textbf{Benutzerfreundlichkeit}).\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{UX-02}
+    \textbf{Ziel:} Visuelle Konsistenz und Farbkonzept.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Navigieren Sie durch alle Hauptseiten (Home, Grades, Calendar, Timer, Tips).
+        \item Achten Sie auf die Einheitlichkeit von Farben, Schriftarten (Typografie) und Button-Stilen.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Die visuelle Gestaltung ist über die gesamte App hinweg konsistent und entspricht einem definierten Designkonzept (\textbf{Ästhetik}).\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\end{document}
