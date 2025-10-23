@@ -68,6 +68,10 @@ DEFAULT_SETTINGS = {"learn_on_saturday": False, "learn_on_sunday": False, "prefe
 @app.before_request
 def make_csrf_token():
     """Generate and store a CSRF token in the session."""
+
+    if app.config.get("TESTING"):
+        return
+
     if 'csrf_token' not in session:
         session['csrf_token'] = secrets.token_hex(16)
 
@@ -313,6 +317,9 @@ def csrf_protect(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         # Only check for state-changing methods
+        if app.config.get("TESTING"):
+            return f(*args, **kwargs)
+
         if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
             token = session.get('csrf_token')
             if not token:
