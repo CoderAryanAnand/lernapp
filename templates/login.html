@@ -7,8 +7,12 @@
     <link rel="stylesheet" href="./static/output.css">
 </head>
 <body class="bg-zinc-200">
+    <div class="flex flex-row w-screen h-[vh10]items-center justify-center">
+        <a href="/"><input type="image" class="relative top-0" src="/static/img/KantiKoalaLogoVar2.png" style="height: 10vh"></a>
+        <p class="absolute top-[9vh] text-right text-md font-bold">KantiKoala, 2025</p>
+    </div>
     <div class="grid items-center justify-center h-screen w-screen">
-        <div class="rounded-2xl bg-zinc-400 p-4 w-[33vw] min-w-[350px]">
+        <div class="rounded-2xl bg-zinc-400 p-4 w-[33vw] min-w-[350px] place-self-center">
             <!-- <div class="grid justify-center pb-4"><h2 class="text-2xl font-bold">Login</h2></div> -->
             <form action="/login" method="post">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
@@ -23,7 +27,7 @@
                     <input class="rounded-md right-0 px-2 w-[200px] bg-zinc-300 " type="password" id="password" name="password" required>
                 </div>
                 <br>
-                <div class="grid justify-center pt-4"><button class="text-2xl font-bold hover:italic" type="submit">Login</button></div>
+                <div class="grid justify-center pt-4"><button class="text-2xl p-1 px-3 rounded-md bg-zinc-300 sm:bg-transparent font-bold hover:italic" type="submit">Login</button></div>
             </form>
         </div>
         <div>
