@@ -181,7 +181,7 @@ class Event(db.Model):
     user_id = db.Column(
         db.Integer, db.ForeignKey("user.id", onupdate="CASCADE"), nullable=False
     )
-    title = db.Column(db.String(100), nullable=False)
+    title = db.Column(db.String(500), nullable=False)
     start = db.Column(db.String(50), nullable=False)  # ISO format datetime
     end = db.Column(db.String(50), nullable=True) # ISO format datetime
     color = db.Column(db.String(7), nullable=False)
@@ -1482,7 +1482,6 @@ def agenda():
 
     return render_template("agenda.html", priority_levels=priority_levels)
 
-import logging
 
 @app.route("/api/import-ics", methods=["POST"])
 @csrf_protect
@@ -1532,7 +1531,6 @@ def import_ics():
         db.session.commit()
         return jsonify({"message": "Events imported successfully"}), 200
     except Exception as e:
-        logging.exception("Error importing .ics file")
         return jsonify({"message": f"Failed to import .ics file: {str(e)}"}), 500
 
 
