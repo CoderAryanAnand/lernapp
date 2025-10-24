@@ -13,6 +13,7 @@ import os
 import json
 import resend
 import secrets
+from flask_migrate import Migrate
 # Outdated gmail version
 # from flask_mailman import Mail, EmailMessage
 
@@ -53,6 +54,7 @@ FROM_EMAIL = "KantiKoala <noreply@kantikoala.app>"
 # ---------------------- Initialize Extensions ----------------------
 
 db = SQLAlchemy(app) # Initializes the SQLAlchemy ORM
+migrate = Migrate(app, db) # Initializes Flask-Migrate for database migrations
 bcrypt = Bcrypt(app) # Initializes Bcrypt for password hashing
 # mail = Mail(app) # Initializes the mail extension
 
