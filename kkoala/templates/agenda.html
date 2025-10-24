@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ session.csrf_token }}">
+    <title>Agenda</title>
+    <!-- FullCalendar JS -->
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+
+    <!-- Custom CSS -->
+    <style>
+        /* General styling for the page */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #f4f4f9;
+        }
+
+        /* Styling for the calendar container */
+        #calendar-container {
+            width: 90%; /* Slightly larger width */
+            max-width: 1200px; /* Increased max width */
+            margin: 20px auto;
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        /* Ensure the calendar takes up the full height */
+        #calendar {
+            height: 100%;
+        }
+
+        /* Styling for the page title */
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .color-info {
+            cursor: pointer;
+            margin-left: 4px;
+            font-size: 1.1em;
+            vertical-align: middle;
+        }
+
+        input[type="color"] {
+            vertical-align: middle;
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Container for the calendar -->
+    <div id="calendar-container">
+        <h1>Your Weekly Agenda</h1>
+        <!-- Import .ics Button -->
+        <button id="import-ics-button" onclick="document.getElementById('ics-file-input').click()">Import .ics File</button>
+        <input type="file" id="ics-file-input" accept=".ics" style="display: none;" onchange="importICSFile(event)">
+        <div id="calendar"></div>
+        <button id="run-scheduler-btn">Run Learning Time Algorithm</button>
+
+        <div id="scheduler-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid #ccc; z-index: 1000; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            <h2>Scheduling Results</h2>
+            <div id="scheduler-message">
+                </div>
+            <button onclick="document.getElementById('scheduler-popup').style.display='none'">Close</button>
+        </div>
+    </div>
+
+    <!-- Popup for editing or deleting an event -->
+    <div id="event-popup" style="display: none; position: fixed; top: 20%; left: 50%; transform: translate(-50%, -20%); background: white; padding: 20px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); z-index: 99999;">
+        <h3>Edit Event</h3>
+        <form id="edit-event-form">
+            <!-- Hidden input to store the event ID -->
+            <input type="hidden" id="event-id" name="id">
+            <input type="hidden" id="recurrence-id" name="recurrence-id"> <!-- Hidden input for recurrence -->
+            <label for="event-title">Title:</label>
+            <input type="text" id="event-title" name="title" required><br>
+            <label for="event-color">Color:</label>
+            <input type="color" id="event-color" name="color">
+            <span class="color-info" title="The color will only be used if the priority is level 4.">ℹ️</span><br>
+            <label for="edit-event-priority">Priority:</label>
+            <select id="edit-event-priority" name="priority">
+                {% for prio in priority_levels %}
+                <option value="{{ prio.priority_level }}">{{ prio.priority_level }}</option>
+                {% endfor %}
+                <option value="{{ priority_levels[-1].priority_level + 1 }}">{{ priority_levels[-1].priority_level + 1 }} (Not learning related)</option>
+            </select><br>
+            <label for="event-start">Start:</label>
+            <input type="datetime-local" id="event-start" name="start" required><br>
+            <label for="event-end">End:</label>
+            <input type="datetime-local" id="event-end" name="end"><br>
+            <label for="edit-all-day">All Day:</label>
+            <input type="checkbox" id="edit-all-day" name="all_day"><br>
+            <label for="edit-recurrence">Edit Recurrence:</label>
+            <select id="edit-recurrence" name="edit-recurrence">
+                <option value="this">Only This Event</option>
+                <option value="all">All Recurring Events</option>
+            </select><br>
+            <button type="submit">Save</button>
+            <button type="button" onclick="deleteEvent()">Delete</button>
+            <button type="button" onclick="deleteRecurringEvents()">Delete Recurring Events</button>
+            <button type="button" onclick="closePopup('event-popup')">Cancel</button>
+        </form>
+    </div>
+
+    <!-- Popup for creating a new event -->
+    <div id="create-popup" style="display: none; position: fixed; top: 20%; left: 50%; transform: translate(-50%, -20%); background: white; padding: 20px; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); z-index: 99999;">
+        <h3>Create Event</h3>
+        <form id="create-event-form">
+            <label for="create-title">Title:</label>
+            <input type="text" id="create-title" name="title" required><br>
+            <label for="create-color">Color:</label>
+            <input type="color" id="create-color" name="color">
+            <span class="color-info" title="The color will only be used if the priority is level 4.">ℹ️</span><br>
+            <label for="create-event-priority">Priority:</label>
+            <select id="create-event-priority" name="priority">
+                {% for prio in priority_levels %}
+                <option value="{{ prio.priority_level }}">{{ prio.priority_level }}</option>
+                {% endfor %}
+                <option value="{{ priority_levels[-1].priority_level + 1 }}">{{ priority_levels[-1].priority_level + 1 }} (Not learning related)</option>
+            </select><br>
+            <label for="create-start">Start:</label>
+            <input type="datetime-local" id="create-start" name="start" required><br>
+            <label for="create-end">End:</label>
+            <input type="datetime-local" id="create-end" name="end"><br>
+            <label for="recurrence">Recurrence:</label>
+            <select id="recurrence" name="recurrence">
+                <option value="none">None</option>
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="monthly">Monthly</option>
+            </select><br>
+            <label for="all-day">All Day:</label>
+            <input type="checkbox" id="all-day" name="all_day"><br>
+            <button type="submit">Create</button>
+            <button type="button" onclick="closePopup('create-popup')">Cancel</button>
+        </form>
+    </div>
+
+    <!-- FullCalendar Initialization -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const calendarEl = document.getElementById('calendar'); // Reference to the calendar container
+            const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek', // Default view is a weekly grid
+                headerToolbar: {
+                    left: 'prev,next today', // Navigation buttons
+                    center: 'title', // Calendar title
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay' // View options
+                },
+                locale: 'en-gb', // Set locale to English
+                height: 'auto', // Automatically adjust height to fit content
+                slotLabelFormat: { // Format for time slots (24-hour format)
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                },
+                eventTimeFormat: { // Format for event times (24-hour format)
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false
+                },
+                events: async function (fetchInfo, successCallback, failureCallback) {
+                    // Fetch events from the server
+                    try {
+                        const response = await fetch('/api/events');
+                        const events = await response.json();
+                        successCallback(events); // Pass events to FullCalendar
+                    } catch (error) {
+                        console.error('Error fetching events:', error);
+                        failureCallback(error); // Handle errors
+                    }
+                },
+                eventClick: function (info) {
+                    // Open the edit/delete popup when an event is clicked
+                    openEventPopup(info.event);
+                },
+                dateClick: function (info) {
+                    // Open the create event popup when a date is clicked
+                    const endTime = new Date(info.date);
+                    const timezoneOffset = endTime.getTimezoneOffset() / 60; // Get timezone offset in hours
+                    endTime.setHours(endTime.getHours() + 1 - timezoneOffset); // Adjust end time to be 1 hour later
+                    openCreatePopup(info.dateStr.slice(0, 16), endTime.toISOString().slice(0, 16)); // Format date for input
+                }
+            });
+            calendar.render(); // Render the calendar
+
+            // Function to open the edit/delete popup
+            function openEventPopup(event) {
+                const popup = document.getElementById('event-popup');
+                document.getElementById('event-id').value = event.id; // Set event ID
+                document.getElementById('recurrence-id').value = event.extendedProps.recurrence_id; // Set recurrence ID
+                document.getElementById('edit-event-priority').value = event.extendedProps.priority; // Set priority
+                document.getElementById('event-title').value = event.title; // Set event title
+                document.getElementById('event-color').value = event.backgroundColor; // Set event color
+
+                // Convert UTC date to local date string for input[type="datetime-local"]
+                function toLocalInputValue(date) {
+                    if (!date) return '';
+                    const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+                    return local.toISOString().slice(0, 16);
+                }
+                document.getElementById('event-start').value = toLocalInputValue(event.start);
+                document.getElementById('event-end').value = event.end ? toLocalInputValue(event.end) : '';
+
+                document.getElementById('edit-all-day').checked = !!event.allDay; // Set all-day checkbox
+                popup.style.display = 'block'; // Show the popup
+            }
+
+            // Function to open the create event popup
+            function openCreatePopup(dateStr, endTime) {
+                const popup = document.getElementById('create-popup');
+                document.getElementById('create-start').value = dateStr; // Set start time
+                document.getElementById('create-end').value = endTime; // Set end time
+                document.getElementById('all-day').checked = false; // Uncheck all-day checkbox
+                popup.style.display = 'block'; // Show the popup
+            }
+        });
+    </script>
+
+    <script>
+        // Close popup function
+        function closePopup(popupId) {
+            document.getElementById(popupId).style.display = 'none'; // Hide the popup
+        }
+
+        // Delete event function
+        async function deleteEvent() {
+            const eventId = document.getElementById('event-id').value; // Get event ID
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            await fetch(`/api/events/${eventId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-Token': csrfToken
+                }
+            }); // Send DELETE request to the server
+            location.reload(); // Reload the page to reflect changes
+        }
+
+        // Delete recurring events function
+        async function deleteRecurringEvents() {
+            const recurrenceId = document.getElementById('recurrence-id').value; // Get event ID
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            await fetch(`/api/events/recurring/${recurrenceId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-Token': csrfToken
+                }
+            }); // Send DELETE request to the server
+            location.reload(); // Reload the page to reflect changes
+        }
+
+        // Handle form submissions for editing events
+        document.getElementById('edit-event-form').addEventListener('submit', async function (e) {
+            e.preventDefault(); // Prevent default form submission
+            const formData = new FormData(e.target); // Get form data
+            formData.set('all_day', document.getElementById('edit-all-day').checked);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            await fetch('/api/events', {
+                method: 'PUT', // Send PUT request to update the event
+                body: JSON.stringify(Object.fromEntries(formData)), // Convert form data to JSON
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken
+                }
+            });
+            location.reload(); // Reload the page to reflect changes
+        });
+
+        // Handle form submissions for creating events
+        document.getElementById('create-event-form').addEventListener('submit', async function (e) {
+            e.preventDefault(); // Prevent default form submission
+            const formData = new FormData(e.target); // Get form data
+            formData.set('all_day', document.getElementById('all-day').checked);
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            await fetch('/api/events', {
+                method: 'POST', // Send POST request to create a new event
+                body: JSON.stringify(Object.fromEntries(formData)), // Convert form data to JSON
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken
+                }
+            });
+            location.reload(); // Reload the page to reflect changes
+        });
+
+        // Function to handle .ics file import
+        async function importICSFile(event) {
+            const file = event.target.files[0]; // Get the selected file
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function (e) {
+                const icsContent = e.target.result; // Get the file content as text
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+                // Send the .ics content to the backend for processing
+                try {
+                    const response = await fetch('/api/import-ics', {
+                        method: 'POST',
+                        body: JSON.stringify({ ics: icsContent }),
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-Token': csrfToken
+                        }
+                    });
+
+                    if (response.ok) {
+                        alert('Events imported successfully!');
+                        location.reload(); // Reload the page to reflect the imported events
+                    } else {
+                        alert('Failed to import events. Please check the .ics file.');
+                    }
+                } catch (error) {
+                    console.error('Error importing .ics file:', error);
+                    alert('An error occurred while importing the .ics file.');
+                }
+            };
+
+            reader.readAsText(file); // Read the file as text
+        }
+        // JavaScript file or <script> block
+
+        document.getElementById('run-scheduler-btn').addEventListener('click', function() {
+            // Show a loading indicator if desired
+            this.disabled = true; 
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            
+            fetch('/api/run-learning-algorithm', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-Token': csrfToken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    displaySchedulingPopup(data.summary, data.results);
+                } else {
+                    alert('Error during scheduling: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => {
+                console.error('Fetch error:', error);
+                alert('A network error occurred.');
+            })
+            .finally(() => {
+                document.getElementById('run-scheduler-btn').disabled = false;
+            });
+        });
+
+
+        function displaySchedulingPopup(summary, results) {
+            const messageContainer = document.getElementById('scheduler-message');
+            let messageHTML = '';
+
+            // --- 1. Build Summary Section ---
+            messageHTML += `<h3>Global Summary:</h3>`;
+            messageHTML += `<p>Exams Processed: <strong>${summary.exams_processed}</strong></p>`;
+            messageHTML += `<p>Total New Blocks Added: <strong>${summary.blocks_added}</strong></p>`;
+            messageHTML += `<p>Total Hours Scheduled: <strong>${summary.hours_added.toFixed(2)} hours</strong></p>`;
+            
+            messageHTML += `<hr style="margin: 10px 0;">`;
+
+            // --- 2. Build Exam-Specific Results Section ---
+            messageHTML += `<h3>Exam Status:</h3>`;
+
+            for (const examTitle in results) {
+                const [success, details] = results[examTitle];
+                const color = success ? 'green' : 'red';
+                const icon = success ? '✅' : '❌';
+                
+                messageHTML += `
+                    <p style="color: ${color}; margin: 5px 0;">
+                        ${icon} <strong>${examTitle}:</strong> ${details}
+                    </p>
+                `;
+            }
+
+            // --- 3. Inject HTML and Display Popup ---
+            messageContainer.innerHTML = messageHTML;
+            document.getElementById('scheduler-popup').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

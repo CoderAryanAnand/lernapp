@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <link rel="stylesheet" href="./static/output.css">
+</head>
+<body class="bg-zinc-50">
+    <div class="bg-zinc-400 relative w-screen min-h-20" style="height:10vh">
+        <div class="w-screen">
+            <h2 class="mx-auto text-4xl font-extrabold">Einstellungen</h2>
+            <a href="/"><input type="image" class="absolute bottom-0 right-1" src="/static/img/KantiKoalaLogoVar2.png" style="height: 10vh"></a>
+            <p class="absolute right-[10vh] top-2 text-right text-sm font-bold">KantiKoala, 2025</p>
+        </div>
+            
+        
+        
+    </div>
+    <h3>General</h3>
+    <a id="chg_pw" href="/settings/change_password"><button>Change Password</button></a>
+    
+    <!-- Changed delete link to a secure form -->
+    <form action="/settings/delete_account" method="post" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');" style="display: inline;">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        <button type="submit">Delete Account</button>
+    </form>
+
+    <h3>Agenda Settings</h3>
+    <!-- Form to select default priority colors, to select if Saturday and/or Sunday can be used for learning (for the algorithm), and preferred learning time in a day -->
+    <form method="post">
+        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+        <!-- General settings ... -->
+        <input type="checkbox" id="saturday" name="learn_on_saturday" {% if learn_on_saturday %}checked{% endif %}>
+        <label for="saturday">Include Saturday for learning</label><br><br>
+        <input type="checkbox" id="sunday" name="learn_on_sunday" {% if learn_on_sunday %}checked{% endif %}>
+        <label for="sunday">Include Sunday for learning</label><br><br>
+        <label for="learning_time">Preferred daily learning start time:</label>
+        <input type="time" id="learning_time" name="learning_time" value="{{ preferred_learning_time }}"><br><br>
+        <h4>Priority Settings</h4>
+        {% for prio in priority_settings %}
+            <fieldset>
+                <legend>Priority {{ prio.priority_level }}</legend>
+                <label>Color: <input type="color" name="priority{{ prio.priority_level }}_color" value="{{ prio.color }}"></label><br>
+                <label>Days to learn: <input type="number" name="priority{{ prio.priority_level }}_days" value="{{ prio.days_to_learn }}"></label><br>
+                <label>Max hours per day: <input type="number" step="0.1" name="priority{{ prio.priority_level }}_max_hours_per_day" value="{{ prio.max_hours_per_day }}"></label><br>
+                <label>Total hours to learn: <input type="number" step="0.1" name="priority{{ prio.priority_level }}_total_hours_to_learn" value="{{ prio.total_hours_to_learn }}"></label><br>
+                <button type="submit" name="remove_priority" value="{{ prio.priority_level }}">Remove</button>
+            </fieldset>
+            <br>
+        {% endfor %}
+        <button type="submit" name="add_priority" value="1">Add Priority Level</button>
+        <input type="submit" value="Save Settings">
+    </form>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Pomodoro Timer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f7f7f7;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            margin-top: 60px;
+            background: #fff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+        #timer {
+            font-size: 3em;
+            margin: 20px 0;
+            color: #e53935;
+        }
+        .controls button {
+            font-size: 1.1em;
+            padding: 10px 20px;
+            margin: 0 8px;
+            border: none;
+            border-radius: 6px;
+            background: #e53935;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .controls button:hover {
+            background: #b71c1c;
+        }
+        #status {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        .settings {
+            margin-top: 20px;
+        }
+        .settings label {
+            margin: 0 10px;
+        }
+        .settings input {
+            width: 40px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pomodoro Timer</h1>
+        <div id="status">Focus</div>
+        <div id="timer">25:00</div>
+        <div class="controls">
+            <button onclick="startTimer()">Start</button>
+            <button onclick="pauseTimer()">Pause</button>
+            <button onclick="resetTimer()">Reset</button>
+        </div>
+        <div class="settings">
+            <label>Work: <input type="number" id="work-minutes" value="25" min="1"> min</label>
+            <label>Break: <input type="number" id="break-minutes" value="5" min="1"> min</label>
+            <label>Long Break: <input type="number" id="longbreak-minutes" value="15" min="1"> min</label>
+            <label>Rounds: <input type="number" id="rounds" value="4" min="1"></label>
+        </div>
+        <div id="round-info" style="margin-top:10px; color:#555;"></div>
+    </div>
+    <script>
+        let timer;
+        let isRunning = false;
+        let isWork = true;
+        let isLongBreak = false;
+        let workMinutes = 25;
+        let breakMinutes = 5;
+        let longBreakMinutes = 15;
+        let rounds = 4;
+        let currentRound = 1;
+        let secondsLeft = workMinutes * 60;
+
+        function updateSettings() {
+            workMinutes = parseInt(document.getElementById('work-minutes').value) || 25;
+            breakMinutes = parseInt(document.getElementById('break-minutes').value) || 5;
+            longBreakMinutes = parseInt(document.getElementById('longbreak-minutes').value) || 15;
+            rounds = parseInt(document.getElementById('rounds').value) || 4;
+        }
+
+        function updateDisplay() {
+            const min = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
+            const sec = (secondsLeft % 60).toString().padStart(2, '0');
+            document.getElementById('timer').textContent = `${min}:${sec}`;
+            document.getElementById('status').textContent = isWork ? "Focus" : (isLongBreak ? "Long Break" : "Break");
+            document.getElementById('round-info').textContent = isWork ? `Round ${currentRound} of ${rounds}` : '';
+        }
+
+        function startTimer() {
+            if (isRunning) return;
+            updateSettings();
+            // If timer is not running and secondsLeft is at initial value, reset it to the correct value
+            if (!isRunning && (secondsLeft === 0 || secondsLeft === undefined || secondsLeft === workMinutes * 60 || secondsLeft === breakMinutes * 60 || secondsLeft === longBreakMinutes * 60)) {
+                secondsLeft = isWork ? workMinutes * 60 : (isLongBreak ? longBreakMinutes * 60 : breakMinutes * 60);
+                updateDisplay();
+            }
+            isRunning = true;
+            timer = setInterval(() => {
+                if (secondsLeft > 0) {
+                    secondsLeft--;
+                    updateDisplay();
+                } else {
+                    clearInterval(timer);
+                    isRunning = false;
+                    if (isWork) {
+                        if (currentRound < rounds) {
+                            isWork = false;
+                            isLongBreak = false;
+                            secondsLeft = breakMinutes * 60;
+                        } else {
+                            isWork = false;
+                            isLongBreak = true;
+                            secondsLeft = longBreakMinutes * 60;
+                        }
+                    } else {
+                        if (isLongBreak) {
+                            isWork = true;
+                            isLongBreak = false;
+                            currentRound = 1;
+                            secondsLeft = workMinutes * 60;
+                        } else {
+                            isWork = true;
+                            currentRound++;
+                            secondsLeft = workMinutes * 60;
+                        }
+                    }
+                    updateDisplay();
+                    startTimer();
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            clearInterval(timer);
+            isRunning = false;
+        }
+
+        function resetTimer() {
+            clearInterval(timer);
+            isRunning = false;
+            updateSettings();
+            isWork = true;
+            isLongBreak = false;
+            currentRound = 1;
+            secondsLeft = workMinutes * 60;
+            updateDisplay();
+        }
+
+        // Update timer if settings are changed
+        document.querySelectorAll('.settings input').forEach(input => {
+            input.addEventListener('change', resetTimer);
+        });
+
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>
