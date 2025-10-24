@@ -10,7 +10,7 @@
     <div class="bg-zinc-400 relative w-screen min-h-20" style="height:10vh">
         <h2 class="mx-4 pt-1 text-4xl font-extrabold">KantiKoala</h2>
         {% if logged_in %}
-        <h3 class="mx-4 text-xl font-bold">Welcome, {{ username }}!</h3>
+        <h3 class="mx-4 text-xl font-bold">Willkommen, {{ username }}!</h3>
         {% endif %}
         <a href="/"><input type="image" class="absolute bottom-0 right-1" src="/static/img/KantiKoalaLogoVar2.png" style="height: 10vh"></a>
     </div>
@@ -18,36 +18,36 @@
     
     {% if logged_in %}
         
-        <div class="rounded-none items-center justify-center relative bottom-2 bg-zinc-300 w-screen md:min-w-[200px] md:w-1/6" style="height: 90vh">
+        <div class="rounded-none items-center justify-center relative bottom-2 bg-zinc-200 md:bg-zinc-300 w-screen md:min-w-[200px] md:w-1/6" style="height: 90vh">
             
             <div class="absolute grid bottom-1 md:left-[8.3vw] justify-center w-screen md:w-[1px]">
                 <div class="md:mx-auto py-2 md:py-0 my-2 rounded-lg bg-zinc-400 hover:bg-slate-300 w-20 text-center">
                     <a class="px-1.5 font-bold" href="/logout"><button class="hover:italic">Logout</button></a>
                 </div>
             </div>
-            <div class="mx-auto py-2 sm:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 w-44">
+            <div class="mx-auto py-2 md:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 w-44">
                 <a class="px-1.5 font-bold" href="/agenda"><button class="hover:italic">Agenda</button></a>
             </div>
-            <div class="mx-auto py-2 sm:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 w-44">
+            <div class="mx-auto py-2 md:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 w-44">
                 <a class="px-1.5 font-bold" href="/noten"><button class="hover:italic">Notenorganisation</button></a>
             </div>
-            <div class="mx-auto py-2 sm:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 w-44">
+            <div class="mx-auto py-2 md:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 w-44">
                 <a class="px-1.5 font-bold" href="/lerntimer"><button class="hover:italic">Lerntimer</button></a>
             </div>
-            <div class="mx-auto py-2 sm:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 w-44">
+            <div class="mx-auto py-2 md:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 w-44">
                 <a class="px-1.5 font-bold" href="/lerntipps"><button class="hover:italic">Lerntipps</button></a>
             </div>
-            <div class="mx-auto py-2 sm:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 w-44">
+            <div class="mx-auto py-2 md:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 w-44">
                 <a class="px-1.5 font-bold" href="/settings"><button class="hover:italic">Einstellungen</button></a>
             </div>
         
         </div>
     {% else %}
-        <div class="rounded-none items-center justify-center relative bottom-2 bg-zinc-300 w-screen md:w-1/6" style="height: 90vh">
-            <div class="mx-auto py-2 sm:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 w-44 ">
+        <div class="rounded-none items-center justify-center relative bottom-2 bg-zinc-200 md:bg-zinc-300 w-screen md:min-w-[200px] md:w-1/6" style="height: 90vh">
+            <div class="mx-auto py-2 md:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 w-44 ">
                 <a class="px-1.5 font-bold" href="/login"><button class="hover:italic">Login</button></a>
             </div>
-            <div class="mx-auto py-2 sm:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 w-44 ">
+            <div class="mx-auto py-2 md:py-0 my-2 relative top-6 rounded-lg bg-zinc-400 hover:bg-slate-300 w-44 ">
                 <a class="px-1.5 font-bold" href="/register"><button class="hover:italic">Registrieren</button></a>
             </div>
 

@@ -4,20 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" href="./static/output.css">
 </head>
-<body>
-    <h2>Login</h2>
-    <form action="/login" method="post">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <button type="submit">Login</button>
-    </form>
-    <p>Don't have an account? <a href="/register">Register</a></p>
-    <a href="/forgot_password">Forgot Password?</a>
+<body class="bg-zinc-200">
+    <div class="grid items-center justify-center h-screen w-screen">
+        <div class="rounded-2xl bg-zinc-400 p-4 w-[33vw] min-w-[350px]">
+            <!-- <div class="grid justify-center pb-4"><h2 class="text-2xl font-bold">Login</h2></div> -->
+            <form action="/login" method="post">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                <div class="flex flex-col sm:flex-row sm:justify-between">
+                    <label class="left-0 pb-2 font-bold"for="username">Username:</label>
+                    <input class="rounded-md right-0 bg-zinc-300 w-[200px]" type="text" id="username" name="username" required>
+                </div>
+                <br>
+                <div class="p-2"></div>
+                <div class="flex flex-col sm:flex-row sm:justify-between">
+                    <label class="left-0 pb-2 font-bold" for="password">Password:</label>
+                    <input class="rounded-md right-0 px-2 w-[200px] bg-zinc-300 " type="password" id="password" name="password" required>
+                </div>
+                <br>
+                <div class="grid justify-center pt-4"><button class="text-2xl font-bold hover:italic" type="submit">Login</button></div>
+            </form>
+        </div>
+        <div>
+            <div class="rounded-md bg-zinc-400 md:min-w-[450px] p-4 flex flex-col md:flex-row md:justify-between">
+                <p>Don't have an account? <a class="font-bold hover:italic" href="/register">Register</a></p>
+                <a class="font-bold hover:italic" href="/forgot_password">Forgot Password?</a>
+            </div>
+        </div>
+    </div>
+    
 </body>
 </html>
