@@ -4,22 +4,44 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+    <link rel="stylesheet" href="./static/output.css">
 </head>
-<body>
-    <h2>Register</h2>
-    <form action="/register" method="post">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-        <br>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <br>
-        <label for="email">Email:</label>
-        <input type="text" id="email" name="email" required>
-        <br>
-        <button type="submit">Register</button>
-    </form>
-    <p>Already have an account? <a href="/login">Login</a></p>
+<body class="bg-zinc-200">
+    <div class="flex flex-row w-screen h-[vh10]items-center justify-center">
+        <!-- dark:invert -->
+        <a href="/"><input type="image" class="relative top-0 " src="/static/img/KantiKoalaLogoVar2.png" style="height: 10vh"></a>
+        <p class="absolute top-[9vh] text-right text-md font-bold">KantiKoala, 2025</p>
+    </div>
+    <div class="grid items-center justify-center h-screen w-screen">
+        <div class="rounded-2xl bg-zinc-400 p-4 w-[33vw] min-w-[350px] place-self-center">
+            <form action="/register" method="post">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+                <div class="flex flex-col sm:flex-row sm:justify-between">
+                    <label class="left-0 pb-2 text-xl font-bold" for="username">Username:</label>
+                    <input class="rounded-md right-0 bg-zinc-300 w-[200px]" type="text" id="username" name="username" required>
+                </div>
+                <br>
+                
+                <div class="flex flex-col sm:flex-row sm:justify-between">
+                    <label class="left-0 pb-2 text-xl font-bold" for="password">Password:</label>
+                    <input class="rounded-md right-0 px-2 w-[200px] bg-zinc-300 " type="password" id="password" name="password" required>
+                </div>
+                <br>
+                
+                <div class="flex flex-col sm:flex-row sm:justify-between">
+                    <label class="left-0 text-xl pb-2 font-bold" for="email">Email:</label>
+                    <input class="rounded-md right-0 px-2 w-[200px] bg-zinc-300 " type="text" id="email" name="email" required>
+                </div>
+                <br>
+                <div class="grid justify-center pt-4"><button class="text-2xl p-1 px-3 rounded-md bg-zinc-300 sm:bg-transparent font-bold hover:italic" type="submit">Register</button></div>
+            </form>
+        </div>
+        <div>
+            <div class="rounded-md bg-zinc-400 md:min-w-[450px] p-4 flex flex-col md:flex-row md:justify-between">
+                <p>Already have an account? <a class="font-bold hover:italic" href="/login">Login</a></p>
+            </div>
+        </div>
+    </div>
+    
 </body>
 </html>

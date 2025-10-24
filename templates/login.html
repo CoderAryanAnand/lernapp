@@ -17,13 +17,13 @@
             <form action="/login" method="post">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                 <div class="flex flex-col sm:flex-row sm:justify-between">
-                    <label class="left-0 pb-2 font-bold"for="username">Username:</label>
+                    <label class="left-0 pb-2 text-xl font-bold"for="username">Username:</label>
                     <input class="rounded-md right-0 bg-zinc-300 w-[200px]" type="text" id="username" name="username" required>
                 </div>
                 <br>
                 <div class="p-2"></div>
                 <div class="flex flex-col sm:flex-row sm:justify-between">
-                    <label class="left-0 pb-2 font-bold" for="password">Password:</label>
+                    <label class="left-0 pb-2 text-xl font-bold" for="password">Password:</label>
                     <input class="rounded-md right-0 px-2 w-[200px] bg-zinc-300 " type="password" id="password" name="password" required>
                 </div>
                 <br>
