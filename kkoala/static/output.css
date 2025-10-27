@@ -652,8 +652,16 @@ video {
   top: 1.5rem;
 }
 
+.top-\[10vh\] {
+  top: 10vh;
+}
+
 .top-\[9vh\] {
   top: 9vh;
+}
+
+.m-3 {
+  margin: 0.75rem;
 }
 
 .mx-4 {
@@ -675,6 +683,10 @@ video {
   margin-bottom: 0.25rem;
 }
 
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
 .block {
   display: block;
 }
@@ -693,6 +705,10 @@ video {
 
 .hidden {
   display: none;
+}
+
+.h-\[90vh\] {
+  height: 90vh;
 }
 
 .h-\[vh10\] {
@@ -723,8 +739,24 @@ video {
   width: 33vw;
 }
 
+.w-\[35vw\] {
+  width: 35vw;
+}
+
+.w-\[85vw\] {
+  width: 85vw;
+}
+
+.w-\[90vw\] {
+  width: 90vw;
+}
+
 .w-screen {
   width: 100vw;
+}
+
+.min-w-\[325px\] {
+  min-width: 325px;
 }
 
 .min-w-\[350px\] {
@@ -824,6 +856,10 @@ video {
   padding: 0.5rem;
 }
 
+.p-3 {
+  padding: 0.75rem;
+}
+
 .p-4 {
   padding: 1rem;
 }
@@ -841,6 +877,11 @@ video {
 .px-3 {
   padding-left: 0.75rem;
   padding-right: 0.75rem;
+}
+
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .py-2 {
@@ -872,6 +913,10 @@ video {
   text-align: right;
 }
 
+.align-middle {
+  vertical-align: middle;
+}
+
 .text-2xl {
   font-size: 1.5rem;
   line-height: 2rem;
@@ -889,11 +934,6 @@ video {
 
 .text-xl {
   font-size: 1.25rem;
-  line-height: 1.75rem;
-}
-
-.text-lg {
-  font-size: 1.125rem;
   line-height: 1.75rem;
 }
 
@@ -924,13 +964,42 @@ video {
   background-color: rgb(203 213 225 / var(--tw-bg-opacity, 1));
 }
 
+.hover\:bg-zinc-200:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(228 228 231 / var(--tw-bg-opacity, 1));
+}
+
 .hover\:italic:hover {
   font-style: italic;
 }
 
 @media (min-width: 640px) {
+  .sm\:absolute {
+    position: absolute;
+  }
+
+  .sm\:w-\[35vw\] {
+    width: 35vw;
+  }
+
+  .sm\:w-\[60vw\] {
+    width: 60vw;
+  }
+
+  .sm\:min-w-\[300px\] {
+    min-width: 300px;
+  }
+
   .sm\:flex-row {
     flex-direction: row;
+  }
+
+  .sm\:items-end {
+    align-items: flex-end;
+  }
+
+  .sm\:justify-end {
+    justify-content: flex-end;
   }
 
   .sm\:justify-between {
@@ -996,19 +1065,6 @@ video {
 }
 
 @media (prefers-color-scheme: dark) {
-  .dark\:to-white {
-    --tw-gradient-to: #fff var(--tw-gradient-to-position);
-  }
-
-  .dark\:fill-white {
-    fill: #fff;
-  }
-
-  .dark\:grayscale-\[1\] {
-    --tw-grayscale: grayscale(1);
-    filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
-  }
-
   .dark\:invert {
     --tw-invert: invert(100%);
     filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);

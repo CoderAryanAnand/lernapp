@@ -14,7 +14,7 @@
     <div class="grid items-center justify-center h-screen w-screen">
         <div class="rounded-2xl bg-zinc-400 p-4 w-[33vw] min-w-[350px] place-self-center">
             <!-- <div class="grid justify-center pb-4"><h2 class="text-2xl font-bold">Login</h2></div> -->
-            <form action="/auth/login" method="post">
+            <form action="/login" method="post">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
                 <div class="flex flex-col sm:flex-row sm:justify-between">
                     <label class="left-0 pb-2 text-xl font-bold"for="username">Username:</label>
@@ -32,8 +32,8 @@
         </div>
         <div>
             <div class="rounded-md bg-zinc-400 md:min-w-[450px] p-4 flex flex-col md:flex-row md:justify-between">
-                <p>Don't have an account? <a class="font-bold hover:italic" href="/auth/register">Register</a></p>
-                <a class="font-bold hover:italic" href="/auth/forgot_password">Forgot Password?</a>
+                <p>Don't have an account? <a class="font-bold hover:italic" href="/register">Register</a></p>
+                <a class="font-bold hover:italic" href="/forgot_password">Forgot Password?</a>
             </div>
         </div>
     </div>

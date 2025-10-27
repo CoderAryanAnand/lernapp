@@ -8,7 +8,7 @@
 <body>
     <h1>Lerntipps</h1>
     {% for category, tips_list in tips.items() %}
-        <button onclick="toggleVisibility('{{ category|replace(' ', '_') }}')">{{ category }}</button>
+        <button onclick="toggleVisibility('{{ category|replace(' ', '_')}}')">{{ category }}</button>
         <div id="{{ category|replace(' ', '_') }}" style="display: none;">
             <ul>
             {% for tip in tips_list %}
