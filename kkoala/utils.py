@@ -42,7 +42,7 @@ def login_required(f):
             if request.path.startswith("/api/"):
                 return jsonify({"error": "Not logged in"}), 401
             # Otherwise, redirect to login page
-            return redirect(url_for("login"))
+            return redirect(url_for("auth.login"))
         return f(*args, **kwargs)
     return decorated_function
 
