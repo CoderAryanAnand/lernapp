@@ -307,7 +307,7 @@
 
                 // Send the .ics content to the backend for processing
                 try {
-                    const response = await fetch('/api/import-ics', {
+                    const response = await fetch('/api/events/import-ics', {
                         method: 'POST',
                         body: JSON.stringify({ ics: icsContent }),
                         headers: {
@@ -337,7 +337,7 @@
             this.disabled = true; 
             const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
             
-            fetch('/api/run-learning-algorithm', {
+            fetch('/api/events/run-learning-algorithm', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
