@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, sessio
 from ..extensions import db, bcrypt
 from ..models import User, Settings, PrioritySetting
 from ..utils import csrf_protect, login_required
-from ..consts import DEFAULT_SETTINGS
+from ..consts import DEFAULT_SETTINGS, FROM_EMAIL
 from itsdangerous import URLSafeTimedSerializer
 import resend
 
@@ -59,7 +59,7 @@ def forgot_password():
             reset_link = url_for("auth.reset_password", token=token, _external=True)
 
             params = {
-                "from": current_app.config.get("FROM_EMAIL"),
+                "from": FROM_EMAIL,
                 "to": [email],
                 "subject": "Password Reset Request",
                 "html": f"<strong>Click the link to reset your password: {reset_link}</strong>",
