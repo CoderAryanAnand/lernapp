@@ -392,7 +392,7 @@ Die Datenstruktur ist in der Datei \texttt{models.py} durch SQLAlchemy-Modelle d
     \end{itemize}
 \end{itemize}
 
-\subsection{Erklärungen zur Code-Struktur}
+\subsection{Code-Struktur}
 Um die Wartbarkeit und Skalierbarkeit der Anwendung zu verbessern, wurde die ursprüngliche Code-Struktur von einer einzigen \texttt{app.py}-Datei in ein modulares Python-Paket namens \texttt{kkoala} umstrukturiert. Dieser Ansatz folgt dem \enquote{Application Factory}-Pattern, einer bewährten Methode für Flask-Anwendungen. Zudem ist diese Anwendung auch die Best Practice für Flask-Anwendungen.\footcite{flask_structure_best_practices}
 
 \begin{enumerate}
@@ -418,7 +418,11 @@ Um die Wartbarkeit und Skalierbarkeit der Anwendung zu verbessern, wurde die urs
     \item \textbf{Kernlogik und Hilfsfunktionen}:
     \begin{itemize}
         \item \textbf{\texttt{kkoala/algorithms.py}}: Eine dedizierte Datei, die ausschliesslich die komplexe Logik des Lernzeitalgorithmus (LZA) enthält.
-        \item \textbf{\texttt{kkoala/utils.py}}: Beinhaltet wiederverwendbare Hilfsfunktionen und Dekoratoren, die in verschiedenen Teilen der Anwendung genutzt werden.
+        \item \textbf{\texttt{kkoala/utils.py}}: Beinhaltet wiederverwendbare Hilfsfunktionen und sogenannte \enquote{Decorators}. Die wichtigsten sind:
+    \begin{itemize}
+        \item \textbf{\texttt{@login\_required}}: Dieser Decorator wird über Routen platziert, die nur von angemeldeten Benutzern aufgerufen werden dürfen. Er prüft automatisch, ob ein Benutzer in der aktuellen Sitzung (Session) angemeldet ist. Falls nicht, wird der Benutzer zur Login-Seite umgeleitet. 
+        \item \textbf{\texttt{@csrf\_protect}}: Schützt Formulare und API-Endpunkte vor Cross-Site Request Forgery Angriffen, wie im Abschnitt \enquote{CSRF-Schutz} beschrieben.
+    \end{itemize}
         \item \textbf{\texttt{kkoala/extensions.py}}: Hier werden die Flask-Erweiterungen (SQLAlchemy, Bcrypt, usw.) initialisiert, um zirkuläre Importfehler zu vermeiden.
     \end{itemize}
     
@@ -429,6 +433,22 @@ Um die Wartbarkeit und Skalierbarkeit der Anwendung zu verbessern, wurde die urs
 
     Für den produktiven Einsatz unserer App verwenden wir Gunicorn (\enquote{Green Unicorn}), einen robusten und weit verbreiteten WSGI-HTTP-Server. Während der eingebaute Entwicklungsserver von Flask für das Testen ausreicht, ist er nicht dafür ausgelegt, eine hohe Anzahl von Anfragen zu bewältigen. Gunicorn agiert hier als leistungsfähiger \enquote{Middleman} zwischen dem Internet und unserer Flask-Anwendung. Er kann mehrere Anfragen gleichzeitig bearbeiten, indem er mehrere \enquote{Worker}-Prozesse verwaltet, was die Leistung und Stabilität der Anwendung unter Last sicherstellt.\footcite{codesignal_gunicorn} Wenn wir Gunicorn starten, geben wir ihm den Befehl \texttt{gunicorn wsgi:application}. Er weiss dann, dass er in der Datei \texttt{wsgi.py} nach dem \texttt{application}-Objekt suchen und dieses als Startpunkt für die Anwendung verwenden muss.
 \end{enumerate}
+
+% ------------------------------Frontend-Struktur (Templates und Statische Dateien)------------------------------
+\subsection{Frontend-Struktur (Templates und Statische Dateien)}
+Die Benutzeroberfläche der Kanti Koala App wird dynamisch auf dem Server generiert und als fertige HTML-Seiten an den Browser des Nutzers gesendet.
+
+\begin{itemize}
+    \item \textbf{Templates (\texttt{kkoala/templates/})}:
+    In diesem Verzeichnis befinden sich alle HTML-Dateien der Anwendung. Flask verwendet die Template-Engine Jinja, um diese Dateien zu verarbeiten. Jinja ermöglicht es, Python-Code direkt in HTML einzubetten, zum Beispiel um Schleifen zu erstellen (\texttt{\{\% for item in items \%\}}), bedingte Blöcke anzuzeigen (\texttt{\{\% if user.is\_authenticated \%\}}) oder Variablen aus dem Backend auszugeben (\texttt{\{\{ user.username \}\}}). Dies macht die Seiten dynamisch und personalisiert.\footcite{jinja_templates, flask_templating}
+
+    \item \textbf{Statische Dateien (\texttt{kkoala/static/})}:
+    Dieses Verzeichnis enthält alle statischen Assets, die vom Browser direkt geladen werden, ohne dass der Server sie verarbeiten muss. Dazu gehören:
+    \begin{itemize}
+        \item \textbf{CSS-Dateien}: Für das Styling und das visuelle Design der Anwendung.
+        \item \textbf{Bilder}: Logos und andere grafische Elemente.
+    \end{itemize}
+\end{itemize}
 
 \section{Features}
 Zunächst werden alle Entscheidungen über die Features erklärt. Natürlich werden die Features auch erklärt.
@@ -519,7 +539,7 @@ Die Abhängigkeiten und Kaskadenlöschungen (z.B. ein gelöschter \texttt{User} 
 \subsection{Serververbindung}
 Da es um eine Web-App handelt, müssen die SQL-Datenbanken irgendwo extern gespeichert werden, wo man sie jederzeit abrufen kann. Das heisst, die SQL-Datei muss auf ein Server gespeichert werden. Wir haben uns schliesslich für die Cloud-Applikation \enquote{DigitalOcean} entschieden. Der Grund dafür war, weil wir erhalten gratis Credits mit einem Student Developer Pack. Die Domaine, die wir gekauft haben, wurde wegen dem gleichen Grund gekauft, nämlich, dass wir mit demselben Student Developer Pack die Top-Level-Domaine .app gratis erhalten haben. Die Domaine heisst \href{https://www.kantikoala.app}{kantikoala.app}.
 
-% ------------------------------AUTHENTICATION------------------------------
+% ------------------------------AUTHENTIFICATION------------------------------
 \subsection{Authentifizierung}
 Um eine App mit verschiedenen Nutzern zu haben, brauchen wir ein gutes Authentifizierungssystem. Das bedeutet, dass es eine Anmelde- und Registrierungsfunktion sowie eine Option zum Vergessen des Passworts, eine Option zum Ändern des Passworts und schliesslich auch eine Option zum Löschen des Kontos geben muss. 
 
@@ -528,23 +548,6 @@ Natürlich können wir ein Passwort nicht im Klartext speichern, denn das wäre 
 Sobald man sich anmeldet oder registriert, wird man auf die Startseite der Website weitergeleitet.
 
 Sehr wichtig bei jedem Anmeldesystem ist natürlich eine Option das Passwort zurückzusetzen wenn man es vergisst. Um so ein System zu haben, ist es wichtig, dass man den Link, um das Passwort zurückzusetzen, nur einmal verwenden kann. Um dies zu erreichen, haben wir den Token, welches gebraucht wird, um zu überprüfen, dass das Passwort für den richtigen User zurückgesetzt wird, mit dem Hash vom alten Passworts generiert. Wir sind dank eines Artikels\footcite{password_reset} auf diese Idee gekommen. Das Prinzip funktioniert, da das Passwort sich ändern wird, und somit kann man den gleichen Token nicht wieder verwenden. Zudem brauchen wir, um die E-Mail zu verschicken, eine API, damit wir sie mit unserer eigenen Domaine verschicken können. Wir haben uns für die API von Resend entschieden, da sie eine kostenlose Stufe hat, die für unser Projekt ausreicht.
-
-
-% ------------------------------CSRF PROTECTION------------------------------
-\subsection{CSRF-Schutz}
-Neben der reinen Authentifizierung ist es entscheidend, die Aktionen eines angemeldeten Benutzers abzusichern. Eine der häufigsten Schwachstellen in Webanwendungen ist die Cross-Site Request Forgery (CSRF). Bei einem CSRF-Angriff bringt ein Angreifer den Browser eines authentifizierten Benutzers dazu, eine unerwünschte Aktion in einer Webanwendung auszuführen, bei der der Benutzer gerade angemeldet ist. Dies geschieht, ohne dass der Benutzer es merkt. So könnte ein Angreifer beispielsweise einen Benutzer dazu verleiten, auf einen bösartigen Link zu klicken, der im Hintergrund unbemerkt das Passwort des Benutzers ändert oder sein Konto löscht.\footcite{TestDriven_CSRF}
-
-Um dies zu verhindern, haben wir das \enquote{Synchronizer Token Pattern} implementiert, eine von OWASP empfohlene Methode\footcite{OWASP_CSRF}. Das Prinzip ist einfach, aber sehr wirksam:
-\begin{enumerate}
-    \item Für jede Benutzersitzung wird ein einzigartiges, geheimes und unvorhersehbares Token generiert und auf dem Server gespeichert.
-    \item Dieses Token wird in alle Formulare, die eine Zustandsänderung bewirken (z.B. das Ändern von Einstellungen oder das Löschen eines Kontos), als verstecktes Feld eingebettet.
-    \item Wenn der Benutzer das Formular abschickt, wird das Token zusammen mit den anderen Formulardaten an den Server gesendet.
-    \item Der Server vergleicht das vom Client gesendete Token mit dem in der Sitzung gespeicherten Token. Stimmen die beiden nicht überein, wird die Anfrage abgelehnt.
-\end{enumerate}
-Da ein Angreifer auf einer fremden Website dieses geheime Token nicht kennen kann, schlägt der Fälschungsversuch fehl.
-
-In unserer Flask-Anwendung haben wir diese Logik mithilfe eines eigenen Decorators (\texttt{@csrf\_protect}) umgesetzt. Dieser Decorator wird auf alle Routen angewendet, die Daten durch \texttt{POST}-, \texttt{PUT}- oder \texttt{DELETE}-Anfragen ändern. Bei Standard-HTML-Formularen wird das Token als verstecktes \texttt{<input>}-Feld übergeben. Für unsere dynamischen Agenda-Funktionen, die auf AJAX basieren, wird das Token aus einem Meta-Tag ausgelesen und in einem benutzerdefinierten HTTP-Header (\texttt{X-CSRF-Token}) mit jeder Anfrage gesendet. Dies stellt sicher, dass jede datenverändernde Aktion, die in unserer Applikation ausgeführt wird, legitim vom Benutzer und von unserer eigenen Webseite stammt.
-
 
 %\href{https://freelancefootprints.substack.com/p/yet-another-password-reset-tutorial}{Yet another password reset tutorial}
 %------------------------------AGENDA------------------------------
@@ -653,6 +656,30 @@ Ein weiteres wichtiges Feature unserer App ist der Lerntimer. Dieser Timer basie
 % ------------------------------LERNTIPPS------------------------------
 \subsection{Lerntipps}
 Ein weiteres Feature unserer App sind die Lerntipps. Diese sind in verschiedene Kategorien aufgeteilt, wie zum Beispiel Zeitmanagement, Pausenmanagement, Stressmanagement und Lernmethoden. In jeder Kategorie gibt es verschiedene wissenschaftlich fundierte Tipps, welche wir aus unserer Recherche und den Interviews gesammelt haben. Diese Tipps sollen den Nutzer:innen helfen, ihr Lernverhalten zu verbessern und effektiver zu lernen.
+
+\section{Sicherheitskonzept}
+Neben der reinen Authentifizierung wurden weitere grundlegende Sicherheitsmassnahmen implementiert, um die Daten der Nutzer und die Integrität der Anwendung zu schützen.
+
+\subsection{Datenspeicherung und Passwort-Sicherheit}
+Die Sicherheit der Benutzerdaten hat höchste Priorität. Wie im Abschnitt zur Authentifizierung beschrieben, werden Passwörter niemals im Klartext gespeichert. Stattdessen wird die Flask-Bcrypt-Bibliothek verwendet, um von jedem Passwort einen kryptografischen Hash zu erzeugen. Beim Login-Vorgang wird das eingegebene Passwort ebenfalls gehasht und dieser Hash wird mit dem in der Datenbank gespeicherten Hash verglichen. Da dieser Prozess unumkehrbar ist, kann selbst bei einem direkten Zugriff auf die Datenbank das ursprüngliche Passwort nicht wiederhergestellt werden.
+
+\subsection{Transportverschlüsselung (HTTPS)}
+Die gesamte Kommunikation zwischen dem Browser des Nutzers und unserem Server wird durch das HTTPS-Protokoll verschlüsselt. Dies wird durch ein SSL/TLS-Zertifikat realisiert, das auf unserem Server bei DigitalOcean installiert ist. Die Verschlüsselung stellt sicher, dass alle übertragenen Daten, von Login-Informationen über Kalendereinträge bis hin zu Noten, vor dem Abhören durch Dritte geschützt sind. Ein Angreifer in einem öffentlichen WLAN könnte beispielsweise die Daten nicht mitlesen. Der Browser zeigt dies durch ein Schlosssymbol in der Adressleiste an und garantiert so eine sichere Verbindung zur Domain \texttt{kantikoala.app}.\footcite{cloudflare_https}
+
+\subsection{CSRF-Schutz}
+Neben der reinen Authentifizierung ist es entscheidend, die Aktionen eines angemeldeten Benutzers abzusichern. Eine der häufigsten Schwachstellen in Webanwendungen ist die Cross-Site Request Forgery (CSRF). Bei einem CSRF-Angriff bringt ein Angreifer den Browser eines authentifizierten Benutzers dazu, eine unerwünschte Aktion in einer Webanwendung auszuführen, bei der der Benutzer gerade angemeldet ist. Dies geschieht, ohne dass der Benutzer es merkt. So könnte ein Angreifer beispielsweise einen Benutzer dazu verleiten, auf einen bösartigen Link zu klicken, der im Hintergrund unbemerkt das Passwort des Benutzers ändert oder sein Konto löscht.\footcite{TestDriven_CSRF}
+
+Um dies zu verhindern, haben wir das \enquote{Synchronizer Token Pattern} implementiert, eine von OWASP empfohlene Methode\footcite{OWASP_CSRF}. Das Prinzip ist einfach, aber sehr wirksam:
+\begin{enumerate}
+    \item Für jede Benutzersitzung wird ein einzigartiges, geheimes und unvorhersehbares Token generiert und auf dem Server gespeichert.
+    \item Dieses Token wird in alle Formulare, die eine Zustandsänderung bewirken (z.B. das Ändern von Einstellungen oder das Löschen eines Kontos), als verstecktes Feld eingebettet.
+    \item Wenn der Benutzer das Formular abschickt, wird das Token zusammen mit den anderen Formulardaten an den Server gesendet.
+    \item Der Server vergleicht das vom Client gesendete Token mit dem in der Sitzung gespeicherten Token. Stimmen die beiden nicht überein, wird die Anfrage abgelehnt.
+\end{enumerate}
+Da ein Angreifer auf einer fremden Website dieses geheime Token nicht kennen kann, schlägt der Fälschungsversuch fehl.
+
+In unserer Flask-Anwendung haben wir diese Logik mithilfe eines eigenen Decorators (\texttt{@csrf\_protect}) umgesetzt. Dieser Decorator wird auf alle Routen angewendet, die Daten durch \texttt{POST}-, \texttt{PUT}- oder \texttt{DELETE}-Anfragen ändern. Bei Standard-HTML-Formularen wird das Token als verstecktes \texttt{<input>}-Feld übergeben. Für unsere dynamischen Agenda-Funktionen, die auf AJAX basieren, wird das Token aus einem Meta-Tag ausgelesen und in einem benutzerdefinierten HTTP-Header (\texttt{X-CSRF-Token}) mit jeder Anfrage gesendet. Dies stellt sicher, dass jede datenverändernde Aktion, die in unserer Applikation ausgeführt wird, legitim vom Benutzer und von unserer eigenen Webseite stammt.
+
 
 % References
 
