@@ -437,7 +437,7 @@ Zunächst werden alle Entscheidungen über die Features erklärt. Natürlich wer
 \subsection{Datenbank}
 Da es sich um eine Webanwendung handelt, können nicht alle Informationen des Benutzers lokal gespeichert werden. Das bedeutet erstens, dass alle Informationen extern auf einem Server gespeichert werden müssen. Zweitens müssen jetzt natürlich die Informationen jedes Nutzers gespeichert werden, und nur die Informationen eines Nutzers zu speichern, wie man es lokal tun würde, funktioniert nicht. Das bedeutete für uns zwei Dinge. Wir müssen einen Weg finden, die Informationen zu speichern, und wir müssen herausfinden, wo diese Informationen gespeichert werden sollen.
 
-Um die Informationen zu speichern, haben wir uns für SQL-Datenbanken entschieden, da diese am einfachsten mit Flask zu verwenden sind.\footcite{flask_database_tutorial} Wenn wir lokal arbeiten, können wir SQLite verwenden, und wenn es sich um die Produktionsumgebung handelt, können wir PostgreSQL verwenden, welches von den meisten Cloud-Anbietern unterstützt wird.
+Um die Informationen zu speichern, haben wir uns für SQL-Datenbanken entschieden, da diese am einfachsten mit Flask zu verwenden sind.\footcite{flask_database_tutorial} Wenn wir lokal arbeiten, können wir SQLite verwenden, und wenn es sich um die Produktionsumgebung handelt, können wir PostgreSQL verwenden, welches viel besser ist für eine solche Umgebung\footcite{astera_postgres_vs_sqlite}.
 
 Die Struktur dieser Tabellen ist im Folgenden dargestellt:
 
