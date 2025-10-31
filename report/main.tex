@@ -93,7 +93,7 @@ Deshalb haben wir uns entschlossen, eine App zu entwickeln, mit der man den Übe
 Da wir eine Web-App erstellen wollen, welche möglichst gut an die Bedürfnisse von Schüler:innen angepasst ist, durften wir uns nicht nur auf unsere eigenen Erfahrungen als Schüler verlassen, sondern mussten auch ein gewisses Mass an Recherche erledigen, damit wir wichtige Entscheidungen sinnvoll begründen konnten. 
 Zu diesem Ende haben wir uns entschieden, uns tiefgründig mit unserem Zielpublikum - Schüler:innen der Kantonsschule Baden - auseinanderzusetzen, indem wir Interviews mit PPP-Lehrpersonen führten und eine Umfrage für Schüler:innen gestalteten.
 
-Die Recherche stellt hier nicht das Kernstück unserer Arbeit dar, sondern ist ein unterstützender, aber dennoch sehr wichtiger, Bestandteil für die Entwicklung der Web-Applikation, da sie uns hilft, uns in unsere Zielgrupe zu versetzen und ihre Bedürfnisse besser zu verstehen, damit wir sie bestmöglich umsetzen können.
+Die Recherche stellt hier nicht das Kernstück unserer Arbeit dar, sondern ist ein unterstützender, aber dennoch sehr wichtiger, Bestandteil für die Entwicklung der Web-Applikation, da sie uns hilft, uns in unsere Zielgrupe zu versetzen und ihre Bedürfnisse
 Wir setzten einen starken Wert auf Professionalität, da wir die Recherche ernst nahmen und eine hohe Qualität anstrebten.
 
 
@@ -168,7 +168,7 @@ Dies ist bspw. mit verschiedenen Online-Timern möglich, wie beispielsweise \hre
 Die Grundidee des Pomdoro-Timers besteht daraus, dass man mithilfe eines Timers seine Lernzeit in festgelegte Intervalle von (typischerweise) 25 Minuten einteilt, mit fünf Minuten Pause dazwischen.
 In diesen 25 Minuten soll man so konzentriert wie möglich lernen und so gut wie möglich jegliche Ablenkungen vermeiden. Der Name des Pomodoro-Timers leitet sich vom Italienischen Wort für \enquote{Tomate} ab und ist angeblich inspiriert von der Form der Küchenuhr, welche der \enquote{Erfinder} dieser Technik, Francesco Cirillo\footcite{Pomodoro}, verwendet haben soll.
 
-Aufgrund der hohen Beliebtheit des Pomodoro-Timers in unserem Umfeld war es für uns wichtig, dass wir uns mit diesem vertraut machen, da dies auch ein geplantes Feature für unsere Web-App ist.
+Aufgrund der hohen Beliebtheit des Pomodoro-Timers in unserem Umfeld war es für uns wichtig, dass wir uns mit diesem vertraut machen, da dies auch ein geplanter Feature für unsere Web-App ist.
 
 \myparagraph{Pausenmanagement}
 Etwas, das wir auch noch als wichtig empfanden, ist das Pausenmanagement, welches eng mit dem Zeitmanagement verbunden ist, da eine gesunde Zeiteinteilung auch sinnvolle Pausen beinhaltet.
@@ -245,7 +245,7 @@ Wir wollten uns hauptsächlich auf die folgenden vier Themen konzentrieren:
     \item Zeitmanagement
 \end{itemize}
 
-Diese Themen wählten wir, da wir sie alle als wichtig für den Schulalltag und das Lernen empfanden und somit auch als besonders relevant für unsere Web-Applikation sahen,
+Diese Themen wählten wir, da wir sie als wichtig für den Schulalltag und das Lernen empfanden und somit auch als besonders relevant für unsere Web-Applikation sahen,
 da wir dies darin einbauen könnten. Dies geht am einfachsten beim Zeitmanagement, da dies sehr stark in unsere geplanten Agenda- und Pomodoro-Timer-Features einfliesst, aber vor allem unsere geplanten Lern- und Daily-Tipps sind da besonders versatil.
 
 
@@ -338,93 +338,95 @@ Damit wir gemeinsam an dem Projekt arbeiten können, ohne ständig Dateien mitei
 
 % ------------------------------Technische Dokumentation------------------------------
 \section{Technische Dokumentation (System- und Datenstruktur)}
-Dieser Abschnitt beschreibt die technische Grundlage der Kanti Koala Web-Applikation, einschliesslich der Systemarchitektur, der Datenstruktur und der Code-Struktur, wie in \texttt{app.py} implementiert.
+Dieser Abschnitt beschreibt die technische Grundlage der Kanti Koala Web-Applikation, einschliesslich der Systemarchitektur, der Datenstruktur und der Code-Struktur, wie es auch implementiert wurde.
 
 \subsection{Darstellung der Systemarchitektur}
 Die Kanti Koala App ist als monolithische Webanwendung konzipiert, die auf einem zentralen Backend-Server läuft.
 
 \begin{itemize}
     \item \textbf{Frameworks:}
-    Das Kernstück der Anwendung ist das Python-Microframework \textbf{Flask}\footcite{app.py}. Es steuert das Routing (die Zuordnung von URLs zu Funktionen), verarbeitet HTTP-Anfragen (GET, POST, etc.) und rendert die HTML-Templates für den Benutzer\footcite{app.py}.
+    Das Kernstück der Anwendung ist das Python-Microframework Flask. Es steuert das Routing (die Zuordnung von URLs zu Funktionen), verarbeitet HTTP-Anfragen (GET, POST, usw.) und rendert die HTML-Templates für den Benutzer.
 
     \item \textbf{Komponentenübersicht (Wichtige Pakete):}
     \begin{itemize}
-        \item \textbf{Flask-SQLAlchemy}\footcite{app.py}: Dient als Object-Relational Mapper (ORM) für die Datenbank. Es ermöglicht die Definition von Datenbanktabellen als Python-Klassen (Models) und vereinfacht Datenbankabfragen\footcite{app.py}.
-        \item \textbf{Flask-Bcrypt}\footcite{app.py}: Wird für die Sicherheit der Benutzerpasswörter eingesetzt. Es hasht und verifiziert Passwörter mithilfe des bcrypt-Algorithmus\footcite{app.py, main.tex}.
-        \item \textbf{Flask-Migrate}\footcite{app.py}: Erleichtert Schema-Migrationen der Datenbank, wenn sich die Modelle (Tabellenstruktur) ändern.
-        \item \textbf{Resend}\footcite{app.py}: Dient als E-Mail-API für den Versand von systemgenerierten E-Mails, insbesondere für die \enquote{Passwort vergessen}-Funktion\footcite{app.py, main.tex}.
-        \item \textbf{icalendar}\footcite{app.py}: Eine Python-Bibliothek, die zum Parsen und Importieren von \texttt{.ics}-Kalenderdateien verwendet wird, um den Schulnetz-Stundenplan zu importieren\footcite{app.py, main.tex}.
-        \item \textbf{itsdangerous}\footcite{app.py}: Wird verwendet, um sichere, zeitlich begrenzte Tokens zu generieren, die für die \enquote{Passwort zurücksetzen}-Links benötigt werden\footcite{app.py}.
+        \item \textbf{Flask-SQLAlchemy}: Dient als Object-Relational Mapper (ORM) für die Datenbank. Es ermöglicht die Definition von Datenbanktabellen als Python-Klassen (Models) und vereinfacht Datenbankabfragen.
+        \item \textbf{Flask-Bcrypt}: Wird für die Sicherheit der Benutzerpasswörter eingesetzt. Es hasht und verifiziert Passwörter mithilfe des bcrypt-Algorithmus.
+        \item \textbf{Flask-Migrate}: Erleichtert Schema-Migrationen der Datenbank, wenn sich die Modelle (Tabellenstruktur) ändern.
+        \item \textbf{Resend}: Dient als E-Mail-API für den Versand von systemgenerierten E-Mails, insbesondere für die \enquote{Passwort vergessen}-Funktion.
+        \item \textbf{icalendar}: Eine Python-Bibliothek, die zum Parsen und Importieren von \texttt{.ics}-Kalenderdateien verwendet wird, um den Schulnetz-Stundenplan zu importieren.
+        \item \textbf{itsdangerous}: Wird verwendet, um sichere, zeitlich begrenzte Tokens zu generieren, die für die \enquote{Passwort zurücksetzen}-Links benötigt werden.
     \end{itemize}
 
     \item \textbf{Server-Setup:}
     \begin{itemize}
-        \item Die Anwendung ist für den Betrieb auf \textbf{DigitalOcean}, einer Cloud-Platform, ausgelegt\footcite{main.tex}.
-        \item Die Datenbankkonfiguration wird dynamisch über Umgebungsvariablen geladen\footcite{app.py}.
-        \item Der Code unterstützt sowohl \textbf{PostgreSQL} (für die Produktion auf Cloud-Diensten) als auch \textbf{SQLite} (für wenn wir local entwickeln)\footcite{app.py, main.tex}.
+        \item Die Anwendung ist für den Betrieb auf DigitalOcean, einer Cloud-Platform, ausgelegt.
+        \item Die Datenbankkonfiguration und verschiedene Schlüssel/API Keys werden dynamisch über Umgebungsvariablen geladen.
+        \item Der Code unterstützt sowohl PostgreSQL (für die Produktion auf Cloud-Diensten) als auch SQLite (für wenn wir lokal entwickeln).
     \end{itemize}
 \end{itemize}
 
 \subsection{Beschreibung der Datenbank(en) und Datenstruktur}
-Die Datenstruktur ist in der Datei \texttt{models.py} durch SQLAlchemy-Modelle definiert. Eine detaillierte Beschreibung der einzelnen Tabellen (\texttt{User}, \texttt{Settings}, \texttt{PrioritySetting}, \texttt{Event}, \texttt{Semester}, \texttt{Subject}, \texttt{Grade}) und ihrer Attribute ist im Kapitel \enquote{Programmieren}, Abschnitt \textbf{\enquote{Datenbankmodelle und Schema}}\footcite{main.tex} ausführlich dokumentiert.
+Die Datenstruktur ist in der Datei \texttt{models.py} durch SQLAlchemy-Modelle definiert. Eine detaillierte Beschreibung der einzelnen Tabellen (\texttt{User}, \texttt{Settings}, \texttt{PrioritySetting}, \texttt{Event}, \texttt{Semester}, \texttt{Subject}, \texttt{Grade}) und ihrer Attribute ist im Abschnitt \enquote{Datenbankmodelle und Schema} ausführlicher dokumentiert.
 
 \begin{itemize}
     \item \textbf{Tabellen:}
-    Die Datenbank besteht aus sieben Haupttabellen: \texttt{User}, \texttt{Settings}, \texttt{PrioritySetting}, \texttt{Event}, \texttt{Semester}, \texttt{Subject} und \texttt{Grade}, die direkt den SQLAlchemy-Klassen in \texttt{models.py} entsprechen\footcite{app.py, main.tex}.
+    Die Datenbank besteht aus sieben Haupttabellen: \texttt{User}, \texttt{Settings}, \texttt{PrioritySetting}, \texttt{Event}, \texttt{Semester}, \texttt{Subject} und \texttt{Grade}, die direkt den SQLAlchemy-Klassen in \texttt{models.py} entsprechen.
 
     \item \textbf{Beziehungen (Relationships):}
-    Die Beziehungen werden durch \texttt{db.relationship} und \texttt{db.ForeignKey} in den Modellen verwaltet\footcite{app.py}.
+    Die Beziehungen werden durch \texttt{db.relationship} und \texttt{db.ForeignKey} in den Modellen verwaltet.
     \begin{itemize}
         \item \textbf{User-zentrierte Struktur:} Der \texttt{User} ist das zentrale Modell. Alle anderen Hauptdaten sind direkt oder indirekt mit ihm verknüpft:
         \begin{itemize}
-            \item \texttt{User} (1) $\to$ \texttt{Settings} (1)\footcite{app.py}
-            \item \texttt{User} (1) $\to$ \texttt{Event} (N)\footcite{app.py}
-            \item \texttt{User} (1) $\to$ \texttt{Semester} (N)\footcite{app.py}
+            \item \texttt{User} (1) $\to$ \texttt{Settings} (1)
+            \item \texttt{User} (1) $\to$ \texttt{Event} (N)
+            \item \texttt{User} (1) $\to$ \texttt{Semester} (N)
         \end{itemize}
         \item \textbf{Hierarchische Beziehungen:}
         \begin{itemize}
-            \item \texttt{Settings} (1) $\to$ \texttt{PrioritySetting} (N): Jede Einstellung hat mehrere Prioritätsregeln\footcite{app.py}.
-            \item \texttt{Semester} (1) $\to$ \texttt{Subject} (N): Jedes Semester hat mehrere Fächer\footcite{app.py}.
-            \item \texttt{Subject} (1) $\to$ \texttt{Grade} (N): Jedes Fach hat mehrere Noten\footcite{app.py}.
+            \item \texttt{Settings} (1) $\to$ \texttt{PrioritySetting} (N): Jede Einstellung hat mehrere Prioritätsregeln.
+            \item \texttt{Semester} (1) $\to$ \texttt{Subject} (N): Jedes Semester hat mehrere Fächer.
+            \item \texttt{Subject} (1) $\to$ \texttt{Grade} (N): Jedes Fach hat mehrere Noten.
         \end{itemize}
-        \item \textbf{Kaskadierendes Löschen:} Die Beziehungen sind mit \texttt{cascade="all, delete-orphan"} konfiguriert\footcite{app.py}. Das bedeutet, wenn ein übergeordnetes Objekt (z.B. ein \texttt{User} oder ein \texttt{Semester}) gelöscht wird, werden alle zugehörigen untergeordneten Objekte (z.B. alle \texttt{Events} und \texttt{Settings} des Users) automatisch mitgelöscht. Dies stellt die Datenintegrität sicher\footcite{main.tex}.
+        \item \textbf{Kaskadierendes Löschen:} Die Beziehungen sind mit \texttt{cascade=\char`\"all, delete-orphan\char`\"} konfiguriert. Das bedeutet, wenn ein übergeordnetes Objekt (z.B. ein \texttt{User} oder ein \texttt{Semester}) gelöscht wird, werden alle zugehörigen untergeordneten Objekte (z.B. alle \texttt{Events} und \texttt{Settings} des Users) automatisch mitgelöscht. Dies stellt die Datenintegrität sicher.
     \end{itemize}
 \end{itemize}
 
 \subsection{Erklärungen zur Code-Struktur}
-Der gesamte Backend-Code ist derzeit in einem einzigen Modul, \texttt{app.py}, organisiert. Die Datei folgt einer logischen Struktur:
+Um die Wartbarkeit und Skalierbarkeit der Anwendung zu verbessern, wurde die ursprüngliche Code-Struktur von einer einzigen \texttt{app.py}-Datei in ein modulares Python-Paket namens \texttt{kkoala} umstrukturiert. Dieser Ansatz folgt dem \enquote{Application Factory}-Pattern, einer bewährten Methode für Flask-Anwendungen. Zudem ist diese Anwendung auch die Best Practice für Flask-Anwendungen.\footcite{flask_structure_best_practices}
 
 \begin{enumerate}
-    \item \textbf{Imports:} Einbindung aller notwendigen Bibliotheken und Frameworks (z.B. Flask, SQLAlchemy, icalendar)\footcite{app.py}.
-    \item \textbf{Konfiguration und Initialisierung:}
+    \item \textbf{Das \enquote{Application Factory}-Pattern (\texttt{kkoala/\_\_init\_\_.py})}:
+    Das Herzstück des Pakets ist die \texttt{create\_app}-Funktion. Anstatt einer globalen App-Instanz wird die Anwendung durch diesen \enquote{Factory}-Aufruf erzeugt. Dies ermöglicht es, verschiedene Konfigurationen (z.B. für Entwicklung, Test oder Produktion) dynamisch zu laden und macht die Anwendung robuster. In dieser Datei werden auch die Flask-Erweiterungen initialisiert und die Blueprints registriert.
+
+    \item \textbf{Konfiguration (\texttt{kkoala/config.py})}:
+    Diese Datei enthält Konfigurationsklassen (z.B. \texttt{DevConfig}, \texttt{ProdConfig}). Sie verwalten wichtige Einstellungen wie den \texttt{SECRET\_KEY}, die Datenbank-URL und API-Schlüssel. Die Konfiguration wird je nach Umgebungsvariable beim Start der App ausgewählt.
+
+    \item \textbf{Blueprints für Routen (\texttt{kkoala/routes/})}:
+    Die Routen der Anwendung sind in \enquote{Blueprints} aufgeteilt, die eine Gruppierung von zusammengehörigen Endpunkten ermöglichen. Dies sorgt für eine saubere Trennung der Anwendungslogik:
     \begin{itemize}
-        \item Initialisierung der Flask-App (\texttt{app = Flask(\_\_name\_\_)})\footcite{app.py}.
-        \item Laden von Umgebungsvariablen (\texttt{load\_dotenv()})\footcite{app.py}.
-        \item Konfiguration der Datenbank (\texttt{app.config["SQLALCHEMY\_DATABASE\_URI"]}), des \texttt{SECRET\_KEY} und der E-Mail-API (\texttt{resend.api\_key})\footcite{app.py}.
-        \item Initialisierung der Flask-Erweiterungen (SQLAlchemy, Bcrypt, Migrate)\footcite{app.py}.
+        \item \textbf{\texttt{auth.py}}: Enthält alle Routen für die Benutzerauthentifizierung (Login, Registrierung, Passwort zurücksetzen).
+        \item \textbf{\texttt{events.py}}: Verwaltet die API-Endpunkte für die Agenda, einschliesslich des Erstellens, Bearbeitens und Löschens von Kalendereinträgen sowie den Start des Lernalgorithmus.
+        \item \textbf{\texttt{grades.py}}: Beinhaltet die API für das Notenmanagement.
+        \item \textbf{\texttt{main.py}}: Definiert die Hauptrouten der Webseite, wie die Startseite.
+        \item \textbf{\texttt{settings.py}}: Steuert die Einstellungsseite und die zugehörige Speicherlogik.
     \end{itemize}
-    \item \textbf{Datenbankmodelle:} Definition aller Tabellen als Python-Klassen (z.B. \texttt{class User(db.Model):}, \texttt{class Event(db.Model):}, etc.)\footcite{app.py}.
-    \item \textbf{Utility-Funktionen und Dekoratoren:}
+
+    \item \textbf{Datenbankmodelle (\texttt{kkoala/models.py})}:
+    Alle SQLAlchemy-Datenbankmodelle (z.B. \texttt{User}, \texttt{Event}, \texttt{Semester}) sind zentral in dieser Datei definiert. Dies erleichtert die Verwaltung der Datenstruktur und Beziehungen.
+
+    \item \textbf{Kernlogik und Hilfsfunktionen}:
     \begin{itemize}
-        \item \textbf{\texttt{@login\_required}}: Ein Dekorator, der prüft, ob ein Benutzer angemeldet ist, bevor er eine Route aufrufen darf. Leitet andernfalls zum Login weiter\footcite{app.py}.
-        \item \textbf{\texttt{@csrf\_protect}}: Ein Dekorator zum Schutz vor Cross-Site Request Forgery (CSRF). Er validiert ein geheimes Token bei allen POST-, PUT-, PATCH- oder DELETE-Anfragen\footcite{app.py, main.tex}.
-        \item \texttt{free\_slots(events, day)}: Eine wichtige Hilfsfunktion für den Lernalgorithmus, die freie Zeitfenster an einem Tag berechnet und dabei 30-Minuten-Puffer um bestehende Termine einhält\footcite{app.py, main.tex}.
+        \item \textbf{\texttt{kkoala/algorithms.py}}: Eine dedizierte Datei, die ausschliesslich die komplexe Logik des Lernzeitalgorithmus (LZA) enthält.
+        \item \textbf{\texttt{kkoala/utils.py}}: Beinhaltet wiederverwendbare Hilfsfunktionen und Dekoratoren, die in verschiedenen Teilen der Anwendung genutzt werden.
+        \item \textbf{\texttt{kkoala/extensions.py}}: Hier werden die Flask-Erweiterungen (SQLAlchemy, Bcrypt, usw.) initialisiert, um zirkuläre Importfehler zu vermeiden.
     \end{itemize}
-    \item \textbf{Lernzeitalgorithmus (LZA):}
-    \begin{itemize}
-        \item \textbf{\texttt{learning\_time\_algorithm(events, user)}}: Die Kernfunktion der Applikation\footcite{app.py, main.tex}. Sie ist verantwortlich für das \enquote{Recycling} (Löschen) alter Lernblöcke und die intelligente Neuplanung von Lernzeiten basierend auf den Prioritätseinstellungen des Benutzers und bestehenden Terminen\footcite{app.py, main.tex}.
-    \end{itemize}
-    \item \textbf{API Endpunkte (Routen mit \texttt{/api/...}):}
-    \begin{itemize}
-        \item Diese Routen dienen der Kommunikation zwischen dem Frontend (JavaScript, FullCalendar) und dem Backend. Sie geben Daten im JSON-Format zurück.
-        \item Beispiele: \texttt{/api/events} (zum Holen, Erstellen und Aktualisieren von Kalendereinträgen), \texttt{/api/run-learning-algorithm} (zum Starten des LZA), \texttt{/api/noten} (zum Speichern und Laden der Noten)\footcite{app.py}.
-    \end{itemize}
-    \item \textbf{Haupt-Routen (Seiten-Navigation):}
-    \begin{itemize}
-        \item Diese Routen rendern die HTML-Seiten für den Benutzer.
-        \item Beispiele: \texttt{/} (Startseite), \texttt{/login}, \texttt{/register}, \texttt{/settings}, \texttt{/agenda}, \texttt{/noten}\footcite{app.py}.
-    \end{itemize}
-    \item \textbf{Start-Block:} Der \texttt{if \_\_name\_\_ == "\_\_main\_\_":}-Block am Ende, der den Server im Entwicklungsmodus startet\footcite{app.py}.
+    
+    \item \textbf{Startpunkt (\texttt{wsgi.py}) und die WSGI-Schnittstelle}:
+    Die Datei \texttt{wsgi.py} im Hauptverzeichnis ist der standardisierte Einstiegspunkt für den Webserver. Ihre einzige Aufgabe ist es, die \texttt{create\_app}-Factory zu importieren und das daraus resultierende Flask-\texttt{application}-Objekt zu erstellen.
+
+    Dieses Objekt ist entscheidend, da es der WSGI (Web Server Gateway Interface) Spezifikation entspricht. WSGI ist ein Python-Standard, der als universelle Schnittstelle oder \enquote{Brücke} zwischen dem Webserver (der Anfragen aus dem Internet empfängt) und der Webanwendung (unserem Flask-Code) dient.\footcite{chaitanya_srivastav_wsgi}
+
+    Für den produktiven Einsatz unserer App verwenden wir Gunicorn (\enquote{Green Unicorn}), einen robusten und weit verbreiteten WSGI-HTTP-Server. Während der eingebaute Entwicklungsserver von Flask für das Testen ausreicht, ist er nicht dafür ausgelegt, eine hohe Anzahl von Anfragen zu bewältigen. Gunicorn agiert hier als leistungsfähiger \enquote{Middleman} zwischen dem Internet und unserer Flask-Anwendung. Er kann mehrere Anfragen gleichzeitig bearbeiten, indem er mehrere \enquote{Worker}-Prozesse verwaltet, was die Leistung und Stabilität der Anwendung unter Last sicherstellt.\footcite{codesignal_gunicorn} Wenn wir Gunicorn starten, geben wir ihm den Befehl \texttt{gunicorn wsgi:application}. Er weiss dann, dass er in der Datei \texttt{wsgi.py} nach dem \texttt{application}-Objekt suchen und dieses als Startpunkt für die Anwendung verwenden muss.
 \end{enumerate}
 
 \section{Features}
