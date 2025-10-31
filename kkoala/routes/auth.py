@@ -142,6 +142,10 @@ def register():
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
             return "User already exists. Choose another username."
+        
+        existing_email = User.query.filter_by(email=email).first()
+        if existing_email:
+            return "Email already registered. Use another email."
 
         # Hash password and create new user
         hashed_password = bcrypt.generate_password_hash(password).decode(
