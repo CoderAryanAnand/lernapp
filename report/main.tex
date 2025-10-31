@@ -47,6 +47,7 @@ bibstyle=mla
 
 % Begin Document
 \begin{document}
+\onehalfspacing
 
 % Title Page
 \makeatletter
@@ -201,7 +202,7 @@ Dabei führten wir laufend Notizen und integrierten diese in unsere Umfrage \& u
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.4]{img/book1.png}
-    \caption{Lernen für Dummies (2. Auflage)}
+    \caption[Lernen für Dummies (2. Auflage). Eigene Bildaufnahme.]{Lernen für Dummies (2. Auflage)}
 \end{figure}
 
 % --- SURFACE LEVEL DESCRIPTION OF BOOK CONTENTS & RELEVANCE / IMPACT ---
@@ -215,7 +216,7 @@ Dieses Buch war somit sehr hilfreich für uns, da es genau die Themen aufgreift,
 \begin{figure}[H]
     \centering
     \includegraphics[scale=0.4]{img/book2.png}
-    \caption{Lernpsychologie (6. Auflage)}
+    \caption[Lernpsychologie (6. Auflage). Eigene Bildaufnahme.]{Lernpsychologie (6. Auflage)}
 \end{figure}
 
 % --- SURFACE LEVEL DESCRIPTION OF BOOK CONTENTS & RELEVANCE / IMPACT ---
@@ -559,7 +560,7 @@ Was man mit dieser Agenda auch machen kann, ist, seinen Stundenplan aus dem \tex
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{img/agenda.png}
-    \caption{Beispiel einer Agenda, mit Lernblöcke von der LZA}
+    \caption[Beispiel einer Agenda, mit Lernblöcke von der LZA. Screenshot KantiKoala, 31.10.2025]{Beispiel einer Agenda, mit Lernblöcke von der LZA}
     \label{fig:placeholder}
 \end{figure}
 % ------------------------------ALGORITHMUS------------------------------
@@ -654,7 +655,7 @@ Ein weiteres wichtiges Feature unserer App ist der Lerntimer. Dieser Timer basie
 Ein weiteres Feature unserer App sind die Lerntipps. Diese sind in verschiedene Kategorien aufgeteilt, wie zum Beispiel Zeitmanagement, Pausenmanagement, Stressmanagement und Lernmethoden. In jeder Kategorie gibt es verschiedene wissenschaftlich fundierte Tipps, welche wir aus unserer Recherche und den Interviews gesammelt haben. Diese Tipps sollen den Nutzer:innen helfen, ihr Lernverhalten zu verbessern und effektiver zu lernen.
 
 % References
-\clearpage
+
 %\addcontentsline{toc}{chapter}{Bibliography}
 %\nocite{*}
 %\printbibliography
@@ -662,6 +663,10 @@ Ein weiteres Feature unserer App sind die Lerntipps. Diese sind in verschiedene 
 \addcontentsline{toc}{chapter}{Literaturverzeichnis} % Changed from Bibliography/Quellen
 \nocite{*}
 \printbibliography[title={Literaturverzeichnis}]
+
+\clearpage
+\addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
+\listoffigures
 
 
 \end{document}
