@@ -10,14 +10,13 @@ grades_bp = Blueprint("grades", __name__, template_folder="../templates", static
 
 @grades_bp.route("/", methods=["GET"])
 @login_required
-def get_noten():
+def get_noten(user):
     """
     API endpoint to get all semesters, subjects, and grades for the user.
 
     Returns:
         JSON: A nested data structure representing the user's academic records.
     """
-    user = User.query.filter_by(username=session["username"]).first()
     semesters = Semester.query.filter_by(user_id=user.id).all()
     data = []
     # Structure the database objects into a nested dictionary/list for JSON output
@@ -43,7 +42,7 @@ def get_noten():
 @grades_bp.route("/", methods=["POST"])
 @csrf_protect
 @login_required
-def save_noten():
+def save_noten(user):
     """
     Replace all semesters/subjects/grades for the current user with the provided payload.
     Payload: [{ name, subjects: [{ name, counts_average, grades: [{ name, value, weight, counts }] }] }]
@@ -51,14 +50,6 @@ def save_noten():
     payload = request.get_json(silent=True)
     if not isinstance(payload, list):
         return jsonify({"error": "Invalid payload, expected a list of semesters"}), 400
-
-    username = session.get("username")
-    if not username:
-        return jsonify({"error": "Unauthorized"}), 401
-
-    user = User.query.filter_by(username=username).first()
-    if not user:
-        return jsonify({"error": "User not found"}), 404
 
     # Validate payload structure before touching DB
     try:

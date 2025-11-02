@@ -187,7 +187,7 @@ def register():
 
 @auth_bp.route("/logout")
 @login_required
-def logout():
+def logout(user):
     """
     Logout route: Clears the user session and redirects to the home page.
 

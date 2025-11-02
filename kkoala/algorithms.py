@@ -6,9 +6,7 @@ from .models import Settings, Event
 def learning_time_algorithm(events, user):
     """
     The core algorithm to schedule optimal learning blocks for upcoming exams.
-    This version is idempotent: it first deletes all previously scheduled non-locked
-    blocks before creating a new, clean schedule.
-    NOTE: This version commits to the DB inside the loop as requested, which is inefficient.
+    This version is idempotent and performs a single database commit for efficiency.
     """
     # --- Configuration and Initialization ---
     settings = Settings.query.filter_by(user_id=user.id).first()
@@ -32,17 +30,16 @@ def learning_time_algorithm(events, user):
         key=lambda e: (int(e.priority), to_dt(e.start))
     )
 
-    # --- GLOBAL CLEANUP PHASE (THE FIX) ---
+    # --- GLOBAL CLEANUP PHASE ---
     # Find all non-locked learning blocks created by the algorithm.
     all_recyclable_blocks = [
         event for event in events if not event.locked and event.title.startswith("Learning for")
     ]
     
-    # Delete all recyclable blocks from the database.
+    # Stage all recyclable blocks for deletion.
     if all_recyclable_blocks:
         for block in all_recyclable_blocks:
             db.session.delete(block)
-        db.session.commit() # Commit all deletions at once.
     
     # Create a clean list of events for scheduling, containing only locked/user-created events.
     events_for_scheduling = [e for e in events if e not in all_recyclable_blocks]
@@ -58,7 +55,6 @@ def learning_time_algorithm(events, user):
 
         summary["exams_processed"] += 1
         total = prio_setting.total_hours_to_learn
-        window_days = prio_setting.days_to_learn
         max_per_day = prio_setting.max_hours_per_day
         window_end = to_dt(exam.start)
 
@@ -99,11 +95,9 @@ def learning_time_algorithm(events, user):
             preferred_start = naive_preferred_start.astimezone(timezone.utc)
             preferred_end = preferred_start + timedelta(hours=today_max)
 
-            # FIX: Create a timezone-aware UTC datetime for the end of the day
             naive_day_end = datetime.combine(current_day.date(), settings_dict['DAY_END'])
             day_end_utc = naive_day_end.astimezone(timezone.utc)
 
-            # Now compare the aware datetimes
             if preferred_end > day_end_utc:
                 preferred_end = day_end_utc
             
@@ -120,9 +114,8 @@ def learning_time_algorithm(events, user):
 
             if is_preferred_slot_free:
                 new_block = Event(title=f"Learning for {exam.title}", start=to_iso(preferred_start), end=to_iso(preferred_end), color=settings_dict['study_block_color'], user_id=exam.user_id, exam_id=exam.id, priority=0, locked=False, recurrence="None", recurrence_id="0", all_day=False)
-                db.session.add(new_block)
-                db.session.commit()
-                events_for_scheduling.append(new_block) # Add to in-memory list for next conflict check
+                db.session.add(new_block) # Stage the new block for addition
+                events_for_scheduling.append(new_block)
                 new_scheduled += preferred_slot_duration
                 summary["blocks_added"] += 1
                 summary["hours_added"] += preferred_slot_duration
@@ -138,9 +131,8 @@ def learning_time_algorithm(events, user):
                 if allocatable >= settings_dict['SESSION']:
                     block_end = slot_start + timedelta(hours=allocatable)
                     new_block = Event(title=f"Learning for {exam.title}", start=to_iso(slot_start), end=to_iso(block_end), color=settings_dict['study_block_color'], user_id=exam.user_id, exam_id=exam.id, priority=0, locked=False, recurrence="None", recurrence_id="0", all_day=False)
-                    db.session.add(new_block)
-                    db.session.commit()
-                    events_for_scheduling.append(new_block) # Add to in-memory list for next conflict check
+                    db.session.add(new_block) # Stage the new block for addition
+                    events_for_scheduling.append(new_block)
                     new_scheduled += allocatable
                     summary["blocks_added"] += 1
                     summary["hours_added"] += allocatable
@@ -152,5 +144,9 @@ def learning_time_algorithm(events, user):
             successes[exam.title] = [True, f"Successfully scheduled all {total_required:.1f} hours."]
         else:
             successes[exam.title] = [False, f"Could only schedule {total_scheduled:.1f} out of {total_required:.1f} hours."]
+
+    # --- FINAL COMMIT ---
+    # Commit all staged deletions and additions in a single transaction.
+    db.session.commit()
 
     return summary, successes
