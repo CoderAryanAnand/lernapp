@@ -13,18 +13,15 @@ events_bp = Blueprint("events", __name__)
 
 @events_bp.route("/", methods=["GET"])
 @login_required
-def get_events():
+def get_events(user):
     """
     API endpoint to fetch all calendar events for the logged-in user.
 
     Returns:
         JSON: A list of all user events formatted for the calendar (FullCalendar).
     """
-    logged_in_user = User.query.filter_by(username=session.get("username")).first()
-    if not logged_in_user:
-        return jsonify([])
-    logged_in_user_id = logged_in_user.id
-    user_events = Event.query.filter_by(user_id=logged_in_user_id).all()
+    # The 'user' object is now provided by the @login_required decorator
+    user_events = Event.query.filter_by(user_id=user.id).all()
     # Format events into a dictionary list for JSON response
     events = [
         {
@@ -46,7 +43,7 @@ def get_events():
 @events_bp.route("/", methods=["POST"])
 @csrf_protect
 @login_required
-def create_event():
+def create_event(user):
     """
     API endpoint to create a new event.
 
@@ -57,8 +54,15 @@ def create_event():
         JSON: A success message and status code 201.
     """
     data = request.json
-    user = User.query.filter_by(username=session["username"]).first()
     all_day = str_to_bool(data.get("all_day", False))
+    end_str = data.get("end")
+
+    # --- FIX: Adjust end date for all-day events ---
+    if all_day and end_str:
+        end_dt = datetime.fromisoformat(end_str)
+        end_dt += timedelta(days=1)
+        end_str = end_dt.isoformat()
+    # --- END FIX ---
 
     # Set event color if it's an exam based on user settings
     if int(data["priority"]) > 0:
@@ -73,7 +77,8 @@ def create_event():
     if data["recurrence"] != "none":
         recurrence_id = str(uuid.uuid4().int) # Generate a unique ID for the series
         start_dt = datetime.fromisoformat(data["start"])
-        end_dt = datetime.fromisoformat(data["end"]) if data.get("end") else None
+        # Use the potentially adjusted end_str from the fix above
+        end_dt = datetime.fromisoformat(end_str) if end_str else None
         duration = end_dt - start_dt if end_dt else None
 
         # Logic to create multiple instances for daily, weekly, or monthly recurrence
@@ -111,7 +116,7 @@ def create_event():
     new_event = Event(
         title=data["title"],
         start=data["start"],
-        end=data.get("end"),
+        end=end_str, # Use the potentially adjusted end_str
         color=data["color"],
         user_id=user.id,
         priority=data["priority"],
@@ -129,7 +134,7 @@ def create_event():
 @events_bp.route("/", methods=["PUT"])
 @csrf_protect
 @login_required
-def update_event():
+def update_event(user):
     """
     API endpoint to update an existing event.
 
@@ -140,7 +145,15 @@ def update_event():
         JSON: A success message and status code 200.
     """
     data = request.json
-    user = User.query.filter_by(username=session["username"]).first()
+    all_day = str_to_bool(data.get("all_day", False))
+    end_str = data.get("end")
+
+    # --- FIX: Adjust end date for all-day events ---
+    if all_day and end_str:
+        end_dt = datetime.fromisoformat(end_str)
+        end_dt += timedelta(days=1)
+        end_str = end_dt.isoformat()
+    # --- END FIX ---
 
     # Case 1: Update a single event (or one that becomes a single event)
     if (
@@ -149,6 +162,9 @@ def update_event():
         or len(Event.query.filter_by(recurrence_id=data["recurrence-id"]).all()) == 1
     ):
         event = Event.query.get(data["id"])
+        if not event or event.user_id != user.id:
+            return jsonify({"message": "Event not found or unauthorized"}), 404
+        
         old_priority = event.priority
         # Update color if priority has changed (for exam events)
         if int(data["priority"]) != old_priority:
@@ -162,19 +178,26 @@ def update_event():
 
         event.title = data["title"]
         event.start = data["start"]
-        event.end = data.get("end")
+        event.end = end_str # Use the potentially adjusted end_str
         event.color = data["color"]
         event.priority = data["priority"]
         event.recurrence = "None" # Update a recurring event instance to a single event
         event.recurrence_id = "0"
-        event.all_day = str_to_bool(data.get("all_day", False))
+        event.all_day = all_day
         event.locked = True
         db.session.commit()
         return jsonify({"message": "Event updated"}), 200
     else:
         # Case 2: Update all events in recurrence series
-        events = Event.query.filter_by(recurrence_id=data["recurrence-id"]).all()
+        events = Event.query.filter_by(recurrence_id=data["recurrence-id"], user_id=user.id).all()
+        if not events:
+            return jsonify({"message": "Recurring events not found or unauthorized"}), 404
+
         new_start_datetime = datetime.fromisoformat(data["start"])
+        # Use the potentially adjusted end_str to calculate the new duration
+        new_end_datetime = datetime.fromisoformat(end_str) if end_str else None
+        new_duration = new_end_datetime - new_start_datetime if new_end_datetime else None
+        
         new_start_time = new_start_datetime.time()
         new_start_date = new_start_datetime.date()
         recurrence_pattern = events[0].recurrence
@@ -184,9 +207,8 @@ def update_event():
             event.title = data["title"]
             event.color = data["color"]
             event.priority = data["priority"]
-            event.all_day = str_to_bool(data.get("all_day", False))
+            event.all_day = all_day
             event.locked = True # Lock recurring events on update
-            current_start_datetime = datetime.fromisoformat(event.start)
 
             # Calculate the new start datetime based on the recurrence pattern and index
             if recurrence_pattern == "daily":
@@ -205,11 +227,12 @@ def update_event():
                 return jsonify({"message": "Unsupported recurrence pattern"}), 400
 
             event.start = updated_start_datetime.isoformat()
-            if event.end: # Adjust the end time based on the original duration
-                current_end_datetime = datetime.fromisoformat(event.end)
-                duration = current_end_datetime - current_start_datetime
-                updated_end_datetime = updated_start_datetime + duration
+            # Adjust the end time based on the new duration
+            if new_duration is not None:
+                updated_end_datetime = updated_start_datetime + new_duration
                 event.end = updated_end_datetime.isoformat()
+            else:
+                event.end = None
 
         db.session.commit()
         return jsonify({"message": "Recurring events updated"}), 200
@@ -218,7 +241,7 @@ def update_event():
 @events_bp.route("/<int:event_id>", methods=["DELETE"])
 @csrf_protect
 @login_required
-def delete_event(event_id):
+def delete_event(user, event_id):
     """
     API endpoint to delete a single event by its ID.
 
@@ -229,17 +252,17 @@ def delete_event(event_id):
         JSON: A success message and status code 200, or a 404 error.
     """
     event = Event.query.get(event_id)
-    if event:
+    if event and event.user_id == user.id:
         db.session.delete(event)
         db.session.commit()
         return jsonify({"message": "Event deleted"}), 200
-    return jsonify({"message": "Event not found"}), 404
+    return jsonify({"message": "Event not found or unauthorized"}), 404
 
 
 @events_bp.route("/recurring/<recurrence_id>", methods=["DELETE"])
 @csrf_protect
 @login_required
-def delete_recurring_events(recurrence_id):
+def delete_recurring_events(user, recurrence_id):
     """
     API endpoint to delete all events associated with a specific recurrence ID.
 
@@ -249,11 +272,8 @@ def delete_recurring_events(recurrence_id):
     Returns:
         JSON: A success message and status code 200, or a 401 error.
     """
-    logged_in_user = User.query.filter_by(username=session.get("username")).first()
-    if not logged_in_user:
-        return jsonify({"error": "Unauthorized"}), 401
     Event.query.filter_by(
-        recurrence_id=recurrence_id, user_id=logged_in_user.id
+        recurrence_id=recurrence_id, user_id=user.id
     ).delete() # Mass delete
     db.session.commit()
     return jsonify({"message": "Recurring events deleted"}), 200
@@ -262,7 +282,7 @@ def delete_recurring_events(recurrence_id):
 @events_bp.route("/run-learning-algorithm", methods=["POST"])
 @csrf_protect
 @login_required
-def run_learning_algorithm():
+def run_learning_algorithm(user):
     """
     API endpoint to trigger the study scheduling algorithm.
 
@@ -271,20 +291,22 @@ def run_learning_algorithm():
     Returns:
         JSON: A dictionary containing the scheduling summary and results per exam.
     """
-    user = User.query.filter_by(username=session["username"]).first()
-    # Get all events for the user (this list is modified/updated by the algorithm)
-    events = Event.query.filter_by(user_id=user.id).all()
-    summary, successes = learning_time_algorithm(events, user)
-    return jsonify({"status": "success",
-                    "summary": summary,
-                    "results": successes
-                    })
+    try:
+        events = Event.query.filter_by(user_id=user.id).all()
+        
+        summary, successes = learning_time_algorithm(events, user)
+
+        return jsonify({"status": "success", "summary": summary, "results": successes}), 200
+    except Exception as e:
+        db.session.rollback()
+        current_app.logger.exception("Error running learning_time_algorithm")
+        return jsonify({"error": "Internal server error", "details": str(e)}), 500
 
 
 @events_bp.route("/import-ics", methods=["POST"])
 @csrf_protect
 @login_required
-def import_ics():
+def import_ics(user):
     """
     API endpoint to import events from an .ics file using the icalendar library.
 
@@ -301,9 +323,6 @@ def import_ics():
 
     try:
         calendar = icalendar.Calendar.from_ical(ics_content)
-        logged_in_user = User.query.filter_by(username=session.get("username")).first()
-        if not logged_in_user:
-            return jsonify({"message": "No logged-in user found"}), 400
 
         for component in calendar.walk():
             if component.name == "VEVENT":
@@ -318,7 +337,7 @@ def import_ics():
                     start=start.isoformat(),
                     end=end.isoformat() if end else None,
                     color=color,
-                    user_id=logged_in_user.id,
+                    user_id=user.id,
                     priority=4, # Assigns a default priority of 4 to imported events
                     recurrence="None",
                     recurrence_id="0",
@@ -329,13 +348,14 @@ def import_ics():
         db.session.commit()
         return jsonify({"message": "Events imported successfully"}), 200
     except Exception as e:
+        db.session.rollback()
         return jsonify({"message": f"Failed to import .ics file: {str(e)}"}), 500
 
 
 @events_bp.route("/populate_test_algorithm", methods=["POST", "GET"])
 @csrf_protect
 @login_required
-def populate_test_algorithm():
+def populate_test_algorithm(user):
     """
     Utility route to clear all existing events and populate the database
     with a standard set of test exams (P1, P2, P3) and busy events.
@@ -345,7 +365,6 @@ def populate_test_algorithm():
     Returns:
         str: A confirmation message and status code 201.
     """
-    user = User.query.filter_by(username=session["username"]).first()
     user_id = user.id
 
     # Clear all existing events for this user before populating

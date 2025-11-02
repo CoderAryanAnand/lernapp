@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, session, current_app
 from datetime import datetime
 import os, json
 
-from ..models import Settings, User
+from ..models import Settings, User, Semester
 from ..utils import login_required
 
 main_bp = Blueprint("main", __name__, template_folder="../templates", static_folder="../static")
@@ -38,7 +38,7 @@ def index():
 
 @main_bp.route("/agenda")
 @login_required
-def agenda():
+def agenda(user):
     """
     Agenda route: Renders the calendar (FullCalendar) view.
 
@@ -47,7 +47,6 @@ def agenda():
     Returns:
         str: Rendered HTML template ('agenda.html').
     """
-    user = User.query.filter_by(username=session["username"]).first()
     settings = Settings.query.filter_by(user_id=user.id).first()
 
     priority_levels = settings.priority_settings
@@ -59,14 +58,15 @@ def agenda():
 
 @main_bp.route("/noten")
 @login_required
-def noten():
+def noten(user):
     """
     Noten route: Renders the grades management page.
 
     Returns:
         str: Rendered HTML template ('noten.html').
     """
-    return render_template("noten.html")
+    semesters = Semester.query.filter_by(user_id=user.id).all()
+    return render_template("noten.html", semesters=semesters)
 
 @main_bp.route("/lerntimer")
 def lerntimer():

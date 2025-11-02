@@ -45,46 +45,81 @@ def get_noten():
 @login_required
 def save_noten():
     """
-    API endpoint to save all semesters, subjects, and grades for the user.
-
-    This implements a destructive save: all existing academic records (Semester,
-    Subject, Grade) are deleted and then recreated from the incoming JSON data.
-
-    Returns:
-        JSON: A status message confirming the successful save.
+    Replace all semesters/subjects/grades for the current user with the provided payload.
+    Payload: [{ name, subjects: [{ name, counts_average, grades: [{ name, value, weight, counts }] }] }]
     """
-    data = request.json
-    user = User.query.filter_by(username=session["username"]).first()
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, list):
+        return jsonify({"error": "Invalid payload, expected a list of semesters"}), 400
+
+    username = session.get("username")
+    if not username:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    user = User.query.filter_by(username=username).first()
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    # Remove all existing semesters, subjects, and grades for this user
-    semesters = Semester.query.filter_by(user_id=user.id).all()
-    for sem in semesters:
-        db.session.delete(sem)
-    db.session.commit()
+    # Validate payload structure before touching DB
+    try:
+        for sem in payload:
+            if not isinstance(sem, dict) or not isinstance(sem.get("name", ""), str):
+                raise ValueError("Invalid semester entry")
+            if "subjects" in sem and not isinstance(sem["subjects"], list):
+                raise ValueError("subjects must be a list")
+            for subj in sem.get("subjects", []):
+                if not isinstance(subj, dict) or not isinstance(subj.get("name", ""), str):
+                    raise ValueError("Invalid subject entry")
+                if "grades" in subj and not isinstance(subj["grades"], list):
+                    raise ValueError("grades must be a list")
+                for grd in subj.get("grades", []):
+                    # attempt to coerce values to check types
+                    float(grd.get("value", 0))
+                    float(grd.get("weight", 1.0))
+    except Exception as e:
+        return jsonify({"error": f"Invalid payload: {str(e)}"}), 400
 
-    # Re-create all semesters, subjects, and grades from the posted data
-    for sem in data:
-        semester = Semester(user_id=user.id, name=sem["name"])
-        db.session.add(semester)
-        db.session.flush() # Flush to get semester.id before adding subjects
+    # Now perform DB replace inside a transaction; rollback on error
+    try:
+        # Delete existing semesters (cascade should remove subjects/grades)
+        existing_semesters = Semester.query.filter_by(user_id=user.id).all()
+        for s in existing_semesters:
+            db.session.delete(s)
+        db.session.flush()
 
-        for subj in sem.get("subjects", []):
-            subject = Subject(semester_id=semester.id, name=subj["name"], counts_towards_average=subj.get("counts_towards_average", True))
-            db.session.add(subject)
-            db.session.flush() # Flush to get subject.id before adding grades
+        # Recreate from payload
+        for sem in payload:
+            sem_name = sem.get("name", "Unnamed Semester")
+            new_sem = Semester(user_id=user.id, name=sem_name)
+            db.session.add(new_sem)
+            db.session.flush()  # ensure new_sem.id available for FK relations
 
-            for grade in subj.get("grades", []):
-                db.session.add(
-                    Grade(
-                        subject_id=subject.id,
-                        name=grade["name"],
-                        value=grade["value"],
-                        weight=grade["weight"],
-                        counts=grade["counts"],
+            for subj in sem.get("subjects", []):
+                subj_name = subj.get("name", "Unnamed Subject")
+                counts_avg = subj.get("counts_average", True)
+                new_subj = Subject(semester_id=new_sem.id, name=subj_name, counts_towards_average=bool(counts_avg))
+                db.session.add(new_subj)
+                db.session.flush()
+
+                for grd in subj.get("grades", []):
+                    try:
+                        value = float(grd.get("value", 0))
+                        weight = float(grd.get("weight", 1.0))
+                    except Exception:
+                        value = 0.0
+                        weight = 1.0
+                    new_grade = Grade(
+                        subject_id=new_subj.id,
+                        name=grd.get("name", ""),
+                        value=value,
+                        weight=weight,
+                        counts=bool(grd.get("counts", True)),
                     )
-                )
+                    db.session.add(new_grade)
 
-    db.session.commit()
-    return jsonify({"status": "success"})
+        db.session.commit()
+        return jsonify({"status": "ok"}), 201
+    except Exception as exc:
+        db.session.rollback()
+        current_app.logger.exception("Failed saving semesters")
+        return jsonify({"error": "Database error saving semesters"}), 500

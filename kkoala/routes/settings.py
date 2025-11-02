@@ -9,7 +9,7 @@ settings_bp = Blueprint("settings", __name__, template_folder="../templates", st
 @settings_bp.route("/", methods=["GET", "POST"])
 @csrf_protect
 @login_required
-def settings_view():
+def settings_view(user):
     """
     Settings route: Allows the user to view and update their general and priority study settings.
 
@@ -20,7 +20,6 @@ def settings_view():
     Returns:
         str: Rendered HTML template ('settings.html') or a redirect.
     """
-    user = User.query.filter_by(username=session["username"]).first()
     settings = Settings.query.filter_by(user_id=user.id).first()
 
     if request.method == "POST":
@@ -93,7 +92,7 @@ def settings_view():
 @settings_bp.route("/delete_account")
 @csrf_protect
 @login_required
-def delete_account():
+def delete_account(user):
     """
     Delete account route: Deletes the user account and all associated data
     due to cascade delete relationships in the SQLAlchemy models.
@@ -101,8 +100,7 @@ def delete_account():
     Returns:
         redirect: Redirects to the home route.
     """
-    current_user = session["username"]
-    db.session.delete(User.query.filter_by(username=current_user).first())
+    db.session.delete(user)
     db.session.commit()
     session.clear()
     return redirect(url_for("main.index"))
@@ -111,7 +109,7 @@ def delete_account():
 @settings_bp.route("/change_password", methods=["GET", "POST"])
 @csrf_protect
 @login_required
-def change_password():
+def change_password(user):
     """
     Change password route: Allows a logged-in user to change their password.
 
@@ -126,8 +124,6 @@ def change_password():
         old_password = request.form["ogpw"]
         new_password = request.form["newpw"]
         confirm_password = request.form["confirm"]
-
-        user = User.query.filter_by(username=session["username"]).first()
 
         # Check old password
         if not bcrypt.check_password_hash(user.password, old_password):

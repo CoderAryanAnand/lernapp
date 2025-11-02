@@ -1,9 +1,11 @@
 from functools import wraps
 from flask import session, redirect, url_for, request, jsonify, current_app
-from datetime import datetime, timedelta, time as dtime
+from datetime import datetime, timedelta, time as dtime, timezone
 import secrets
+from dateutil import parser
 
 from .consts import DAY_START
+from .models import User  # <-- IMPORT THE USER MODEL
 
 def str_to_bool(val):
     """
@@ -24,10 +26,13 @@ def str_to_bool(val):
 
 def login_required(f):
     """
-    Decorator to ensure a user is logged in before accessing a route.
+    Decorator to ensure a user is logged in and exists in the database.
 
-    If the user is not logged in, it redirects to the login page for HTML
-    requests or returns a 401 JSON error for API requests.
+    If the user is not logged in or not found, it redirects to the login page
+    for HTML requests or returns a 401 JSON error for API requests.
+
+    It also passes the fetched user object as the first argument to the
+    decorated view function.
 
     Args:
         f (function): The view function to wrap.
@@ -37,13 +42,21 @@ def login_required(f):
     """
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if "username" not in session:
-            # If it's an API request, return JSON error
+        username = session.get("username")
+        if not username:
             if request.path.startswith("/api/"):
-                return jsonify({"error": "Not logged in"}), 401
-            # Otherwise, redirect to login page
+                return jsonify({"error": "Unauthorized: Not logged in"}), 401
             return redirect(url_for("auth.login"))
-        return f(*args, **kwargs)
+
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            # Handle case where user is in session but not in DB
+            if request.path.startswith("/api/"):
+                return jsonify({"error": "Unauthorized: User not found"}), 401
+            return redirect(url_for("auth.login"))
+
+        # Pass the fetched user object to the route function
+        return f(user, *args, **kwargs)
     return decorated_function
 
 def csrf_protect(f):
@@ -73,51 +86,56 @@ def csrf_protect(f):
     return decorated_function
 
 def make_csrf_token():
-    """Generate and store a CSRF token in the session."""
-
     if current_app.config.get("TESTING"):
         return
+    if "csrf_token" not in session:
+        session["csrf_token"] = secrets.token_hex(16)
 
-    if 'csrf_token' not in session:
-        session['csrf_token'] = secrets.token_hex(16)
-
-def to_dt(iso: str) -> datetime:
+def to_dt(iso_or_dt) -> datetime:
     """
-    Converts ISO format string to a datetime object.
-
-    Args:
-        iso (str): The ISO formatted datetime string.
-
-    Returns:
-        datetime: The corresponding datetime object.
+    Robustly convert an ISO string or a datetime object to a timezone-aware UTC datetime.
     """
-    return datetime.fromisoformat(iso)
+    if not iso_or_dt:
+        return None
+
+    # If it's already a datetime object, just make it timezone-aware.
+    if isinstance(iso_or_dt, datetime):
+        if iso_or_dt.tzinfo is None:
+            return iso_or_dt.replace(tzinfo=timezone.utc)
+        return iso_or_dt.astimezone(timezone.utc)
+
+    # If it's a string, parse it.
+    if isinstance(iso_or_dt, str):
+        try:
+            # Use fromisoformat for standard ISO strings
+            dt = datetime.fromisoformat(iso_or_dt.replace("Z", "+00:00"))
+        except ValueError:
+            # Fallback to dateutil.parser for more lenient parsing
+            dt = parser.parse(iso_or_dt)
+        
+        if dt.tzinfo is None:
+            return dt.replace(tzinfo=timezone.utc)
+        return dt.astimezone(timezone.utc)
+
+    # Handle other unexpected types
+    raise TypeError(f"Unsupported type for to_dt: {type(iso_or_dt)}")
 
 
 def to_iso(dt: datetime) -> str:
-    """
-    Converts a datetime object to ISO format string with seconds precision.
-
-    Args:
-        dt (datetime): The datetime object.
-
-    Returns:
-        str: The ISO formatted string.
-    """
-    return dt.isoformat(timespec="seconds")
+    """Return an ISO string in UTC (with Z) from a datetime or None."""
+    if dt is None:
+        return None
+    # Ensure the datetime is in UTC
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    else:
+        dt = dt.astimezone(timezone.utc)
+    return dt.isoformat().replace("+00:00", "Z")
 
 def free_slots(events, day):
     """
     Calculates free time slots for a given day, respecting existing events
-    and current_applying a 30-minute margin (buffer) around them.
-
-    Args:
-        events (list[Event]): A list of all Event objects for the user.
-        day (date): The date to check for free slots.
-
-    Returns:
-        list[tuple[datetime, datetime]]: A list of (start, end) tuples
-                                         representing continuous free time windows.
+    and applying a 30-minute margin (buffer) around them.
     """
     # Note: DAY_END is dynamically set to 22:00 in the main algorithm.
     DAY_END = dtime(22, 0)
@@ -125,8 +143,12 @@ def free_slots(events, day):
     events_today.sort(key=lambda event: to_dt(event.start))
 
     free_slots = []
-    # Set the starting point for the search to the start of the defined day (08:00)
-    current_start = datetime.combine(day, DAY_START)
+    
+    # FIX: Correctly convert local DAY_START to UTC
+    # Create a naive datetime representing the local start time
+    naive_day_start = datetime.combine(day, DAY_START)
+    # Convert this local time to its UTC equivalent
+    current_start = naive_day_start.astimezone(timezone.utc)
 
     for event in events_today:
         event_start = to_dt(event.start)
@@ -134,15 +156,18 @@ def free_slots(events, day):
         if event.all_day:
             return []  # No free slots if there's an all-day event
 
-        # Check if there's a free slot before the current event, respecting a 30-min buffer
         if current_start <= event_start - timedelta(minutes=30):
-            free_slots.current_append((current_start, event_start - timedelta(minutes=30)))
+            free_slots.append((current_start, event_start - timedelta(minutes=30)))
 
-        # Move the current start past the end of the current event, respecting a 30-min buffer
         current_start = max(current_start, event_end + timedelta(minutes=30))
 
-    # Check for a final free slot after the last event until the end of the day (22:00)
-    if current_start <= datetime.combine(day, DAY_END):
-        free_slots.current_append((current_start, datetime.combine(day, DAY_END)))
+    # FIX: Correctly convert local DAY_END to UTC
+    # Create a naive datetime representing the local end time
+    naive_day_end = datetime.combine(day, DAY_END)
+    # Convert this local time to its UTC equivalent
+    day_end_dt = naive_day_end.astimezone(timezone.utc)
+    
+    if current_start <= day_end_dt:
+        free_slots.append((current_start, day_end_dt))
 
     return free_slots

@@ -148,64 +148,20 @@
         </form>
     </div>
 
-    <!-- FullCalendar Initialization -->
+    <!-- UNIFIED SCRIPT BLOCK -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const calendarEl = document.getElementById('calendar'); // Reference to the calendar container
-            const calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'timeGridWeek', // Default view is a weekly grid
-                headerToolbar: {
-                    left: 'prev,next today', // Navigation buttons
-                    center: 'title', // Calendar title
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay' // View options
-                },
-                locale: 'en-gb', // Set locale to English
-                height: 'auto', // Automatically adjust height to fit content
-                slotLabelFormat: { // Format for time slots (24-hour format)
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false
-                },
-                eventTimeFormat: { // Format for event times (24-hour format)
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    hour12: false
-                },
-                events: async function (fetchInfo, successCallback, failureCallback) {
-                    // Fetch events from the server
-                    try {
-                        const response = await fetch('/api/events');
-                        const events = await response.json();
-                        successCallback(events); // Pass events to FullCalendar
-                    } catch (error) {
-                        console.error('Error fetching events:', error);
-                        failureCallback(error); // Handle errors
-                    }
-                },
-                eventClick: function (info) {
-                    // Open the edit/delete popup when an event is clicked
-                    openEventPopup(info.event);
-                },
-                dateClick: function (info) {
-                    // Open the create event popup when a date is clicked
-                    const endTime = new Date(info.date);
-                    const timezoneOffset = endTime.getTimezoneOffset() / 60; // Get timezone offset in hours
-                    endTime.setHours(endTime.getHours() + 1 - timezoneOffset); // Adjust end time to be 1 hour later
-                    openCreatePopup(info.dateStr.slice(0, 16), endTime.toISOString().slice(0, 16)); // Format date for input
-                }
-            });
-            calendar.render(); // Render the calendar
+            // --- 1. DECLARE THE CALENDAR VARIABLE IN A SHARED SCOPE ---
+            let calendar;
 
-            // Function to open the edit/delete popup
+            // --- 2. HELPER FUNCTIONS ---
             function openEventPopup(event) {
-                const popup = document.getElementById('event-popup');
-                document.getElementById('event-id').value = event.id; // Set event ID
-                document.getElementById('recurrence-id').value = event.extendedProps.recurrence_id; // Set recurrence ID
-                document.getElementById('edit-event-priority').value = event.extendedProps.priority; // Set priority
-                document.getElementById('event-title').value = event.title; // Set event title
-                document.getElementById('event-color').value = event.backgroundColor; // Set event color
+                document.getElementById('event-id').value = event.id;
+                document.getElementById('recurrence-id').value = event.extendedProps.recurrence_id;
+                document.getElementById('edit-event-priority').value = event.extendedProps.priority;
+                document.getElementById('event-title').value = event.title;
+                document.getElementById('event-color').value = event.backgroundColor;
 
-                // Convert UTC date to local date string for input[type="datetime-local"]
                 function toLocalInputValue(date) {
                     if (!date) return '';
                     const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
@@ -213,186 +169,164 @@
                 }
                 document.getElementById('event-start').value = toLocalInputValue(event.start);
                 document.getElementById('event-end').value = event.end ? toLocalInputValue(event.end) : '';
-
-                document.getElementById('edit-all-day').checked = !!event.allDay; // Set all-day checkbox
-                popup.style.display = 'block'; // Show the popup
+                document.getElementById('edit-all-day').checked = !!event.allDay;
+                document.getElementById('event-popup').style.display = 'block';
             }
 
-            // Function to open the create event popup
             function openCreatePopup(dateStr, endTime) {
-                const popup = document.getElementById('create-popup');
-                document.getElementById('create-start').value = dateStr; // Set start time
-                document.getElementById('create-end').value = endTime; // Set end time
-                document.getElementById('all-day').checked = false; // Uncheck all-day checkbox
-                popup.style.display = 'block'; // Show the popup
+                document.getElementById('create-start').value = dateStr;
+                document.getElementById('create-end').value = endTime;
+                document.getElementById('all-day').checked = false;
+                document.getElementById('create-popup').style.display = 'block';
             }
-        });
-    </script>
 
-    <script>
-        // Close popup function
-        function closePopup(popupId) {
-            document.getElementById(popupId).style.display = 'none'; // Hide the popup
-        }
-
-        // Delete event function
-        async function deleteEvent() {
-            const eventId = document.getElementById('event-id').value; // Get event ID
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            await fetch(`/api/events/${eventId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-Token': csrfToken
+            function displaySchedulingPopup(summary, results) {
+                const messageContainer = document.getElementById('scheduler-message');
+                let messageHTML = `<h3>Global Summary:</h3>`;
+                messageHTML += `<p>Exams Processed: <strong>${summary.exams_processed}</strong></p>`;
+                messageHTML += `<p>Total New Blocks Added: <strong>${summary.blocks_added}</strong></p>`;
+                messageHTML += `<p>Total Hours Scheduled: <strong>${summary.hours_added.toFixed(2)} hours</strong></p>`;
+                messageHTML += `<hr style="margin: 10px 0;"><h3>Exam Status:</h3>`;
+                for (const examTitle in results) {
+                    const [success, details] = results[examTitle];
+                    const color = success ? 'green' : 'red';
+                    const icon = success ? '✅' : '❌';
+                    messageHTML += `<p style="color: ${color}; margin: 5px 0;">${icon} <strong>${examTitle}:</strong> ${details}</p>`;
                 }
-            }); // Send DELETE request to the server
-            location.reload(); // Reload the page to reflect changes
-        }
+                messageContainer.innerHTML = messageHTML;
+                document.getElementById('scheduler-popup').style.display = 'block';
+            }
 
-        // Delete recurring events function
-        async function deleteRecurringEvents() {
-            const recurrenceId = document.getElementById('recurrence-id').value; // Get event ID
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            await fetch(`/api/events/recurring/${recurrenceId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-Token': csrfToken
-                }
-            }); // Send DELETE request to the server
-            location.reload(); // Reload the page to reflect changes
-        }
+            // --- 3. GLOBAL FUNCTIONS (ATTACHED TO WINDOW) ---
+            // These functions are called from onclick attributes in the HTML
+            window.closePopup = function(popupId) {
+                document.getElementById(popupId).style.display = 'none';
+            }
 
-        // Handle form submissions for editing events
-        document.getElementById('edit-event-form').addEventListener('submit', async function (e) {
-            e.preventDefault(); // Prevent default form submission
-            const formData = new FormData(e.target); // Get form data
-            formData.set('all_day', document.getElementById('edit-all-day').checked);
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            await fetch('/api/events', {
-                method: 'PUT', // Send PUT request to update the event
-                body: JSON.stringify(Object.fromEntries(formData)), // Convert form data to JSON
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': csrfToken
-                }
-            });
-            location.reload(); // Reload the page to reflect changes
-        });
-
-        // Handle form submissions for creating events
-        document.getElementById('create-event-form').addEventListener('submit', async function (e) {
-            e.preventDefault(); // Prevent default form submission
-            const formData = new FormData(e.target); // Get form data
-            formData.set('all_day', document.getElementById('all-day').checked);
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            await fetch('/api/events', {
-                method: 'POST', // Send POST request to create a new event
-                body: JSON.stringify(Object.fromEntries(formData)), // Convert form data to JSON
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': csrfToken
-                }
-            });
-            location.reload(); // Reload the page to reflect changes
-        });
-
-        // Function to handle .ics file import
-        async function importICSFile(event) {
-            const file = event.target.files[0]; // Get the selected file
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = async function (e) {
-                const icsContent = e.target.result; // Get the file content as text
+            window.deleteEvent = async function() {
+                const eventId = document.getElementById('event-id').value;
                 const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                await fetch(`/api/events/${eventId}`, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-Token': csrfToken }
+                });
+                calendar.refetchEvents();
+                closePopup('event-popup');
+            }
 
-                // Send the .ics content to the backend for processing
-                try {
+            window.deleteRecurringEvents = async function() {
+                const recurrenceId = document.getElementById('recurrence-id').value;
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                await fetch(`/api/events/recurring/${recurrenceId}`, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-Token': csrfToken }
+                });
+                calendar.refetchEvents();
+                closePopup('event-popup');
+            }
+
+            window.importICSFile = async function(event) {
+                const file = event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = async function (e) {
+                    const icsContent = e.target.result;
+                    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
                     const response = await fetch('/api/events/import-ics', {
                         method: 'POST',
                         body: JSON.stringify({ ics: icsContent }),
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRF-Token': csrfToken
-                        }
+                        headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
                     });
-
                     if (response.ok) {
                         alert('Events imported successfully!');
-                        location.reload(); // Reload the page to reflect the imported events
+                        calendar.refetchEvents();
                     } else {
-                        alert('Failed to import events. Please check the .ics file.');
+                        alert('Failed to import events.');
                     }
-                } catch (error) {
-                    console.error('Error importing .ics file:', error);
-                    alert('An error occurred while importing the .ics file.');
-                }
-            };
-
-            reader.readAsText(file); // Read the file as text
-        }
-        // JavaScript file or <script> block
-
-        document.getElementById('run-scheduler-btn').addEventListener('click', function() {
-            // Show a loading indicator if desired
-            this.disabled = true; 
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-            
-            fetch('/api/events/run-learning-algorithm', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-Token': csrfToken
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'success') {
-                    displaySchedulingPopup(data.summary, data.results);
-                } else {
-                    alert('Error during scheduling: ' + (data.error || 'Unknown error'));
-                }
-            })
-            .catch(error => {
-                console.error('Fetch error:', error);
-                alert('A network error occurred.');
-            })
-            .finally(() => {
-                document.getElementById('run-scheduler-btn').disabled = false;
-            });
-        });
-
-
-        function displaySchedulingPopup(summary, results) {
-            const messageContainer = document.getElementById('scheduler-message');
-            let messageHTML = '';
-
-            // --- 1. Build Summary Section ---
-            messageHTML += `<h3>Global Summary:</h3>`;
-            messageHTML += `<p>Exams Processed: <strong>${summary.exams_processed}</strong></p>`;
-            messageHTML += `<p>Total New Blocks Added: <strong>${summary.blocks_added}</strong></p>`;
-            messageHTML += `<p>Total Hours Scheduled: <strong>${summary.hours_added.toFixed(2)} hours</strong></p>`;
-            
-            messageHTML += `<hr style="margin: 10px 0;">`;
-
-            // --- 2. Build Exam-Specific Results Section ---
-            messageHTML += `<h3>Exam Status:</h3>`;
-
-            for (const examTitle in results) {
-                const [success, details] = results[examTitle];
-                const color = success ? 'green' : 'red';
-                const icon = success ? '✅' : '❌';
-                
-                messageHTML += `
-                    <p style="color: ${color}; margin: 5px 0;">
-                        ${icon} <strong>${examTitle}:</strong> ${details}
-                    </p>
-                `;
+                };
+                reader.readAsText(file);
             }
 
-            // --- 3. Inject HTML and Display Popup ---
-            messageContainer.innerHTML = messageHTML;
-            document.getElementById('scheduler-popup').style.display = 'block';
-        }
+            // --- 4. INITIALIZE THE CALENDAR ---
+            const calendarEl = document.getElementById('calendar');
+            // Assign to the calendar variable declared in the outer scope
+            calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'timeGridWeek',
+                headerToolbar: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                },
+                locale: 'en-gb',
+                height: 'auto',
+                slotLabelFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+                eventTimeFormat: { hour: '2-digit', minute: '2-digit', hour12: false },
+                events: '/api/events',
+                eventClick: function (info) { openEventPopup(info.event); },
+                dateClick: function (info) {
+                    const endTime = new Date(info.date);
+                    const timezoneOffset = endTime.getTimezoneOffset() / 60;
+                    endTime.setHours(endTime.getHours() + 1 - timezoneOffset);
+                    openCreatePopup(info.dateStr.slice(0, 16), endTime.toISOString().slice(0, 16));
+                }
+            });
+            calendar.render();
+
+            // --- 5. EVENT LISTENERS ---
+            document.getElementById('edit-event-form').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                formData.set('all_day', document.getElementById('edit-all-day').checked);
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                await fetch('/api/events', {
+                    method: 'PUT',
+                    body: JSON.stringify(Object.fromEntries(formData)),
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
+                });
+                calendar.refetchEvents();
+                closePopup('event-popup');
+            });
+
+            document.getElementById('create-event-form').addEventListener('submit', async function (e) {
+                e.preventDefault();
+                const formData = new FormData(e.target);
+                formData.set('all_day', document.getElementById('all-day').checked);
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                await fetch('/api/events', {
+                    method: 'POST',
+                    body: JSON.stringify(Object.fromEntries(formData)),
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
+                });
+                calendar.refetchEvents();
+                closePopup('create-popup');
+            });
+
+            document.getElementById('run-scheduler-btn').addEventListener('click', function() {
+                this.disabled = true;
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+                fetch('/api/events/run-learning-algorithm', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-Token': csrfToken }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        displaySchedulingPopup(data.summary, data.results);
+                        // This will now work correctly because 'calendar' is in scope
+                        calendar.refetchEvents();
+                    } else {
+                        alert('Error during scheduling: ' + (data.error || 'Unknown error'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    alert('A network error occurred.');
+                })
+                .finally(() => {
+                    this.disabled = false;
+                });
+            });
+        });
     </script>
 </body>
 </html>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ session.csrf_token }}">
+    <meta name="csrf-token" content="{{ session.get('csrf_token', '') }}">
     <title>Semester Management</title>
     <style>
         body {
@@ -272,6 +272,21 @@
 
         // --- Core Subject/Semester Functions ---
 
+        // add helper to rename a semester
+        function renameSemester(semesterDiv) {
+            const headerSpan = semesterDiv.querySelector('.dropdown-header span');
+            const oldName = headerSpan ? headerSpan.textContent.trim() : 'Semester';
+            const newName = prompt('Rename semester:', oldName);
+            if (newName && newName.trim() !== '' && newName !== oldName) {
+                headerSpan.textContent = newName;
+                // persist change
+                saveAllSemestersToBackend().catch(err => {
+                    console.error('Failed saving renamed semester', err);
+                    alert('Failed to save renamed semester. See console for details.');
+                });
+            }
+        }
+
         function createSemester() {
             if (semesterCounter >= SEMESTER_NAMES.length) {
                 alert("Maximum number of hardcoded semesters reached.");
@@ -287,6 +302,17 @@
             const header = document.createElement("div");
             header.className = "dropdown-header";
             header.innerHTML = `<span>${semesterName}</span><span class="average">Average: 0 | Points: 0.0</span>`;
+            
+            // Edit semester name button
+            const editSemesterBtn = document.createElement("button");
+            editSemesterBtn.textContent = "Edit";
+            editSemesterBtn.className = "edit-semester-btn";
+            editSemesterBtn.onclick = function(e) {
+                e.stopPropagation();
+                renameSemester(semesterDiv);
+            };
+            header.appendChild(editSemesterBtn);
+
             header.onclick = function() {
                 header.classList.toggle("open");
                 content.style.display = header.classList.contains("open") ? "block" : "none";
@@ -481,9 +507,13 @@
         function editGradeRow(btn) {
             const gradeRow = btn.parentElement;
             const gradesList = gradeRow.parentElement;
+            const subjectDiv = gradesList.closest('.subject');
             currentSubjectForGrade = {
                 gradesList: gradesList,
-                avgSpan: gradesList.parentElement.parentElement.querySelector('.average'),
+                avgSpan: (function () {
+                    const subjectDiv = gradesList.closest('.subject');
+                    return subjectDiv ? subjectDiv.querySelector('.dropdown-header .average') : null;
+                })(),
                 semesterDiv: gradesList.closest('.semester')
             };
             openGradePopup(gradeRow);
@@ -492,7 +522,8 @@
         function deleteGradeRow(btn) {
             const gradeRow = btn.parentElement;
             const gradesList = gradeRow.parentElement;
-            const avgSpan = gradesList.parentElement.parentElement.querySelector('.average');
+            const subjectDiv = gradesList.closest('.subject');
+            const avgSpan = subjectDiv ? subjectDiv.querySelector('.dropdown-header .average') : null;
             const semesterDiv = gradesList.closest('.semester');
             
             gradeRow.remove();
@@ -526,7 +557,10 @@
             
             const subjectContext = {
                 gradesList: gradesList,
-                avgSpan: gradesList.parentElement.parentElement.querySelector('.average'),
+                avgSpan: (function () {
+                    const subjectDiv = gradesList.closest('.subject');
+                    return subjectDiv ? subjectDiv.querySelector('.dropdown-header .average') : null;
+                })(),
                 semesterDiv: gradesList.closest('.semester')
             };
 
@@ -656,6 +690,17 @@
                 const header = document.createElement("div");
                 header.className = "dropdown-header";
                 header.innerHTML = `<span>${sem.name}</span><span class="average">Average: 0 | Points: 0.0</span>`;
+                
+                // Edit semester name button for loaded semesters
+                const editSemesterBtn = document.createElement("button");
+                editSemesterBtn.textContent = "Edit";
+                editSemesterBtn.className = "edit-semester-btn";
+                editSemesterBtn.onclick = function(e) {
+                    e.stopPropagation();
+                    renameSemester(semesterDiv);
+                };
+                header.appendChild(editSemesterBtn);
+
                 header.onclick = function() {
                     header.classList.toggle("open");
                     content.style.display = header.classList.contains("open") ? "block" : "none";
@@ -721,13 +766,13 @@
                 semesters.push({ name: semesterName, subjects });
             });
 
-            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
+            const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content') || '';
             await fetch("/api/noten", {
                 method: "POST",
+                credentials: 'same-origin',
                 headers: {
                     "Content-Type": "application/json",
-                    "X-CSRF-Token": csrfToken
+                    ...(csrfToken ? {"X-CSRF-Token": csrfToken} : {})
                 },
                 body: JSON.stringify(semesters)
             });
