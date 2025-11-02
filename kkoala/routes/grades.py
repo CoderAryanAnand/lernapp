@@ -6,7 +6,10 @@ from ..models import Subject, Grade, User, Semester
 from ..utils import login_required, csrf_protect
 from ..extensions import db
 
-grades_bp = Blueprint("grades", __name__, template_folder="../templates", static_folder="../static")
+grades_bp = Blueprint(
+    "grades", __name__, template_folder="../templates", static_folder="../static"
+)
+
 
 @grades_bp.route("/", methods=["GET"])
 @login_required
@@ -23,7 +26,12 @@ def get_noten(user):
     for sem in semesters:
         sem_data = {"id": sem.id, "name": sem.name, "subjects": []}
         for subj in sem.subjects:
-            subj_data = {"id": subj.id, "name": subj.name, "counts_towards_average": subj.counts_towards_average, "grades": []}
+            subj_data = {
+                "id": subj.id,
+                "name": subj.name,
+                "counts_towards_average": subj.counts_towards_average,
+                "grades": [],
+            }
             for grade in subj.grades:
                 subj_data["grades"].append(
                     {
@@ -59,7 +67,9 @@ def save_noten(user):
             if "subjects" in sem and not isinstance(sem["subjects"], list):
                 raise ValueError("subjects must be a list")
             for subj in sem.get("subjects", []):
-                if not isinstance(subj, dict) or not isinstance(subj.get("name", ""), str):
+                if not isinstance(subj, dict) or not isinstance(
+                    subj.get("name", ""), str
+                ):
                     raise ValueError("Invalid subject entry")
                 if "grades" in subj and not isinstance(subj["grades"], list):
                     raise ValueError("grades must be a list")
@@ -88,7 +98,11 @@ def save_noten(user):
             for subj in sem.get("subjects", []):
                 subj_name = subj.get("name", "Unnamed Subject")
                 counts_avg = subj.get("counts_average", True)
-                new_subj = Subject(semester_id=new_sem.id, name=subj_name, counts_towards_average=bool(counts_avg))
+                new_subj = Subject(
+                    semester_id=new_sem.id,
+                    name=subj_name,
+                    counts_towards_average=bool(counts_avg),
+                )
                 db.session.add(new_subj)
                 db.session.flush()
 

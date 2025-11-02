@@ -11,6 +11,7 @@ from ..algorithms import learning_time_algorithm
 
 events_bp = Blueprint("events", __name__)
 
+
 @events_bp.route("/", methods=["GET"])
 @login_required
 def get_events(user):
@@ -66,23 +67,31 @@ def create_event(user):
 
     # Set event color if it's an exam based on user settings
     if int(data["priority"]) > 0:
-        prio_setting = PrioritySetting.query.join(Settings).filter(
-            Settings.user_id == user.id,
-            PrioritySetting.priority_level == int(data["priority"])
-        ).first()
+        prio_setting = (
+            PrioritySetting.query.join(Settings)
+            .filter(
+                Settings.user_id == user.id,
+                PrioritySetting.priority_level == int(data["priority"]),
+            )
+            .first()
+        )
         if prio_setting:
             data["color"] = prio_setting.color
 
     # Handle recurring events
     if data["recurrence"] != "none":
-        recurrence_id = str(uuid.uuid4().int) # Generate a unique ID for the series
+        recurrence_id = str(uuid.uuid4().int)  # Generate a unique ID for the series
         start_dt = datetime.fromisoformat(data["start"])
         # Use the potentially adjusted end_str from the fix above
         end_dt = datetime.fromisoformat(end_str) if end_str else None
         duration = end_dt - start_dt if end_dt else None
 
         # Logic to create multiple instances for daily, weekly, or monthly recurrence
-        num_instances = 365 if data["recurrence"] == "daily" else 52 if data["recurrence"] == "weekly" else 12
+        num_instances = (
+            365
+            if data["recurrence"] == "daily"
+            else 52 if data["recurrence"] == "weekly" else 12
+        )
         for i in range(num_instances):
             if data["recurrence"] == "daily":
                 offset = timedelta(days=i)
@@ -104,7 +113,7 @@ def create_event(user):
                 recurrence=data["recurrence"],
                 recurrence_id=recurrence_id,
                 all_day=all_day,
-                locked=True, # Recurring events are locked by default
+                locked=True,  # Recurring events are locked by default
                 exam_id=None,
             )
             db.session.add(new_event)
@@ -116,14 +125,14 @@ def create_event(user):
     new_event = Event(
         title=data["title"],
         start=data["start"],
-        end=end_str, # Use the potentially adjusted end_str
+        end=end_str,  # Use the potentially adjusted end_str
         color=data["color"],
         user_id=user.id,
         priority=data["priority"],
         recurrence="None",
         recurrence_id="0",
         all_day=all_day,
-        locked=True, # Single, user-created events are locked by default
+        locked=True,  # Single, user-created events are locked by default
         exam_id=None,
     )
     db.session.add(new_event)
@@ -164,24 +173,28 @@ def update_event(user):
         event = Event.query.get(data["id"])
         if not event or event.user_id != user.id:
             return jsonify({"message": "Event not found or unauthorized"}), 404
-        
+
         old_priority = event.priority
         # Update color if priority has changed (for exam events)
         if int(data["priority"]) != old_priority:
             if int(data["priority"]) > 0:
-                prio_setting = PrioritySetting.query.join(Settings).filter(
-                    Settings.user_id == user.id,
-                    PrioritySetting.priority_level == int(data["priority"])
-                ).first()
+                prio_setting = (
+                    PrioritySetting.query.join(Settings)
+                    .filter(
+                        Settings.user_id == user.id,
+                        PrioritySetting.priority_level == int(data["priority"]),
+                    )
+                    .first()
+                )
                 if prio_setting:
                     data["color"] = prio_setting.color
 
         event.title = data["title"]
         event.start = data["start"]
-        event.end = end_str # Use the potentially adjusted end_str
+        event.end = end_str  # Use the potentially adjusted end_str
         event.color = data["color"]
         event.priority = data["priority"]
-        event.recurrence = "None" # Update a recurring event instance to a single event
+        event.recurrence = "None"  # Update a recurring event instance to a single event
         event.recurrence_id = "0"
         event.all_day = all_day
         event.locked = True
@@ -189,15 +202,22 @@ def update_event(user):
         return jsonify({"message": "Event updated"}), 200
     else:
         # Case 2: Update all events in recurrence series
-        events = Event.query.filter_by(recurrence_id=data["recurrence-id"], user_id=user.id).all()
+        events = Event.query.filter_by(
+            recurrence_id=data["recurrence-id"], user_id=user.id
+        ).all()
         if not events:
-            return jsonify({"message": "Recurring events not found or unauthorized"}), 404
+            return (
+                jsonify({"message": "Recurring events not found or unauthorized"}),
+                404,
+            )
 
         new_start_datetime = datetime.fromisoformat(data["start"])
         # Use the potentially adjusted end_str to calculate the new duration
         new_end_datetime = datetime.fromisoformat(end_str) if end_str else None
-        new_duration = new_end_datetime - new_start_datetime if new_end_datetime else None
-        
+        new_duration = (
+            new_end_datetime - new_start_datetime if new_end_datetime else None
+        )
+
         new_start_time = new_start_datetime.time()
         new_start_date = new_start_datetime.date()
         recurrence_pattern = events[0].recurrence
@@ -208,7 +228,7 @@ def update_event(user):
             event.color = data["color"]
             event.priority = data["priority"]
             event.all_day = all_day
-            event.locked = True # Lock recurring events on update
+            event.locked = True  # Lock recurring events on update
 
             # Calculate the new start datetime based on the recurrence pattern and index
             if recurrence_pattern == "daily":
@@ -274,7 +294,7 @@ def delete_recurring_events(user, recurrence_id):
     """
     Event.query.filter_by(
         recurrence_id=recurrence_id, user_id=user.id
-    ).delete() # Mass delete
+    ).delete()  # Mass delete
     db.session.commit()
     return jsonify({"message": "Recurring events deleted"}), 200
 
@@ -293,10 +313,13 @@ def run_learning_algorithm(user):
     """
     try:
         events = Event.query.filter_by(user_id=user.id).all()
-        
+
         summary, successes = learning_time_algorithm(events, user)
 
-        return jsonify({"status": "success", "summary": summary, "results": successes}), 200
+        return (
+            jsonify({"status": "success", "summary": summary, "results": successes}),
+            200,
+        )
     except Exception as e:
         db.session.rollback()
         current_app.logger.exception("Error running learning_time_algorithm")
@@ -330,7 +353,7 @@ def import_ics(user):
                 # DTSTART/DTEND objects are converted to datetime objects
                 start = component.get("DTSTART").dt
                 end = component.get("DTEND").dt if component.get("DTEND") else None
-                color = "#fcba03" # Default color for imported events
+                color = "#fcba03"  # Default color for imported events
 
                 new_event = Event(
                     title=title,
@@ -338,7 +361,7 @@ def import_ics(user):
                     end=end.isoformat() if end else None,
                     color=color,
                     user_id=user.id,
-                    priority=4, # Assigns a default priority of 4 to imported events
+                    priority=4,  # Assigns a default priority of 4 to imported events
                     recurrence="None",
                     recurrence_id="0",
                     locked=True,
@@ -378,49 +401,112 @@ def populate_test_algorithm(user):
     # Events are created here: exam1 (P1, 10 days out), exam2 (P2, 7 days out), exam3 (P3, 4 days out), and busy events.
 
     exam1 = Event(
-        user_id=user_id, title="Math Exam", start=(today + timedelta(days=10, hours=9)).isoformat(),
-        end=(today + timedelta(days=10, hours=11)).isoformat(), color="#770000", priority=1,
-        recurrence="None", recurrence_id="0", all_day=False, locked=True, exam_id=None,
+        user_id=user_id,
+        title="Math Exam",
+        start=(today + timedelta(days=10, hours=9)).isoformat(),
+        end=(today + timedelta(days=10, hours=11)).isoformat(),
+        color="#770000",
+        priority=1,
+        recurrence="None",
+        recurrence_id="0",
+        all_day=False,
+        locked=True,
+        exam_id=None,
     )
     exam2 = Event(
-        user_id=user_id, title="History Exam", start=(today + timedelta(days=7, hours=13)).isoformat(),
-        end=(today + timedelta(days=7, hours=15)).isoformat(), color="#ca8300", priority=2,
-        recurrence="None", recurrence_id="0", all_day=False, locked=True, exam_id=None,
+        user_id=user_id,
+        title="History Exam",
+        start=(today + timedelta(days=7, hours=13)).isoformat(),
+        end=(today + timedelta(days=7, hours=15)).isoformat(),
+        color="#ca8300",
+        priority=2,
+        recurrence="None",
+        recurrence_id="0",
+        all_day=False,
+        locked=True,
+        exam_id=None,
     )
     exam3 = Event(
-        user_id=user_id, title="Biology Exam", start=(today + timedelta(days=4, hours=8)).isoformat(),
-        end=(today + timedelta(days=4, hours=10)).isoformat(), color="#097200", priority=3,
-        recurrence="None", recurrence_id="0", all_day=False, locked=True, exam_id=None,
+        user_id=user_id,
+        title="Biology Exam",
+        start=(today + timedelta(days=4, hours=8)).isoformat(),
+        end=(today + timedelta(days=4, hours=10)).isoformat(),
+        color="#097200",
+        priority=3,
+        recurrence="None",
+        recurrence_id="0",
+        all_day=False,
+        locked=True,
+        exam_id=None,
     )
 
     busy1 = Event(
-        user_id=user_id, title="Class: English", start=(today + timedelta(days=1, hours=10)).isoformat(),
-        end=(today + timedelta(days=1, hours=12)).isoformat(), color="#4287f5", priority=5,
-        recurrence="None", recurrence_id="0", all_day=False, locked=True, exam_id=None,
+        user_id=user_id,
+        title="Class: English",
+        start=(today + timedelta(days=1, hours=10)).isoformat(),
+        end=(today + timedelta(days=1, hours=12)).isoformat(),
+        color="#4287f5",
+        priority=5,
+        recurrence="None",
+        recurrence_id="0",
+        all_day=False,
+        locked=True,
+        exam_id=None,
     )
     busy2 = Event(
-        user_id=user_id, title="Doctor Appointment", start=(today + timedelta(days=2, hours=15)).isoformat(),
-        end=(today + timedelta(days=2, hours=16)).isoformat(), color="#8e44ad", priority=5,
-        recurrence="None", recurrence_id="0", all_day=False, locked=True, exam_id=None,
+        user_id=user_id,
+        title="Doctor Appointment",
+        start=(today + timedelta(days=2, hours=15)).isoformat(),
+        end=(today + timedelta(days=2, hours=16)).isoformat(),
+        color="#8e44ad",
+        priority=5,
+        recurrence="None",
+        recurrence_id="0",
+        all_day=False,
+        locked=True,
+        exam_id=None,
     )
     busy3 = Event(
-        user_id=user_id, title="Class: Chemistry", start=(today + timedelta(days=5, hours=9)).isoformat(),
-        end=(today + timedelta(days=5, hours=11)).isoformat(), color="#16a085", priority=5,
-        recurrence="None", recurrence_id="0", all_day=False, locked=True, exam_id=None,
+        user_id=user_id,
+        title="Class: Chemistry",
+        start=(today + timedelta(days=5, hours=9)).isoformat(),
+        end=(today + timedelta(days=5, hours=11)).isoformat(),
+        color="#16a085",
+        priority=5,
+        recurrence="None",
+        recurrence_id="0",
+        all_day=False,
+        locked=True,
+        exam_id=None,
     )
     busy4 = Event(
-        user_id=user_id, title="Sports Practice", start=(today + timedelta(days=6, hours=17)).isoformat(),
-        end=(today + timedelta(days=6, hours=19)).isoformat(), color="#e67e22", priority=5,
-        recurrence="None", recurrence_id="0", all_day=False, locked=True, exam_id=None,
+        user_id=user_id,
+        title="Sports Practice",
+        start=(today + timedelta(days=6, hours=17)).isoformat(),
+        end=(today + timedelta(days=6, hours=19)).isoformat(),
+        color="#e67e22",
+        priority=5,
+        recurrence="None",
+        recurrence_id="0",
+        all_day=False,
+        locked=True,
+        exam_id=None,
     )
 
     non_exam = Event(
-        user_id=user_id, title="Read a book", start=(today + timedelta(days=3, hours=18)).isoformat(),
-        end=(today + timedelta(days=3, hours=19)).isoformat(), color="#888888", priority=0,
-        recurrence="None", recurrence_id="0", all_day=False, locked=True, exam_id=None,
+        user_id=user_id,
+        title="Read a book",
+        start=(today + timedelta(days=3, hours=18)).isoformat(),
+        end=(today + timedelta(days=3, hours=19)).isoformat(),
+        color="#888888",
+        priority=0,
+        recurrence="None",
+        recurrence_id="0",
+        all_day=False,
+        locked=True,
+        exam_id=None,
     )
 
     db.session.add_all([exam1, exam2, exam3, busy1, busy2, busy3, busy4, non_exam])
     db.session.commit()
     return "Test events for the learning time algorithm have been populated!", 201
-

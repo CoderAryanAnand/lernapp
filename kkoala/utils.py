@@ -7,6 +7,7 @@ from dateutil import parser
 from .consts import DAY_START
 from .models import User  # <-- IMPORT THE USER MODEL
 
+
 def str_to_bool(val):
     """
     Convert a string or boolean value to a boolean.
@@ -40,6 +41,7 @@ def login_required(f):
     Returns:
         function: The decorated function.
     """
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
         username = session.get("username")
@@ -57,10 +59,13 @@ def login_required(f):
 
         # Pass the fetched user object to the route function
         return f(user, *args, **kwargs)
+
     return decorated_function
+
 
 def csrf_protect(f):
     """Decorator to protect a route from CSRF attacks."""
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
         # Only check for state-changing methods
@@ -68,12 +73,14 @@ def csrf_protect(f):
             return f(*args, **kwargs)
 
         if request.method in ["POST", "PUT", "PATCH", "DELETE"]:
-            token = session.get('csrf_token')
+            token = session.get("csrf_token")
             if not token:
                 return jsonify({"error": "CSRF token missing from session"}), 400
 
             # Get token from form or from header (for AJAX)
-            request_token = request.form.get('csrf_token') or request.headers.get('X-CSRF-Token')
+            request_token = request.form.get("csrf_token") or request.headers.get(
+                "X-CSRF-Token"
+            )
 
             if not request_token:
                 return jsonify({"error": "CSRF token missing from request"}), 400
@@ -83,13 +90,16 @@ def csrf_protect(f):
                 return jsonify({"error": "Invalid CSRF token"}), 400
 
         return f(*args, **kwargs)
+
     return decorated_function
+
 
 def make_csrf_token():
     if current_app.config.get("TESTING"):
         return
     if "csrf_token" not in session:
         session["csrf_token"] = secrets.token_hex(16)
+
 
 def to_dt(iso_or_dt) -> datetime:
     """
@@ -112,7 +122,7 @@ def to_dt(iso_or_dt) -> datetime:
         except ValueError:
             # Fallback to dateutil.parser for more lenient parsing
             dt = parser.parse(iso_or_dt)
-        
+
         if dt.tzinfo is None:
             return dt.replace(tzinfo=timezone.utc)
         return dt.astimezone(timezone.utc)
@@ -132,6 +142,7 @@ def to_iso(dt: datetime) -> str:
         dt = dt.astimezone(timezone.utc)
     return dt.isoformat().replace("+00:00", "Z")
 
+
 def free_slots(events, day):
     """
     Calculates free time slots for a given day, respecting existing events
@@ -143,7 +154,7 @@ def free_slots(events, day):
     events_today.sort(key=lambda event: to_dt(event.start))
 
     free_slots = []
-    
+
     # FIX: Correctly convert local DAY_START to UTC
     # Create a naive datetime representing the local start time
     naive_day_start = datetime.combine(day, DAY_START)
@@ -166,7 +177,7 @@ def free_slots(events, day):
     naive_day_end = datetime.combine(day, DAY_END)
     # Convert this local time to its UTC equivalent
     day_end_dt = naive_day_end.astimezone(timezone.utc)
-    
+
     if current_start <= day_end_dt:
         free_slots.append((current_start, day_end_dt))
 

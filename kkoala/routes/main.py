@@ -5,7 +5,9 @@ import os, json
 from ..models import Settings, User, Semester
 from ..utils import login_required
 
-main_bp = Blueprint("main", __name__, template_folder="../templates", static_folder="../static")
+main_bp = Blueprint(
+    "main", __name__, template_folder="../templates", static_folder="../static"
+)
 
 
 @main_bp.route("/")
@@ -28,13 +30,17 @@ def index():
         tips = ["No tips available."]
 
     # Selects a tip based on the day of the year (ensures a different tip daily)
-    tip_of_the_day = tips[
-        datetime.now().timetuple().tm_yday % len(tips)
-    ].strip()
+    tip_of_the_day = tips[datetime.now().timetuple().tm_yday % len(tips)].strip()
 
     if "username" in session:
-        return render_template("home.html", username=session["username"], logged_in=True, tip=tip_of_the_day)
+        return render_template(
+            "home.html",
+            username=session["username"],
+            logged_in=True,
+            tip=tip_of_the_day,
+        )
     return render_template("home.html", logged_in=False, tip=tip_of_the_day)
+
 
 @main_bp.route("/agenda")
 @login_required
@@ -67,6 +73,7 @@ def noten(user):
     """
     semesters = Semester.query.filter_by(user_id=user.id).all()
     return render_template("noten.html", semesters=semesters)
+
 
 @main_bp.route("/lerntimer")
 def lerntimer():

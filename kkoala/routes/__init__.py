@@ -4,6 +4,7 @@ from .grades import grades_bp
 from .settings import settings_bp
 from .main import main_bp
 
+
 def register_blueprints(app):
     app.register_blueprint(auth_bp, url_prefix="/auth")
     app.register_blueprint(events_bp, url_prefix="/api/events")

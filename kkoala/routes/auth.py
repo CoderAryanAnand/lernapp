@@ -1,4 +1,13 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, current_app, flash
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    session,
+    current_app,
+    flash,
+)
 from ..extensions import db, bcrypt
 from ..models import User, Settings, PrioritySetting
 from ..utils import csrf_protect, login_required
@@ -6,7 +15,9 @@ from ..consts import DEFAULT_SETTINGS, FROM_EMAIL
 from itsdangerous import URLSafeTimedSerializer
 import resend
 
-auth_bp = Blueprint("auth", __name__, template_folder="../templates", static_folder="../static")
+auth_bp = Blueprint(
+    "auth", __name__, template_folder="../templates", static_folder="../static"
+)
 
 
 @auth_bp.route("/login", methods=["GET", "POST"])
@@ -104,7 +115,10 @@ def reset_password(token):
             )
         except Exception:
             # FIX: Replace string return with flash and redirect
-            flash("Invalid or expired token. Please request a new password reset link.", "error")
+            flash(
+                "Invalid or expired token. Please request a new password reset link.",
+                "error",
+            )
             return redirect(url_for("auth.forgot_password"))
 
         if request.form["new_password"] == request.form["confirm_password"]:
@@ -118,9 +132,12 @@ def reset_password(token):
                 )
                 user.password = hashed_password
                 db.session.commit()
-                flash("Your password has been reset successfully. Please log in.", "success")
+                flash(
+                    "Your password has been reset successfully. Please log in.",
+                    "success",
+                )
                 return redirect(url_for("auth.login"))
-            
+
             # FIX: Replace string return with flash and redirect
             flash("An unexpected error occurred. Please try again.", "error")
             return redirect(url_for("auth.forgot_password"))
@@ -154,19 +171,17 @@ def register():
         if existing_user:
             flash("User already exists. Choose another username.", "error")
             return render_template("register.html")
-        
+
         existing_email = User.query.filter_by(email=email).first()
         if existing_email:
             flash("Email already registered. Use another email.", "error")
             return render_template("register.html")
 
         # Hash password and create new user
-        hashed_password = bcrypt.generate_password_hash(password).decode(
-            "utf-8"
-        )
+        hashed_password = bcrypt.generate_password_hash(password).decode("utf-8")
         new_user = User(username=username, password=hashed_password, email=email)
         db.session.add(new_user)
-        db.session.commit() # Commit to get new_user.id
+        db.session.commit()  # Commit to get new_user.id
 
         # Create default settings for the new user
         default_settings = Settings(
@@ -177,19 +192,21 @@ def register():
             study_block_color=DEFAULT_SETTINGS["study_block_color"],
         )
         db.session.add(default_settings)
-        db.session.flush() # Flush to get default_settings.id
+        db.session.flush()  # Flush to get default_settings.id
 
         # Create default PrioritySetting entries (P1, P2, P3)
         for level in [1, 2, 3]:
             priority = DEFAULT_SETTINGS["priority_settings"][level]
-            db.session.add(PrioritySetting(
-                settings_id=default_settings.id,
-                priority_level=level,
-                color=priority["color"],
-                days_to_learn=priority["days_to_learn"],
-                max_hours_per_day=priority["max_hours_per_day"],
-                total_hours_to_learn=priority["total_hours_to_learn"],
-            ))
+            db.session.add(
+                PrioritySetting(
+                    settings_id=default_settings.id,
+                    priority_level=level,
+                    color=priority["color"],
+                    days_to_learn=priority["days_to_learn"],
+                    max_hours_per_day=priority["max_hours_per_day"],
+                    total_hours_to_learn=priority["total_hours_to_learn"],
+                )
+            )
         db.session.commit()
 
         session["username"] = username
