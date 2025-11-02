@@ -42,6 +42,9 @@ bibstyle=mla
 #1\par\nobreak\vspace{40 pt}}}
 \makeatother
 
+% Fix for font issue
+\DeclareRobustCommand{\ttfamily}{\fontencoding{T1}\fontfamily{lmtt}\selectfont}
+
 % newline after paragraph
 \newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
 
@@ -54,7 +57,10 @@ bibstyle=mla
 \begin{titlepage}
     \centering
     \vspace*{1cm}
-       { \includegraphics[width=6cm]{img/kanti-baden.png}}\\[1cm]
+       { \includegraphics[width=6cm]{img/kanti-baden.png}}
+       \addtocounter{figure}{1}
+       \addcontentsline{lof}{figure}{\protect\numberline{\thefigure}{Logo der Kantonsschule Baden. Quelle: Wikipedia}}
+       \\[1cm]
 
     {\LARGE \textbf{Kanti Koala}}\\
     {\textbf{Die Lern- und Studienhilfsapp für Schüler:innen der Kantonsschule Baden}}\\[1cm]
@@ -63,7 +69,7 @@ bibstyle=mla
     {Schriftlicher Kommentar}\\[1cm]
     
     \textbf{Erstbetreuer: }{Michael Schneider}\\
-    \textbf{Zweitbetreuerin: }{Julia Smits}\\[1cm]
+    \textbf{Zweitbewerterin: }{Julia Smits}\\[1cm]
     
     \textbf{Geschrieben von: }{Aryan Anand (G22b), Simon Haddon (G22b)}\\[1cm]
     \date{\large Datum: 11. November 2025}
@@ -73,20 +79,20 @@ bibstyle=mla
 
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
-Die Kanti Koala App ist eine Webanwendung, die entwickelt wurde, um Schüler:innen der Kantonsschule Baden bei der Bewältigung ihres anspruchsvollen Schulalltags zu unterstützen. 
-Die App bietet eine zentrale, leicht verst-ändliche Agenda zur Organisation aller Termine, Hausaufgaben und Prüfung-en. 
-Kernstück ist ein intelligenter Lernalgorithmus, der auf Basis individueller Prioritäten und gesetzter Fristen automatisch flexible Lernblöcke in den Kalender einplant. 
-Darüber hinaus verfügt die App über ein Notenmanagement-System zur transparenten Leistungsüberwachung und liefert zusätzliche Lerntipps und Hilfestellungen. Technisch basiert Kanti Koala auf Python/Flask und einer SQL-Datenbank und wurde mit Fokus auf Benutzerfreundlichkeit und Datenintegrität konzipiert. Ziel ist es, den Schüler:innen zu helfen, den Überblick zu behalten, Stress zu reduzieren und das Selbstmanagement zu verbessern.
-\pagebreak
+Die vorliegende Maturitätsarbeit befasst sich mit der Entwicklung einer webbasierten Lern- und Studienhilfe für Schüler:innen der Kantonsschule Baden. Ausgangspunkt war die Fragestellung, wie digitale Werkzeuge den Lern- und Organisationsalltag von Schüler:innen erleichtern können. Ziel war es, eine Anwendung zu entwerfen, die schulische Aufgaben, Lernzeiten und Notenverwaltung zentral zusammenführt und durch intelligente Funktionen das Selbstmanagement fördert.
+
+Zur Beantwortung dieser Frage wurde zunächst eine umfangreiche Recherche durchgeführt, bestehend aus einer Literaturstudie zu Lernmethoden, Zeit- und Pausenmanagement sowie Stressbewältigung, ergänzt durch Interviews mit Lehrpersonen und eine Umfrage unter Schüler:innen. Die theoretischen Erkenntnisse flossen in die Konzeption der Applikation ein. Technisch wurde die App mit Python und dem Webframework Flask entwickelt, wobei eine SQL-Datenbank für die Datenspeicherung eingesetzt wurde. Besonderes Augenmerk galt der Benutzerfreundlichkeit, Datensicherheit und der Integration eines algorithmischen Planungssystems.
+
+Das Ergebnis ist die Webanwendung Kanti Koala, die als zentrale Plattform für Schulorganisation dient. Hauptfunktionen sind eine Agenda mit automatischer Lernzeitplanung, ein Notenmanagement-System, ein Pomodoro-basierter Lerntimer sowie tägliche Lern- und Motivationstipps. Der entwickelte Lernzeitalgorithmus plant Lernblöcke dynamisch nach Priorität, Terminen und verfügbaren Zeiten der Nutzer:innen. Die App zeigt, wie digitale Anwendungen das Zeitmanagement und die Lernmotivation von Schüler:innen nachhaltig unterstützen können. Zukünftige Arbeiten sollen Feedback aus der praktischen Nutzung einbeziehen, um die App weiter zu optimieren und auf andere Schulen auszuweiten.\pagebreak
 
 % Table of Contents
 \tableofcontents
 
 % ------------------------------Einleitung------------------------------
-\chapter{Einleitung – Unsere Vision}
+\chapter{Einleitung \textendash\space unsere Vision}
 In der Kantonsschule Baden hat man meist viel zu tun. Es gibt nicht nur viele Prüfungen, auf die man sich vorbereiten muss, sondern auch Hausaufgaben, welche gemacht werden müssen. Wenn man alles, was man für die Schule tun muss, mit den Aktivitäten, die man in der Freizeit macht, kombiniert, merkt man, dass man viel zu tun hat. Es ist nicht leicht, das alles allein und ohne Hilfe zu bewältigen.
 
-Deshalb haben wir uns entschlossen, eine App zu entwickeln, mit der man den Überblick über all diese Aktivitäten behalten kann. Sie organisiert sie nicht nur für die Studierenden, sondern zeigt auch an, wenn man mit etwas Bestimmtem in Verzug gerät. Diese App gibt auch Tipps, wie man effizienter lernen kann, und sie gibt sogar allgemeine Tipps über die Schule, was besonders hilfreich ist, wenn man ein:e neue:r Schüler:in ist. Generell hat die App viele Funktionen, die den Schüler:innen den Alltag erleichtern sollen.
+Deshalb haben wir uns entschlossen, eine App zu entwickeln, mit der man den Überblick über all diese Aktivitäten behalten kann. Sie organisiert sie nicht nur für die Studierenden, sondern zeigt auch an, wenn man mit etwas Bestimmtem in Verzug gerät. Diese App gibt auch Tipps, wie man effizienter lernen kann. Generell hat die App viele Funktionen, die den Schüler:innen den Alltag erleichtern sollen.
 
 % ------------------------------Recherche------------------------------
 \chapter{Recherche}
@@ -327,7 +333,7 @@ Daraus entstanden diese zwei Fragen:
 
 
 % ------------------------------Programmieren------------------------------
-\chapter{Programmieren}
+\chapter{Methodik \textendash\space Programmieren der Web-Applikation}
 \section{Erste Entscheidungen}
 Der erste Gedanke bei dieser Anwendung war, ob es sich um eine Webanwendung oder eine Anwendung handeln sollte, die zum Beispiel auf Ihrem Telefon ausgeführt werden kann. Wir haben uns schnell dafür entschieden, dass eine Web-App für unseren Anwendungsfall viel besser geeignet ist, da sie erstens von allen Geräten abgerufen werden kann und es schneller ist, nur eine Web-App zu programmieren, anstatt drei verschiedene Anwendungen, die auf verschiedenen Betriebssystemen von Telefonen und dann auch für Computer laufen können.
 
@@ -493,7 +499,7 @@ Definiert die spezifischen Parameter für jede Prioritätsstufe des Lernalgorith
     \item[\textbf{settings\_id}] Fremdschlüssel zur \texttt{Settings}-Tabelle (notwendig).
     \item[\textbf{priority\_level}] Die Prioritätsstufe (Integer, notwendig).
     \item[\textbf{color}] Die dem Prioritätslevel zugeordnete Farbe (Hex-Code, notwendig).
-    \item[\textbf{days\_to\_learn}] Anzahl der Tage vor einem Ereignis, an denen gelernt werden soll.
+    % \item[\textbf{days\_to\_learn}] Anzahl der Tage vor einem Ereignis, an denen gelernt werden soll.
     \item[\textbf{max\_hours\_per\_day}] Maximale Lernstunden pro Tag für diese Priorität.
     \item[\textbf{total\_hours\_to\_learn}] Die gesamte zu lernende Stundenanzahl für diese Priorität.
 \end{description}
@@ -537,7 +543,9 @@ Die Abhängigkeiten und Kaskadenlöschungen (z.B. ein gelöschter \texttt{User} 
 
 % ------------------------------SERVER------------------------------
 \subsection{Serververbindung}
-Da es um eine Web-App handelt, müssen die SQL-Datenbanken irgendwo extern gespeichert werden, wo man sie jederzeit abrufen kann. Das heisst, die SQL-Datei muss auf ein Server gespeichert werden. Wir haben uns schliesslich für die Cloud-Applikation \enquote{DigitalOcean} entschieden. Der Grund dafür war, weil wir erhalten gratis Credits mit einem Student Developer Pack. Die Domaine, die wir gekauft haben, wurde wegen dem gleichen Grund gekauft, nämlich, dass wir mit demselben Student Developer Pack die Top-Level-Domaine .app gratis erhalten haben. Die Domaine heisst \href{https://www.kantikoala.app}{kantikoala.app}.
+Da es um eine Web-App handelt, müssen die SQL-Datenbanken irgendwo extern gespeichert werden, wo man sie jederzeit abrufen kann. Das heisst, die SQL-Datei muss auf ein Server gespeichert werden. Wir haben uns schliesslich für die Cloud-Applikation \enquote{DigitalOcean} entschieden. Der Grund dafür war, weil wir erhalten gratis Credits mit einem Student Developer Pack. Gleichzeitig konnten wir auch die Webseite auf derselben Plattform hosten, welches den Prozess vereinfacht hat, da wir alles intern verbinden konnten.
+
+Die Domaine, die wir kauften, wurde wegen dem gleichen Grund gekauft, nämlich, dass wir mit demselben Student Developer Pack die Top-Level-Domaine .app gratis erhalten haben. Die Domaine heisst \href{https://www.kantikoala.app}{kantikoala.app}.
 
 % ------------------------------AUTHENTIFICATION------------------------------
 \subsection{Authentifizierung}
@@ -548,6 +556,8 @@ Natürlich können wir ein Passwort nicht im Klartext speichern, denn das wäre 
 Sobald man sich anmeldet oder registriert, wird man auf die Startseite der Website weitergeleitet.
 
 Sehr wichtig bei jedem Anmeldesystem ist natürlich eine Option das Passwort zurückzusetzen wenn man es vergisst. Um so ein System zu haben, ist es wichtig, dass man den Link, um das Passwort zurückzusetzen, nur einmal verwenden kann. Um dies zu erreichen, haben wir den Token, welches gebraucht wird, um zu überprüfen, dass das Passwort für den richtigen User zurückgesetzt wird, mit dem Hash vom alten Passworts generiert. Wir sind dank eines Artikels\footcite{password_reset} auf diese Idee gekommen. Das Prinzip funktioniert, da das Passwort sich ändern wird, und somit kann man den gleichen Token nicht wieder verwenden. Zudem brauchen wir, um die E-Mail zu verschicken, eine API, damit wir sie mit unserer eigenen Domaine verschicken können. Wir haben uns für die API von Resend entschieden, da sie eine kostenlose Stufe hat, die für unser Projekt ausreicht.
+
+Im Falle, dass ein Nutzer zum Beispiel mit einer E-Mail, die schon gebraucht wird, sich registrieren will, oder mit einem falschen Passwort sich anmelden will, bekommt der Nutzer eine Fehlermeldung angezeigt, die ihm sagt, was falsch gelaufen ist, mithilfe von Flash-Nachrichten\footcite{realpython_flask_flashes}.
 
 %\href{https://freelancefootprints.substack.com/p/yet-another-password-reset-tutorial}{Yet another password reset tutorial}
 %------------------------------AGENDA------------------------------
@@ -590,8 +600,8 @@ Diese Einstellungen gelten für den gesamten Planungszeitraum:
 \myparagraph{Prüfungsspezifische Parameter (Pro Prioritätstufe)}
 Diese Werte werden basierend auf der Priorität jeder Prüfung zugewiesen:
 \begin{itemize}
-    \item \textbf{Lernfenster}\\
-    Die Anzahl der Tage rückwirkend ab dem Prüfungstermin, innerhalb derer Lernblöcke platziert werden sollen.
+    % \item \textbf{Lernfenster}\\
+    % Die Anzahl der Tage rückwirkend ab dem Prüfungstermin, innerhalb derer Lernblöcke platziert werden sollen.
     \item \textbf{Tägliches Maximum}\\
     Die maximale Stundenzahl, die pro Tag für Prüfungen dieser Priorität geplant werden darf.
     \item \textbf{Total Lernstunden}\\
@@ -609,7 +619,7 @@ Der Algorithmus arbeitet iterativ und bearbeitet alle als Prüfung markierten Er
     \end{itemize}
     \item \textbf{Rückwärts-Iterative Planung}:
     \begin{itemize}
-        \item Die Planungsstrategie ist eine Rückwärtsiteration: Sie beginnt beim Prüfungstermin und arbeitet sich tageweise bis zum aktuellen Datum vor. Dieses Vorgehen stellt sicher, dass die Lernblöcke mit höchster Dringlichkeit (die Tage, die am nächsten zur Prüfung liegen) zuerst belegt werden.
+        \item Die Planungsstrategie ist eine Rückwärtsiteration: Sie beginnt beim Prüfungstermin und arbeitet sich tageweise, jedoch maximal drei Wochen, bis zum aktuellen Datum vor. Diese Zeitspanne wurde auf Basis unserer Recherche als optimaler Zeitraum für eine effektive Prüfungsvorbereitung festgelegt. Dieses Vorgehen stellt sicher, dass die Lernblöcke mit höchster Dringlichkeit (die Tage, die am nächsten zur Prüfung liegen) zuerst belegt werden.
         \item An jedem Tag wird die maximale Lernzeit für diese spezifische Prüfung ermittelt. Diese ergibt sich aus der Differenz zwischen dem täglichen Maximum und den Stunden, die bereits an diesem Tag für die Prüfung geplant wurden. Dadurch wird das tägliche Zeitlimit zuverlässig eingehalten und eine Überlastung vermieden.
     \end{itemize}
     \item \textbf{Platzierung und strikte Konfliktvermeidung}:
@@ -619,12 +629,12 @@ Der Algorithmus arbeitet iterativ und bearbeitet alle als Prüfung markierten Er
         \item \textbf{Alternative Slots}: Falls die bevorzugte Zeit belegt ist, sucht ein dediziertes Modul den grössten verfügbaren, konfliktfreien Zeitabschnitt des Tages, um die Platzierung zu maximieren.
         \item \textbf{Echtzeit-Aktualisierung}: Nach der erfolgreichen Generierung und Speicherung eines Lernblocks wird dieser sofort zur Liste der aktuellen Kalenderereignisse hinzugefügt. Dieser Mechanismus ist entscheidend, um sicherzustellen, dass alle unmittelbar nachfolgenden Planungsversuche am selben Tag diesen neu erstellten Block als bereits belegt berücksichtigen und somit Überlappungen ausgeschlossen sind.
     \end{itemize}
-    \item \textbf{Notfallplanung (Erweitertes Zeitfenster)}:
-    \begin{itemize}
-        \item Falls die Gesamtlernstunden nach der iterativen Planung im primären Lernfenster noch nicht erreicht wurden, aktiviert der Algorithmus eine Notfallsuche.
-        \item Diese sucht nach verfügbaren Plätzen in einem erweiterten, sekundären Zeitfenster. Dieses Fenster erstreckt sich maximal bis zum 21. Tag vor der Prüfung.
-        \item Die Regeln des täglichen Maximums und der Konfliktvermeidung bleiben auch in diesem Notfallmodus strikt erhalten.
-    \end{itemize}
+    % \item \textbf{Notfallplanung (Erweitertes Zeitfenster)}:
+    % \begin{itemize}
+    %     \item Falls die Gesamtlernstunden nach der iterativen Planung im primären Lernfenster noch nicht erreicht wurden, aktiviert der Algorithmus eine Notfallsuche.
+    %     \item Diese sucht nach verfügbaren Plätzen in einem erweiterten, sekundären Zeitfenster. Dieses Fenster erstreckt sich maximal bis zum 21. Tag vor der Prüfung.
+    %     \item Die Regeln des täglichen Maximums und der Konfliktvermeidung bleiben auch in diesem Notfallmodus strikt erhalten.
+    % \end{itemize}
     \item \textbf{Ergebnisrückgabe und Zusammenfassung}:
     \begin{itemize}
         \item Nachdem alle Prüfungen bearbeitet wurden, gibt der Algorithmus eine detaillierte Zusammenfassung des Planungsvorgangs zurück.
@@ -680,6 +690,21 @@ Da ein Angreifer auf einer fremden Website dieses geheime Token nicht kennen kan
 
 In unserer Flask-Anwendung haben wir diese Logik mithilfe eines eigenen Decorators (\texttt{@csrf\_protect}) umgesetzt. Dieser Decorator wird auf alle Routen angewendet, die Daten durch \texttt{POST}-, \texttt{PUT}- oder \texttt{DELETE}-Anfragen ändern. Bei Standard-HTML-Formularen wird das Token als verstecktes \texttt{<input>}-Feld übergeben. Für unsere dynamischen Agenda-Funktionen, die auf AJAX basieren, wird das Token aus einem Meta-Tag ausgelesen und in einem benutzerdefinierten HTTP-Header (\texttt{X-CSRF-Token}) mit jeder Anfrage gesendet. Dies stellt sicher, dass jede datenverändernde Aktion, die in unserer Applikation ausgeführt wird, legitim vom Benutzer und von unserer eigenen Webseite stammt.
 
+Eine wichtige Anmerkung ist, dass es schon Module wie \texttt{Flask-WTF} gibt, die CSRF-Schutz bieten. Wir haben uns jedoch entschieden, unseren eigenen Decorator zu schreiben, um ein tieferes Verständnis für die Funktionsweise von CSRF-Schutzmechanismen zu erlangen und die Kontrolle über die Implementierung zu behalten.
+
+% ------------------------------TESTS------------------------------
+\section{Tests}
+Um die Qualität und Zuverlässigkeit der Kanti Koala Web-App sicherzustellen, wurden verschiedene Testfälle erstellt. Diese Tests decken sowohl die Backend-Logik als auch die Frontend-Funktionalität ab. Die genauen Testfälle und deren Ergebnisse sind im Anhang dokumentiert. 
+
+
+% Schlussfolgerung und Ausblick
+%\clearpage
+\chapter{Schlussfolgerung und Ausblick}
+Das Ziel dieser Maturitätsarbeit war es, eine Web-App zu entwickeln, die Kantonsschüler:innen dabei unterstützt, ihr Lernen effizienter zu organisieren und zu planen. Mit der Kanti Koala App haben wir eine Lösung geschaffen, die nicht nur eine benutzerfreundliche Agenda bietet, sondern auch einen intelligenten Lernzeitalgorithmus integriert, der auf wissenschaftlichen Erkenntnissen basiert. Die App ermöglicht es den Nutzer:innen, ihre Prüfungen und Lernzeiten effektiv zu verwalten, was zu einer besseren Vorbereitung und letztlich zu besseren schulischen Leistungen führen kann.
+
+Dabei haben wir, als die Entwickler, wertvolle Erfahrungen in der Webentwicklung gesammelt, insbesondere im Umgang mit Flask, Datenbanken und Sicherheitsaspekten. Die Implementierung des Lernzeitalgorithmus stellte eine besondere Herausforderung dar, da er sowohl flexibel als auch robust sein musste, um den unterschiedlichen Bedürfnissen der Nutzer gerecht zu werden. 
+
+Die App ist aber lang noch nicht fertig, denn es gibt noch viele Möglichkeiten zur Erweiterung. Als erstes würden wir sie gerne noch von Schüler:innen testen lassen, damit wir genau wissen, was unsere Nutzer:innen wollen und brauchen. Basierend auf diesem Feedback könnten wir dann weitere Features implementieren.
 
 % References
 
@@ -692,8 +717,18 @@ In unserer Flask-Anwendung haben wir diese Logik mithilfe eines eigenen Decorato
 \printbibliography[title={Literaturverzeichnis}]
 
 \clearpage
-\addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
 \listoffigures
+\addcontentsline{toc}{chapter}{Abbildungsverzeichnis}
+
+\clearpage
+\chapter*{Anhang}
+\addcontentsline{toc}{chapter}{Anhang}
+\begin{itemize}
+    \item \textbf{Code:} Der vollständige Code der Kanti Koala Web-App ist auf GitHub verfügbar unter: \url{https://github.com/CoderAryanAnand/lernapp}.
+    \item \textbf{KI-Nachweis}
+    \item \textbf{Tests}
+    \item \textbf{Umfragen und Interviews}
+\end{itemize}
 
 
 \end{document}
