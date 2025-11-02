@@ -80,9 +80,9 @@ class PrioritySetting(db.Model):
     color = db.Column(
         db.String(7), nullable=False
     )  # Color to display exams of this priority
-    days_to_learn = db.Column(
-        db.Integer, nullable=False
-    )  # Scheduling window size before exam
+    # days_to_learn = db.Column(
+    #     db.Integer, nullable=False
+    # )  # Scheduling window size before exam
     max_hours_per_day = db.Column(
         db.Float, nullable=False
     )  # Max study time per day for this priority
