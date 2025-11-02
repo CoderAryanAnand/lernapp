@@ -98,8 +98,14 @@ def learning_time_algorithm(events, user):
             naive_preferred_start = datetime.combine(current_day.date(), settings_dict['preferred_time'])
             preferred_start = naive_preferred_start.astimezone(timezone.utc)
             preferred_end = preferred_start + timedelta(hours=today_max)
-            if preferred_end.time() > settings_dict['DAY_END']:
-                preferred_end = datetime.combine(current_day.date(), settings_dict['DAY_END']).replace(tzinfo=timezone.utc)
+
+            # FIX: Create a timezone-aware UTC datetime for the end of the day
+            naive_day_end = datetime.combine(current_day.date(), settings_dict['DAY_END'])
+            day_end_utc = naive_day_end.astimezone(timezone.utc)
+
+            # Now compare the aware datetimes
+            if preferred_end > day_end_utc:
+                preferred_end = day_end_utc
             
             preferred_slot_duration = (preferred_end - preferred_start).total_seconds() / 3600
             is_preferred_slot_free = True
