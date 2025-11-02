@@ -61,7 +61,7 @@
                                 <fieldset>
                                     <legend class="font-bold text-xl text-center">Priorität {{ prio.priority_level }}</legend>
                                     <label class="font-bold">Farbe: <input class="bg-zinc-400"type="color" name="priority{{ prio.priority_level }}_color" value="{{ prio.color }}"></label><br>
-                                    <label>Tage zum Lernen: <input type="number" name="priority{{ prio.priority_level }}_days" value="{{ prio.days_to_learn }}"></label><br>
+                                    <!-- <label>Tage zum Lernen: <input type="number" name="priority{{ prio.priority_level }}_days" value="{{ prio.days_to_learn }}"></label><br> -->
                                     <label>Max. Stunden pro Tag: <input type="number" step="0.1" name="priority{{ prio.priority_level }}_max_hours_per_day" value="{{ prio.max_hours_per_day }}"></label><br>
                                     <label>Totale Stundenanzahl: <input type="number" step="0.1" name="priority{{ prio.priority_level }}_total_hours_to_learn" value="{{ prio.total_hours_to_learn }}"></label><br>
                                     <button type="submit" name="remove_priority" value="{{ prio.priority_level }}">Remove</button>
