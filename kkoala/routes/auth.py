@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, session, current_app
+from flask import Blueprint, render_template, request, redirect, url_for, session, current_app, flash
 from ..extensions import db, bcrypt
 from ..models import User, Settings, PrioritySetting
 from ..utils import csrf_protect, login_required
@@ -31,7 +31,8 @@ def login():
         if user and bcrypt.check_password_hash(user.password, password):
             session["username"] = username
             return redirect(url_for("main.index"))
-        return "Invalid credentials. Try again."
+        flash("Invalid credentials. Try again.", "error")
+        return render_template("login.html")
     return render_template("login.html")
 
 
@@ -67,8 +68,10 @@ def forgot_password():
 
             email = resend.Emails.send(params)
 
-            return "Password reset link sent to your email."
-        return "Email not found. Try again."
+            flash("Password reset link sent to your email.", "info")
+        else:
+            flash("Email not found. Try again.", "error")
+        return render_template("forgot_password.html")
     else:
         return render_template("forgot_password.html")
 
@@ -100,7 +103,9 @@ def reset_password(token):
                 request.form["token"], salt=user.password, max_age=900
             )
         except Exception:
-            return "Invalid or expired token."
+            # FIX: Replace string return with flash and redirect
+            flash("Invalid or expired token. Please request a new password reset link.", "error")
+            return redirect(url_for("auth.forgot_password"))
 
         if request.form["new_password"] == request.form["confirm_password"]:
             new_password = request.form["new_password"]
@@ -113,10 +118,16 @@ def reset_password(token):
                 )
                 user.password = hashed_password
                 db.session.commit()
+                flash("Your password has been reset successfully. Please log in.", "success")
                 return redirect(url_for("auth.login"))
-            return "User not found. Try again."
+            
+            # FIX: Replace string return with flash and redirect
+            flash("An unexpected error occurred. Please try again.", "error")
+            return redirect(url_for("auth.forgot_password"))
         else:
-            return "Passwords do not match. Try again."
+            # FIX: Replace string return with flash and re-render
+            flash("Passwords do not match. Please try again.", "error")
+            return render_template("reset_password.html", token=token)
     else:
         return render_template("reset_password.html", token=token)
 
@@ -141,11 +152,13 @@ def register():
 
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
-            return "User already exists. Choose another username."
+            flash("User already exists. Choose another username.", "error")
+            return render_template("register.html")
         
         existing_email = User.query.filter_by(email=email).first()
         if existing_email:
-            return "Email already registered. Use another email."
+            flash("Email already registered. Use another email.", "error")
+            return render_template("register.html")
 
         # Hash password and create new user
         hashed_password = bcrypt.generate_password_hash(password).decode(
