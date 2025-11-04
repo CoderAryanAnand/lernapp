@@ -42,7 +42,7 @@ style=apa
 \makeatother
 
 % Create a command to add a footnote for AI assistance, you can add dates or versions if needed
-\newcommand{\aifootnote}[1]{\footnote{ChatGPT (Version GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, [#1]. Antwort ganz übernommen.}}
+\newcommand{\aifootnote}[1]{\footnote{ChatGPT (Version GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, #1. Antwort ganz übernommen.}}
 
 % Fix for font issue
 \DeclareRobustCommand{\ttfamily}{\fontencoding{T1}\fontfamily{lmtt}\selectfont}
@@ -412,11 +412,11 @@ Diese sammelten wir durch genaue Analyse der schriftlichen Transkription, dabei 
 % ------------------------------Programmieren------------------------------
 \chapter{Methodik -- Programmieren der Web-Applikation}
 \section{Erste Entscheidungen}
-Der erste Gedanke bei dieser Anwendung war, ob es sich um eine Webanwendung oder eine Anwendung handeln sollte, die zum Beispiel auf Ihrem Telefon ausgeführt werden kann. Wir haben uns schnell dafür entschieden, dass eine Web-App für unseren Anwendungsfall viel besser geeignet ist, da sie erstens von allen Geräten abgerufen werden kann und es schneller ist, nur eine Web-App zu programmieren, anstatt drei verschiedene Anwendungen, die auf verschiedenen Betriebssystemen von Telefonen und dann auch für Computer laufen können.
+Zu Beginn stand die grundsätzliche Plattformwahl im Zentrum: native Applikation (z.\,B. für Smartphones) oder webbasierte Lösung. Unter Berücksichtigung von Geräteunabhängigkeit, Verteil- und Updateaufwand, Entwicklungsressourcen sowie des verfügbaren Zeitrahmens erwies sich eine Web-Applikation als zweckmässig. Sie ist plattformagnostisch im Browser nutzbar, benötigt keine Installation und lässt sich zentral aktualisieren. Zudem reduziert eine einheitliche Codebasis den Implementierungs- und Wartungsaufwand gegenüber mehreren nativen Anwendungen für unterschiedliche Betriebssysteme.
 
-Da wir uns entschieden hatten, eine Web-App zu erstellen, mussten wir entscheiden, wie wir diese gestalten wollten. Die einfachste Option war die Verwendung von Python, da wir beide Erfahrung mit dem Flask-Modul in Python hatten. Um mit Python zu programmieren, können Sie eine Vielzahl von Editoren verwenden, aber wir haben uns letztendlich für Visual Studio Code entschieden, weil wir bereits Erfahrung damit hatten. Zudem ist der GitHub Copilot in Visual Studio Code integriert, welches uns das Leben vereinfacht, da wir leicht für Hilfe fragen können.
+Auf Basis dieser Entscheidung fiel die Technologiewahl auf Python mit dem Microframework Flask. Ausschlaggebend waren vorhandene Vorerfahrungen und eine schlanke Lernkurve. Als Entwicklungsumgebung wurde Visual Studio Code eingesetzt. Die integrierten Funktionen zur Produktivitätssteigerung (u.\,a. Sprachunterstützung, Linting und Code-Assistenz) unterstützen einen effizienten, nachvollziehbaren Entwicklungsprozess.
 
-Damit wir gemeinsam an dem Projekt arbeiten können, ohne ständig Dateien miteinander teilen zu müssen, haben wir uns für die Plattform Github entschieden. Auf Github kann man Code online speichern, auf den dann andere Personen leicht zugreifen können. Das macht das parallele Arbeiten sehr viel einfacher. 
+Für die kollaborative Arbeit kamen Git als Versionsverwaltung und GitHub als zentrales Remote‑Repository zum Einsatz. Der Quellcode wurde dort gemeinsam versioniert und ausgetauscht; regelmässige Synchronisationen (Push/Pull) stellten einen konsistenten, aktuellen Projektstand sicher.\aifootnote{04.11.2025}
 
 % HIER MUSS NOCH SERVER ENTSCHEIDUNG GESCHRIEBEN WERDEN
 
