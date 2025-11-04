@@ -41,15 +41,20 @@ style=apa
 #1\par\nobreak\vspace{40 pt}}}
 \makeatother
 
+% Create a command to add a footnote for AI assistance, you can add dates or versions if needed
+\newcommand{\aifootnote}[1]{\footnote{ChatGPT (Version GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, [#1]. Antwort ganz übernommen.}}
+
 % Fix for font issue
 \DeclareRobustCommand{\ttfamily}{\fontencoding{T1}\fontfamily{lmtt}\selectfont}
 
 % newline after paragraph
 \newcommand{\myparagraph}[1]{\paragraph{#1}\mbox{}\\}
 
+\onehalfspacing
+
 % Begin Document
 \begin{document}
-\onehalfspacing
+
 
 % Title Page
 \makeatletter
@@ -82,16 +87,44 @@ Die vorliegende Maturitätsarbeit befasst sich mit der Entwicklung einer webbasi
 
 Zur Beantwortung dieser Frage wurde zunächst eine umfangreiche Recherche durchgeführt, bestehend aus einer Literaturstudie zu Lernmethoden, Zeit- und Pausenmanagement sowie Stressbewältigung, ergänzt durch Interviews mit Lehrpersonen und eine Umfrage unter Schüler:innen. Die theoretischen Erkenntnisse flossen in die Konzeption der Applikation ein. Technisch wurde die App mit Python und dem Webframework Flask entwickelt, wobei eine SQL-Datenbank für die Datenspeicherung eingesetzt wurde. Besonderes Augenmerk galt der Benutzerfreundlichkeit, Datensicherheit und der Integration eines algorithmischen Planungssystems.
 
-Das Ergebnis ist die Webanwendung Kanti Koala, die als zentrale Plattform für Schulorganisation dient. Hauptfunktionen sind eine Agenda mit automatischer Lernzeitplanung, ein Notenmanagement-System, ein Pomodoro-basierter Lerntimer sowie tägliche Lern- und Motivationstipps. Der entwickelte Lernzeitalgorithmus plant Lernblöcke dynamisch nach Priorität, Terminen und verfügbaren Zeiten der Nutzer:innen. Die App zeigt, wie digitale Anwendungen das Zeitmanagement und die Lernmotivation von Schüler:innen nachhaltig unterstützen können. Zukünftige Arbeiten sollen Feedback aus der praktischen Nutzung einbeziehen, um die App weiter zu optimieren und auf andere Schulen auszuweiten.\pagebreak
-
+Das Ergebnis ist die Webanwendung Kanti Koala, die als zentrale Plattform für Schulorganisation dient. Hauptfunktionen sind eine Agenda mit automatischer Lernzeitplanung, ein Notenmanagement-System, ein Pomodoro-basierter Lerntimer sowie tägliche Lern- und Motivationstipps. Der entwickelte Lernzeitalgorithmus plant Lernblöcke dynamisch nach Priorität, Terminen und verfügbaren Zeiten der Nutzer:innen. Die App zeigt, wie digitale Anwendungen das Zeitmanagement und die Lernmotivation von Schüler:innen nachhaltig unterstützen können. Zukünftige Arbeiten sollen Feedback aus der praktischen Nutzung einbeziehen, um die App weiter zu optimieren und auf andere Schulen auszuweiten.\aifootnote{04.11.2025}
+\clearpage
 % Table of Contents
 \tableofcontents
 
 % ------------------------------Einleitung------------------------------
-\chapter{Einleitung \textendash\space unsere Vision}
-In der Kantonsschule Baden hat man meist viel zu tun. Es gibt nicht nur viele Prüfungen, auf die man sich vorbereiten muss, sondern auch Hausaufgaben, welche gemacht werden müssen. Wenn man alles, was man für die Schule tun muss, mit den Aktivitäten, die man in der Freizeit macht, kombiniert, merkt man, dass man viel zu tun hat. Es ist nicht leicht, das alles allein und ohne Hilfe zu bewältigen.
+\chapter{Einleitung -- unsere Vision}
+Der Schulalltag an der Kantonsschule Baden ist durch eine hohe Arbeitsdichte geprägt. Neben zahlreichen Prüfungen, auf die gezielt vorzubereiten ist, sind regelmässig Hausaufgaben anzufertigen. In Kombination mit ausserschulischen Verpflichtungen entstehen erhebliche Anforderungen an Planung und Selbstorganisation, die ohne geeignete Hilfsmittel nur schwer zu bewältigen sind. Digitale Werkzeuge können hier ansetzen, indem sie Aufgaben bündeln, Transparenz schaffen und Lernzeiten strukturiert planbar machen.
 
-Deshalb haben wir uns entschlossen, eine App zu entwickeln, mit der man den Überblick über all diese Aktivitäten behalten kann. Sie organisiert sie nicht nur für die Studierenden, sondern zeigt auch an, wenn man mit etwas Bestimmtem in Verzug gerät. Diese App gibt auch Tipps, wie man effizienter lernen kann. Generell hat die App viele Funktionen, die den Schüler:innen den Alltag erleichtern sollen.
+\section{Motivation und Relevanz}
+Aus der Perspektive von Schüler:innen besteht ein wiederkehrendes Problem darin, Lernaufwände, Termine und persönliche Ressourcen in Einklang zu bringen. Versäumnisse führen zu Stress, ungleichmässiger Belastung und ineffizientem Lernen. Eine zentrale, benutzerfreundliche Applikation, welche Lernzeiten, Termine und Noten integriert, ist daher fachlich relevant: Sie stärkt Selbstmanagement und Verbindlichkeit, reduziert kognitive Belastung in der Planung und kann so Lernqualität und Wohlbefinden positiv beeinflussen. Für die Kantonsschule Baden ist der Kontext besonders bedeutsam, da heterogene Anforderungen (Prüfungen, Projekte, Freizeit) koordiniert werden müssen. Zum Zeitpunkt der Fragestellung ist die konkrete Plattformwahl (Web‑ oder native Applikation) bewusst offen; die Untersuchung erfolgt plattformagnostisch.
+
+\section{Fragestellung und Zielsetzung}
+\textbf{Hauptfragestellung:}
+\begin{quote}
+Lässt sich eine digitale Applikation konzipieren und prototypisch umsetzen, die den Lern‑ und Organisationsalltag von Schüler:innen der Kantonsschule Baden messbar verbessert?
+\end{quote}
+\textit{Begründung:} Die Frage fokussiert auf Machbarkeit und Wirkung einer digitalen Lösung, ohne die Plattform (Web oder nativ) vorab festzulegen. Sie ist überprüfbar über Indikatoren wie Planbarkeit, Termintreue, wahrgenommene Kontrolle und Aufwandreduktion.
+
+Zur Konkretisierung werden folgende Teilfragen untersucht:
+\begin{itemize}
+  \item \textbf{Wirksamkeit:} Verbessert die Applikation Planbarkeit, Termintreue und die wahrgenommene Kontrolle über Lernzeiten?
+  \item \textbf{Funktionsgruppen:} Welche Funktionen (z.\,B. Planung/Agenda, Leistungsübersicht, Timer, Hinweise) stiften den grössten Nutzen?
+  \item \textbf{Plattform- \& Architekturwahl:} Welche Plattform (Web oder nativ) ist unter schulischen Rahmenbedingungen (Verfügbarkeit, Wartung, Deployment) zweckmässig?
+  \item \textbf{Datenschutz \& Sicherheit:} Sind die vorgesehenen Massnahmen (u.\,a. Passwortschutz, Transportverschlüsselung) für den Schulkontext angemessen?
+\end{itemize}
+
+\section{Aufbau und Begründung des schriftlichen Kommentars}
+Der Bericht ist entlang der Entwicklungslogik strukturiert:
+\begin{enumerate}
+  \item \textbf{Recherche:} Ausgangslage, Literatur- und Internetrecherche, Interviews und Umfrage als empirische Grundlage; diese sichern Nachvollziehbarkeit der Anforderungen.
+  \item \textbf{Methodik - Programmierung:} Architektur, Datenmodell, Routen, Kernlogik (Lernzeitalgorithmus) und UI; die Reihenfolge folgt der technischen Abhängigkeit vom Systementwurf zur Implementierung.
+  \item \textbf{Features:} Darstellung der Hauptfunktionen (Agenda, Noten, Lerntimer, Tipps) als Umsetzung der Anforderungen.
+  \item \textbf{Sicherheitskonzept:} Begründete Auswahl und Implementierung von Schutzmassnahmen (Passwortsicherheit, HTTPS, CSRF).
+  \item \textbf{Tests:} Sicherung von Funktionsfähigkeit und Qualität.
+  \item \textbf{Schlussfolgerung und Ausblick:} Beantwortung der Fragestellung, Limitationen und Weiterentwicklung.
+\end{enumerate}
+Diese Gliederung ist gewählt, um von der Problem- und Evidenzbasis über die Umsetzung zur Bewertung zu führen und damit die zentrale Fragestellung stringent zu beantworten.\aifootnote{04.11.2025}
 
 % ------------------------------Recherche------------------------------
 \chapter{Recherche}
@@ -377,7 +410,7 @@ Diese sammelten wir durch genaue Analyse der schriftlichen Transkription, dabei 
 
 
 % ------------------------------Programmieren------------------------------
-\chapter{Methodik \textendash\space Programmieren der Web-Applikation}
+\chapter{Methodik -- Programmieren der Web-Applikation}
 \section{Erste Entscheidungen}
 Der erste Gedanke bei dieser Anwendung war, ob es sich um eine Webanwendung oder eine Anwendung handeln sollte, die zum Beispiel auf Ihrem Telefon ausgeführt werden kann. Wir haben uns schnell dafür entschieden, dass eine Web-App für unseren Anwendungsfall viel besser geeignet ist, da sie erstens von allen Geräten abgerufen werden kann und es schneller ist, nur eine Web-App zu programmieren, anstatt drei verschiedene Anwendungen, die auf verschiedenen Betriebssystemen von Telefonen und dann auch für Computer laufen können.
 
@@ -615,7 +648,7 @@ Sobald man sich anmeldet oder registriert, wird man auf die Startseite der Websi
 
 Sehr wichtig bei jedem Anmeldesystem ist natürlich eine Option das Passwort zurückzusetzen wenn man es vergisst. Um so ein System zu haben, ist es wichtig, dass man den Link, um das Passwort zurückzusetzen, nur einmal verwenden kann. Um dies zu erreichen, haben wir den Token, welches gebraucht wird, um zu überprüfen, dass das Passwort für den richtigen User zurückgesetzt wird, mit dem Hash vom alten Passworts generiert. Wir sind dank \textcite{password_reset} auf diese Idee gekommen. Das Prinzip funktioniert, da das Passwort sich ändern wird, und somit kann man den gleichen Token nicht wieder verwenden. Zudem brauchen wir, um die E-Mail zu verschicken, eine API, damit wir sie mit unserer eigenen Domaine verschicken können. Wir haben uns für die API von Resend entschieden, da sie eine kostenlose Stufe hat, die für unser Projekt ausreicht.
 
-Im Falle, dass ein Nutzer zum Beispiel mit einer E-Mail, die schon gebraucht wird, sich registrieren will, oder mit einem falschen Passwort sich anmelden will, bekommt der Nutzer eine Fehlermeldung angezeigt, die ihm sagt, was falsch gelaufen ist, mithilfe von Flash-Nachrichten \parencite{realpython_flask_flashes}.
+Im Falle, dass ein Nutzer zum Beispiel mit einer E-Mail, die schon gebraucht wird, sich registrieren will, oder mit einem falschen Passwort sich anmelden will, bekommt der Nutzer eine Fehlermeldung angezeigt, die ihm sagt, was falsch gelaufen ist, mithilfe von Flash-Nachrichten, welche eine Funktion von Flask ist \parencite{realpython_flask_flashes}.
 
 %\href{https://freelancefootprints.substack.com/p/yet-another-password-reset-tutorial}{Yet another password reset tutorial}
 %------------------------------AGENDA------------------------------
@@ -626,7 +659,7 @@ Jedes Ereignis sollte die folgenden Informationen enthalten: einen Titel, die St
 
 Zur Anzeige des Ereignisses haben wir ein Modul namens FullCalendar verwendet, eine JavaScript-Bibliothek zur Anzeige eines Kalenders. Wir haben uns für dieses Modul entschieden, weil es das erste Ergebnis war, das bei der Suche nach einer Bibliothek mit seinen Fähigkeiten auftauchte. 
 
-Was man mit dieser Agenda auch machen kann, ist, seinen Stundenplan aus dem \texttt{schulnetz}, das ist die Plattform, die von der Kantonsschule verwendet wird, um den Schüler:innen ihren Stundenplan anzuzeigen, zu importieren. Da jeder Kanti-Schüler seinen Stundenplan auf \texttt{schulnetz} hat, dachten wir, es wäre nützlich, ihn von dort zu importieren, anstatt jede Stunde manuell eingeben zu müssen. Unsere Agenda kann also Agenden im .ics-Format importieren, das ist das Format, in dem \texttt{schulnetz} seine Kalender exportiert.
+Was man mit dieser Agenda auch machen kann, ist, seinen Stundenplan aus dem \texttt{schulnetz}, zu importieren. Das ist die Plattform, die von der Kantonsschule verwendet wird, um den Schüler:innen ihren Stundenplan anzuzeigen. Da jeder Kanti-Schüler seinen Stundenplan auf \texttt{schulnetz} hat, dachten wir, es wäre nützlich, wenn man ihn von dort importieren könnte, anstatt jede Stunde manuell eingeben zu müssen. Unsere Agenda kann also Agenden im .ics-Format importieren, das ist das Format, in dem \texttt{schulnetz} seine Kalender exportiert. Es gibt keine direkte Funktion, um den Stundenplan zu importieren, also müssen die Nutzer:innen einfach zuerst ihren Stundenplan auf \texttt{schulnetz} exportieren, und dann die .ics-Datei in unsere App importieren.
 
 \begin{figure}
     \centering
@@ -637,6 +670,7 @@ Was man mit dieser Agenda auch machen kann, ist, seinen Stundenplan aus dem \tex
 % ------------------------------ALGORITHMUS------------------------------
 \subsection{Der Lernzeitalgorithmus}
 Der Lernzeitalgorithmus (LZA) ist der Kern unserer Web-App. Er automatisiert die Planung der notwendigen Lernzeiten für die anstehenden Prüfungen eines Nutzers.
+Wir bezeichnen unseren Mechanismus als Algorithmus, da er die formalen Kriterien eines Algorithmus erfüllt: Jeder Planungsschritt ist ausführbar (existierende Funktionen), deterministisch und determiniert (gleiche Eingabedaten führen stets zur gleichen Priorisierung und Planung). Zudem ist die Anzahl der zur Erstellung des Lernplans notwendigen Schritte endlich (Finitheit), wodurch der Mechanismus garantiert terminiert und eine strukturierte Ausgabe (den Lernplan) basierend auf den Eingabedaten (Benutzereinstellungen und Prüfungstermine) liefert. \parencite{studyflix_algorithmus}
 
 \subsubsection{Eingabeparameter und Planungsziel}
 
