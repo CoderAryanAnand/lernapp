@@ -43,6 +43,8 @@ style=apa
 
 % Create a command to add a footnote for AI assistance, you can add dates or versions if needed
 \newcommand{\aifootnote}[1]{\footnote{ChatGPT (Version GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, #1. Antwort ganz übernommen.}}
+\newcommand{\aifootnotemark}{\footnotemark}
+\newcommand{\aifootnotetext}[1]{\footnotetext{ChatGPT (Version GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, #1. Antwort ganz übernommen.}}
 
 % Fix for font issue
 \DeclareRobustCommand{\ttfamily}{\fontencoding{T1}\fontfamily{lmtt}\selectfont}
@@ -411,17 +413,19 @@ Diese sammelten wir durch genaue Analyse der schriftlichen Transkription, dabei 
 
 % ------------------------------Programmieren------------------------------
 \chapter{Methodik -- Programmieren der Web-Applikation}
-\section{Erste Entscheidungen}
+\section[Erste Entscheidungen]{Erste Entscheidungen\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext{04.11.2025}
 Zu Beginn stand die grundsätzliche Plattformwahl im Zentrum: native Applikation (z.\,B. für Smartphones) oder webbasierte Lösung. Unter Berücksichtigung von Geräteunabhängigkeit, Verteil- und Updateaufwand, Entwicklungsressourcen sowie des verfügbaren Zeitrahmens erwies sich eine Web-Applikation als zweckmässig. Sie ist plattformagnostisch im Browser nutzbar, benötigt keine Installation und lässt sich zentral aktualisieren. Zudem reduziert eine einheitliche Codebasis den Implementierungs- und Wartungsaufwand gegenüber mehreren nativen Anwendungen für unterschiedliche Betriebssysteme.
 
 Auf Basis dieser Entscheidung fiel die Technologiewahl auf Python mit dem Microframework Flask. Ausschlaggebend waren vorhandene Vorerfahrungen und eine schlanke Lernkurve. Als Entwicklungsumgebung wurde Visual Studio Code eingesetzt. Die integrierten Funktionen zur Produktivitätssteigerung (u.\,a. Sprachunterstützung, Linting und Code-Assistenz) unterstützen einen effizienten, nachvollziehbaren Entwicklungsprozess.
 
-Für die kollaborative Arbeit kamen Git als Versionsverwaltung und GitHub als zentrales Remote‑Repository zum Einsatz. Der Quellcode wurde dort gemeinsam versioniert und ausgetauscht; regelmässige Synchronisationen (Push/Pull) stellten einen konsistenten, aktuellen Projektstand sicher.\aifootnote{04.11.2025}
+Für die kollaborative Arbeit kamen Git als Versionsverwaltung und GitHub als zentrales Remote-Repository zum Einsatz. Der Quellcode wurde dort gemeinsam versioniert und ausgetauscht; regelmässige Synchronisationen (Push/Pull) stellten einen konsistenten, aktuellen Projektstand sicher.
 
 % HIER MUSS NOCH SERVER ENTSCHEIDUNG GESCHRIEBEN WERDEN
 
 % ------------------------------ANFORDERUNGEN------------------------------
-\section{Anforderungen}
+\section[Anforderungen]{Anforderungen\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext{04.11.2025}
 Bevor wir mit dem Programmieren der Web-Applikation beginnen konnten, mussten wir uns zuerst über die Anforderungen an die Applikation klar werden. Da es sich um eine Web-Applikation handelt, welche den Schüler:innen der Kantonsschule Baden helfen soll, mussten wir uns überlegen, welche Funktionen die Applikation beinhalten sollte und wie diese umgesetzt werden könnten.
 
 Die Anforderungen an die Kanti Koala Web-Applikation sind wie folgt:
