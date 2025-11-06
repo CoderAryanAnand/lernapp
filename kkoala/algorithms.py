@@ -171,10 +171,11 @@ def learning_time_algorithm(events, user):
                 is_preferred_slot_free = False
 
             if is_preferred_slot_free:
+                # Events are stored in UTC in the database, so keep them in UTC
                 new_block = Event(
                     title=f"Learning for {exam.title}",
-                    start=to_iso(preferred_start),
-                    end=to_iso(preferred_end),
+                    start=to_iso(preferred_start),  # preferred_start is already in UTC
+                    end=to_iso(preferred_end),      # preferred_end is already in UTC
                     color=settings_dict["study_block_color"],
                     user_id=exam.user_id,
                     exam_id=exam.id,
@@ -200,10 +201,11 @@ def learning_time_algorithm(events, user):
                 allocatable = min(slot_duration, hours_left - new_scheduled, today_max)
                 if allocatable >= settings_dict["SESSION"]:
                     block_end = slot_start + timedelta(hours=allocatable)
+                    # slot_start and block_end are already in UTC from free_slots()
                     new_block = Event(
                         title=f"Learning for {exam.title}",
-                        start=to_iso(slot_start),
-                        end=to_iso(block_end),
+                        start=to_iso(slot_start),   # Already UTC
+                        end=to_iso(block_end),      # Already UTC
                         color=settings_dict["study_block_color"],
                         user_id=exam.user_id,
                         exam_id=exam.id,

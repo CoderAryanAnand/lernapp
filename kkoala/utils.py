@@ -148,18 +148,20 @@ def free_slots(events, day):
     Calculates free time slots for a given day, respecting existing events
     and applying a 30-minute margin (buffer) around them.
     """
-    # Note: DAY_END is dynamically set to 22:00 in the main algorithm.
+    from zoneinfo import ZoneInfo
+    
     DAY_END = dtime(22, 0)
+    USER_TZ = ZoneInfo("Europe/Zurich")  # Define user timezone
+    
     events_today = [event for event in events if to_dt(event.start).date() == day]
     events_today.sort(key=lambda event: to_dt(event.start))
 
     free_slots = []
 
     # FIX: Correctly convert local DAY_START to UTC
-    # Create a naive datetime representing the local start time
     naive_day_start = datetime.combine(day, DAY_START)
-    # Convert this local time to its UTC equivalent
-    current_start = naive_day_start.astimezone(timezone.utc)
+    # Localize to user timezone FIRST, then convert to UTC
+    current_start = naive_day_start.replace(tzinfo=USER_TZ).astimezone(timezone.utc)
 
     for event in events_today:
         event_start = to_dt(event.start)
@@ -173,10 +175,8 @@ def free_slots(events, day):
         current_start = max(current_start, event_end + timedelta(minutes=30))
 
     # FIX: Correctly convert local DAY_END to UTC
-    # Create a naive datetime representing the local end time
     naive_day_end = datetime.combine(day, DAY_END)
-    # Convert this local time to its UTC equivalent
-    day_end_dt = naive_day_end.astimezone(timezone.utc)
+    day_end_dt = naive_day_end.replace(tzinfo=USER_TZ).astimezone(timezone.utc)
 
     if current_start <= day_end_dt:
         free_slots.append((current_start, day_end_dt))
