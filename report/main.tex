@@ -9,7 +9,10 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{hyperref}
-\usepackage[german]{babel}
+\usepackage[T1]{fontenc}        % proper glyphs for äöüß, hyphenation
+\usepackage[utf8]{inputenc}     % source file is UTF-8
+\usepackage{lmodern}            % Latin Modern fonts
+\usepackage[ngerman]{babel}     % modern German hyphenation
 \usepackage[autostyle]{csquotes}
 \usepackage{setspace}
 \usepackage{titlesec}
@@ -24,6 +27,29 @@
 backend=biber,
 style=apa
 ]{biblatex}
+\usepackage{microtype}          % better line breaking / protrusion
+\usepackage[htt]{hyphenat}      % allow hyphenation in \texttt / typewriter
+% Hyphenation / line-breaking tuning
+\pretolerance=50
+\tolerance=2000
+\emergencystretch=25pt
+\hyphenpenalty=100
+\exhyphenpenalty=50
+\doublehyphendemerits=5000
+\finalhyphendemerits=1000
+% Manual hyphenation exceptions (add as needed)
+\hyphenation{
+  Lern-zeit-al-go-rith-mus
+  Lern-zeit-al-go-rith-men
+  Nutz-er-da-ten
+  Authen-ti-fi-zie-rung
+  Prioritäts-ein-stel-lun-gen
+  Pro-to-typ
+  Daten-struk-tur
+  Daten-struk-tu-ren
+  Web-An-wen-dung
+  An-wen-dungs-ar-chi-tek-tur
+}
 % \DeclareLanguageMapping{german}{german}
 \addbibresource{references.bib}
 \usepackage{etoolbox}
@@ -833,7 +859,55 @@ Um die Qualität und Zuverlässigkeit der Kanti Koala Web-App sicherzustellen, w
 
 % Schlussfolgerung und Ausblick
 %\clearpage
-\chapter{Schlussfolgerung und Ausblick}
+\chapter[Schlussfolgerung und Ausblick]{Schlussfolgerung und Ausblick\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext{06.11.2025}
+\section*{Zusammenfassung}
+% Folgende Linie zu überarbeiten:
+Ausgehend von der in der Einleitung formulierten Zielsetzung -- Übersicht über Termine/Aufgaben/Lernzeiten schaffen und regelmässige, abgegrenzte Lernphasen unterstützen -- wurde ein prototypischer Web-Ansatz umgesetzt. Die zuvor durch Literaturstudie (Lern-, Zeit-, Pausen-, Stressaspekte), Interviews mit PPP-Lehrpersonen und eine Schüler:innen-Umfrage gewonnenen Erkenntnisse dienten der Ableitung der funktionalen Kernanforderungen (zentrale Agenda, automatische Lernblock-Erzeugung, strukturierte Zeitsegmente, einfache Notenerfassung, Basis-Schutzmechanismen).
+
+Umgesetzt wurden:
+\begin{itemize}
+  \item \textbf{Agenda} als zentrales Organisationsinstrument mit manueller Event-Erfassung, Import von \texttt{.ics}-Stundenplänen und Prioritätsattributen als Grundlage für Lernblöcke (reduziert Mehrfacherfassung).
+  \item \textbf{Lernzeitalgorithmus} mit rückwärtsgerichteter, konfliktvermeidender Platzierung von Lernblöcken innerhalb täglicher Obergrenzen und gesetzter Prioritäten (unterstützt regelmässige, zeitlich definierte Phasen).
+  \item \textbf{Notenverwaltung} (Semester-Fach-Note) zur strukturierten Ablage schulischer Leistungsdaten (fördert konsistente Dokumentation).
+  \item \textbf{Pomodoro-basierter Lerntimer} zur zeitlichen Segmentierung von Lernintervallen und Pausen (Rahmen für wiederholbare Lerngewohnheiten).
+  \item \textbf{Tägliche Tipps} aus recherchierten Bereichen (Zeit-, Pausen-, Stressmanagement, Lernmethoden) als ergänzende Impulse.
+  \item \textbf{Authentifizierung} (Registrierung, Login, Passwort-Reset) mit gehashten/gesalzten Passwörtern (bcrypt) zur sicheren Zugangstrennung.
+  \item \textbf{Basis-Sicherheitsmassnahmen} (CSRF-Token, HTTPS-Kommunikation) zur Integrität von Sitzungsaktionen und Schutz der Transportstrecke.
+\end{itemize}
+Damit liegt ein kohärenter Prototyp vor, der die in der Einleitung definierten organisatorischen und lerngewohnheitsbezogenen Zielkomponenten funktional realisiert; Aussagen zur tatsächlichen Wirkung im Nutzungskontext stehen aus.
+
+\section*{Bilanz zur Fragestellung}
+Die Hauptfragestellung (Erleichterung von Organisation und Unterstützung regelmässiger Lerngewohnheiten) wurde technisch adressiert:
+\begin{itemize}
+  \item \textbf{Organisation erleichtern}: Zentrale Erfassung von Ereignissen, algorithmische Erstellung von Lernblöcken, Prioritätssteuerung und .ics-Import reduzieren manuellen Planungsaufwand (keine Mehrfacherfassung, automatische zeitliche Segmentierung vom Algorithmus).
+  \item \textbf{Unterstützung von Lerngewohnheiten}: Strukturierte Lernblöcke (mit Start-/Endzeiten) und konfigurierbarer Lerntimer bilden wiederkehrende Einheiten ab; Lerntipps liefern ergänzende Handlungsimpulse.
+\end{itemize}
+Nicht beantwortet ist die empirische Wirksamkeit (keine Nutzerstudie, keine Auswertung von Termintreue oder wahrgenommener Kontrolle). Die Plattformfrage wurde faktisch zugunsten einer Web-Variante getroffen; eine systematische Gegenüberstellung zu einer nativen Umsetzung steht aus.
+
+\section*{Erkenntnisse aus dem Arbeitsprozess}
+\begin{itemize}
+  \item Früh definierte Datenbeziehungen erleichtern Erweiterungen (z.B. zusätzliche Leistungsmetriken).
+  \item Iterative Anpassung des Lernzeitalgorithmus notwendig (Rückwärtsplanung erwies sich zur Priorisierung naher Prüfungen als praktikabel; Konfliktpuffer reduzierten Engstellen).
+  \item Klare Prioritätsparameter (tägliches Maximum, Gesamtstunden) verhindern Überlastung, erforderten aber konsistente Validierung.
+  \item Modularisierung (Blueprints, \texttt{extensions.py}, Factory) minimierte Kopplung und vereinfachte Tests.
+  \item Sicherheitsthemen (CSRF, Passwort-Hashing) müssen früh integriert werden, um Nacharbeiten zu vermeiden.
+  \item Transkription in Mundart führte zu hohem Aufwand; Standardisierung der Interviewsprache wäre effizienter.
+  \item Heuristische Betrachtung der Bedienlogik ersetzt keine Nutzerbeobachtung.
+\end{itemize}
+
+\section*{Ausblick und offene Punkte}
+\begin{itemize}
+  \item \textbf{Empirische Evaluation}: Erhebung definierter Indikatoren (Planungsaufwand, Termintreue, wahrgenommene Kontrolle) durch Tagebuch- oder Log-Daten und Fragebögen.
+  \item \textbf{Algorithmus-Erweiterung}: Adaptive Verteilung basierend auf Notenfortschritt.
+  \item \textbf{Plattformvergleich}: Systematische Analyse einer nativen oder hybriden App (Offline-Fähigkeit, Push-Benachrichtigungen).
+  \item \textbf{Zusätzliche Sicherheitsmassnahmen}: 2FA, Ratenbegrenzung bei Anmeldeversuchen, E-Mail-Verifizierung.
+  \item \textbf{Zusätzliche Features}: Integration von To-Do-Listen, Fortschrittsvisualisierung, soziale Funktionen (z.B. Lerngruppen).
+\end{itemize}
+
+\section*{Fazit}
+Der Prototyp schafft eine funktionale Grundlage zur strukturierten Erfassung und Planung von schulischen Aktivitäten und Lernzeiten. Die technische Machbarkeit der Kernfunktionen ist gezeigt; die tatsächliche Wirkung auf Lernorganisation und Gewohnheiten bleibt Gegenstand zukünftiger Evaluation. Damit liegt eine belastbare Ausgangsbasis für eine empirische Validierungs- und Erweiterungsphase vor.
+
 
 % References
 
