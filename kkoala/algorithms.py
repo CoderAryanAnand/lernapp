@@ -161,9 +161,14 @@ def learning_time_algorithm(events, user):
                 for event in events_for_scheduling:
                     if to_dt(event.start).date() != current_day.date():
                         continue
+                    
+                    # FIX: Handle events without end times
+                    event_start = to_dt(event.start)
+                    event_end = to_dt(event.end) if event.end else event_start
+                    
                     if not (
-                        preferred_end <= to_dt(event.start) - timedelta(minutes=30)
-                        or preferred_start >= to_dt(event.end) + timedelta(minutes=30)
+                        preferred_end <= event_start - timedelta(minutes=30)
+                        or preferred_start >= event_end + timedelta(minutes=30)
                     ):
                         is_preferred_slot_free = False
                         break
