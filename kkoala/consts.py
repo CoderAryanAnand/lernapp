@@ -10,19 +10,19 @@ DEFAULT_SETTINGS = {
     "priority_settings": {
         1: {
             "color": "#770000",
-            "days_to_learn": 14,
+            # "days_to_learn": 14,
             "max_hours_per_day": 2.0,
             "total_hours_to_learn": 14.0,
         },
         2: {
             "color": "#ca8300",
-            "days_to_learn": 7,
+            # "days_to_learn": 7,
             "max_hours_per_day": 1.5,
             "total_hours_to_learn": 7.0,
         },
         3: {
             "color": "#097200",
-            "days_to_learn": 4,
+            # "days_to_learn": 4,
             "max_hours_per_day": 1.0,
             "total_hours_to_learn": 4.0,
         },
