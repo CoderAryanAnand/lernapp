@@ -45,6 +45,7 @@ style=apa
 \newcommand{\aifootnote}[1]{\footnote{ChatGPT (Version GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, #1. Antwort ganz übernommen.}}
 \newcommand{\aifootnotemark}{\footnotemark}
 \newcommand{\aifootnotetext}[1]{\footnotetext{ChatGPT (Version GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, #1. Antwort ganz übernommen.}}
+\newcommand{\aifootnotebasis}[1]{\footnotetext{ChatGPT (Version GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, #1. Antwort als Basis.}}
 
 % Fix for font issue
 \DeclareRobustCommand{\ttfamily}{\fontencoding{T1}\fontfamily{lmtt}\selectfont}
@@ -95,7 +96,8 @@ Das Ergebnis ist die Webanwendung Kanti Koala, die als zentrale Plattform für S
 \tableofcontents
 
 % ------------------------------Einleitung------------------------------
-\chapter{Einleitung -- unsere Vision}
+\chapter[Einleitung -- unsere Vision]{Einleitung -- unsere Vision\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext{04.11.2025}
 Der Schulalltag an der Kantonsschule Baden ist durch eine hohe Arbeitsdichte geprägt. Neben zahlreichen Prüfungen, auf die gezielt vorzubereiten ist, sind regelmässig Hausaufgaben anzufertigen. In Kombination mit ausserschulischen Verpflichtungen entstehen erhebliche Anforderungen an Planung und Selbstorganisation, die ohne geeignete Hilfsmittel nur schwer zu bewältigen sind. Digitale Werkzeuge können hier ansetzen, indem sie Aufgaben bündeln, Transparenz schaffen und Lernzeiten strukturiert planbar machen.
 
 \section{Motivation und Relevanz}
@@ -126,7 +128,7 @@ Der Bericht ist entlang der Entwicklungslogik strukturiert:
   \item \textbf{Tests:} Sicherung von Funktionsfähigkeit und Qualität.
   \item \textbf{Schlussfolgerung und Ausblick:} Beantwortung der Fragestellung, Limitationen und Weiterentwicklung.
 \end{enumerate}
-Diese Gliederung ist gewählt, um von der Problem- und Evidenzbasis über die Umsetzung zur Bewertung zu führen und damit die zentrale Fragestellung stringent zu beantworten.\aifootnote{04.11.2025}
+Diese Gliederung ist gewählt, um von der Problem- und Evidenzbasis über die Umsetzung zur Bewertung zu führen und damit die zentrale Fragestellung stringent zu beantworten.
 
 % ------------------------------Recherche------------------------------
 \chapter{Recherche}
@@ -224,7 +226,7 @@ Somit kann eine Lernmethode beispielsweise eine Kombination von verschiedenen Le
 Ein Beispiel für eine Lerntechnik wäre, dass man sich Verknüpfungen zu bisherigem Wissen schafft, wie beispielsweise bei der Assoziationstheorie \parencite{Book2}.
 Wir betrachteten dabei folgende Aussagen über das Lernen als wichtig: \begin{quote}
     \textit{Lernen ist ein komplexer Prozess, der durch Technik und Rahmenbedingungen unterstützt werden kann.\newline
-Wer nur kurzfristig paukt, kann den Stoff zwar vorübergehend abrufen – auf lange Sicht vergisst er aber alles wieder.}
+Wer nur kurzfristig paukt, kann den Stoff zwar vorübergehend abrufen -- auf lange Sicht vergisst er aber alles wieder.}
 \end{quote}
 ( \parencite{Lerntechnik_2})\newline
 
@@ -474,7 +476,8 @@ Die Anforderungen an die Kanti Koala Web-Applikation sind wie folgt:
 \end{itemize}
 
 % ------------------------------Technische Dokumentation------------------------------
-\section{Technische Dokumentation (System- und Datenstruktur)}
+\section[Technische Dokumentation (System- und Datenstruktur)]{Technische Dokumentation (System- und Datenstruktur)\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext{04.11.2025}
 Dieser Abschnitt beschreibt die technische Grundlage der Kanti Koala Web-Applikation, einschliesslich der Systemarchitektur, der Datenstruktur und der Code-Struktur, wie es auch implementiert wurde.
 
 \subsection{Darstellung der Systemarchitektur}
@@ -591,15 +594,15 @@ Zunächst werden alle Entscheidungen über die Features erklärt. Natürlich wer
 
 % ------------------------------DATENBANK------------------------------
 \subsection{Datenbank}
-Da es sich um eine Webanwendung handelt, können nicht alle Informationen des Benutzers lokal gespeichert werden. Das bedeutet erstens, dass alle Informationen extern auf einem Server gespeichert werden müssen. Zweitens müssen jetzt natürlich die Informationen jedes Nutzers gespeichert werden, und nur die Informationen eines Nutzers zu speichern, wie man es lokal tun würde, funktioniert nicht. Das bedeutete für uns zwei Dinge. Wir müssen einen Weg finden, die Informationen zu speichern, und wir müssen herausfinden, wo diese Informationen gespeichert werden sollen.
+Da es sich um eine Webanwendung handelt, können nicht alle Informationen des Benutzers lokal gespeichert werden. Das bedeutet erstens, dass alle Informationen extern auf einem Server gespeichert werden müssen. Zweitens erfordert der Mehrbenutzerbetrieb eine nutzerspezifisch getrennte, zentrale Datenhaltung; die ausschliessliche Speicherung der Daten eines einzelnen Nutzers, wie bei lokaler Nutzung, ist nicht ausreichend. Das bedeutete für uns zwei Dinge. Wir müssen einen Weg finden, die Informationen zu speichern, und wir müssen herausfinden, wo diese Informationen gespeichert werden sollen.
 
 Um die Informationen zu speichern, haben wir uns für SQL-Datenbanken entschieden, da diese am einfachsten mit Flask zu verwenden sind. \parencite{flask_database_tutorial} Wenn wir lokal arbeiten, können wir SQLite verwenden, und wenn es sich um die Produktionsumgebung handelt, können wir PostgreSQL verwenden, welches viel besser ist für eine solche Umgebung \parencite{astera_postgres_vs_sqlite}.
 
 Die Struktur dieser Tabellen ist im Folgenden dargestellt:
 
 % --- SCHEMA DESCRIPTION REPLACING TABLES ---
-\subsubsection{Datenbankmodelle und Schema}
-
+\subsubsection[Datenbankmodelle und Schema]{Datenbankmodelle und Schema\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Describe the models from models.py in LaTeX in German, without using tables. Just use text. }, 04.11.2025. Antwort ganz übernommen.}
 Die Datenbank besteht aus sieben Hauptmodellen, die die Nutzerdaten und die Planungslogik abbilden.
 
 \myparagraph{User}
@@ -672,13 +675,15 @@ Die Abhängigkeiten und Kaskadenlöschungen (z.B. ein gelöschter \texttt{User} 
 \end{itemize}
 
 % ------------------------------SERVER------------------------------
-\subsection{Serververbindung}
+\subsection[Serververbindung]{Serververbindung\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
 Da es um eine Web-App handelt, müssen die SQL-Datenbanken irgendwo extern gespeichert werden, wo man sie jederzeit abrufen kann. Das heisst, die SQL-Datei muss auf ein Server gespeichert werden. Wir haben uns schliesslich für die Cloud-Applikation \enquote{DigitalOcean} entschieden. Der Grund dafür war, weil wir erhalten gratis Credits mit einem Student Developer Pack. Gleichzeitig konnten wir auch die Webseite auf derselben Plattform hosten, welches den Prozess vereinfacht hat, da wir alles intern verbinden konnten.
 
-Die Domaine, die wir kauften, wurde wegen dem gleichen Grund gekauft, nämlich, dass wir mit demselben Student Developer Pack die Top-Level-Domaine .app gratis erhalten haben. Die Domaine heisst \href{https://www.kantikoala.app}{kantikoala.app}.
+Die Domain, die wir kauften, wurde wegen dem gleichen Grund gekauft, nämlich, dass wir mit demselben Student Developer Pack die Top-Level-Domain .app gratis erhalten haben. Die Domain heisst \href{https://www.kantikoala.app}{kantikoala.app}.
 
 % ------------------------------AUTHENTIFICATION------------------------------
-\subsection{Authentifizierung}
+\subsection[Authentifizierung]{Authentifizierung\texorpdfstring{\aifootnotemark}{}}
+\aifootnotebasis{04.11.2025}
 Um eine App mit verschiedenen Nutzern zu haben, brauchen wir ein gutes Authentifizierungssystem. Das bedeutet, dass es eine Anmelde- und Registrierungsfunktion sowie eine Option zum Vergessen des Passworts, eine Option zum Ändern des Passworts und schliesslich auch eine Option zum Löschen des Kontos geben muss. 
 
 Natürlich können wir ein Passwort nicht im Klartext speichern, denn das wäre ein Sicherheitsrisiko und ein ethisches Risiko, weil wir als Entwickler dann die Passwörter der einzelnen Konten einsehen können. Die einfachste Lösung für dieses Problem besteht darin, das Kennwort zu hashen. Unter Passwort-Hashing versteht man die algorithmische Umwandlung eines Passworts in Chiffretext oder eine unumkehrbar verschleierte Version seiner selbst \parencite{password_hashing}. Ein anderes wichtiges Konzept ist das Salting. Salting ist die Praxis, zufällige Daten (ein \enquote{Salt}) zu einem Passwort hinzuzufügen, bevor es gehasht wird. Dies verhindert Angriffe mit vorgefertigten Tabellen (Rainbow Tables), da das gleiche Passwort mit unterschiedlichen Salts zu unterschiedlichen Hashes führt \parencite{password_salting_rainbow_tables}. Glücklicherweise kümmert sich das Flask-Bcrypt-Modul um all diese Dinge für uns, sodass wir uns keine Sorgen machen müssen, wie wir das Passwort hashen und salten. \parencite{flask_bcrypt_docs}
@@ -691,23 +696,25 @@ Im Falle, dass ein Nutzer zum Beispiel mit einer E-Mail, die schon gebraucht wir
 
 %\href{https://freelancefootprints.substack.com/p/yet-another-password-reset-tutorial}{Yet another password reset tutorial}
 %------------------------------AGENDA------------------------------
-\subsection{Agenda}
-Das Hauptmerkmal unserer App ist die Agenda. Dieser Terminkalender muss leicht verständlich sein, und man muss die folgenden drei Dinge tun können: einen Termin erstellen, einen Termin bearbeiten und einen Termin löschen.
+\subsection[Agenda]{Agenda\texorpdfstring{\aifootnotemark}{}}
+\aifootnotebasis{04.11.2025}
+Die Agenda ist eine zentrale Kernfunktion der Anwendung. Sie muss intuitiv bedienbar sein und mindestens die folgenden Operationen unterstützen: das Erstellen, Bearbeiten und Löschen von Terminen.
 
-Jedes Ereignis sollte die folgenden Informationen enthalten: einen Titel, die Start- und Endzeit, ob es sich um ein wiederkehrendes Ereignis handelt, eine Farbe und seine Priorität, die für den Algorithmus wichtig sein wird. Man kann auch einstellen, ob der Event sich um ein All-Day Event handelt, oder ein normales Event ist, mit Start- und Endzeit. Die Benutzer-ID wird automatisch übermittelt, wenn ein Ereignis erstellt wird, je nachdem, wer gerade angemeldet ist.
+Jedes Ereignis umfasst die Attribute Titel, Start- und Endzeit, eine optionale Wiederholungsregel, eine Farbe sowie eine Priorität, die für den Lernzeitalgorithmus relevant ist. Zusätzlich kann ein Ereignis als ganztägig gekennzeichnet werden. Die Zuordnung zum jeweiligen Konto erfolgt über die aktuell authentifizierte Sitzung; die Benutzer-ID wird beim Anlegen eines Ereignisses automatisch hinterlegt.
 
-Zur Anzeige des Ereignisses haben wir ein Modul namens FullCalendar verwendet, eine JavaScript-Bibliothek zur Anzeige eines Kalenders. Wir haben uns für dieses Modul entschieden, weil es das erste Ergebnis war, das bei der Suche nach einer Bibliothek mit seinen Fähigkeiten auftauchte. 
+Für die Darstellung setzen wir die JavaScript-Bibliothek FullCalendar ein. Wir haben uns für dieses Modul entschieden, weil es das erste Ergebnis war, das bei der Suche nach einer Bibliothek mit seinen Fähigkeiten auftauchte.
 
-Was man mit dieser Agenda auch machen kann, ist, seinen Stundenplan aus dem \texttt{schulnetz}, zu importieren. Das ist die Plattform, die von der Kantonsschule verwendet wird, um den Schüler:innen ihren Stundenplan anzuzeigen. Da jeder Kanti-Schüler seinen Stundenplan auf \texttt{schulnetz} hat, dachten wir, es wäre nützlich, wenn man ihn von dort importieren könnte, anstatt jede Stunde manuell eingeben zu müssen. Unsere Agenda kann also Agenden im .ics-Format importieren, das ist das Format, in dem \texttt{schulnetz} seine Kalender exportiert. Es gibt keine direkte Funktion, um den Stundenplan zu importieren, also müssen die Nutzer:innen einfach zuerst ihren Stundenplan auf \texttt{schulnetz} exportieren, und dann die .ics-Datei in unsere App importieren.
+Zudem unterstützt die Agenda den Import des individuellen Stundenplans aus \texttt{schulnetz}, der von der Kantonsschule zur Anzeige von Stundenplänen genutzt wird. Da \texttt{schulnetz} Kalenderdaten im \texttt{.ics}-Format exportiert, kann die Datei zunächst dort exportiert und anschliessend in unsere Anwendung importiert werden. Dies reduziert manuellen Erfassungsaufwand.
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{img/agenda.png}
-    \caption[Beispiel einer Agenda, mit Lernblöcke von der LZA. Screenshot KantiKoala, 31.10.2025]{Beispiel einer Agenda, mit Lernblöcke von der LZA}
+    \caption[Beispiel einer Agenda mit Lernblöcken der LZA. Screenshot Kanti Koala, 31.10.2025]{Beispiel einer Agenda mit Lernblöcken der LZA}
     \label{fig:placeholder}
 \end{figure}
 % ------------------------------ALGORITHMUS------------------------------
-\subsection{Der Lernzeitalgorithmus}
+\subsection[Der Lernzeitalgorithmus]{Der Lernzeitalgorithmus\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
 Der Lernzeitalgorithmus (LZA) ist der Kern unserer Web-App. Er automatisiert die Planung der notwendigen Lernzeiten für die anstehenden Prüfungen eines Nutzers.
 Wir bezeichnen unseren Mechanismus als Algorithmus, da er die formalen Kriterien eines Algorithmus erfüllt: Jeder Planungsschritt ist ausführbar (existierende Funktionen), deterministisch und determiniert (gleiche Eingabedaten führen stets zur gleichen Priorisierung und Planung). Zudem ist die Anzahl der zur Erstellung des Lernplans notwendigen Schritte endlich (Finitheit), wodurch der Mechanismus garantiert terminiert und eine strukturierte Ausgabe (den Lernplan) basierend auf den Eingabedaten (Benutzereinstellungen und Prüfungstermine) liefert. \parencite{studyflix_algorithmus}
 
@@ -745,7 +752,7 @@ Der Algorithmus arbeitet iterativ und bearbeitet alle als Prüfung markierten Er
 \begin{enumerate}
     \item \textbf{Zyklische Neuberechnung der Anforderungen (Recycling)}:
     \begin{itemize}
-        \item \textbf{Flexibilitätsbereinigung}: Alle vom System selbst geplanten, aber nicht gesperrten (gesperrt sind die Blöcke, die vom Nutzer bearbeitet worden sind) Lernblöcke für die aktuelle Prüfung werden gelöscht. Dies ermöglicht eine dynamische, optimale Neuplanung, falls sich die Rahmenbedingungen (z.B. neue Events, geänderte Prioritätseinstellungen) geändert haben.
+        \item \textbf{Flexibilitätsbereinigung}: Alle vom System selbst geplanten, aber nicht gesperrten (gesperrt sind die Blöcke, die vom Nutzer bearbeitet worden sind) Lernblöcke für die aktuelle Prüfung werden gelöscht. Dies ermöglicht eine Neuplanung, falls sich die Rahmenbedingungen (z.B. neue Events, geänderte Prioritätseinstellungen) geändert haben.
         \item \textbf{Soll-Stunden-Ermittlung}: Die noch zu erbringende Lernzeit wird neu berechnet. Hierbei werden alle bereits absolvierten Stunden sowie Stunden, die durch manuelle oder vom Nutzer gesperrte Blöcke abgedeckt sind, von den Gesamtsollstunden abgezogen.
     \end{itemize}
     \item \textbf{Rückwärts-Iterative Planung}:
@@ -757,7 +764,7 @@ Der Algorithmus arbeitet iterativ und bearbeitet alle als Prüfung markierten Er
     \begin{itemize}
         \item \textbf{Bevorzugter Slot}: Es wird primär versucht, einen Lernblock in der vom Nutzer festgelegten bevorzugten Lernzeit zu platzieren.
         \item \textbf{Konfliktprüfung}: Die Verfügbarkeit des Slots wird gegen alle Kalendereinträge des Nutzers für den aktuellen Tag geprüft. Dabei wird ein 30-minütiger Puffer vor und nach jedem bestehenden Ereignis (wie Sport oder Arzttermin) beachtet, um knappe Überlappungen und unnötigen Stress zu vermeiden.
-        \item \textbf{Alternative Slots}: Falls die bevorzugte Zeit belegt ist, sucht ein dediziertes Modul den grössten verfügbaren, konfliktfreien Zeitabschnitt des Tages, um die Platzierung zu maximieren.
+        \item \textbf{Alternative Slots}: Falls die bevorzugte Zeit belegt ist, sucht eine dedizierte Funktion den grössten verfügbaren, konfliktfreien Zeitabschnitt des Tages, um die Platzierung zu maximieren.
         \item \textbf{Echtzeit-Aktualisierung}: Nach der erfolgreichen Generierung und Speicherung eines Lernblocks wird dieser sofort zur Liste der aktuellen Kalenderereignisse hinzugefügt. Dieser Mechanismus ist entscheidend, um sicherzustellen, dass alle unmittelbar nachfolgenden Planungsversuche am selben Tag diesen neu erstellten Block als bereits belegt berücksichtigen und somit Überlappungen ausgeschlossen sind.
     \end{itemize}
     % \item \textbf{Notfallplanung (Erweitertes Zeitfenster)}:
@@ -779,16 +786,16 @@ Der Algorithmus arbeitet iterativ und bearbeitet alle als Prüfung markierten Er
 \subsection{Daily Tipps}
 Ein relativ wichtiges Feature unserer App sind die Daily Tipps. Es sollte jeden Tag ein neuer Tipp an den Nutzer gezeigt werden auf der Startseite, entweder über die Kantonsschule oder allgemeine Lerntipps. Die einfachste Möglichkeit, dies zu implementieren, ist eine simple Modulo-Rechnung. 
 \[
-\text{Tipp des Tages} = (\text{Tag des Jahres}) \bmod (\text{Anzahl der Tipps})
+\text{Tipp des Tages (Index von der Liste)} = (\text{Tag des Jahres}) \bmod (\text{Anzahl der Tipps})
 \]
 
-Somit wird an einem bestimmten Tag nur einen Tipp gezeigt und über das ganze Jahr sollten alle Tipps gezeigt werden (da wir sowieso weniger als 365 Tipps haben).
+Somit wird an einem bestimmten Tag nur einen Tipp gezeigt und über das ganze Jahr sollten alle Tipps in einem Zyklus gezeigt werden (da wir sowieso weniger als 365 Tipps haben).
 
 
 % ------------------------------NOTENORGANISATION------------------------------
 
 \subsection{Notenorganisation}
-In der Kantonsschule muss man immer wieder Prüfungen schreiben. Die Noten, die man erhält, sind dann wichtig für die Promotion in die nächste Stufe. Deswegen haben wir ein Feature, in dem man seine Noten pro Semester speichern kann. Jedes Semester hat schon die jeweiligen Fächer, die man dann in diesem Semester haben würde, geladen. Man kann natürlich immer noch Fächer löschen und hinzufügen. Man kann mit diesem Feature dann seine Durchschnitte pro Fach und Semester sehen. Ebenfalls kann man mit dem Notenrechner sehen, welche Note man in einem Fach brauchen würde, um einen bestimmten Schnitt in diesem Fach zu haben.
+In der Kantonsschule muss man immer wieder Prüfungen schreiben. Die Noten, die man erhält, sind dann wichtig für die Promotion in die nächste Stufe. Deswegen haben wir ein Feature, in dem man seine Noten pro Semester speichern kann. Jedes Semester hat schon die jeweiligen Fächer, die man dann in diesem Semester haben würde, geladen. Man kann natürlich immer noch Fächer löschen und hinzufügen. Man kann mit diesem Feature dann seine Durchschnitte pro Fach und Semester sehen. Ebenfalls kann man mit dem Notenrechner sehen, welche Note man in einem Fach brauchen würde, um einen bestimmten Schnitt in diesem Fach zu haben. Die Idee von diesem Feature stammt aus der App \enquote{Pluspoints} \parencite{pluspoints_app}. Das Feature, das uns dort fehlte, war die automatische Fächeraddition pro Semester, welches wir in unserer App implementiert haben.
 
 % ------------------------------LERNTIMER------------------------------
 \subsection{Lerntimer}
@@ -796,19 +803,23 @@ Ein weiteres wichtiges Feature unserer App ist der Lerntimer. Dieser Timer basie
 
 % ------------------------------LERNTIPPS------------------------------
 \subsection{Lerntipps}
-Ein weiteres Feature unserer App sind die Lerntipps. Diese sind in verschiedene Kategorien aufgeteilt, wie zum Beispiel Zeitmanagement, Pausenmanagement, Stressmanagement und Lernmethoden. In jeder Kategorie gibt es verschiedene wissenschaftlich fundierte Tipps, welche wir aus unserer Recherche und den Interviews gesammelt haben. Diese Tipps sollen den Nutzer:innen helfen, ihr Lernverhalten zu verbessern und effektiver zu lernen.
+Ein weiteres Feature unserer App sind die Lerntipps. Diese sind in verschiedene Kategorien aufgeteilt, wie zum Beispiel Zeitmanagement, Pausenmanagement, Stressmanagement und Lernmethoden. In jeder Kategorie gibt es verschiedene Tipps, welche wir aus unserer Recherche und den Interviews gesammelt haben. Diese Tipps sollen den Nutzer:innen helfen, ihr Lernverhalten zu verbessern.
 
-\section{Sicherheitskonzept}
+\section[Sicherheitskonzept]{Sicherheitskonzept\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
 Neben der reinen Authentifizierung wurden weitere grundlegende Sicherheitsmassnahmen implementiert, um die Daten der Nutzer und die Integrität der Anwendung zu schützen.
 
-\subsection{Datenspeicherung und Passwort-Sicherheit}
+\subsection[Datenspeicherung und Passwort-Sicherheit]{Datenspeicherung und Passwort-Sicherheit\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
 Die Sicherheit der Benutzerdaten hat höchste Priorität. Wie im Abschnitt zur Authentifizierung beschrieben, werden Passwörter niemals im Klartext gespeichert. Stattdessen wird die Flask-Bcrypt-Bibliothek verwendet, um von jedem Passwort einen kryptografischen Hash zu erzeugen. Beim Login-Vorgang wird das eingegebene Passwort ebenfalls gehasht und dieser Hash wird mit dem in der Datenbank gespeicherten Hash verglichen. Da dieser Prozess unumkehrbar ist, kann selbst bei einem direkten Zugriff auf die Datenbank das ursprüngliche Passwort nicht wiederhergestellt werden.
 
-\subsection{Transportverschlüsselung (HTTPS)}
+\subsection[Transportverschlüsselung (HTTPS)]{Transportverschlüsselung (HTTPS)\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
 Die gesamte Kommunikation zwischen dem Browser des Nutzers und unserem Server wird durch das HTTPS-Protokoll verschlüsselt. Dies wird durch ein SSL/TLS-Zertifikat realisiert, das auf unserem Server bei DigitalOcean installiert ist. Die Verschlüsselung stellt sicher, dass alle übertragenen Daten, von Login-Informationen über Kalendereinträge bis hin zu Noten, vor dem Abhören durch Dritte geschützt sind. Ein Angreifer in einem öffentlichen WLAN könnte beispielsweise die Daten nicht mitlesen. Der Browser zeigt dies durch ein Schlosssymbol in der Adressleiste an und garantiert so eine sichere Verbindung zur Domain \texttt{kantikoala.app}. \parencite{cloudflare_https}
 
-\subsection{CSRF-Schutz}
-Neben der reinen Authentifizierung ist es entscheidend, die Aktionen eines angemeldeten Benutzers abzusichern. Eine der häufigsten Schwachstellen in Webanwendungen ist die Cross-Site Request Forgery (CSRF). Bei einem CSRF-Angriff bringt ein Angreifer den Browser eines authentifizierten Benutzers dazu, eine unerwünschte Aktion in einer Webanwendung auszuführen, bei der der Benutzer gerade angemeldet ist. Dies geschieht, ohne dass der Benutzer es merkt. So könnte ein Angreifer beispielsweise einen Benutzer dazu verleiten, auf einen bösartigen Link zu klicken, der im Hintergrund unbemerkt das Passwort des Benutzers ändert oder sein Konto löscht. \parencite{TestDriven_CSRF}
+\subsection[CSRF-Schutz]{CSRF-Schutz\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
+Neben der reinen Authentifizierung ist es entscheidend, die Aktionen eines angemeldeten Benutzers abzusichern. Eine häufigste Schwachstelle in Webanwendungen ist die Cross-Site Request Forgery (CSRF) \parencite{rapid7_csrf}. Bei einem CSRF-Angriff bringt ein Angreifer den Browser eines authentifizierten Benutzers dazu, eine unerwünschte Aktion in einer Webanwendung auszuführen, bei der der Benutzer gerade angemeldet ist. Dies geschieht, ohne dass der Benutzer es merkt. So könnte ein Angreifer beispielsweise einen Benutzer dazu verleiten, auf einen bösartigen Link zu klicken, der im Hintergrund unbemerkt das Passwort des Benutzers ändert oder sein Konto löscht. \parencite{TestDriven_CSRF}
 
 Um dies zu verhindern, haben wir das \enquote{Synchronizer Token Pattern} implementiert, eine von \textcite{OWASP_CSRF} empfohlene Methode. Das Prinzip ist einfach, aber sehr wirksam:
 \begin{enumerate}
@@ -821,7 +832,7 @@ Da ein Angreifer auf einer fremden Website dieses geheime Token nicht kennen kan
 
 In unserer Flask-Anwendung haben wir diese Logik mithilfe eines eigenen Decorators (\texttt{@csrf\_protect}) umgesetzt. Dieser Decorator wird auf alle Routen angewendet, die Daten durch \texttt{POST}-, \texttt{PUT}- oder \texttt{DELETE}-Anfragen ändern. Bei Standard-HTML-Formularen wird das Token als verstecktes \texttt{<input>}-Feld übergeben. Für unsere dynamischen Agenda-Funktionen, die auf AJAX basieren, wird das Token aus einem Meta-Tag ausgelesen und in einem benutzerdefinierten HTTP-Header (\texttt{X-CSRF-Token}) mit jeder Anfrage gesendet. Dies stellt sicher, dass jede datenverändernde Aktion, die in unserer Applikation ausgeführt wird, legitim vom Benutzer und von unserer eigenen Webseite stammt.
 
-Eine wichtige Anmerkung ist, dass es schon Module wie \texttt{Flask-WTF} gibt, die CSRF-Schutz bieten. Wir haben uns jedoch entschieden, unseren eigenen Decorator zu schreiben, um ein tieferes Verständnis für die Funktionsweise von CSRF-Schutzmechanismen zu erlangen und die Kontrolle über die Implementierung zu behalten.
+Eine wichtige Anmerkung ist, dass es schon Module wie \texttt{Flask-WTF} gibt, die CSRF-Schutz bieten. Wir haben uns jedoch entschieden, unseren eigenen Decorator zu schreiben, um ein tieferes Verständnis für die Funktionsweise von CSRF-Schutzmechanismen zu erlangen.
 
 % ------------------------------TESTS------------------------------
 \section{Tests}
@@ -831,11 +842,6 @@ Um die Qualität und Zuverlässigkeit der Kanti Koala Web-App sicherzustellen, w
 % Schlussfolgerung und Ausblick
 %\clearpage
 \chapter{Schlussfolgerung und Ausblick}
-Das Ziel dieser Maturitätsarbeit war es, eine Web-App zu entwickeln, die Kantonsschüler:innen dabei unterstützt, ihr Lernen effizienter zu organisieren und zu planen. Mit der Kanti Koala App haben wir eine Lösung geschaffen, die nicht nur eine benutzerfreundliche Agenda bietet, sondern auch einen intelligenten Lernzeitalgorithmus integriert, der auf wissenschaftlichen Erkenntnissen basiert. Die App ermöglicht es den Nutzer:innen, ihre Prüfungen und Lernzeiten effektiv zu verwalten, was zu einer besseren Vorbereitung und letztlich zu besseren schulischen Leistungen führen kann.
-
-Dabei haben wir, als die Entwickler, wertvolle Erfahrungen in der Webentwicklung gesammelt, insbesondere im Umgang mit Flask, Datenbanken und Sicherheitsaspekten. Die Implementierung des Lernzeitalgorithmus stellte eine besondere Herausforderung dar, da er sowohl flexibel als auch robust sein musste, um den unterschiedlichen Bedürfnissen der Nutzer gerecht zu werden. 
-
-Die App ist aber lang noch nicht fertig, denn es gibt noch viele Möglichkeiten zur Erweiterung. Als erstes würden wir sie gerne noch von Schüler:innen testen lassen, damit wir genau wissen, was unsere Nutzer:innen wollen und brauchen. Basierend auf diesem Feedback könnten wir dann weitere Features implementieren.
 
 % References
 
