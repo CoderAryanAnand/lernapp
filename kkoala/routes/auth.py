@@ -14,6 +14,7 @@ from ..utils import csrf_protect, login_required
 from ..consts import DEFAULT_SETTINGS, FROM_EMAIL
 from itsdangerous import URLSafeTimedSerializer
 import resend
+import re
 
 auth_bp = Blueprint(
     "auth", __name__, template_folder="../templates", static_folder="../static"
@@ -166,6 +167,10 @@ def register():
         username = request.form["username"]
         password = request.form["password"]
         email = request.form["email"]
+
+        if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+            flash("Invalid email address. Please enter a valid email.", "error")
+            return render_template("register.html")
 
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
