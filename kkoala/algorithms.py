@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, time as dtime, timezone
+from zoneinfo import ZoneInfo
 from .utils import to_dt, to_iso, free_slots
 from .extensions import db
 from .models import Settings, Event
@@ -26,6 +27,7 @@ def learning_time_algorithm(events, user):
         "study_block_color": settings.study_block_color or "#0000FF",
         "DAY_END": dtime(22, 0),
         "SESSION": 0.5,
+        "user_tz": ZoneInfo("Europe/Zurich"),  # Add user's timezone
     }
 
     exams = sorted(
@@ -137,13 +139,16 @@ def learning_time_algorithm(events, user):
             naive_preferred_start = datetime.combine(
                 current_day.date(), settings_dict["preferred_time"]
             )
-            preferred_start = naive_preferred_start.astimezone(timezone.utc)
+            # Localize to user timezone FIRST, then convert to UTC
+            local_preferred_start = naive_preferred_start.replace(tzinfo=settings_dict["user_tz"])
+            preferred_start = local_preferred_start.astimezone(timezone.utc)
             preferred_end = preferred_start + timedelta(hours=today_max)
 
             naive_day_end = datetime.combine(
                 current_day.date(), settings_dict["DAY_END"]
             )
-            day_end_utc = naive_day_end.astimezone(timezone.utc)
+            local_day_end = naive_day_end.replace(tzinfo=settings_dict["user_tz"])
+            day_end_utc = local_day_end.astimezone(timezone.utc)
 
             if preferred_end > day_end_utc:
                 preferred_end = day_end_utc
