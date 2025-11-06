@@ -98,37 +98,29 @@ Das Ergebnis ist die Webanwendung Kanti Koala, die als zentrale Plattform für S
 % ------------------------------Einleitung------------------------------
 \chapter[Einleitung -- unsere Vision]{Einleitung -- unsere Vision\texorpdfstring{\aifootnotemark}{}}
 \aifootnotetext{04.11.2025}
-Der Schulalltag an der Kantonsschule Baden ist durch eine hohe Arbeitsdichte geprägt. Neben zahlreichen Prüfungen, auf die gezielt vorzubereiten ist, sind regelmässig Hausaufgaben anzufertigen. In Kombination mit ausserschulischen Verpflichtungen entstehen erhebliche Anforderungen an Planung und Selbstorganisation, die ohne geeignete Hilfsmittel nur schwer zu bewältigen sind. Digitale Werkzeuge können hier ansetzen, indem sie Aufgaben bündeln, Transparenz schaffen und Lernzeiten strukturiert planbar machen.
+Der Schulalltag an der Kantonsschule Baden ist durch eine hohe Arbeitsdichte geprägt. Neben zahlreichen Prüfungen, auf die vorzubereiten ist, fallen kontinuierlich Hausaufgaben an. In Kombination mit ausserschulischen Verpflichtungen entstehen Anforderungen an Planung und Selbstorganisation, die ohne strukturierende Hilfsmittel nur begrenzt überschaubar bleiben. 
 
 \section{Motivation und Relevanz}
-Aus der Perspektive von Schüler:innen besteht ein wiederkehrendes Problem darin, Lernaufwände, Termine und persönliche Ressourcen in Einklang zu bringen. Versäumnisse führen zu Stress, ungleichmässiger Belastung und ineffizientem Lernen. Eine zentrale, benutzerfreundliche Applikation, welche Lernzeiten, Termine und Noten integriert, ist daher fachlich relevant: Sie stärkt Selbstmanagement und Verbindlichkeit, reduziert kognitive Belastung in der Planung und kann so Lernqualität und Wohlbefinden positiv beeinflussen. Für die Kantonsschule Baden ist der Kontext besonders bedeutsam, da heterogene Anforderungen (Prüfungen, Projekte, Freizeit) koordiniert werden müssen. Zum Zeitpunkt der Fragestellung ist die konkrete Plattformwahl (Web‑ oder native Applikation) bewusst offen; die Untersuchung erfolgt plattformagnostisch.
+Aus unserer Erfahrung als Schüler der Kantonsschule Baden besteht ein wiederkehrendes Problem für Schüler:innen darin, Lernaufwand, Fristen und verfügbare Zeitblöcke koordiniert abzubilden. Fehlende Übersicht kann zu subjektivem Zeitdruck, Verdichtung einzelner Tage und Verschiebungen führen. Eine zentral organisierende Applikation, welche Lernzeiten, Termine und Noten gemeinsam verwaltet, ist daher relevant. In diesem Kontext wird unter Unterstützung des Selbstmanagements ausdrücklich Folgendes verstanden: (1) Reduktion des individuellen Planungsaufwands (Zeit zur manuellen Wochenplanung), (2) Erhöhung der Vorlauftransparenz (Sichtbarkeit bevorstehender Prüfungen in Tagen), (3) strukturierte Segmentierung von Lernblöcken (klar definierte Start-/Endzeiten). Die Plattformwahl (Web oder nativ) bleibt zum Untersuchungszeitpunkt offen; die Konzeption erfolgt plattformneutral.
 
 \section{Fragestellung und Zielsetzung}
 \textbf{Hauptfragestellung:}
 \begin{quote}
-Lässt sich eine digitale Applikation konzipieren und prototypisch umsetzen, die den Lern‑ und Organisationsalltag von Schüler:innen der Kantonsschule Baden messbar verbessert?
+Kann eine digitale Applikation so konzipiert und prototypisch umgesetzt werden, dass sie Schüler:innen eine übersichtliche Organisation von Terminen, Aufgaben und Lernzeiten ermöglicht und zugleich Funktionen bereitstellt, die regelmässige Lerngewohnheiten unterstützen?
 \end{quote}
-\textit{Begründung:} Die Frage fokussiert auf Machbarkeit und Wirkung einer digitalen Lösung, ohne die Plattform (Web oder nativ) vorab festzulegen. Sie ist überprüfbar über Indikatoren wie Planbarkeit, Termintreue, wahrgenommene Kontrolle und Aufwandreduktion.
+\textit{Begriffsklärung:} Unter „Organisation erleichtern“ verstehen wir eine bessere Übersicht über anstehende Termine/Aufgaben und eine Verringerung des manuellen Planungsaufwands. „Lerngewohnheiten unterstützen“ meint Funktionen, die regelmässige, zeitlich abgegrenzte Lernphasen fördern (z. B. Lernblöcke und Timer).\\
 
-Zur Konkretisierung werden folgende Teilfragen untersucht:
-\begin{itemize}
-  \item \textbf{Wirksamkeit:} Verbessert die Applikation Planbarkeit, Termintreue und die wahrgenommene Kontrolle über Lernzeiten?
-  \item \textbf{Funktionsgruppen:} Welche Funktionen (z.\,B. Planung/Agenda, Leistungsübersicht, Timer, Hinweise) stiften den grössten Nutzen?
-  \item \textbf{Plattform- \& Architekturwahl:} Welche Plattform (Web oder nativ) ist unter schulischen Rahmenbedingungen (Verfügbarkeit, Wartung, Deployment) zweckmässig?
-  \item \textbf{Datenschutz \& Sicherheit:} Sind die vorgesehenen Massnahmen (u.\,a. Passwortschutz, Transportverschlüsselung) für den Schulkontext angemessen?
-\end{itemize}
+\noindent
+\textit{Zielsetzung:} Entwicklung eines Prototyps, der die zur Messung dieser Indikatoren notwendigen funktionalen Strukturen (Agenda mit Prioritäten, Lernblock-Generierung, Notenerfassung, Timer) bereitstellt.
 
 \section{Aufbau und Begründung des schriftlichen Kommentars}
-Der Bericht ist entlang der Entwicklungslogik strukturiert:
+Der Bericht ist entlang der Entwicklungslogik aufgebaut und führt von der Ausgangslage über die Umsetzung zur Einordnung:
 \begin{enumerate}
-  \item \textbf{Recherche:} Ausgangslage, Literatur- und Internetrecherche, Interviews und Umfrage als empirische Grundlage; diese sichern Nachvollziehbarkeit der Anforderungen.
-  \item \textbf{Methodik - Programmierung:} Architektur, Datenmodell, Routen, Kernlogik (Lernzeitalgorithmus) und UI; die Reihenfolge folgt der technischen Abhängigkeit vom Systementwurf zur Implementierung.
-  \item \textbf{Features:} Darstellung der Hauptfunktionen (Agenda, Noten, Lerntimer, Tipps) als Umsetzung der Anforderungen.
-  \item \textbf{Sicherheitskonzept:} Begründete Auswahl und Implementierung von Schutzmassnahmen (Passwortsicherheit, HTTPS, CSRF).
-  \item \textbf{Tests:} Sicherung von Funktionsfähigkeit und Qualität.
-  \item \textbf{Schlussfolgerung und Ausblick:} Beantwortung der Fragestellung, Limitationen und Weiterentwicklung.
+  \item \textbf{Recherche}: TBA
+  \item \textbf{Methodik - Programmierung}: Systemarchitektur, Datenstrukturen, Darstellung der Features, Sicherheitsaspekte und schliesslich noch Testing.
+  \item \textbf{Schlussfolgerung und Ausblick}: Bilanz zur Fragestellung, gewonnene Erkenntnisse und offene Arbeitsschritte.
 \end{enumerate}
-Diese Gliederung ist gewählt, um von der Problem- und Evidenzbasis über die Umsetzung zur Bewertung zu führen und damit die zentrale Fragestellung stringent zu beantworten.
+Die Gliederung macht nachvollziehbar, wie aus Problemstellung und Zielsetzung konkrete Komponenten abgeleitet, implementiert und dokumentiert wurden; eine empirische Wirkungsevaluation ist nicht Gegenstand dieses Berichts.
 
 % ------------------------------Recherche------------------------------
 \chapter{Recherche}
