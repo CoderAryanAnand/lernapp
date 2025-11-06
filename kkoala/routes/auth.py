@@ -202,7 +202,7 @@ def register():
                     settings_id=default_settings.id,
                     priority_level=level,
                     color=priority["color"],
-                    days_to_learn=priority["days_to_learn"],
+                    # days_to_learn=priority["days_to_learn"],
                     max_hours_per_day=priority["max_hours_per_day"],
                     total_hours_to_learn=priority["total_hours_to_learn"],
                 )
