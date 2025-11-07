@@ -288,6 +288,19 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
+\begin{testcase}{CAL-04}
+    \textbf{Ziel:} Export von Kalenderereignissen als ICS-Datei.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Erstellen Sie mehrere Ereignisse im Kalender (z.B. Einzeltermine, wiederkehrende Termine, ganztägige Ereignisse).
+        \item Nutzen Sie die Export-Funktion in der Agenda (z.B. Button "Kalender exportieren" oder ähnlich).
+        \item Laden Sie die generierte \texttt{.ics}-Datei herunter.
+        \item Öffnen Sie die Datei in einem externen Kalender-Tool (z.B. Google Calendar, Outlook, Apple Calendar).
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Alle Ereignisse werden korrekt in die \texttt{.ics}-Datei exportiert. Die Datei kann in gängigen Kalenderanwendungen ohne Fehler geöffnet werden.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
 \subsection{Lern-Tools (Timer und Tipps)}
 
 \begin{testcase}{TOOL-01}
