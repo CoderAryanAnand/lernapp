@@ -53,7 +53,7 @@ def settings_view(user):
                 settings_id=settings.id,
                 priority_level=next_level,
                 color="#000000",
-                days_to_learn=7,
+                # days_to_learn=7,
                 max_hours_per_day=2.0,
                 total_hours_to_learn=7.0,
             )
@@ -92,17 +92,20 @@ def settings_view(user):
         settings.study_block_color = request.form.get(
             "study_block_color", settings.study_block_color
         )
+        settings.import_color = request.form.get(
+            "import_color", settings.import_color
+        )
 
         # Update specific priority settings (color, days_to_learn, etc.)
         for prio in settings.priority_settings:
             prio.color = request.form.get(
                 f"priority{prio.priority_level}_color", prio.color
             )
-            prio.days_to_learn = int(
-                request.form.get(
-                    f"priority{prio.priority_level}_days", prio.days_to_learn
-                )
-            )
+            # prio.days_to_learn = int(
+            #     request.form.get(
+            #         f"priority{prio.priority_level}_days", prio.days_to_learn
+            #     )
+            # )
             prio.max_hours_per_day = float(
                 request.form.get(
                     f"priority{prio.priority_level}_max_hours_per_day",
@@ -129,6 +132,7 @@ def settings_view(user):
             settings.priority_settings, key=lambda p: p.priority_level
         ),  # Ensure list is sorted
         study_block_color=settings.study_block_color,
+        import_color=settings.import_color,
     )
 
 

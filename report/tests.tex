@@ -29,6 +29,10 @@
 \definecolor{passcolor}{rgb}{0.1, 0.6, 0.1}
 \definecolor{failcolor}{rgb}{0.8, 0.1, 0.1}
 
+\newcommand{\aifootnotemark}{\footnotemark}
+\newcommand{\aifootnotetext}{\footnotetext{Gemini (Model 2.5 Pro): \enquote{Korrigiere Fehler in den Test-Cases, und verbessere die Sprache [...]. }, 23.10.2025. Antwort ganz übernommen.}}
+
+
 % Define a new environment for Test Cases
 \newenvironment{testcase}[1]{%
     \par\vspace{1em}\noindent\begin{minipage}{\linewidth}
@@ -45,15 +49,14 @@
 \thispagestyle{empty}
 
 \section{Einführung}
-Dieses Dokument dient als Protokoll für die manuelle Qualitätssicherung (Quality Assurance, QA) der KantiKoala Webanwendung. Der Testplan ist darauf ausgerichtet, die Funktionalität, Benutzerfreundlichkeit und Ästhetik des Produkts gemäß den im Vertrag festgelegten \textbf{Bewertungskriterien} zu überprüfen.
+Dieses Dokument dient als Protokoll für die manuelle Qualitätssicherung der KantiKoala Webanwendung. Der Testplan ist darauf ausgerichtet, die Kernfunktionen der App zu validieren, darunter Benutzer-Authentifizierung, Notenverwaltung, Kalenderfunktionen, Lern-Tools und die User Interface. Jeder Testfall ist klar definiert mit Ziel, Schritten zur Durchführung, erwarteten Resultaten und dem Status (Bestanden/Nicht Bestanden).
 
 \section{Abdeckung der Bewertungskriterien (Produkt)}
-Die manuelle Testspezifikation zielt primär auf die Überprüfung der Kriterien in Abschnitt 2a (Qualität der Umsetzung) und 2c (Ästhetik) des Maturaarbeitsvertrags ab.
+Die manuelle Testspezifikation zielt primär auf die Überprüfung der folgenden Bewertungskriterien ab:
 
 \begin{itemize}
-    \item \textbf{Funktionalität (Vollständigkeit und Korrektheit)}: Überprüfung, ob alle implementierten Features (Noten, Kalender, Timer, Login) wie in der Spezifikation erwartet funktionieren.
+    \item \textbf{Funktionalität (Vollständigkeit und Korrektheit)}: Überprüfung, ob alle implementierten Features (Noten, Kalender, Timer, Login) wie erwartet funktionieren.
     \item \textbf{Benutzerfreundlichkeit (Ergonomie, Logik, Verständlichkeit)}: Fokus auf intuitive Navigation, klare Fehlermeldungen und logische Abläufe.
-    \item \textbf{Qualitätskontrolle (Tests)}: Dieses Dokument dient als Basis zur Dokumentation der durchgeführten Tests.
     \item \textbf{Ästhetik (Gestaltung, Layout, Typografie)}: Visuelle Überprüfung der Konsistenz, Responsive Design und ansprechenden Darstellung auf verschiedenen Geräten.
 \end{itemize}
 
@@ -61,7 +64,8 @@ Die manuelle Testspezifikation zielt primär auf die Überprüfung der Kriterien
 
 Die Testfälle sind nach funktionalen Bereichen gruppiert.
 
-\subsection{Authentifizierung und Benutzerverwaltung}
+\subsection[Authentifizierung und Benutzerverwaltung]{Authentifizierung und Benutzerverwaltung\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext
 
 \begin{testcase}{AUTH-01}
     \textbf{Ziel:} Erfolgreiche Registrierung eines neuen Benutzers und anschliessender Login.\\
@@ -164,7 +168,8 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
-\subsection{Notenverwaltung (Grade Management)}
+\subsection[Notenverwaltung]{Notenverwaltung\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext
 
 \begin{testcase}{GRADE-01}
     \textbf{Ziel:} Korrekte Berechnung des gewichteten Durchschnitts.\\
@@ -239,7 +244,8 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
-\subsection{Kalender und Agenda}
+\subsection[Kalender und Agenda]{Kalender und Agenda\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext
 
 \begin{testcase}{CAL-01}
     \textbf{Ziel:} Erstellung und Verwaltung eines Einzelereignisses.\\
@@ -279,6 +285,19 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
         \item Laden Sie die \texttt{.ics}-Datei hoch.
     \end{enumerate}
     \textbf{Erwartetes Resultat:} Die Ereignisse aus der Datei werden erfolgreich in den Kalender importiert und korrekt angezeigt. Die ursprüngliche \texttt{icalendar}-Struktur wird korrekt interpretiert.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{CAL-04}
+    \textbf{Ziel:} Export von Kalenderereignissen als ICS-Datei.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Erstellen Sie mehrere Ereignisse im Kalender (z.B. Einzeltermine, wiederkehrende Termine, ganztägige Ereignisse).
+        \item Nutzen Sie die Export-Funktion in der Agenda (z.B. Button "Kalender exportieren" oder ähnlich).
+        \item Laden Sie die generierte \texttt{.ics}-Datei herunter.
+        \item Öffnen Sie die Datei in einem externen Kalender-Tool (z.B. Google Calendar, Outlook, Apple Calendar).
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Alle Ereignisse werden korrekt in die \texttt{.ics}-Datei exportiert. Die Datei kann in gängigen Kalenderanwendungen ohne Fehler geöffnet werden.\\
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
@@ -365,9 +384,10 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
-\subsection{Benutzerfreundlichkeit und Ästhetik (Usability \& Aesthetics)}
+\subsection[Ästhetik/User Interface]{Ästhetik/User Interface\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext
 
-\begin{testcase}{UX-01}
+\begin{testcase}{UI-01}
     \textbf{Ziel:} Responsive Design und Barrierefreiheit der Navigation.\\
     \textbf{Schritte:}
     \begin{enumerate}[label=\arabic*.]
@@ -379,7 +399,7 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
-\begin{testcase}{UX-02}
+\begin{testcase}{UI-02}
     \textbf{Ziel:} Visuelle Konsistenz und Farbkonzept.\\
     \textbf{Schritte:}
     \begin{enumerate}[label=\arabic*.]

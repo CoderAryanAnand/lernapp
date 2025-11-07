@@ -40,6 +40,14 @@
                 <label for="sunday">Include Sunday for learning</label><br><br>
                 <label for="learning_time">Preferred daily learning start time:</label>
                 <input type="time" id="learning_time" name="learning_time" value="{{ preferred_learning_time }}"><br><br>
+                <!-- Study Block Color -->
+                <label for="study_block_color" class="font-bold">Lernblock-Farbe:</label>
+                <input type="color" id="study_block_color" name="study_block_color" value="{{ study_block_color }}" class="bg-zinc-300"><br><br>
+                
+                <!-- Imported Events Color -->
+                <label for="import_color" class="font-bold">Importierte Events-Farbe:</label>
+                <input type="color" id="import_color" name="import_color" value="{{ import_color }}" class="bg-zinc-300"><br><br>
+                
                 <input type="submit" value="Speichern">
             </form>
         </div>
