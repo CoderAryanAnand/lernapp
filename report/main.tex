@@ -1,4 +1,6 @@
 \documentclass[12pt,a4paper]{report}
+\usepackage{fontspec} % Use fontspec for better font shape support
+\setmainfont{Latin Modern Roman} % Set the main font explicitly
 
 % Questions to ask @Herr Schneider
 % 1 -
@@ -772,7 +774,7 @@ Ein relativ wichtiges Feature unserer App sind die Daily Tipps. Es sollte jeden 
 \text{Tipp des Tages (Index von der Liste)} = (\text{Tag des Jahres}) \bmod (\text{Anzahl der Tipps})
 \]
 
-Somit wird an einem bestimmten Tag nur einen Tipp gezeigt und über das ganze Jahr sollten alle Tipps in einem Zyklus gezeigt werden (da wir sowieso weniger als 365 Tipps haben).
+Somit wird an einem bestimmten Tag nur einen Tipp gezeigt und über das ganze Jahr sollten alle Tipps in einem Zyklus gezeigt werden (da wir sowieso weniger als 365 Tipps haben). Am ersten Tag wird der zweite Tipp der Liste gezeigt, da natürlich der Index bei 0 anfängt, aber der Tag des Jahres bei 1 anfängt. Es macht jedoch keinen Unterschied, ob der erste Tipp am ersten Tag oder der zweite Tipp am ersten Tag gezeigt wird, da es ja nur darum geht, dass jeden Tag ein anderer Tipp gezeigt wird.
 
 
 % ------------------------------NOTENORGANISATION------------------------------
