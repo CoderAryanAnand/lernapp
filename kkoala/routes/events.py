@@ -8,6 +8,7 @@ from ..extensions import db
 from ..models import Event, User, Settings, PrioritySetting
 from ..utils import csrf_protect, login_required, str_to_bool
 from ..algorithms import learning_time_algorithm
+from ..consts import DEFAULT_IMPORT_COLOR
 
 events_bp = Blueprint("events", __name__)
 
@@ -341,6 +342,7 @@ def import_ics(user):
     """
     data = request.json
     ics_content = data.get("ics")
+    user_settings = Settings.query.filter_by(user_id=user.id).first()
     if not ics_content:
         return jsonify({"message": "No .ics content provided"}), 400
 
@@ -353,7 +355,7 @@ def import_ics(user):
                 # DTSTART/DTEND objects are converted to datetime objects
                 start = component.get("DTSTART").dt
                 end = component.get("DTEND").dt if component.get("DTEND") else None
-                color = "#fcba03"  # Default color for imported events
+                color = user_settings.import_color or DEFAULT_IMPORT_COLOR
 
                 new_event = Event(
                     title=title,

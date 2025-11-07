@@ -52,6 +52,7 @@ class Settings(db.Model):
     learn_on_sunday = db.Column(db.Boolean, default=False)
     preferred_learning_time = db.Column(db.String(20), default="18:00")
     study_block_color = db.Column(db.String(7), default="#0000FF")
+    import_color = db.Column(db.String(7), default="#6C757D")
 
     # Relationship to detailed priority rules
     priority_settings = db.relationship(

@@ -34,6 +34,10 @@ language=ngerman
 }
 \usepackage{microtype}          % better line breaking / protrusion
 \usepackage[htt]{hyphenat}      % allow hyphenation in \texttt / typewriter
+
+% Prevent footnotes from breaking across pages
+\interfootnotelinepenalty=10000
+
 % Hyphenation / line-breaking tuning
 \pretolerance=50
 \tolerance=2000
@@ -623,6 +627,53 @@ Jedes Ereignis umfasst die Attribute Titel, Start- und Endzeit, eine optionale W
 Für die Darstellung setzen wir die JavaScript-Bibliothek FullCalendar ein \parencite{full_calendar}. Sie ist etabliert, funktionsreich und gut dokumentiert und ermöglicht unterschiedliche Ansichten (z.\,B. Monat, Woche, Liste), Drag-and-Drop-Anpassungen sowie eine direkte Synchronisation mit dem Backend über JSON-Endpunkte.
 
 Die Agenda unterstützt zudem den Import des individuellen Stundenplans aus \texttt{schulnetz}, der von der Kantonsschule zur Anzeige von Stundenplänen genutzt wird. Da \texttt{schulnetz} Kalenderdaten im \texttt{.ics}-Format exportiert, kann die Datei zunächst dort exportiert und anschliessend in unsere Anwendung importiert werden. Dies reduziert manuellen Erfassungsaufwand.
+
+\subsubsection{Farbkonzept für Ereignisse}
+Die Farbgebung in der Agenda folgt einem durchdachten System zur visuellen Unterscheidung verschiedener Ereignistypen (vgl. \texttt{kkoala/consts.py}, \texttt{kkoala/routes/events.py}, \texttt{kkoala/templates/settings.html}):
+
+\myparagraph{Importierte Ereignisse (Stundenplan)}
+Beim Import von \texttt{.ics}-Dateien werden alle Ereignisse automatisch mit der Standardfarbe \texttt{\#6C757D} (mittleres Grau) eingefärbt. Diese Wahl basiert auf mehreren Überlegungen:
+\begin{itemize}
+    \item \textbf{Visuelle Hierarchie}: Grau ist neutral und tritt gegenüber den farbcodierten Prioritätsstufen (rot, orange, grün) und Lernblöcken (blau) zurück, sodass wichtigere Ereignisse visuell dominieren.
+    \item \textbf{Lesbarkeit}: \texttt{\#6C757D} bietet ausreichenden Kontrast zu weissen Hintergründen, ohne visuell dominant zu wirken.
+\end{itemize}
+
+Diese Standardfarbe kann in den Einstellungen global angepasst werden, falls Nutzer:innen persönliche Präferenzen haben. Alle bereits importierten Ereignisse übernehmen dann die neue Farbe, was eine konsistente visuelle Darstellung des gesamten Stundenplans gewährleistet.
+
+\myparagraph{Prüfungsereignisse nach Prioritätsstufen}
+Prüfungen werden basierend auf ihrer Prioritätsstufe automatisch eingefärbt, um die Dringlichkeit visuell zu kommunizieren (vgl. \texttt{kkoala/consts.py}). Die Farbwahl folgt einem Ampel-System mit abgestufter Intensität:
+
+\begin{itemize}
+    \item \textbf{Priorität 1 (Höchste Dringlichkeit): \texttt{\#770000} -- Dunkles Rot}
+    \begin{itemize}
+        \item Rot wird im Ampel-System für \enquote{Stopp} verwendet und signalisiert hohe Dringlichkeit.
+        \item Das dunkle Rot \texttt{\#770000} ist weniger intensiv als reines Rot (\texttt{\#FF0000}), bleibt aber gut sichtbar.
+    \end{itemize}
+    
+    \item \textbf{Priorität 2 (Mittlere Dringlichkeit): \texttt{\#ca8300} -- Orange}
+    \begin{itemize}
+        \item Orange liegt im Ampel-System zwischen Rot und Grün und signalisiert mittlere Dringlichkeit.
+        \item Bildet eine Abstufung zwischen Priorität 1 (Rot) und Priorität 3 (Grün).
+    \end{itemize}
+    
+    \item \textbf{Priorität 3 (Niedrigste Dringlichkeit): \texttt{\#097200} -- Dunkles Grün}
+    \begin{itemize}
+        \item Grün wird im Ampel-System für \enquote{Freigabe} verwendet und signalisiert niedrige Dringlichkeit.
+        \item Das dunkle Grün \texttt{\#097200} bietet ausreichenden Kontrast zum weissen Hintergrund.
+    \end{itemize}
+\end{itemize}
+
+Die Farbwahl orientiert sich am Ampel-System (Rot → Orange → Grün), das aus dem Verkehrswesen bekannt ist. Die Farbtöne sind abgedunkelt, um eine gleichmässige visuelle Darstellung zu gewährleisten. Alle Prioritätsfarben können in den Einstellungen angepasst werden.
+
+\myparagraph{Algorithmisch generierte Lernblöcke}
+Die vom Lernzeitalgorithmus erzeugten Lernblöcke erhalten standardmässig die Farbe \texttt{\#0000FF} (reines Blau). Diese Entscheidung wurde aus folgenden Gründen getroffen:
+\begin{itemize}
+    \item Blau liegt ausserhalb des Ampel-Farbspektrums (Rot-Orange-Grün) und der Stundenplanfarbe (Grau), wodurch Lernblöcke klar erkennbar sind.
+    \item Reines Blau bietet hohen Kontrast zum weissen Hintergrund.
+\end{itemize}
+
+Diese Standardfarbe kann in den Einstellungen angepasst werden, falls Nutzer:innen eine andere Farbe bevorzugen (vgl. \texttt{kkoala/templates/settings.html}).
+
 
 \begin{figure}
     \centering

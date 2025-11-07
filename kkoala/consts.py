@@ -8,6 +8,7 @@ DEFAULT_SETTINGS = {
     "learn_on_sunday": False,
     "preferred_learning_time": "18:00",
     "study_block_color": "#0000FF",
+    "import_color": "#6C757D",
     "priority_settings": {
         1: {
             "color": "#770000",
@@ -30,3 +31,5 @@ DEFAULT_SETTINGS = {
     },
     "time_zone": ZoneInfo("Europe/Zurich"),
 }
+
+DEFAULT_IMPORT_COLOR = "#6C757D"  # Bootstrap's secondary gray - neutral, professional, standard
