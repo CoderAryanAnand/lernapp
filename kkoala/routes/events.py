@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify, current_app, session
+from flask import Blueprint, request, jsonify, current_app, session, Response
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import uuid
@@ -510,3 +510,44 @@ def populate_test_algorithm(user):
     db.session.add_all([exam1, exam2, exam3, busy1, busy2, busy3, busy4, non_exam])
     db.session.commit()
     return "Test events for the learning time algorithm have been populated!", 201
+
+
+@events_bp.route("/export-ics", methods=["GET"])
+@login_required
+def export_ics(user):
+    """
+    API endpoint to export all user events as an .ics file.
+
+    Returns:
+        Response: A downloadable .ics file containing all user events.
+    """
+    user_events = Event.query.filter_by(user_id=user.id).all()
+    
+    # Create a new iCalendar object
+    cal = icalendar.Calendar()
+    cal.add('prodid', '-//Kanti Koala//kantikoala.com//')
+    cal.add('version', '2.0')
+    
+    for event in user_events:
+        vevent = icalendar.Event()
+        vevent.add('summary', event.title)
+        vevent.add('dtstart', datetime.fromisoformat(event.start))
+        if event.end:
+            vevent.add('dtend', datetime.fromisoformat(event.end))
+        vevent.add('uid', f'{event.id}@kantikoala.com')
+        vevent.add('description', f'Priority: {event.priority}')
+        # Add color as a custom property (not all calendar apps support this)
+        vevent.add('color', event.color)
+        cal.add_component(vevent)
+    
+    # Generate the .ics file content
+    ics_content = cal.to_ical()
+    
+    # Return as a downloadable file
+    return Response(
+        ics_content,
+        mimetype='text/calendar',
+        headers={
+            'Content-Disposition': 'attachment; filename=kantikoala_events.ics'
+        }
+    )

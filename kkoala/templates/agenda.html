@@ -68,6 +68,7 @@
         <input type="file" id="ics-file-input" accept=".ics" style="display: none;" onchange="importICSFile(event)">
         <div id="calendar"></div>
         <button id="run-scheduler-btn">Run Learning Time Algorithm</button>
+        <button onclick="exportICS()" class="export-btn">Export .ics</button>
 
         <div id="scheduler-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 20px; background: white; border: 1px solid #ccc; z-index: 1000; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
             <h2>Scheduling Results</h2>
@@ -245,6 +246,10 @@
                     }
                 };
                 reader.readAsText(file);
+            }
+
+            window.exportICS = function() {
+                window.location.href = '/api/events/export-ics';
             }
 
             // --- 4. INITIALIZE THE CALENDAR ---
