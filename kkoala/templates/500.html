@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interner Serverfehler</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
+</head>
+<body class="bg-zinc-100 dark:bg-zinc-900 font-sans">
+    <main class="flex flex-col items-center justify-center h-screen text-center p-6">
+        <div class="max-w-md">
+            <img src="{{ url_for('static', filename='img/KantiKoalaLogoVar2.png') }}" alt="KantiKoala Logo" class="h-24 mx-auto mb-8 dark:invert">
+            
+            <h1 class="text-8xl font-extrabold text-red-600 dark:text-red-500 tracking-tight">500</h1>
+            
+            <h2 class="mt-4 text-3xl font-bold text-zinc-800 dark:text-white sm:text-4xl">
+                Interner Serverfehler
+            </h2>
+            
+            <p class="mt-4 text-base text-zinc-600 dark:text-zinc-400">
+                Entschuldigung, bei uns ist etwas schiefgelaufen. Wir arbeiten daran, das Problem so schnell wie möglich zu beheben.
+            </p>
+            
+            <a href="{{ url_for('main.index') }}" class="inline-block mt-8 px-6 py-3 font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-zinc-900">
+                Zurück zur Startseite
+            </a>
+        </div>
+    </main>
+</body>
+</html>

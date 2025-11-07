@@ -1,46 +1,77 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <link rel="stylesheet" href="./static/output.css">
-    <link rel="stylesheet" href="./static/flash.css">
+    <title>Anmelden</title>
+    <!-- Correctly link static files using url_for -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='flash.css') }}">
 </head>
-<body class="bg-zinc-200">
-    <div class="flex flex-row w-screen h-[vh10]items-center justify-center">
-        <a href="/"><input type="image" class="relative top-0" src="/static/img/KantiKoalaLogoVar2.png" style="height: 10vh"></a>
-        <p class="absolute top-[9vh] text-right text-md font-bold">KantiKoala, 2025</p>
-    </div>
-    <div class="grid items-center justify-center h-screen w-screen">
-        <div class="rounded-2xl bg-zinc-400 p-4 w-[33vw] min-w-[350px] place-self-center">
-            <!-- <div class="grid justify-center pb-4"><h2 class="text-2xl font-bold">Login</h2></div> -->
-            {% for category, message in get_flashed_messages(with_categories=true) %}
-                <div class="flash {{ category }}">{{ message }}</div>
-            {% endfor %}
-            <form action="/auth/login" method="post">
+<body class="bg-zinc-200 dark:bg-zinc-900 font-sans">
+
+    <!-- Header Section -->
+    <header class="w-full h-[10vh] flex items-center justify-center relative border-b border-zinc-300 dark:border-zinc-700">
+        <a href="{{ url_for('main.index') }}">
+            <img class="h-[8vh] dark:invert" src="{{ url_for('static', filename='img/KantiKoalaLogoVar2.png') }}" alt="KantiKoala Logo">
+        </a>
+        <p class="absolute bottom-1 text-xs text-zinc-600 dark:text-zinc-400">KantiKoala, 2025</p>
+    </header>
+
+    <!-- Main Content - Centered -->
+    <main class="w-full h-[90vh] flex items-center justify-center p-4">
+        
+        <!-- Form Container -->
+        <div class="w-full max-w-sm p-8 space-y-6 bg-white dark:bg-zinc-800 rounded-xl shadow-lg">
+            
+            <h1 class="text-3xl font-bold text-center text-zinc-900 dark:text-white">
+                Anmelden
+            </h1>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Form -->
+            <form action="{{ url_for('auth.login') }}" method="post" class="space-y-6">
                 <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                <div class="flex flex-col sm:flex-row sm:justify-between">
-                    <label class="left-0 pb-2 text-xl font-bold"for="username">Username:</label>
-                    <input class="rounded-md right-0 bg-zinc-300 w-[200px]" type="text" id="username" name="username" required>
+                
+                <!-- Username Field -->
+                <div>
+                    <label for="username" class="block mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">Benutzername</label>
+                    <input type="text" id="username" name="username" required
+                           class="w-full px-4 py-2 text-zinc-900 bg-zinc-100 dark:bg-zinc-700 dark:text-white border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
-                <br>
-                <div class="p-2"></div>
-                <div class="flex flex-col sm:flex-row sm:justify-between">
-                    <label class="left-0 pb-2 text-xl font-bold" for="password">Password:</label>
-                    <input class="rounded-md right-0 px-2 w-[200px] bg-zinc-300 " type="password" id="password" name="password" required>
+
+                <!-- Password Field -->
+                <div>
+                    <div class="flex items-center justify-between">
+                        <label for="password" class="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Passwort</label>
+                        <a href="{{ url_for('auth.forgot_password') }}" class="text-xs text-blue-600 dark:text-blue-400 hover:underline">Passwort vergessen?</a>
+                    </div>
+                    <input type="password" id="password" name="password" required
+                           class="w-full px-4 py-2 mt-2 text-zinc-900 bg-zinc-100 dark:bg-zinc-700 dark:text-white border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
-                <br>
-                <div class="grid justify-center pt-4"><button class="text-2xl p-1 px-3 rounded-md bg-zinc-300 sm:bg-transparent font-bold hover:italic" type="submit">Login</button></div>
+                
+                <!-- Submit Button -->
+                <button type="submit" 
+                        class="w-full px-4 py-2.5 text-white font-semibold bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-zinc-800 transition-colors duration-200">
+                    Anmelden
+                </button>
             </form>
+
+            <!-- Secondary Link to Register -->
+            <p class="text-sm text-center text-zinc-600 dark:text-zinc-400">
+                Haben Sie noch kein Konto?
+                <a href="{{ url_for('auth.register') }}" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">Registrieren</a>
+            </p>
         </div>
-        <div>
-            <div class="rounded-md bg-zinc-400 md:min-w-[450px] p-4 flex flex-col md:flex-row md:justify-between">
-                <p>Don't have an account? <a class="font-bold hover:italic" href="/auth/register">Register</a></p>
-                <a class="font-bold hover:italic" href="/auth/forgot_password">Forgot Password?</a>
-            </div>
-        </div>
-    </div>
+    </main>
     
 </body>
 </html>

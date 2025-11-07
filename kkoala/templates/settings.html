@@ -1,94 +1,109 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings</title>
-    <link rel="stylesheet" href="./static/output.css">
+    <title>Einstellungen</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
 </head>
-<body class="bg-zinc-200">
-    <!-- TOP BAR -->
-    <div class="bg-zinc-400 relative w-screen min-h-20" style="height:10vh">
-        <div class="w-screen">
-            <h2 class="mx-auto text-4xl font-extrabold px-4 pt-4 align-middle">Einstellungen</h2>
-            <a href="/"><input type="image" class="absolute bottom-0 right-1" src="/static/img/KantiKoalaLogoVar2.png" style="height: 10vh"></a>
-            <p class="absolute right-[10vh] top-2 text-right text-sm font-bold">KantiKoala, 2025</p>
-        </div>
-    </div>
-    <!-- GENERAL SETTINGS -->
-    <div class="sm:absolute top-[10vh] left-0 flex items-center flex-col">
-        <!-- GENERAL -->
-        <div class="bg-zinc-300 rounded-2xl p-1 m-3 w-[90vw] sm:w-[60vw] w-min-[300px]">
-            <h3 class="text-center w-[90vw] sm:w-[60vw] sm:w-min-[300px] font-bold text-2xl">General</h3>
-                <a id="chg_pw" href="/settings/change_password"><button>Change Password</button></a>
-                
-                <!-- Changed delete link to a secure form -->
-                <form action="/settings/delete_account" method="post" onsubmit="return confirm('Are you sure you want to delete your account? This action cannot be undone.');" style="display: inline;">
-                    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                    <button type="submit">Delete Account</button>
-                </form>
-        </div>
-        <!-- AGENDA -->
-        <div class="bg-zinc-300 rounded-2xl p-1 m-3 w-[90vw] sm:w-[60vw] sm:w-min-[300px]">
-            <h3 class="font-bold text-2xl text-center w-[90vw] sm:w-[60vw] sm:w-min-[300px]">Agenda Settings</h3>
-            <form method="post">
-                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                <!-- General settings ... -->
-                <input type="checkbox" id="saturday" name="learn_on_saturday" {% if learn_on_saturday %}checked{% endif %}>
-                <label for="saturday">Include Saturday for learning</label><br><br>
-                <input type="checkbox" id="sunday" name="learn_on_sunday" {% if learn_on_sunday %}checked{% endif %}>
-                <label for="sunday">Include Sunday for learning</label><br><br>
-                <label for="learning_time">Preferred daily learning start time:</label>
-                <input type="time" id="learning_time" name="learning_time" value="{{ preferred_learning_time }}"><br><br>
-                <!-- Study Block Color -->
-                <label for="study_block_color" class="font-bold">Lernblock-Farbe:</label>
-                <input type="color" id="study_block_color" name="study_block_color" value="{{ study_block_color }}" class="bg-zinc-300"><br><br>
-                
-                <!-- Imported Events Color -->
-                <label for="import_color" class="font-bold">Importierte Events-Farbe:</label>
-                <input type="color" id="import_color" name="import_color" value="{{ import_color }}" class="bg-zinc-300"><br><br>
-                
-                <input type="submit" value="Speichern">
-            </form>
-        </div>
-    </div>
-    
+<body class="bg-zinc-100 dark:bg-zinc-900 font-sans">
+    <!-- Main layout container -->
+    <div class="md:flex">
+        <!-- Include the reusable navbar component -->
+        {% include '_navbar.html' %}
 
-   
-    <!-- Form to select default priority colors, to select if Saturday and/or Sunday can be used for learning (for the algorithm), and preferred learning time in a day -->
-    <form method="post">
-        <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-        
-        <div class="sm:absolute right-0 top-[10vh]">
-            <div class="flex items-center sm:items-end flex-col sm:justify-end">
-                <div class="bg-zinc-300 rounded-2xl p-1 m-3 justify-center">
-                    <h4 class=" text-center top-0 right-0 w-[90vw] sm:w-[35vw] min-w-[325px] text-2xl font-bold">Priorität Einstellungen</h4>
-                    {% for prio in priority_settings %}
-                        <div class="">
-                            <div class="bg-zinc-400 rounded-2xl m-3 p-3 w-[85vw] sm:w-[35vw] sm:min-w-[300px]">
-                                <fieldset>
-                                    <legend class="font-bold text-xl text-center">Priorität {{ prio.priority_level }}</legend>
-                                    <label class="font-bold">Farbe: <input class="bg-zinc-400"type="color" name="priority{{ prio.priority_level }}_color" value="{{ prio.color }}"></label><br>
-                                    <!-- <label>Tage zum Lernen: <input type="number" name="priority{{ prio.priority_level }}_days" value="{{ prio.days_to_learn }}"></label><br> -->
-                                    <label>Max. Stunden pro Tag: <input type="number" step="0.1" name="priority{{ prio.priority_level }}_max_hours_per_day" value="{{ prio.max_hours_per_day }}"></label><br>
-                                    <label>Totale Stundenanzahl: <input type="number" step="0.1" name="priority{{ prio.priority_level }}_total_hours_to_learn" value="{{ prio.total_hours_to_learn }}"></label><br>
-                                    <button type="submit" name="remove_priority" value="{{ prio.priority_level }}">Remove</button>
-                                </fieldset>
-                                <br>
+        <!-- Main Content Area -->
+        <main class="flex-grow p-8">
+            <h1 class="text-4xl font-bold text-zinc-800 dark:text-white mb-8">Einstellungen</h1>
+
+            <form method="post" class="space-y-8">
+                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+
+                <!-- Grid for settings cards -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                    <!-- Left Column -->
+                    <div class="space-y-8">
+                        <!-- Account Settings Card -->
+                        <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-md">
+                            <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-6">Konto</h2>
+                            <div class="space-y-4">
+                                <a href="/settings/change_password" class="block w-full text-center px-4 py-2 font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-700 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-600">
+                                    Passwort ändern
+                                </a>
+                                <button type="submit" name="delete_account" value="1" onclick="return confirm('Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.');" class="w-full px-4 py-2 font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700">
+                                    Konto löschen
+                                </button>
                             </div>
                         </div>
-                        
-                    {% endfor %}
-                    <div class="w-[35vw] w-min-[325px] flex justify-center"><button class="text-center font-bold px-2 mb-2 rounded-md bg-zinc-400 hover:italic hover:bg-zinc-200" type="submit" name="add_priority" value="1">Add Priority Level</button></div>
-                    
-                    <div class="w-[35vw] w-min-[325px] flex justify-center">
-                        <input class="text-center font-bold px-2 rounded-md bg-zinc-400 hover:bg-zinc-200 hover:italic" type="submit" value="Speichern">
+
+                        <!-- Agenda Settings Card -->
+                        <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-md">
+                            <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-6">Agenda</h2>
+                            <div class="space-y-4">
+                                <label class="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
+                                    <span>Samstag zum Lernen einbeziehen</span>
+                                    <input type="checkbox" id="saturday" name="learn_on_saturday" {% if learn_on_saturday %}checked{% endif %} class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                </label>
+                                <label class="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
+                                    <span>Sonntag zum Lernen einbeziehen</span>
+                                    <input type="checkbox" id="sunday" name="learn_on_sunday" {% if learn_on_sunday %}checked{% endif %} class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                                </label>
+                                <label class="block text-zinc-700 dark:text-zinc-300">
+                                    <span>Bevorzugte Lernstartzeit:</span>
+                                    <input type="time" id="learning_time" name="learning_time" value="{{ preferred_learning_time }}" class="mt-1 block w-full px-3 py-2 bg-zinc-100 dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                </label>
+                                <label class="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
+                                    <span>Lernblock-Farbe:</span>
+                                    <input type="color" id="study_block_color" name="study_block_color" value="{{ study_block_color }}" class="w-10 h-10 p-0 border-none rounded-md bg-transparent">
+                                </label>
+                                <label class="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
+                                    <span>Importierte Events-Farbe:</span>
+                                    <input type="color" id="import_color" name="import_color" value="{{ import_color }}" class="w-10 h-10 p-0 border-none rounded-md bg-transparent">
+                                </label>
+                            </div>
+                        </div>
                     </div>
-                    
+
+                    <!-- Right Column: Priority Settings -->
+                    <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-md">
+                        <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-6">Prioritäten</h2>
+                        <div class="space-y-6">
+                            {% for prio in priority_settings %}
+                            <div class="p-4 bg-zinc-50 dark:bg-zinc-700/50 rounded-lg border border-zinc-200 dark:border-zinc-600">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="font-bold text-lg text-zinc-800 dark:text-white">Priorität {{ prio.priority_level }}</h3>
+                                    <button type="submit" name="remove_priority" value="{{ prio.priority_level }}" class="px-3 py-1 text-sm font-semibold text-white bg-red-600 rounded-md hover:bg-red-700">Entfernen</button>
+                                </div>
+                                <div class="space-y-3">
+                                    <label class="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
+                                        <span>Farbe:</span>
+                                        <input type="color" name="priority{{ prio.priority_level }}_color" value="{{ prio.color }}" class="w-10 h-10 p-0 border-none rounded-md bg-transparent">
+                                    </label>
+                                    <label class="block text-zinc-700 dark:text-zinc-300">
+                                        <span>Max. Stunden pro Tag:</span>
+                                        <input type="number" step="0.1" name="priority{{ prio.priority_level }}_max_hours_per_day" value="{{ prio.max_hours_per_day }}" class="mt-1 block w-full px-3 py-2 bg-zinc-100 dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </label>
+                                    <label class="block text-zinc-700 dark:text-zinc-300">
+                                        <span>Totale Stundenanzahl:</span>
+                                        <input type="number" step="0.1" name="priority{{ prio.priority_level }}_total_hours_to_learn" value="{{ prio.total_hours_to_learn }}" class="mt-1 block w-full px-3 py-2 bg-zinc-100 dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    </label>
+                                </div>
+                            </div>
+                            {% endfor %}
+                            <button type="submit" name="add_priority" value="1" class="w-full px-4 py-2 font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-700 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-600">
+                                Prioritätsebene hinzufügen
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        
-    </form>
+
+                <!-- Save Button -->
+                <div class="pt-8 flex justify-end">
+                    <input type="submit" value="Alle Einstellungen speichern" class="px-6 py-3 font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer">
+                </div>
+            </form>
+        </main>
+    </div>
 </body>
 </html>

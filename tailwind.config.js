@@ -1,7 +1,8 @@
 module.exports = {
   content: [
-    '/templates/*.{html,js}',
+    '/kkoala/templates/*.{html,js}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {},
   },
@@ -17,8 +18,18 @@ module.exports = {
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './templates/**/*.{html,js}',
-    './components/**/*.{html,js}',
+    './kkoala/templates/**/*.{html,js}',
+    './kkoala/components/**/*.{html,js}',
+  ],
+  darkMode: 'class',
+  theme: {
+    extend: {},
+  },
+  variants: {
+    extend: {},
+  },
+  plugins: [
+    'postcss',
   ],
   // ...
 }
