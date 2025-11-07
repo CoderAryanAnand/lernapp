@@ -9,7 +9,10 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{hyperref}
-\usepackage[german]{babel}
+\usepackage[T1]{fontenc}        % proper glyphs for äöüß, hyphenation
+\usepackage[utf8]{inputenc}     % source file is UTF-8
+\usepackage{lmodern}            % Latin Modern fonts
+\usepackage[ngerman]{babel}     % modern German hyphenation
 \usepackage[autostyle]{csquotes}
 \usepackage{setspace}
 \usepackage{titlesec}
@@ -24,6 +27,29 @@
 backend=biber,
 style=apa
 ]{biblatex}
+\usepackage{microtype}          % better line breaking / protrusion
+\usepackage[htt]{hyphenat}      % allow hyphenation in \texttt / typewriter
+% Hyphenation / line-breaking tuning
+\pretolerance=50
+\tolerance=2000
+\emergencystretch=25pt
+\hyphenpenalty=100
+\exhyphenpenalty=50
+\doublehyphendemerits=5000
+\finalhyphendemerits=1000
+% Manual hyphenation exceptions (add as needed)
+\hyphenation{
+  Lern-zeit-al-go-rith-mus
+  Lern-zeit-al-go-rith-men
+  Nutz-er-da-ten
+  Authen-ti-fi-zie-rung
+  Prioritäts-ein-stel-lun-gen
+  Pro-to-typ
+  Daten-struk-tur
+  Daten-struk-tu-ren
+  Web-An-wen-dung
+  An-wen-dungs-ar-chi-tek-tur
+}
 % \DeclareLanguageMapping{german}{german}
 \addbibresource{references.bib}
 \usepackage{etoolbox}
@@ -45,6 +71,7 @@ style=apa
 \newcommand{\aifootnote}[1]{\footnote{ChatGPT (Version GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, #1. Antwort ganz übernommen.}}
 \newcommand{\aifootnotemark}{\footnotemark}
 \newcommand{\aifootnotetext}[1]{\footnotetext{ChatGPT (Version GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, #1. Antwort ganz übernommen.}}
+\newcommand{\aifootnotebasis}[1]{\footnotetext{ChatGPT (Version GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, #1. Antwort als Basis.}}
 
 % Fix for font issue
 \DeclareRobustCommand{\ttfamily}{\fontencoding{T1}\fontfamily{lmtt}\selectfont}
@@ -85,48 +112,43 @@ style=apa
 
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
-Die vorliegende Maturitätsarbeit befasst sich mit der Entwicklung einer webbasierten Lern- und Studienhilfe für Schüler:innen der Kantonsschule Baden. Ausgangspunkt war die Fragestellung, wie digitale Werkzeuge den Lern- und Organisationsalltag von Schüler:innen erleichtern können. Ziel war es, eine Anwendung zu entwerfen, die schulische Aufgaben, Lernzeiten und Notenverwaltung zentral zusammenführt und durch intelligente Funktionen das Selbstmanagement fördert.
+Diese Maturitätsarbeit behandelt die Konzeption und prototypische Umsetzung einer webbasierten Applikation für Schüler:innen der Kantonsschule Baden mit dem Ziel, schulische Termine, Aufgaben und Lernzeiten zentral organisierbar zu machen und regelmässige, abgegrenzte Lernphasen zu unterstützen. Die Zielsetzung umfasst keine Wirksamkeitsmessung, sondern die Bereitstellung funktionaler Grundlagen.
 
-Zur Beantwortung dieser Frage wurde zunächst eine umfangreiche Recherche durchgeführt, bestehend aus einer Literaturstudie zu Lernmethoden, Zeit- und Pausenmanagement sowie Stressbewältigung, ergänzt durch Interviews mit Lehrpersonen und eine Umfrage unter Schüler:innen. Die theoretischen Erkenntnisse flossen in die Konzeption der Applikation ein. Technisch wurde die App mit Python und dem Webframework Flask entwickelt, wobei eine SQL-Datenbank für die Datenspeicherung eingesetzt wurde. Besonderes Augenmerk galt der Benutzerfreundlichkeit, Datensicherheit und der Integration eines algorithmischen Planungssystems.
+Zur Ableitung der Anforderungen wurden eine fokussierte Literatur- und Internetrecherche (Lernmethoden, Zeit- und Pausenorganisation, Stressaspekte), Interviews mit zwei PPP-Lehrpersonen sowie eine Umfrage unter Schüler:innen eingesetzt. Die Ergebnisse strukturierten die Funktionsprioritäten (Agenda, Lernblöcke, Noten, Timer, Tipps) und die Parametrisierung des Lernzeitalgorithmus.
 
-Das Ergebnis ist die Webanwendung Kanti Koala, die als zentrale Plattform für Schulorganisation dient. Hauptfunktionen sind eine Agenda mit automatischer Lernzeitplanung, ein Notenmanagement-System, ein Pomodoro-basierter Lerntimer sowie tägliche Lern- und Motivationstipps. Der entwickelte Lernzeitalgorithmus plant Lernblöcke dynamisch nach Priorität, Terminen und verfügbaren Zeiten der Nutzer:innen. Die App zeigt, wie digitale Anwendungen das Zeitmanagement und die Lernmotivation von Schüler:innen nachhaltig unterstützen können. Zukünftige Arbeiten sollen Feedback aus der praktischen Nutzung einbeziehen, um die App weiter zu optimieren und auf andere Schulen auszuweiten.\aifootnote{04.11.2025}
+Die Applikation wurde mit Python (Flask), einem relationalen Datenmodell und modularer Architektur implementiert. Kernfunktionen sind: eine Agenda mit manueller Ereigniserfassung, Import von \texttt{.ics}-Stundenplänen und algorithmischer Lernblock-Generierung nach Prioritäten; Notenverwaltung; ein konfigurierbarer Pomodoro-basiertes Lerntimer-Modul; kategorisierte tägliche Tipps, sowie auch allgemeine Lerntipps (Zeit-, Pausen-, Stressmanagement, Lernmethoden); Authentifizierung mit Basis-Schutzmassnahmen (u. a. Passwort Hashing). Der Lernzeitalgorithmus verteilt definierte Lernstunden rückwärts vom Prüfungstermin unter Berücksichtigung von Tageslimits, bevorzugten Zeiten und Konfliktvermeidung.
+
+Die Arbeit zeigt die technische Machbarkeit eines integrierten, strukturierten Ansatzes zur Lern- und Organisationsunterstützung; Aussagen zur tatsächlichen Wirkung im Nutzungskontext stehen aus und bilden den Gegenstand zukünftiger Evaluation (z.B. Planungsaufwand, Terminnutzung, wahrgenommene Kontrolle). Der Prototyp bildet eine erweiterbare Grundlage für nachfolgende empirische Validierung. \aifootnote{06.11.2025}
 \clearpage
 % Table of Contents
 \tableofcontents
 
 % ------------------------------Einleitung------------------------------
-\chapter{Einleitung -- unsere Vision}
-Der Schulalltag an der Kantonsschule Baden ist durch eine hohe Arbeitsdichte geprägt. Neben zahlreichen Prüfungen, auf die gezielt vorzubereiten ist, sind regelmässig Hausaufgaben anzufertigen. In Kombination mit ausserschulischen Verpflichtungen entstehen erhebliche Anforderungen an Planung und Selbstorganisation, die ohne geeignete Hilfsmittel nur schwer zu bewältigen sind. Digitale Werkzeuge können hier ansetzen, indem sie Aufgaben bündeln, Transparenz schaffen und Lernzeiten strukturiert planbar machen.
+\chapter[Einleitung -- unsere Vision]{Einleitung -- unsere Vision\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext{04.11.2025}
+Der Schulalltag an der Kantonsschule Baden ist durch eine hohe Arbeitsdichte geprägt. Neben zahlreichen Prüfungen, auf die vorzubereiten ist, fallen kontinuierlich Hausaufgaben an. In Kombination mit ausserschulischen Verpflichtungen entstehen Anforderungen an Planung und Selbstorganisation, die ohne strukturierende Hilfsmittel nur begrenzt überschaubar bleiben. 
 
 \section{Motivation und Relevanz}
-Aus der Perspektive von Schüler:innen besteht ein wiederkehrendes Problem darin, Lernaufwände, Termine und persönliche Ressourcen in Einklang zu bringen. Versäumnisse führen zu Stress, ungleichmässiger Belastung und ineffizientem Lernen. Eine zentrale, benutzerfreundliche Applikation, welche Lernzeiten, Termine und Noten integriert, ist daher fachlich relevant: Sie stärkt Selbstmanagement und Verbindlichkeit, reduziert kognitive Belastung in der Planung und kann so Lernqualität und Wohlbefinden positiv beeinflussen. Für die Kantonsschule Baden ist der Kontext besonders bedeutsam, da heterogene Anforderungen (Prüfungen, Projekte, Freizeit) koordiniert werden müssen. Zum Zeitpunkt der Fragestellung ist die konkrete Plattformwahl (Web‑ oder native Applikation) bewusst offen; die Untersuchung erfolgt plattformagnostisch.
+Aus unserer Erfahrung als Schüler der Kantonsschule Baden besteht ein wiederkehrendes Problem für Schüler:innen darin, Lernaufwand, Fristen und verfügbare Zeitblöcke koordiniert abzubilden. Fehlende Übersicht kann zu subjektivem Zeitdruck, Verdichtung einzelner Tage und Verschiebungen führen. Eine zentral organisierende Applikation, welche Lernzeiten, Termine und Noten gemeinsam verwaltet, ist daher relevant. In diesem Kontext wird unter Unterstützung des Selbstmanagements ausdrücklich Folgendes verstanden: (1) Reduktion des individuellen Planungsaufwands (Zeit zur manuellen Wochenplanung), (2) Erhöhung der Vorlauftransparenz (Sichtbarkeit bevorstehender Prüfungen in Tagen), (3) strukturierte Segmentierung von Lernblöcken (klar definierte Start-/Endzeiten). Die Plattformwahl (Web oder nativ) bleibt zum Untersuchungszeitpunkt offen; die Konzeption erfolgt plattformneutral.
 
 \section{Fragestellung und Zielsetzung}
 \textbf{Hauptfragestellung:}
 \begin{quote}
-Lässt sich eine digitale Applikation konzipieren und prototypisch umsetzen, die den Lern‑ und Organisationsalltag von Schüler:innen der Kantonsschule Baden messbar verbessert?
+Kann eine digitale Applikation so konzipiert und prototypisch umgesetzt werden, dass sie Schüler:innen eine übersichtliche Organisation von Terminen, Aufgaben und Lernzeiten ermöglicht und zugleich Funktionen bereitstellt, die regelmässige Lerngewohnheiten unterstützen?
 \end{quote}
-\textit{Begründung:} Die Frage fokussiert auf Machbarkeit und Wirkung einer digitalen Lösung, ohne die Plattform (Web oder nativ) vorab festzulegen. Sie ist überprüfbar über Indikatoren wie Planbarkeit, Termintreue, wahrgenommene Kontrolle und Aufwandreduktion.
+\textit{Begriffsklärung:} Unter „Organisation erleichtern“ verstehen wir eine bessere Übersicht über anstehende Termine/Aufgaben und eine Verringerung des manuellen Planungsaufwands. „Lerngewohnheiten unterstützen“ meint Funktionen, die regelmässige, zeitlich abgegrenzte Lernphasen fördern (z. B. Lernblöcke und Timer).\\
 
-Zur Konkretisierung werden folgende Teilfragen untersucht:
-\begin{itemize}
-  \item \textbf{Wirksamkeit:} Verbessert die Applikation Planbarkeit, Termintreue und die wahrgenommene Kontrolle über Lernzeiten?
-  \item \textbf{Funktionsgruppen:} Welche Funktionen (z.\,B. Planung/Agenda, Leistungsübersicht, Timer, Hinweise) stiften den grössten Nutzen?
-  \item \textbf{Plattform- \& Architekturwahl:} Welche Plattform (Web oder nativ) ist unter schulischen Rahmenbedingungen (Verfügbarkeit, Wartung, Deployment) zweckmässig?
-  \item \textbf{Datenschutz \& Sicherheit:} Sind die vorgesehenen Massnahmen (u.\,a. Passwortschutz, Transportverschlüsselung) für den Schulkontext angemessen?
-\end{itemize}
+\noindent
+\textit{Zielsetzung:} Entwicklung eines Prototyps, der die zur Messung dieser Indikatoren notwendigen funktionalen Strukturen (Agenda mit Prioritäten, Lernblock-Generierung, Notenerfassung, Timer) bereitstellt.
 
 \section{Aufbau und Begründung des schriftlichen Kommentars}
-Der Bericht ist entlang der Entwicklungslogik strukturiert:
+Der Bericht ist entlang der Entwicklungslogik aufgebaut und führt von der Ausgangslage über die Umsetzung zur Einordnung:
 \begin{enumerate}
-  \item \textbf{Recherche:} Ausgangslage, Literatur- und Internetrecherche, Interviews und Umfrage als empirische Grundlage; diese sichern Nachvollziehbarkeit der Anforderungen.
-  \item \textbf{Methodik - Programmierung:} Architektur, Datenmodell, Routen, Kernlogik (Lernzeitalgorithmus) und UI; die Reihenfolge folgt der technischen Abhängigkeit vom Systementwurf zur Implementierung.
-  \item \textbf{Features:} Darstellung der Hauptfunktionen (Agenda, Noten, Lerntimer, Tipps) als Umsetzung der Anforderungen.
-  \item \textbf{Sicherheitskonzept:} Begründete Auswahl und Implementierung von Schutzmassnahmen (Passwortsicherheit, HTTPS, CSRF).
-  \item \textbf{Tests:} Sicherung von Funktionsfähigkeit und Qualität.
-  \item \textbf{Schlussfolgerung und Ausblick:} Beantwortung der Fragestellung, Limitationen und Weiterentwicklung.
+  \item \textbf{Recherche}: TBA
+  \item \textbf{Methodik - Programmierung}: Systemarchitektur, Datenstrukturen, Darstellung der Features, Sicherheitsaspekte und schliesslich noch Testing.
+  \item \textbf{Schlussfolgerung und Ausblick}: Bilanz zur Fragestellung, gewonnene Erkenntnisse und offene Arbeitsschritte.
 \end{enumerate}
-Diese Gliederung ist gewählt, um von der Problem- und Evidenzbasis über die Umsetzung zur Bewertung zu führen und damit die zentrale Fragestellung stringent zu beantworten.\aifootnote{04.11.2025}
+Die Gliederung macht nachvollziehbar, wie aus Problemstellung und Zielsetzung konkrete Komponenten abgeleitet, implementiert und dokumentiert wurden; eine empirische Wirkungsevaluation ist nicht Gegenstand dieses Berichts.
 
 % ------------------------------Recherche------------------------------
 \chapter{Recherche}
@@ -372,7 +394,7 @@ Diese sammelten wir durch genaue Analyse der schriftlichen Transkription, dabei 
 \aifootnotetext{04.11.2025}
 Zu Beginn stand die grundsätzliche Plattformwahl im Zentrum: native Applikation (z.\,B. für Smartphones) oder webbasierte Lösung. Unter Berücksichtigung von Geräteunabhängigkeit, Verteil- und Updateaufwand, Entwicklungsressourcen sowie des verfügbaren Zeitrahmens erwies sich eine Web-Applikation als zweckmässig. Sie ist plattformagnostisch im Browser nutzbar, benötigt keine Installation und lässt sich zentral aktualisieren. Zudem reduziert eine einheitliche Codebasis den Implementierungs- und Wartungsaufwand gegenüber mehreren nativen Anwendungen für unterschiedliche Betriebssysteme.
 
-Auf Basis dieser Entscheidung fiel die Technologiewahl auf Python mit dem Microframework Flask. Ausschlaggebend waren vorhandene Vorerfahrungen und eine schlanke Lernkurve. Als Entwicklungsumgebung wurde Visual Studio Code eingesetzt. Die integrierten Funktionen zur Produktivitätssteigerung (u.\,a. Sprachunterstützung, Linting und Code-Assistenz) unterstützen einen effizienten, nachvollziehbaren Entwicklungsprozess.
+Auf Basis dieser Entscheidung fiel die Wahl der Technologie auf Python mit dem Microframework Flask. Ausschlaggebend waren vorhandene Vorkenntnisse. Als Entwicklungsumgebung wurde Visual Studio Code verwendet, da es durch integrierte Funktionen wie Code-Assistenz (z. B. Copilot) einen effizienten Entwicklungsprozess ermöglicht und schnelle Unterstützung bietet.
 
 Für die kollaborative Arbeit kamen Git als Versionsverwaltung und GitHub als zentrales Remote-Repository zum Einsatz. Der Quellcode wurde dort gemeinsam versioniert und ausgetauscht; regelmässige Synchronisationen (Push/Pull) stellten einen konsistenten, aktuellen Projektstand sicher.
 
@@ -394,7 +416,8 @@ Die Anforderungen an die Kanti Koala Web-Applikation sind wie folgt:
 \end{itemize}
 
 % ------------------------------Technische Dokumentation------------------------------
-\section{Technische Dokumentation (System- und Datenstruktur)}
+\section[Technische Dokumentation (System- und Datenstruktur)]{Technische Dokumentation (System- und Datenstruktur)\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext{04.11.2025}
 Dieser Abschnitt beschreibt die technische Grundlage der Kanti Koala Web-Applikation, einschliesslich der Systemarchitektur, der Datenstruktur und der Code-Struktur, wie es auch implementiert wurde.
 
 \subsection{Darstellung der Systemarchitektur}
@@ -511,15 +534,15 @@ Zunächst werden alle Entscheidungen über die Features erklärt. Natürlich wer
 
 % ------------------------------DATENBANK------------------------------
 \subsection{Datenbank}
-Da es sich um eine Webanwendung handelt, können nicht alle Informationen des Benutzers lokal gespeichert werden. Das bedeutet erstens, dass alle Informationen extern auf einem Server gespeichert werden müssen. Zweitens müssen jetzt natürlich die Informationen jedes Nutzers gespeichert werden, und nur die Informationen eines Nutzers zu speichern, wie man es lokal tun würde, funktioniert nicht. Das bedeutete für uns zwei Dinge. Wir müssen einen Weg finden, die Informationen zu speichern, und wir müssen herausfinden, wo diese Informationen gespeichert werden sollen.
+Da es sich um eine Webanwendung handelt, können nicht alle Informationen des Benutzers lokal gespeichert werden. Das bedeutet erstens, dass alle Informationen extern auf einem Server gespeichert werden müssen. Zweitens erfordert der Mehrbenutzerbetrieb eine nutzerspezifisch getrennte, zentrale Datenhaltung; die ausschliessliche Speicherung der Daten eines einzelnen Nutzers, wie bei lokaler Nutzung, ist nicht ausreichend. Das bedeutete für uns zwei Dinge. Wir müssen einen Weg finden, die Informationen zu speichern, und wir müssen herausfinden, wo diese Informationen gespeichert werden sollen.
 
 Um die Informationen zu speichern, haben wir uns für SQL-Datenbanken entschieden, da diese am einfachsten mit Flask zu verwenden sind. \parencite{flask_database_tutorial} Wenn wir lokal arbeiten, können wir SQLite verwenden, und wenn es sich um die Produktionsumgebung handelt, können wir PostgreSQL verwenden, welches viel besser ist für eine solche Umgebung \parencite{astera_postgres_vs_sqlite}.
 
 Die Struktur dieser Tabellen ist im Folgenden dargestellt:
 
 % --- SCHEMA DESCRIPTION REPLACING TABLES ---
-\subsubsection{Datenbankmodelle und Schema}
-
+\subsubsection[Datenbankmodelle und Schema]{Datenbankmodelle und Schema\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Describe the models from models.py in LaTeX in German, without using tables. Just use text. }, 04.11.2025. Antwort ganz übernommen.}
 Die Datenbank besteht aus sieben Hauptmodellen, die die Nutzerdaten und die Planungslogik abbilden.
 
 \myparagraph{User}
@@ -592,13 +615,15 @@ Die Abhängigkeiten und Kaskadenlöschungen (z.B. ein gelöschter \texttt{User} 
 \end{itemize}
 
 % ------------------------------SERVER------------------------------
-\subsection{Serververbindung}
+\subsection[Serververbindung]{Serververbindung\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
 Da es um eine Web-App handelt, müssen die SQL-Datenbanken irgendwo extern gespeichert werden, wo man sie jederzeit abrufen kann. Das heisst, die SQL-Datei muss auf ein Server gespeichert werden. Wir haben uns schliesslich für die Cloud-Applikation \enquote{DigitalOcean} entschieden. Der Grund dafür war, weil wir erhalten gratis Credits mit einem Student Developer Pack. Gleichzeitig konnten wir auch die Webseite auf derselben Plattform hosten, welches den Prozess vereinfacht hat, da wir alles intern verbinden konnten.
 
-Die Domaine, die wir kauften, wurde wegen dem gleichen Grund gekauft, nämlich, dass wir mit demselben Student Developer Pack die Top-Level-Domaine .app gratis erhalten haben. Die Domaine heisst \href{https://www.kantikoala.app}{kantikoala.app}.
+Die Domain, die wir kauften, wurde wegen dem gleichen Grund gekauft, nämlich, dass wir mit demselben Student Developer Pack die Top-Level-Domain .app gratis erhalten haben. Die Domain heisst \href{https://www.kantikoala.app}{kantikoala.app}.
 
 % ------------------------------AUTHENTIFICATION------------------------------
-\subsection{Authentifizierung}
+\subsection[Authentifizierung]{Authentifizierung\texorpdfstring{\aifootnotemark}{}}
+\aifootnotebasis{04.11.2025}
 Um eine App mit verschiedenen Nutzern zu haben, brauchen wir ein gutes Authentifizierungssystem. Das bedeutet, dass es eine Anmelde- und Registrierungsfunktion sowie eine Option zum Vergessen des Passworts, eine Option zum Ändern des Passworts und schliesslich auch eine Option zum Löschen des Kontos geben muss. 
 
 Natürlich können wir ein Passwort nicht im Klartext speichern, denn das wäre ein Sicherheitsrisiko und ein ethisches Risiko, weil wir als Entwickler dann die Passwörter der einzelnen Konten einsehen können. Die einfachste Lösung für dieses Problem besteht darin, das Kennwort zu hashen. Unter Passwort-Hashing versteht man die algorithmische Umwandlung eines Passworts in Chiffretext oder eine unumkehrbar verschleierte Version seiner selbst \parencite{password_hashing}. Ein anderes wichtiges Konzept ist das Salting. Salting ist die Praxis, zufällige Daten (ein \enquote{Salt}) zu einem Passwort hinzuzufügen, bevor es gehasht wird. Dies verhindert Angriffe mit vorgefertigten Tabellen (Rainbow Tables), da das gleiche Passwort mit unterschiedlichen Salts zu unterschiedlichen Hashes führt \parencite{password_salting_rainbow_tables}. Glücklicherweise kümmert sich das Flask-Bcrypt-Modul um all diese Dinge für uns, sodass wir uns keine Sorgen machen müssen, wie wir das Passwort hashen und salten. \parencite{flask_bcrypt_docs}
@@ -611,23 +636,25 @@ Im Falle, dass ein Nutzer zum Beispiel mit einer E-Mail, die schon gebraucht wir
 
 %\href{https://freelancefootprints.substack.com/p/yet-another-password-reset-tutorial}{Yet another password reset tutorial}
 %------------------------------AGENDA------------------------------
-\subsection{Agenda}
-Das Hauptmerkmal unserer App ist die Agenda. Dieser Terminkalender muss leicht verständlich sein, und man muss die folgenden drei Dinge tun können: einen Termin erstellen, einen Termin bearbeiten und einen Termin löschen.
+\subsection[Agenda]{Agenda\texorpdfstring{\aifootnotemark}{}}
+\aifootnotebasis{04.11.2025}
+Die Agenda ist eine zentrale Kernfunktion der Anwendung. Sie muss intuitiv bedienbar sein und mindestens die folgenden Operationen unterstützen: das Erstellen, Bearbeiten und Löschen von Terminen.
 
-Jedes Ereignis sollte die folgenden Informationen enthalten: einen Titel, die Start- und Endzeit, ob es sich um ein wiederkehrendes Ereignis handelt, eine Farbe und seine Priorität, die für den Algorithmus wichtig sein wird. Man kann auch einstellen, ob der Event sich um ein All-Day Event handelt, oder ein normales Event ist, mit Start- und Endzeit. Die Benutzer-ID wird automatisch übermittelt, wenn ein Ereignis erstellt wird, je nachdem, wer gerade angemeldet ist.
+Jedes Ereignis umfasst die Attribute Titel, Start- und Endzeit, eine optionale Wiederholungsregel, eine Farbe sowie eine Priorität, die für den Lernzeitalgorithmus relevant ist. Zusätzlich kann ein Ereignis als ganztägig gekennzeichnet werden. Die Zuordnung zum jeweiligen Konto erfolgt über die aktuell authentifizierte Sitzung; die Benutzer-ID wird beim Anlegen eines Ereignisses automatisch hinterlegt.
 
-Zur Anzeige des Ereignisses haben wir ein Modul namens FullCalendar verwendet, eine JavaScript-Bibliothek zur Anzeige eines Kalenders. Wir haben uns für dieses Modul entschieden, weil es das erste Ergebnis war, das bei der Suche nach einer Bibliothek mit seinen Fähigkeiten auftauchte. 
+Für die Darstellung setzen wir die JavaScript-Bibliothek FullCalendar ein. Wir haben uns für dieses Modul entschieden, weil es das erste Ergebnis war, das bei der Suche nach einer Bibliothek mit seinen Fähigkeiten auftauchte.
 
-Was man mit dieser Agenda auch machen kann, ist, seinen Stundenplan aus dem \texttt{schulnetz}, zu importieren. Das ist die Plattform, die von der Kantonsschule verwendet wird, um den Schüler:innen ihren Stundenplan anzuzeigen. Da jeder Kanti-Schüler seinen Stundenplan auf \texttt{schulnetz} hat, dachten wir, es wäre nützlich, wenn man ihn von dort importieren könnte, anstatt jede Stunde manuell eingeben zu müssen. Unsere Agenda kann also Agenden im .ics-Format importieren, das ist das Format, in dem \texttt{schulnetz} seine Kalender exportiert. Es gibt keine direkte Funktion, um den Stundenplan zu importieren, also müssen die Nutzer:innen einfach zuerst ihren Stundenplan auf \texttt{schulnetz} exportieren, und dann die .ics-Datei in unsere App importieren.
+Zudem unterstützt die Agenda den Import des individuellen Stundenplans aus \texttt{schulnetz}, der von der Kantonsschule zur Anzeige von Stundenplänen genutzt wird. Da \texttt{schulnetz} Kalenderdaten im \texttt{.ics}-Format exportiert, kann die Datei zunächst dort exportiert und anschliessend in unsere Anwendung importiert werden. Dies reduziert manuellen Erfassungsaufwand.
 
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{img/agenda.png}
-    \caption[Beispiel einer Agenda, mit Lernblöcke von der LZA. Screenshot KantiKoala, 31.10.2025]{Beispiel einer Agenda, mit Lernblöcke von der LZA}
+    \caption[Beispiel einer Agenda mit Lernblöcken der LZA. Screenshot Kanti Koala, 31.10.2025]{Beispiel einer Agenda mit Lernblöcken der LZA}
     \label{fig:placeholder}
 \end{figure}
 % ------------------------------ALGORITHMUS------------------------------
-\subsection{Der Lernzeitalgorithmus}
+\subsection[Der Lernzeitalgorithmus]{Der Lernzeitalgorithmus\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
 Der Lernzeitalgorithmus (LZA) ist der Kern unserer Web-App. Er automatisiert die Planung der notwendigen Lernzeiten für die anstehenden Prüfungen eines Nutzers.
 Wir bezeichnen unseren Mechanismus als Algorithmus, da er die formalen Kriterien eines Algorithmus erfüllt: Jeder Planungsschritt ist ausführbar (existierende Funktionen), deterministisch und determiniert (gleiche Eingabedaten führen stets zur gleichen Priorisierung und Planung). Zudem ist die Anzahl der zur Erstellung des Lernplans notwendigen Schritte endlich (Finitheit), wodurch der Mechanismus garantiert terminiert und eine strukturierte Ausgabe (den Lernplan) basierend auf den Eingabedaten (Benutzereinstellungen und Prüfungstermine) liefert. \parencite{studyflix_algorithmus}
 
@@ -665,7 +692,7 @@ Der Algorithmus arbeitet iterativ und bearbeitet alle als Prüfung markierten Er
 \begin{enumerate}
     \item \textbf{Zyklische Neuberechnung der Anforderungen (Recycling)}:
     \begin{itemize}
-        \item \textbf{Flexibilitätsbereinigung}: Alle vom System selbst geplanten, aber nicht gesperrten (gesperrt sind die Blöcke, die vom Nutzer bearbeitet worden sind) Lernblöcke für die aktuelle Prüfung werden gelöscht. Dies ermöglicht eine dynamische, optimale Neuplanung, falls sich die Rahmenbedingungen (z.B. neue Events, geänderte Prioritätseinstellungen) geändert haben.
+        \item \textbf{Flexibilitätsbereinigung}: Alle vom System selbst geplanten, aber nicht gesperrten (gesperrt sind die Blöcke, die vom Nutzer bearbeitet worden sind) Lernblöcke für die aktuelle Prüfung werden gelöscht. Dies ermöglicht eine Neuplanung, falls sich die Rahmenbedingungen (z.B. neue Events, geänderte Prioritätseinstellungen) geändert haben.
         \item \textbf{Soll-Stunden-Ermittlung}: Die noch zu erbringende Lernzeit wird neu berechnet. Hierbei werden alle bereits absolvierten Stunden sowie Stunden, die durch manuelle oder vom Nutzer gesperrte Blöcke abgedeckt sind, von den Gesamtsollstunden abgezogen.
     \end{itemize}
     \item \textbf{Rückwärts-Iterative Planung}:
@@ -677,7 +704,7 @@ Der Algorithmus arbeitet iterativ und bearbeitet alle als Prüfung markierten Er
     \begin{itemize}
         \item \textbf{Bevorzugter Slot}: Es wird primär versucht, einen Lernblock in der vom Nutzer festgelegten bevorzugten Lernzeit zu platzieren.
         \item \textbf{Konfliktprüfung}: Die Verfügbarkeit des Slots wird gegen alle Kalendereinträge des Nutzers für den aktuellen Tag geprüft. Dabei wird ein 30-minütiger Puffer vor und nach jedem bestehenden Ereignis (wie Sport oder Arzttermin) beachtet, um knappe Überlappungen und unnötigen Stress zu vermeiden.
-        \item \textbf{Alternative Slots}: Falls die bevorzugte Zeit belegt ist, sucht ein dediziertes Modul den grössten verfügbaren, konfliktfreien Zeitabschnitt des Tages, um die Platzierung zu maximieren.
+        \item \textbf{Alternative Slots}: Falls die bevorzugte Zeit belegt ist, sucht eine dedizierte Funktion den grössten verfügbaren, konfliktfreien Zeitabschnitt des Tages, um die Platzierung zu maximieren.
         \item \textbf{Echtzeit-Aktualisierung}: Nach der erfolgreichen Generierung und Speicherung eines Lernblocks wird dieser sofort zur Liste der aktuellen Kalenderereignisse hinzugefügt. Dieser Mechanismus ist entscheidend, um sicherzustellen, dass alle unmittelbar nachfolgenden Planungsversuche am selben Tag diesen neu erstellten Block als bereits belegt berücksichtigen und somit Überlappungen ausgeschlossen sind.
     \end{itemize}
     % \item \textbf{Notfallplanung (Erweitertes Zeitfenster)}:
@@ -699,16 +726,16 @@ Der Algorithmus arbeitet iterativ und bearbeitet alle als Prüfung markierten Er
 \subsection{Daily Tipps}
 Ein relativ wichtiges Feature unserer App sind die Daily Tipps. Es sollte jeden Tag ein neuer Tipp an den Nutzer gezeigt werden auf der Startseite, entweder über die Kantonsschule oder allgemeine Lerntipps. Die einfachste Möglichkeit, dies zu implementieren, ist eine simple Modulo-Rechnung. 
 \[
-\text{Tipp des Tages} = (\text{Tag des Jahres}) \bmod (\text{Anzahl der Tipps})
+\text{Tipp des Tages (Index von der Liste)} = (\text{Tag des Jahres}) \bmod (\text{Anzahl der Tipps})
 \]
 
-Somit wird an einem bestimmten Tag nur einen Tipp gezeigt und über das ganze Jahr sollten alle Tipps gezeigt werden (da wir sowieso weniger als 365 Tipps haben).
+Somit wird an einem bestimmten Tag nur einen Tipp gezeigt und über das ganze Jahr sollten alle Tipps in einem Zyklus gezeigt werden (da wir sowieso weniger als 365 Tipps haben).
 
 
 % ------------------------------NOTENORGANISATION------------------------------
 
 \subsection{Notenorganisation}
-In der Kantonsschule muss man immer wieder Prüfungen schreiben. Die Noten, die man erhält, sind dann wichtig für die Promotion in die nächste Stufe. Deswegen haben wir ein Feature, in dem man seine Noten pro Semester speichern kann. Jedes Semester hat schon die jeweiligen Fächer, die man dann in diesem Semester haben würde, geladen. Man kann natürlich immer noch Fächer löschen und hinzufügen. Man kann mit diesem Feature dann seine Durchschnitte pro Fach und Semester sehen. Ebenfalls kann man mit dem Notenrechner sehen, welche Note man in einem Fach brauchen würde, um einen bestimmten Schnitt in diesem Fach zu haben.
+In der Kantonsschule muss man immer wieder Prüfungen schreiben. Die Noten, die man erhält, sind dann wichtig für die Promotion in die nächste Stufe. Deswegen haben wir ein Feature, in dem man seine Noten pro Semester speichern kann. Jedes Semester hat schon die jeweiligen Fächer, die man dann in diesem Semester haben würde, geladen. Man kann natürlich immer noch Fächer löschen und hinzufügen. Man kann mit diesem Feature dann seine Durchschnitte pro Fach und Semester sehen. Ebenfalls kann man mit dem Notenrechner sehen, welche Note man in einem Fach brauchen würde, um einen bestimmten Schnitt in diesem Fach zu haben. Die Idee von diesem Feature stammt aus der App \enquote{Pluspoints} \parencite{pluspoints_app}. Das Feature, das uns dort fehlte, war die automatische Fächeraddition pro Semester, welches wir in unserer App implementiert haben.
 
 % ------------------------------LERNTIMER------------------------------
 \subsection{Lerntimer}
@@ -716,19 +743,23 @@ Ein weiteres wichtiges Feature unserer App ist der Lerntimer. Dieser Timer basie
 
 % ------------------------------LERNTIPPS------------------------------
 \subsection{Lerntipps}
-Ein weiteres Feature unserer App sind die Lerntipps. Diese sind in verschiedene Kategorien aufgeteilt, wie zum Beispiel Zeitmanagement, Pausenmanagement, Stressmanagement und Lernmethoden. In jeder Kategorie gibt es verschiedene wissenschaftlich fundierte Tipps, welche wir aus unserer Recherche und den Interviews gesammelt haben. Diese Tipps sollen den Nutzer:innen helfen, ihr Lernverhalten zu verbessern und effektiver zu lernen.
+Ein weiteres Feature unserer App sind die Lerntipps. Diese sind in verschiedene Kategorien aufgeteilt, wie zum Beispiel Zeitmanagement, Pausenmanagement, Stressmanagement und Lernmethoden. In jeder Kategorie gibt es verschiedene Tipps, welche wir aus unserer Recherche und den Interviews gesammelt haben. Diese Tipps sollen den Nutzer:innen helfen, ihr Lernverhalten zu verbessern.
 
-\section{Sicherheitskonzept}
+\section[Sicherheitskonzept]{Sicherheitskonzept\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
 Neben der reinen Authentifizierung wurden weitere grundlegende Sicherheitsmassnahmen implementiert, um die Daten der Nutzer und die Integrität der Anwendung zu schützen.
 
-\subsection{Datenspeicherung und Passwort-Sicherheit}
+\subsection[Datenspeicherung und Passwort-Sicherheit]{Datenspeicherung und Passwort-Sicherheit\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
 Die Sicherheit der Benutzerdaten hat höchste Priorität. Wie im Abschnitt zur Authentifizierung beschrieben, werden Passwörter niemals im Klartext gespeichert. Stattdessen wird die Flask-Bcrypt-Bibliothek verwendet, um von jedem Passwort einen kryptografischen Hash zu erzeugen. Beim Login-Vorgang wird das eingegebene Passwort ebenfalls gehasht und dieser Hash wird mit dem in der Datenbank gespeicherten Hash verglichen. Da dieser Prozess unumkehrbar ist, kann selbst bei einem direkten Zugriff auf die Datenbank das ursprüngliche Passwort nicht wiederhergestellt werden.
 
-\subsection{Transportverschlüsselung (HTTPS)}
+\subsection[Transportverschlüsselung (HTTPS)]{Transportverschlüsselung (HTTPS)\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
 Die gesamte Kommunikation zwischen dem Browser des Nutzers und unserem Server wird durch das HTTPS-Protokoll verschlüsselt. Dies wird durch ein SSL/TLS-Zertifikat realisiert, das auf unserem Server bei DigitalOcean installiert ist. Die Verschlüsselung stellt sicher, dass alle übertragenen Daten, von Login-Informationen über Kalendereinträge bis hin zu Noten, vor dem Abhören durch Dritte geschützt sind. Ein Angreifer in einem öffentlichen WLAN könnte beispielsweise die Daten nicht mitlesen. Der Browser zeigt dies durch ein Schlosssymbol in der Adressleiste an und garantiert so eine sichere Verbindung zur Domain \texttt{kantikoala.app}. \parencite{cloudflare_https}
 
-\subsection{CSRF-Schutz}
-Neben der reinen Authentifizierung ist es entscheidend, die Aktionen eines angemeldeten Benutzers abzusichern. Eine der häufigsten Schwachstellen in Webanwendungen ist die Cross-Site Request Forgery (CSRF). Bei einem CSRF-Angriff bringt ein Angreifer den Browser eines authentifizierten Benutzers dazu, eine unerwünschte Aktion in einer Webanwendung auszuführen, bei der der Benutzer gerade angemeldet ist. Dies geschieht, ohne dass der Benutzer es merkt. So könnte ein Angreifer beispielsweise einen Benutzer dazu verleiten, auf einen bösartigen Link zu klicken, der im Hintergrund unbemerkt das Passwort des Benutzers ändert oder sein Konto löscht. \parencite{TestDriven_CSRF}
+\subsection[CSRF-Schutz]{CSRF-Schutz\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
+Neben der reinen Authentifizierung ist es entscheidend, die Aktionen eines angemeldeten Benutzers abzusichern. Eine häufigste Schwachstelle in Webanwendungen ist die Cross-Site Request Forgery (CSRF) \parencite{rapid7_csrf}. Bei einem CSRF-Angriff bringt ein Angreifer den Browser eines authentifizierten Benutzers dazu, eine unerwünschte Aktion in einer Webanwendung auszuführen, bei der der Benutzer gerade angemeldet ist. Dies geschieht, ohne dass der Benutzer es merkt. So könnte ein Angreifer beispielsweise einen Benutzer dazu verleiten, auf einen bösartigen Link zu klicken, der im Hintergrund unbemerkt das Passwort des Benutzers ändert oder sein Konto löscht. \parencite{TestDriven_CSRF}
 
 Um dies zu verhindern, haben wir das \enquote{Synchronizer Token Pattern} implementiert, eine von \textcite{OWASP_CSRF} empfohlene Methode. Das Prinzip ist einfach, aber sehr wirksam:
 \begin{enumerate}
@@ -741,7 +772,7 @@ Da ein Angreifer auf einer fremden Website dieses geheime Token nicht kennen kan
 
 In unserer Flask-Anwendung haben wir diese Logik mithilfe eines eigenen Decorators (\texttt{@csrf\_protect}) umgesetzt. Dieser Decorator wird auf alle Routen angewendet, die Daten durch \texttt{POST}-, \texttt{PUT}- oder \texttt{DELETE}-Anfragen ändern. Bei Standard-HTML-Formularen wird das Token als verstecktes \texttt{<input>}-Feld übergeben. Für unsere dynamischen Agenda-Funktionen, die auf AJAX basieren, wird das Token aus einem Meta-Tag ausgelesen und in einem benutzerdefinierten HTTP-Header (\texttt{X-CSRF-Token}) mit jeder Anfrage gesendet. Dies stellt sicher, dass jede datenverändernde Aktion, die in unserer Applikation ausgeführt wird, legitim vom Benutzer und von unserer eigenen Webseite stammt.
 
-Eine wichtige Anmerkung ist, dass es schon Module wie \texttt{Flask-WTF} gibt, die CSRF-Schutz bieten. Wir haben uns jedoch entschieden, unseren eigenen Decorator zu schreiben, um ein tieferes Verständnis für die Funktionsweise von CSRF-Schutzmechanismen zu erlangen und die Kontrolle über die Implementierung zu behalten.
+Eine wichtige Anmerkung ist, dass es schon Module wie \texttt{Flask-WTF} gibt, die CSRF-Schutz bieten. Wir haben uns jedoch entschieden, unseren eigenen Decorator zu schreiben, um ein tieferes Verständnis für die Funktionsweise von CSRF-Schutzmechanismen zu erlangen.
 
 % ------------------------------TESTS------------------------------
 \section{Tests}
@@ -750,12 +781,55 @@ Um die Qualität und Zuverlässigkeit der Kanti Koala Web-App sicherzustellen, w
 
 % Schlussfolgerung und Ausblick
 %\clearpage
-\chapter{Schlussfolgerung und Ausblick}
-Das Ziel dieser Maturitätsarbeit war es, eine Web-App zu entwickeln, die Kantonsschüler:innen dabei unterstützt, ihr Lernen effizienter zu organisieren und zu planen. Mit der Kanti Koala App haben wir eine Lösung geschaffen, die nicht nur eine benutzerfreundliche Agenda bietet, sondern auch einen intelligenten Lernzeitalgorithmus integriert, der auf wissenschaftlichen Erkenntnissen basiert. Die App ermöglicht es den Nutzer:innen, ihre Prüfungen und Lernzeiten effektiv zu verwalten, was zu einer besseren Vorbereitung und letztlich zu besseren schulischen Leistungen führen kann.
+\chapter[Schlussfolgerung und Ausblick]{Schlussfolgerung und Ausblick\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext{06.11.2025}
+\section*{Zusammenfassung}
+% Folgende Linie zu überarbeiten:
+Ausgehend von der in der Einleitung formulierten Zielsetzung -- Übersicht über Termine/Aufgaben/Lernzeiten schaffen und regelmässige, abgegrenzte Lernphasen unterstützen -- wurde ein prototypischer Web-Ansatz umgesetzt. Die zuvor durch Literaturstudie (Lern-, Zeit-, Pausen-, Stressaspekte), Interviews mit PPP-Lehrpersonen und eine Schüler:innen-Umfrage gewonnenen Erkenntnisse dienten der Ableitung der funktionalen Kernanforderungen (zentrale Agenda, automatische Lernblock-Erzeugung, strukturierte Zeitsegmente, einfache Notenerfassung, Basis-Schutzmechanismen).
 
-Dabei haben wir, als die Entwickler, wertvolle Erfahrungen in der Webentwicklung gesammelt, insbesondere im Umgang mit Flask, Datenbanken und Sicherheitsaspekten. Die Implementierung des Lernzeitalgorithmus stellte eine besondere Herausforderung dar, da er sowohl flexibel als auch robust sein musste, um den unterschiedlichen Bedürfnissen der Nutzer gerecht zu werden. 
+Umgesetzt wurden:
+\begin{itemize}
+  \item \textbf{Agenda} als zentrales Organisationsinstrument mit manueller Event-Erfassung, Import von \texttt{.ics}-Stundenplänen und Prioritätsattributen als Grundlage für Lernblöcke (reduziert Mehrfacherfassung).
+  \item \textbf{Lernzeitalgorithmus} mit rückwärtsgerichteter, konfliktvermeidender Platzierung von Lernblöcken innerhalb täglicher Obergrenzen und gesetzter Prioritäten (unterstützt regelmässige, zeitlich definierte Phasen).
+  \item \textbf{Notenverwaltung} (Semester-Fach-Note) zur strukturierten Ablage schulischer Leistungsdaten (fördert konsistente Dokumentation).
+  \item \textbf{Pomodoro-basierter Lerntimer} zur zeitlichen Segmentierung von Lernintervallen und Pausen (Rahmen für wiederholbare Lerngewohnheiten).
+  \item \textbf{Tägliche Tipps} aus recherchierten Bereichen (Zeit-, Pausen-, Stressmanagement, Lernmethoden) als ergänzende Impulse.
+  \item \textbf{Authentifizierung} (Registrierung, Login, Passwort-Reset) mit gehashten/gesalzten Passwörtern (bcrypt) zur sicheren Zugangstrennung.
+  \item \textbf{Basis-Sicherheitsmassnahmen} (CSRF-Token, HTTPS-Kommunikation) zur Integrität von Sitzungsaktionen und Schutz der Transportstrecke.
+\end{itemize}
+Damit liegt ein kohärenter Prototyp vor, der die in der Einleitung definierten organisatorischen und lerngewohnheitsbezogenen Zielkomponenten funktional realisiert; Aussagen zur tatsächlichen Wirkung im Nutzungskontext stehen aus.
 
-Die App ist aber lang noch nicht fertig, denn es gibt noch viele Möglichkeiten zur Erweiterung. Als erstes würden wir sie gerne noch von Schüler:innen testen lassen, damit wir genau wissen, was unsere Nutzer:innen wollen und brauchen. Basierend auf diesem Feedback könnten wir dann weitere Features implementieren.
+\section*{Bilanz zur Fragestellung}
+Die Hauptfragestellung (Erleichterung von Organisation und Unterstützung regelmässiger Lerngewohnheiten) wurde technisch adressiert:
+\begin{itemize}
+  \item \textbf{Organisation erleichtern}: Zentrale Erfassung von Ereignissen, algorithmische Erstellung von Lernblöcken, Prioritätssteuerung und .ics-Import reduzieren manuellen Planungsaufwand (keine Mehrfacherfassung, automatische zeitliche Segmentierung vom Algorithmus).
+  \item \textbf{Unterstützung von Lerngewohnheiten}: Strukturierte Lernblöcke (mit Start-/Endzeiten) und konfigurierbarer Lerntimer bilden wiederkehrende Einheiten ab; Lerntipps liefern ergänzende Handlungsimpulse.
+\end{itemize}
+Nicht beantwortet ist die empirische Wirksamkeit (keine Nutzerstudie, keine Auswertung von Termintreue oder wahrgenommener Kontrolle). Die Plattformfrage wurde faktisch zugunsten einer Web-Variante getroffen; eine systematische Gegenüberstellung zu einer nativen Umsetzung steht aus.
+
+\section*{Erkenntnisse aus dem Arbeitsprozess}
+\begin{itemize}
+  \item Früh definierte Datenbeziehungen erleichtern Erweiterungen (z.B. zusätzliche Leistungsmetriken).
+  \item Iterative Anpassung des Lernzeitalgorithmus notwendig (Rückwärtsplanung erwies sich zur Priorisierung naher Prüfungen als praktikabel; Konfliktpuffer reduzierten Engstellen).
+  \item Klare Prioritätsparameter (tägliches Maximum, Gesamtstunden) verhindern Überlastung, erforderten aber konsistente Validierung.
+  \item Modularisierung (Blueprints, \texttt{extensions.py}, Factory) minimierte Kopplung und vereinfachte Tests.
+  \item Sicherheitsthemen (CSRF, Passwort-Hashing) müssen früh integriert werden, um Nacharbeiten zu vermeiden.
+  \item Transkription in Mundart führte zu hohem Aufwand; Standardisierung der Interviewsprache wäre effizienter.
+  \item Heuristische Betrachtung der Bedienlogik ersetzt keine Nutzerbeobachtung.
+\end{itemize}
+
+\section*{Ausblick und offene Punkte}
+\begin{itemize}
+  \item \textbf{Empirische Evaluation}: Erhebung definierter Indikatoren (Planungsaufwand, Termintreue, wahrgenommene Kontrolle) durch Tagebuch- oder Log-Daten und Fragebögen.
+  \item \textbf{Algorithmus-Erweiterung}: Adaptive Verteilung basierend auf Notenfortschritt.
+  \item \textbf{Plattformvergleich}: Systematische Analyse einer nativen oder hybriden App (Offline-Fähigkeit, Push-Benachrichtigungen).
+  \item \textbf{Zusätzliche Sicherheitsmassnahmen}: 2FA, Ratenbegrenzung bei Anmeldeversuchen, E-Mail-Verifizierung.
+  \item \textbf{Zusätzliche Features}: Integration von To-Do-Listen, Fortschrittsvisualisierung, soziale Funktionen (z.B. Lerngruppen).
+\end{itemize}
+
+\section*{Fazit}
+Der Prototyp schafft eine funktionale Grundlage zur strukturierten Erfassung und Planung von schulischen Aktivitäten und Lernzeiten. Die technische Machbarkeit der Kernfunktionen ist gezeigt; die tatsächliche Wirkung auf Lernorganisation und Gewohnheiten bleibt Gegenstand zukünftiger Evaluation. Damit liegt eine belastbare Ausgangsbasis für eine empirische Validierungs- und Erweiterungsphase vor.
+
 
 % References
 

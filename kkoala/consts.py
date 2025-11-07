@@ -1,4 +1,5 @@
 from datetime import time as dtime
+from zoneinfo import ZoneInfo
 
 DAY_START = dtime(8, 0)
 FROM_EMAIL = "KantiKoala <noreply@kantikoala.app>"
@@ -27,4 +28,5 @@ DEFAULT_SETTINGS = {
             "total_hours_to_learn": 4.0,
         },
     },
+    "time_zone": ZoneInfo("Europe/Zurich"),
 }

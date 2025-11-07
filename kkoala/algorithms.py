@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta, time as dtime, timezone
+from zoneinfo import ZoneInfo
 from .utils import to_dt, to_iso, free_slots
 from .extensions import db
 from .models import Settings, Event
@@ -26,6 +27,7 @@ def learning_time_algorithm(events, user):
         "study_block_color": settings.study_block_color or "#0000FF",
         "DAY_END": dtime(22, 0),
         "SESSION": 0.5,
+        "user_tz": ZoneInfo("Europe/Zurich"),  # Add user's timezone
     }
 
     exams = sorted(
@@ -137,13 +139,16 @@ def learning_time_algorithm(events, user):
             naive_preferred_start = datetime.combine(
                 current_day.date(), settings_dict["preferred_time"]
             )
-            preferred_start = naive_preferred_start.astimezone(timezone.utc)
+            # Localize to user timezone FIRST, then convert to UTC
+            local_preferred_start = naive_preferred_start.replace(tzinfo=settings_dict["user_tz"])
+            preferred_start = local_preferred_start.astimezone(timezone.utc)
             preferred_end = preferred_start + timedelta(hours=today_max)
 
             naive_day_end = datetime.combine(
                 current_day.date(), settings_dict["DAY_END"]
             )
-            day_end_utc = naive_day_end.astimezone(timezone.utc)
+            local_day_end = naive_day_end.replace(tzinfo=settings_dict["user_tz"])
+            day_end_utc = local_day_end.astimezone(timezone.utc)
 
             if preferred_end > day_end_utc:
                 preferred_end = day_end_utc
@@ -156,9 +161,14 @@ def learning_time_algorithm(events, user):
                 for event in events_for_scheduling:
                     if to_dt(event.start).date() != current_day.date():
                         continue
+                    
+                    # FIX: Handle events without end times
+                    event_start = to_dt(event.start)
+                    event_end = to_dt(event.end) if event.end else event_start
+                    
                     if not (
-                        preferred_end <= to_dt(event.start) - timedelta(minutes=30)
-                        or preferred_start >= to_dt(event.end) + timedelta(minutes=30)
+                        preferred_end <= event_start - timedelta(minutes=30)
+                        or preferred_start >= event_end + timedelta(minutes=30)
                     ):
                         is_preferred_slot_free = False
                         break
@@ -166,10 +176,11 @@ def learning_time_algorithm(events, user):
                 is_preferred_slot_free = False
 
             if is_preferred_slot_free:
+                # Events are stored in UTC in the database, so keep them in UTC
                 new_block = Event(
                     title=f"Learning for {exam.title}",
-                    start=to_iso(preferred_start),
-                    end=to_iso(preferred_end),
+                    start=to_iso(preferred_start),  # preferred_start is already in UTC
+                    end=to_iso(preferred_end),      # preferred_end is already in UTC
                     color=settings_dict["study_block_color"],
                     user_id=exam.user_id,
                     exam_id=exam.id,
@@ -195,10 +206,11 @@ def learning_time_algorithm(events, user):
                 allocatable = min(slot_duration, hours_left - new_scheduled, today_max)
                 if allocatable >= settings_dict["SESSION"]:
                     block_end = slot_start + timedelta(hours=allocatable)
+                    # slot_start and block_end are already in UTC from free_slots()
                     new_block = Event(
                         title=f"Learning for {exam.title}",
-                        start=to_iso(slot_start),
-                        end=to_iso(block_end),
+                        start=to_iso(slot_start),   # Already UTC
+                        end=to_iso(block_end),      # Already UTC
                         color=settings_dict["study_block_color"],
                         user_id=exam.user_id,
                         exam_id=exam.id,
