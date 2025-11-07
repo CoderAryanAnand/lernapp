@@ -9,6 +9,8 @@
 \babelprovide[import, onchar=ids fonts]{german}
 \babelprovide[import, onchar=ids fonts]{english}
 
+\usepackage{csquotes}
+
 % Set default/Latin font to Sans Serif in the main (rm) slot
 
 % Fix lists for non-English main language
@@ -136,6 +138,32 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
+\begin{testcase}{AUTH-07}
+    \textbf{Ziel:} Verhinderung doppelter Registrierung mit identischem Benutzernamen oder identischer E-Mail-Adresse.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Registrieren Sie einen neuen Benutzer mit Benutzername "testuser" und E-Mail "test@example.com".
+        \item Melden Sie sich ab.
+        \item Versuchen Sie, einen weiteren Benutzer mit demselben Benutzernamen ("testuser"), aber einer anderen E-Mail zu registrieren.
+        \item Versuchen Sie, einen weiteren Benutzer mit derselben E-Mail ("test@example.com"), aber einem anderen Benutzernamen zu registrieren.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} In beiden Fällen wird die Registrierung abgelehnt und eine klare Fehlermeldung angezeigt. Die Datenbank-Integritätsbedingungen (UNIQUE-Constraints) werden korrekt durchgesetzt.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{AUTH-08}
+    \textbf{Ziel:} Zeitliche Begrenzung des Passwort-Reset-Tokens (max\_age).\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Fordern Sie über die "Passwort vergessen"-Funktion einen Reset-Link an.
+        \item Notieren Sie den Token aus der URL des erhaltenen Links.
+        \item Warten Sie eine Zeitspanne, die länger ist als die im Code definierte \texttt{max\_age}, welche 15 Minuten beträgt (z.B. 15 Minuten + 1 Minute).
+        \item Versuchen Sie, den Link zu verwenden oder den Token manuell zu validieren.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Der Token wird als abgelaufen zurückgewiesen, und eine entsprechende Fehlermeldung wird angezeigt (z.B. "Der Link ist abgelaufen. Bitte fordern Sie einen neuen an.").\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
 \subsection{Notenverwaltung (Grade Management)}
 
 \begin{testcase}{GRADE-01}
@@ -165,6 +193,49 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
         \item \textbf{Löschen:} Löschen Sie eine einzelne Note. Löschen Sie das gesamte Semester.
     \end{enumerate}
     \textbf{Erwartetes Resultat:} Alle Operationen (Erstellen, Lesen, Aktualisieren, Löschen) sind erfolgreich und die Datenkonsistenz bleibt erhalten.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{GRADE-03}
+    \textbf{Ziel:} Automatisches Hinzufügen vordefinierter Fächer zu neu erstellten Semestern.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Melden Sie sich als Benutzer an.
+        \item Navigieren Sie zur Notenverwaltungsseite (\texttt{/noten}).
+        \item Erstellen Sie ein neues Semester manuell mit dem \enquote{Add Semester} Knopf.
+        \item Überprüfen Sie, ob automatisch vordefinierte Standard-Fächer zum Semester hinzugefügt wurden.
+        \item Erstellen Sie ein weiteres Semester und überprüfen Sie erneut, ob die Standard-Fächer hinzugefügt wurden.
+    \end{enumerate}
+    Die Standard-Fächer für das erste Semester sind folgende:
+    \begin{itemize}
+        \item Mathematik
+        \item Deutsch
+        \item Englisch
+        \item Französisch
+        \item Physik
+        \item Chemie
+        \item Biologie
+        \item Geschichte
+        \item Geografie
+        \item Informatik
+        \item Sport
+    \end{itemize}
+    Für das zweite Semester sind die Standard-Fächer:
+    \begin{itemize}
+        \item Mathematik
+        \item Deutsch
+        \item Englisch
+        \item Französisch
+        \item Physik
+        \item Chemie
+        \item Biologie
+        \item Geschichte
+        \item Geografie
+        \item Informatik
+        \item Wirtschaft und Recht
+        \item Sport
+    \end{itemize}
+    \textbf{Erwartetes Resultat:} Beim Erstellen eines neuen Semesters werden automatisch die in der Konfiguration definierten Standard-Fächer hinzugefügt, sodass der Benutzer direkt mit der Noteneingabe beginnen kann. Die Logik ist in der Backend-Route zur Semestererstellung implementiert.\\
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
@@ -262,6 +333,35 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
         \item Überprüfen Sie die Agenda-Ansicht.
     \end{enumerate}
     \textbf{Erwartetes Resultat:} Neue Lernblöcke für die "Mathe-Prüfung" erscheinen im Kalender. Die Blöcke werden in den Tagen vor der Prüfung geplant, aber es wird kein Lernblock mit dem "Zahnarzt"-Termin oder in dessen Pufferzeit (30 Min. davor/danach) geplant. Die Gesamtstundenzahl der Blöcke entspricht den Vorgaben aus den Einstellungen für Priorität 1.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{TOOL-06}
+    \textbf{Ziel:} Detaillierte Funktionsprüfung des Lernalgorithmus (Prioritäten, Puffer, Konfliktvermeidung).\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Erstellen Sie in den Einstellungen (\texttt{/settings}) Prioritätsprofile:
+            \begin{itemize}
+                \item Priorität 1: 10 Stunden Lernzeit, Lernfenster 14 Tage vor Prüfung.
+                \item Priorität 2: 5 Stunden Lernzeit, Lernfenster 7 Tage vor Prüfung.
+            \end{itemize}
+        \item Erstellen Sie folgende Termine im Kalender:
+            \begin{itemize}
+                \item Prüfung A (Priorität 1) in 14 Tagen.
+                \item Prüfung B (Priorität 2) in 10 Tagen.
+                \item Regulärer Termin "Sport" jeden Montag 18:00-19:30 (wiederkehrend).
+            \end{itemize}
+        \item Führen Sie den Lernalgorithmus aus.
+        \item Überprüfen Sie die generierten Lernblöcke auf:
+            \begin{itemize}
+                \item Korrekte Gesamtstundenzahl (14h für Prüfung A, 7h für Prüfung B).
+                \item Verteilung innerhalb des jeweiligen Lernfensters, und wenn möglich, den Lernblock um die bevorzugte Uhrzeit (18:00).
+                \item Keine Überschneidungen mit bestehenden Terminen.
+                \item Einhaltung des min. 30-Minuten-Puffers vor und nach dem "Sport"-Termin.
+            \end{itemize}
+        \item Ändern Sie die Uhrzeit von "Sport" und führen Sie den Algorithmus erneut aus.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Alle Lernblöcke werden regelkonform platziert. Es treten keine Konflikte oder Überschneidungen auf. Der Algorithmus passt sich dynamisch an Änderungen bestehender Termine an. Die Summe der Lernblockdauern stimmt mit den Einstellungen überein.\\
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
