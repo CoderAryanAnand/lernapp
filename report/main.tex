@@ -1,6 +1,4 @@
 \documentclass[12pt,a4paper]{report}
-\usepackage{fontspec} % Use fontspec for better font shape support
-\setmainfont{Latin Modern Roman} % Set the main font explicitly
 
 % Questions to ask @Herr Schneider
 % 1 -
@@ -27,8 +25,13 @@
 \usepackage{float}
 \usepackage[
 backend=biber,
-style=apa
+style=apa,
+language=ngerman
 ]{biblatex}
+\DeclareLanguageMapping{ngerman}{ngerman-apa}
+\DefineBibliographyStrings{ngerman}{
+  nodate = {o\adddot\addspace D\adddot}
+}
 \usepackage{microtype}          % better line breaking / protrusion
 \usepackage[htt]{hyphenat}      % allow hyphenation in \texttt / typewriter
 % Hyphenation / line-breaking tuning
