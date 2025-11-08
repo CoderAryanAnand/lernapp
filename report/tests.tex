@@ -168,6 +168,32 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
+\begin{testcase}{AUTH-09}
+    \textbf{Ziel:} Sicherstellen, dass die Registrierung fehlschlägt, wenn die Passwörter nicht übereinstimmen.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Navigieren Sie zur Registrierungsseite.
+        \item Füllen Sie alle Felder aus, aber geben Sie unterschiedliche Werte in die Felder "Passwort" und "Passwort bestätigen" ein.
+        \item Klicken Sie auf den Registrierungsbutton.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Die Registrierung wird blockiert. Eine klare Fehlermeldung ("Die Passwörter stimmen nicht überein.") wird angezeigt, und der Benutzer bleibt auf der Registrierungsseite.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{AUTH-10}
+    \textbf{Ziel:} Ein Benutzer kann sein Konto dauerhaft über die Einstellungsseite löschen.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Melden Sie sich mit einem Testkonto an.
+        \item Navigieren Sie zur Einstellungsseite (\texttt{/settings}).
+        \item Klicken Sie auf den "Konto löschen"-Button.
+        \item Bestätigen Sie die Löschung, da ein Bestätigungsdialog erscheint.
+        \item Versuchen Sie, sich erneut mit den Zugangsdaten des gelöschten Kontos anzumelden.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Das Konto wird aus der Datenbank entfernt. Der Benutzer wird ausgeloggt und zur Start- oder Login-Seite weitergeleitet. Ein erneuter Anmeldeversuch mit den alten Daten schlägt fehl.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
 \subsection[Notenverwaltung]{Notenverwaltung\texorpdfstring{\aifootnotemark}{}}
 \aifootnotetext
 
