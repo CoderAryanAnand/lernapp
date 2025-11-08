@@ -166,7 +166,12 @@ def register():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+        confirm_password = request.form["confirm_password"]
         email = request.form["email"]
+
+        if password != confirm_password:
+            flash("Passwords do not match. Please try again.", "error")
+            return render_template("register.html")
 
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             flash("Invalid email address. Please enter a valid email.", "error")
