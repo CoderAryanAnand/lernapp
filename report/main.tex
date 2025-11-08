@@ -121,13 +121,14 @@ language=ngerman
 
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
-Diese Maturitätsarbeit behandelt die Konzeption und prototypische Umsetzung einer webbasierten Applikation für Schüler:innen der Kantonsschule Baden mit dem Ziel, schulische Termine, Aufgaben und Lernzeiten zentral organisierbar zu machen und regelmässige, abgegrenzte Lernphasen zu unterstützen. Die Zielsetzung umfasst keine Wirksamkeitsmessung, sondern die Bereitstellung funktionaler Grundlagen.
+% LAST SENTENCE OF THIS LINE TO BE EDITED.
+Diese Maturitätsarbeit behandelt die Konzeption und prototypische Umsetzung einer webbasierten Applikation für Schüler:innen der Kantonsschule Baden mit dem Ziel, schulische Termine, Aufgaben und Lernzeiten zentral organisierbar zu machen und regelmässige, abgegrenzte Lernphasen zu unterstützen. Eine umfassende Wirkungskontrolle war nicht Teil der Zielsetzung; stattdessen wurde die Bedienbarkeit in einem Usability-Test geprüft.; die Ergebnisse bestätigten grundlegende Bedienbarkeit und identifizierten kleinere Optimierungspunkte (Navigationstiefe, Beschriftungen einzelner Formularfelder).
 
 Zur Ableitung der Anforderungen wurden eine fokussierte Literatur- und Internetrecherche (Lernmethoden, Zeit- und Pausenorganisation, Stressaspekte), Interviews mit zwei PPP-Lehrpersonen sowie eine Umfrage unter Schüler:innen eingesetzt. Die Ergebnisse strukturierten die Funktionsprioritäten (Agenda, Lernblöcke, Noten, Timer, Tipps) und die Parametrisierung des Lernzeitalgorithmus.
 
 Die Applikation wurde mit Python (Flask), einem relationalen Datenmodell und modularer Architektur implementiert. Kernfunktionen sind: eine Agenda mit manueller Ereigniserfassung, Import von \texttt{.ics}-Stundenplänen und algorithmischer Lernblock-Generierung nach Prioritäten; Notenverwaltung; ein konfigurierbarer Pomodoro-basiertes Lerntimer-Modul; kategorisierte tägliche Tipps, sowie auch allgemeine Lerntipps (Zeit-, Pausen-, Stressmanagement, Lernmethoden); Authentifizierung mit Basis-Schutzmassnahmen (u. a. Passwort Hashing). Der Lernzeitalgorithmus verteilt definierte Lernstunden rückwärts vom Prüfungstermin unter Berücksichtigung von Tageslimits, bevorzugten Zeiten und Konfliktvermeidung.
 
-Die Arbeit zeigt die technische Machbarkeit eines integrierten, strukturierten Ansatzes zur Lern- und Organisationsunterstützung; Aussagen zur tatsächlichen Wirkung im Nutzungskontext stehen aus und bilden den Gegenstand zukünftiger Evaluation (z.B. Planungsaufwand, Terminnutzung, wahrgenommene Kontrolle). Der Prototyp bildet eine erweiterbare Grundlage für nachfolgende empirische Validierung. \aifootnote{06.11.2025}
+Die Arbeit zeigt die technische Machbarkeit eines integrierten, strukturierten Ansatzes zur Lern- und Organisationsunterstützung; eine weitergehende Wirkungsevaluation (über die durchgeführte Usability-Prüfung hinaus) steht aus und bildet zukünftige Arbeit. Der Prototyp bildet eine erweiterbare Grundlage für nachfolgende empirische Validierung. \aifootnote{06.11.2025}
 \clearpage
 % Table of Contents
 \tableofcontents
@@ -157,7 +158,7 @@ Der Bericht ist entlang der Entwicklungslogik aufgebaut und führt von der Ausga
   \item \textbf{Methodik - Programmierung}: Systemarchitektur, Datenstrukturen, Darstellung der Features, Sicherheitsaspekte und schliesslich noch Testing.
   \item \textbf{Schlussfolgerung und Ausblick}: Bilanz zur Fragestellung, gewonnene Erkenntnisse und offene Arbeitsschritte.
 \end{enumerate}
-Die Gliederung macht nachvollziehbar, wie aus Problemstellung und Zielsetzung konkrete Komponenten abgeleitet, implementiert und dokumentiert wurden; eine empirische Wirkungsevaluation ist nicht Gegenstand dieses Berichts.
+Die Gliederung macht nachvollziehbar, wie aus Problemstellung und Zielsetzung konkrete Komponenten abgeleitet, implementiert und dokumentiert wurden; ein Usability-Test der Bedienbarkeit und Verständlichkeit ist auch Bestandteil der Arbeit und wurde durchgeführt.
 
 % ------------------------------Recherche------------------------------
 \chapter{Recherche}
@@ -776,7 +777,7 @@ Der Algorithmus arbeitet iterativ und bearbeitet alle als Prüfung markierten Er
         \item \textbf{Alternative Slots}: Falls die bevorzugte Zeit belegt ist, sucht eine dedizierte Funktion den grössten verfügbaren, konfliktfreien Zeitabschnitt.
         \item \textbf{Echtzeit-Aktualisierung}: Nach erfolgreicher Generierung wird der Lernblock sofort zur Liste der aktuellen Ereignisse hinzugefügt, um nachfolgende Überlappungen auszuschliessen.
     \end{itemize}
-    \item \textbf{Ergebnisrückgabe und Zusammenfassung}:
+             \item \textbf{Ergebnisrückgabe und Zusammenfassung}:
     \begin{itemize}
         \item Der Algorithmus gibt eine detaillierte Zusammenfassung zurück: Gesamtzahl hinzugefügter Lernblöcke, geplante Gesamtstunden und Planungsstatus pro Prüfung.
     \end{itemize}
@@ -794,6 +795,8 @@ Ein relativ wichtiges Feature unserer App sind die Daily Tipps. Es sollte jeden 
 \text{Tipp des Tages (Index)} = (\text{Tag des Jahres}) \bmod (\text{Anzahl der Tipps})
 \end{equation}
 Somit wird an einem bestimmten Tag nur ein Tipp gezeigt und über das ganze Jahr sollten alle Tipps in einem Zyklus gezeigt werden.
+
+Der Titel dieses Features ist auf Englisch (\enquote{Tip of the Day}), weil der Ausdruck als prägnanter UI-Anker wiedererkennbar ist; der eigentliche Inhalt (der Tipp) bleibt vollständig auf Deutsch, sodass Verständlichkeit und lokaler Bezug erhalten bleiben.
 
 \subsection{Lerntipps}
 Ein weiteres Feature unserer App sind die Lerntipps. Diese sind in verschiedene Kategorien aufgeteilt, wie zum Beispiel Zeitmanagement, Pausenmanagement, Stressmanagement und Lernmethoden. In jeder Kategorie gibt es verschiedene Tipps, welche wir aus unserer Recherche und den Interviews gesammelt haben. Diese Tipps sollen den Nutzer:innen helfen, ihr Lernverhalten zu verbessern.
@@ -827,16 +830,38 @@ In unserer Flask-Anwendung haben wir diese Logik mithilfe eines eigenen Decorato
 
 Eine wichtige Anmerkung ist, dass es schon Module wie \texttt{Flask-WTF} gibt, die CSRF-Schutz bieten. Wir haben uns jedoch entschieden, unseren eigenen Decorator zu schreiben, um ein tieferes Verständnis für die Funktionsweise von CSRF-Schutzmechanismen zu erlangen.
 
-\section{Tests}
-Um die Qualität und Zuverlässigkeit der Kanti Koala Web-App sicherzustellen, wurden verschiedene Testfälle erstellt. Diese Tests decken sowohl die Backend-Logik als auch die Frontend-Funktionalität ab und umfassen folgende Testbereiche:
+\section{Design und Benutzeroberfläche}
+Das Design der Web-App haben wir mit der CSS-Bibliothek Tailwind CSS umgesetzt \parencite{tailwind_css}. Tailwind ermöglicht es uns, schnell und konsistent ansprechende Oberflächen zu gestalten, indem wir vordefinierte Utility-Klassen verwenden. Dies erleichtert die Umsetzung eines einheitlichen Designs und beschleunigt den Entwicklungsprozess erheblich.
+
+\subsection{Farbkonzept}
+Die Farbwahl folgt praktischen Erwägungen: gut unterscheidbare Zustände, ruhige Grundflächen und konsistente Akzente. Manche Farbwahlen wurden schon vorher im Abschnitt zur Agenda erläutert. Hier eine Übersicht des generellen Farbkonzepts:
 \begin{itemize}
-  \item \textbf{Authentifizierung}
-  \item \textbf{Agenda}
-  \item \textbf{Notenverwaltung}
-  \item \textbf{Lerntools}
-  \item \textbf{User Interface}
+  \item Neutrale Hintergründe (hell/dunkel): dezente Grau-/Zinc-Töne als Bühne für Inhalte.
+  \item Prioritäten in der Agenda: abgestufte Rot–Orange–Grün-Töne für eine nachvollziehbare Dringlichkeitsskala.
+  \item Lernblöcke: Blau ausserhalb des Rot–Grün-Spektrums zur klaren Abgrenzung.
+  \item Importierte Stundenplan-Elemente: neutrales Grau, damit sie Informationen liefern ohne zu dominieren.
+  \item Rückmeldungen: Grün für erfolgreiche Aktionen, Rot für Fehlerzustände.
+  \item Akzente: Primärfarbe Blau und Grün für interaktive Elemente (Buttons, Links) zur Hervorhebung.
 \end{itemize}
-Die vollständigen Testprotokolle sind im Anhang dokumentiert.
+Die Töne sind bewusst leicht gedämpft gewählt, um eine ruhige, einheitliche Anmutung über helle und dunkle Oberflächen zu erhalten.
+
+\subsection{Dark Mode}
+Die App richtet sich nach der Systemeinstellung (\texttt{prefers-color-scheme}). Ein früh geladenes Skript setzt die Klasse \texttt{dark} auf \texttt{<html>} bei dunkler Präferenz und entfernt sie sonst. Die Styles sind als Dualklassen (z.\,B. \texttt{bg-zinc-100} / \texttt{dark:bg-zinc-900}) angelegt. So ergibt sich eine konsistente Darstellung ohne separate Stylesheets und ohne sichtbare Umschalt­effekte.
+
+\subsection{Fehlerseiten (404/500): Gestaltung und Zweck}
+\textbf{404} signalisiert, dass eine angeforderte Ressource nicht existiert; \textbf{500} steht für einen internen Fehler.
+Die Seiten sind reduziert gestaltet:
+\begin{itemize}
+  \item Zentrale Karte mit Statuscode, kurzer Erklärung und primärer Aktion (zurück zur Startseite).
+  \item Konsistentes Branding (Logo, Basisfarben) für Wiedererkennung.
+  \item Keine technischen Details; klare Orientierung statt Verunsicherung.
+\end{itemize}
+Ziel ist, Nutzer:innen schnell zurück in einen funktionierenden Kontext zu führen und gleichzeitig sensible Interna nicht offenzulegen.
+
+% ------------------ keep existing structure below ------------------
+
+\section{Tests}
+Um die Qualität und Zuverlässigkeit der Kanti Koala Web-App sicherzustellen, wurden verschiedene Testfälle (funktional + Usability) durchgeführt. Die funktionalen Tests decken Backend-Logik und Frontend-Funktionalität ab (Authentifizierung, Agenda, Notenverwaltung, Lerntools, UI). Der formative Usability-Test (siehe eigenes Kapitel) evaluierte Bedienlichkeit, Verständlichkeit und Fehlertoleranz bei Kernaufgaben. Die vollständigen Testprotokolle der funktionalen Tests sind im Anhang dokumentiert.
 
 
 % Schlussfolgerung und Ausblick
@@ -865,7 +890,7 @@ Die Hauptfragestellung (Erleichterung von Organisation und Unterstützung regelm
   \item \textbf{Organisation erleichtern}: Zentrale Erfassung von Ereignissen, algorithmische Erstellung von Lernblöcken, Prioritätssteuerung und .ics-Import reduzieren manuellen Planungsaufwand (keine Mehrfacherfassung, automatische zeitliche Segmentierung vom Algorithmus).
   \item \textbf{Unterstützung von Lerngewohnheiten}: Strukturierte Lernblöcke (mit Start-/Endzeiten) und konfigurierbarer Lerntimer bilden wiederkehrende Einheiten ab; Lerntipps liefern ergänzende Handlungsimpulse.
 \end{itemize}
-Nicht beantwortet ist die empirische Wirksamkeit (keine Nutzerstudie, keine Auswertung von Termintreue oder wahrgenommener Kontrolle). Die Plattformfrage wurde faktisch zugunsten einer Web-Variante getroffen; eine systematische Gegenüberstellung zu einer nativen Umsetzung steht aus.
+Nicht beantwortet ist die weitergehende empirische Wirkung (Langzeitnutzung, Lernverhaltensänderung); die Bedienbarkeit wurde jedoch formativ geprüft und Basisakzeptanz bestätigt. Wir dachten uns, dass eine langfristige Evaluation nur über ein Semester Sinn machen würde und im Rahmen einer Maturitätsarbeit nicht realisierbar ist.
 
 \section*{Erkenntnisse aus dem Arbeitsprozess}
 \begin{itemize}
@@ -880,11 +905,10 @@ Nicht beantwortet ist die empirische Wirksamkeit (keine Nutzerstudie, keine Ausw
 
 \section*{Ausblick und offene Punkte}
 \begin{itemize}
-  \item \textbf{Empirische Evaluation}: Erhebung definierter Indikatoren (Planungsaufwand, Termintreue, wahrgenommene Kontrolle) durch Tagebuch- oder Log-Daten und Fragebögen.
-  \item \textbf{Algorithmus-Erweiterung}: Adaptive Verteilung basierend auf Notenfortschritt.
-  \item \textbf{Plattformvergleich}: Systematische Analyse einer nativen oder hybriden App (Offline-Fähigkeit, Push-Benachrichtigungen).
-  \item \textbf{Zusätzliche Sicherheitsmassnahmen}: 2FA, Ratenbegrenzung bei Anmeldeversuchen, E-Mail-Verifizierung.
-  \item \textbf{Zusätzliche Features}: Integration von To-Do-Listen, Fortschrittsvisualisierung, soziale Funktionen (z.B. Lerngruppen).
+  \item Vertiefte Wirkungsstudie (Langzeit-Logdaten, Lernblock-Nutzung).
+  \item Erweiterte Analytics (Verhältnis geplante vs. absolvierte Lernblöcke).
+  \item Dynamische Prioritätsanpassung nach Notenfortschritt.
+  \item Native App-Evaluierung (Offline, Push-Benachrichtigungen).
 \end{itemize}
 
 \section*{Fazit}
