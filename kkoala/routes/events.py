@@ -377,141 +377,141 @@ def import_ics(user):
         return jsonify({"message": f"Failed to import .ics file: {str(e)}"}), 500
 
 
-@events_bp.route("/populate_test_algorithm", methods=["POST", "GET"])
-@csrf_protect
-@login_required
-def populate_test_algorithm(user):
-    """
-    Utility route to clear all existing events and populate the database
-    with a standard set of test exams (P1, P2, P3) and busy events.
+# @events_bp.route("/populate_test_algorithm", methods=["POST", "GET"])
+# @csrf_protect
+# @login_required
+# def populate_test_algorithm(user):
+#     """
+#     Utility route to clear all existing events and populate the database
+#     with a standard set of test exams (P1, P2, P3) and busy events.
 
-    This is intended for development and testing of the algorithm.
+#     This is intended for development and testing of the algorithm.
 
-    Returns:
-        str: A confirmation message and status code 201.
-    """
-    user_id = user.id
+#     Returns:
+#         str: A confirmation message and status code 201.
+#     """
+#     user_id = user.id
 
-    # Clear all existing events for this user before populating
-    Event.query.filter_by(user_id=user_id).delete()
-    db.session.commit()
+#     # Clear all existing events for this user before populating
+#     Event.query.filter_by(user_id=user_id).delete()
+#     db.session.commit()
 
-    # Define test data relative to today
-    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+#     # Define test data relative to today
+#     today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
 
-    # ... (event creation code omitted for brevity) ...
-    # Events are created here: exam1 (P1, 10 days out), exam2 (P2, 7 days out), exam3 (P3, 4 days out), and busy events.
+#     # ... (event creation code omitted for brevity) ...
+#     # Events are created here: exam1 (P1, 10 days out), exam2 (P2, 7 days out), exam3 (P3, 4 days out), and busy events.
 
-    exam1 = Event(
-        user_id=user_id,
-        title="Math Exam",
-        start=(today + timedelta(days=10, hours=9)).isoformat(),
-        end=(today + timedelta(days=10, hours=11)).isoformat(),
-        color="#770000",
-        priority=1,
-        recurrence="None",
-        recurrence_id="0",
-        all_day=False,
-        locked=True,
-        exam_id=None,
-    )
-    exam2 = Event(
-        user_id=user_id,
-        title="History Exam",
-        start=(today + timedelta(days=7, hours=13)).isoformat(),
-        end=(today + timedelta(days=7, hours=15)).isoformat(),
-        color="#ca8300",
-        priority=2,
-        recurrence="None",
-        recurrence_id="0",
-        all_day=False,
-        locked=True,
-        exam_id=None,
-    )
-    exam3 = Event(
-        user_id=user_id,
-        title="Biology Exam",
-        start=(today + timedelta(days=4, hours=8)).isoformat(),
-        end=(today + timedelta(days=4, hours=10)).isoformat(),
-        color="#097200",
-        priority=3,
-        recurrence="None",
-        recurrence_id="0",
-        all_day=False,
-        locked=True,
-        exam_id=None,
-    )
+#     exam1 = Event(
+#         user_id=user_id,
+#         title="Math Exam",
+#         start=(today + timedelta(days=10, hours=9)).isoformat(),
+#         end=(today + timedelta(days=10, hours=11)).isoformat(),
+#         color="#770000",
+#         priority=1,
+#         recurrence="None",
+#         recurrence_id="0",
+#         all_day=False,
+#         locked=True,
+#         exam_id=None,
+#     )
+#     exam2 = Event(
+#         user_id=user_id,
+#         title="History Exam",
+#         start=(today + timedelta(days=7, hours=13)).isoformat(),
+#         end=(today + timedelta(days=7, hours=15)).isoformat(),
+#         color="#ca8300",
+#         priority=2,
+#         recurrence="None",
+#         recurrence_id="0",
+#         all_day=False,
+#         locked=True,
+#         exam_id=None,
+#     )
+#     exam3 = Event(
+#         user_id=user_id,
+#         title="Biology Exam",
+#         start=(today + timedelta(days=4, hours=8)).isoformat(),
+#         end=(today + timedelta(days=4, hours=10)).isoformat(),
+#         color="#097200",
+#         priority=3,
+#         recurrence="None",
+#         recurrence_id="0",
+#         all_day=False,
+#         locked=True,
+#         exam_id=None,
+#     )
 
-    busy1 = Event(
-        user_id=user_id,
-        title="Class: English",
-        start=(today + timedelta(days=1, hours=10)).isoformat(),
-        end=(today + timedelta(days=1, hours=12)).isoformat(),
-        color="#4287f5",
-        priority=5,
-        recurrence="None",
-        recurrence_id="0",
-        all_day=False,
-        locked=True,
-        exam_id=None,
-    )
-    busy2 = Event(
-        user_id=user_id,
-        title="Doctor Appointment",
-        start=(today + timedelta(days=2, hours=15)).isoformat(),
-        end=(today + timedelta(days=2, hours=16)).isoformat(),
-        color="#8e44ad",
-        priority=5,
-        recurrence="None",
-        recurrence_id="0",
-        all_day=False,
-        locked=True,
-        exam_id=None,
-    )
-    busy3 = Event(
-        user_id=user_id,
-        title="Class: Chemistry",
-        start=(today + timedelta(days=5, hours=9)).isoformat(),
-        end=(today + timedelta(days=5, hours=11)).isoformat(),
-        color="#16a085",
-        priority=5,
-        recurrence="None",
-        recurrence_id="0",
-        all_day=False,
-        locked=True,
-        exam_id=None,
-    )
-    busy4 = Event(
-        user_id=user_id,
-        title="Sports Practice",
-        start=(today + timedelta(days=6, hours=17)).isoformat(),
-        end=(today + timedelta(days=6, hours=19)).isoformat(),
-        color="#e67e22",
-        priority=5,
-        recurrence="None",
-        recurrence_id="0",
-        all_day=False,
-        locked=True,
-        exam_id=None,
-    )
+#     busy1 = Event(
+#         user_id=user_id,
+#         title="Class: English",
+#         start=(today + timedelta(days=1, hours=10)).isoformat(),
+#         end=(today + timedelta(days=1, hours=12)).isoformat(),
+#         color="#4287f5",
+#         priority=5,
+#         recurrence="None",
+#         recurrence_id="0",
+#         all_day=False,
+#         locked=True,
+#         exam_id=None,
+#     )
+#     busy2 = Event(
+#         user_id=user_id,
+#         title="Doctor Appointment",
+#         start=(today + timedelta(days=2, hours=15)).isoformat(),
+#         end=(today + timedelta(days=2, hours=16)).isoformat(),
+#         color="#8e44ad",
+#         priority=5,
+#         recurrence="None",
+#         recurrence_id="0",
+#         all_day=False,
+#         locked=True,
+#         exam_id=None,
+#     )
+#     busy3 = Event(
+#         user_id=user_id,
+#         title="Class: Chemistry",
+#         start=(today + timedelta(days=5, hours=9)).isoformat(),
+#         end=(today + timedelta(days=5, hours=11)).isoformat(),
+#         color="#16a085",
+#         priority=5,
+#         recurrence="None",
+#         recurrence_id="0",
+#         all_day=False,
+#         locked=True,
+#         exam_id=None,
+#     )
+#     busy4 = Event(
+#         user_id=user_id,
+#         title="Sports Practice",
+#         start=(today + timedelta(days=6, hours=17)).isoformat(),
+#         end=(today + timedelta(days=6, hours=19)).isoformat(),
+#         color="#e67e22",
+#         priority=5,
+#         recurrence="None",
+#         recurrence_id="0",
+#         all_day=False,
+#         locked=True,
+#         exam_id=None,
+#     )
 
-    non_exam = Event(
-        user_id=user_id,
-        title="Read a book",
-        start=(today + timedelta(days=3, hours=18)).isoformat(),
-        end=(today + timedelta(days=3, hours=19)).isoformat(),
-        color="#888888",
-        priority=0,
-        recurrence="None",
-        recurrence_id="0",
-        all_day=False,
-        locked=True,
-        exam_id=None,
-    )
+#     non_exam = Event(
+#         user_id=user_id,
+#         title="Read a book",
+#         start=(today + timedelta(days=3, hours=18)).isoformat(),
+#         end=(today + timedelta(days=3, hours=19)).isoformat(),
+#         color="#888888",
+#         priority=0,
+#         recurrence="None",
+#         recurrence_id="0",
+#         all_day=False,
+#         locked=True,
+#         exam_id=None,
+#     )
 
-    db.session.add_all([exam1, exam2, exam3, busy1, busy2, busy3, busy4, non_exam])
-    db.session.commit()
-    return "Test events for the learning time algorithm have been populated!", 201
+#     db.session.add_all([exam1, exam2, exam3, busy1, busy2, busy3, busy4, non_exam])
+#     db.session.commit()
+#     return "Test events for the learning time algorithm have been populated!", 201
 
 
 @events_bp.route("/export-ics", methods=["GET"])
