@@ -667,6 +667,13 @@ Sehr wichtig bei jedem Anmeldesystem ist natürlich eine Option das Passwort zur
 
 Im Falle, dass ein Nutzer zum Beispiel mit einer E-Mail, die schon gebraucht wird, sich registrieren will, oder mit einem falschen Passwort sich anmelden will, bekommt der Nutzer eine Fehlermeldung angezeigt, die ihm sagt, was falsch gelaufen ist, mithilfe von Flash-Nachrichten, welche eine Funktion von Flask ist \parencite{realpython_flask_flashes}.
 
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{img/login-screenshot.png}
+    \caption[Screenshot des Anmeldeprozesses. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot des Anmeldeprozesses}
+    \label{fig:auth_flow}
+\end{figure}
+
 \subsection[Agenda]{Agenda\texorpdfstring{\aifootnotemark}{}}
 \aifootnotebasis{04.11.2025}
 Die Agenda ist eine zentrale Kernfunktion der Anwendung. Sie sollte die Operationen Erstellen, Bearbeiten und Löschen von Terminen mit minimalem Aufwand ermöglichen.
@@ -796,6 +803,13 @@ In der Kantonsschule muss man immer wieder Prüfungen schreiben. Die Noten, die 
 \subsection{Lerntimer}
 Ein weiteres wichtiges Feature unserer App ist der Lerntimer. Dieser Timer basiert auf der Pomodoro-Technik, welche im Recherche Teil dieses Berichts erklärt wurde. Mit der Recherche, die wir führten, fanden wir es wichtig, einen solchen Lerntimer zu implementieren, da es eine sehr effektive Lerntechnik ist. Der Timer hat die Standard-Einstellungen von 25 Minuten Lernen und 5 Minuten Pause, welche man aber auch ändern kann, falls man das möchte.
 
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=\linewidth]{img/lerntimer-screenshot.png}
+    \caption[Screenshot der Lerntimer-Seite. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Lerntimer-Seite}
+    \label{fig:lerntimer_page}
+\end{figure}
+
 \subsection{Daily Tipps}
 Ein relativ wichtiges Feature unserer App sind die Daily Tipps. Es sollte jeden Tag ein neuer Tipp an den Nutzer gezeigt werden auf der Startseite, entweder über die Kantonsschule oder allgemeine Lerntipps. Die einfachste Möglichkeit, dies zu implementieren, ist eine simple Modulo-Rechnung:
 \begin{equation}
@@ -823,6 +837,16 @@ Wir haben auch ein Scroll-To-Top Button implementiert, da wir von einer Rückmel
     \includegraphics[width=\linewidth]{img/lerntipps-screenshot.png}
     \caption[Screenshot der Lerntipps-Seite. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Lerntipps-Seite}
     \label{fig:lerntipps_page}
+\end{figure}
+
+\subsection{Einstellungen}
+In den Einstellungen kann der Nutzer verschiedene globale Einstellungen für die App vornehmen, wie zum Beispiel das Farbschema der App (hell oder dunkel), die bevorzugte Lernzeit, ob am Wochenende gelernt werden soll und die Farben der Prioritätsstufen. Diese Einstellungen werden in der Datenbank gespeichert und beim Laden der App abgerufen, um eine personalisierte Erfahrung zu bieten. Zusätzlich kann man hier auch sein Konto löschen und sein Passwort ändern.
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=\linewidth]{img/einstellungen-screenshot.png}
+    \caption[Screenshot der Einstellungen-Seite. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Einstellungen-Seite}
+    \label{fig:settings_page}
 \end{figure}
 
 
@@ -882,6 +906,13 @@ Die Seiten sind reduziert gestaltet:
   \item Keine technischen Details; klare Orientierung statt Verunsicherung.
 \end{itemize}
 Ziel ist, Nutzer:innen schnell zurück in einen funktionierenden Kontext zu führen und gleichzeitig sensible Interna nicht offenzulegen.
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=0.6\linewidth]{img/404-page.png}
+    \caption[Screenshot der 404-Fehlerseite. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der 404-Fehlerseite}
+    \label{fig:404_page}
+\end{figure}
 
 % ------------------ keep existing structure below ------------------
 
