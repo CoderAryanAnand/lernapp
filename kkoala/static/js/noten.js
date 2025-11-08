@@ -233,7 +233,14 @@ function addSubject(container, subjectName, grades = [], countsAverage = true) {
     const gradesList = document.createElement("div");
     gradesList.className = "grades-list space-y-2";
     content.appendChild(gradesList);
+    
+    // Append to DOM FIRST before rendering grades
+    subjectDiv.append(header, content);
+    container.appendChild(subjectDiv);
+    
+    // NOW render grades (after subjectDiv is in the DOM)
     grades.forEach(grade => renderGradeRow(gradesList, grade.name, grade.value, grade.weight, grade.counts));
+    
     const actionsDiv = document.createElement("div");
     actionsDiv.className = "flex flex-wrap gap-2 mt-4";
     actionsDiv.innerHTML = `
@@ -242,8 +249,7 @@ function addSubject(container, subjectName, grades = [], countsAverage = true) {
         <button class="delete-subject-btn text-sm px-3 py-1.5 font-semibold text-white bg-red-600 rounded-md hover:bg-red-700">Fach löschen</button>
     `;
     content.appendChild(actionsDiv);
-    subjectDiv.append(header, content);
-    container.appendChild(subjectDiv);
+    
     header.onclick = (e) => {
         if (!e.target.closest('button')) {
             content.classList.toggle("hidden");
@@ -270,12 +276,18 @@ function renderGradeRow(gradesList, name, value, weight, counts, gradeRow = null
         gradeRow.className = "grade-row";
         gradesList.appendChild(gradeRow);
     }
-    gradeRow.className = "grade-row flex items-center justify-between p-2 rounded-md " + (counts ? "bg-zinc-50 dark:bg-zinc-700/50" : "bg-zinc-100 dark:bg-zinc-700/20 opacity-70");
+    
+    const countsText = counts ? "" : " (Zählt nicht)";
+    
+    // Use a CSS Grid for perfect, stable column alignment
+    gradeRow.className = "grade-row grid grid-cols-[1fr_auto_auto_auto] items-center gap-x-4 p-2 rounded-md bg-zinc-50 dark:bg-zinc-700/50";
     gradeRow.innerHTML = `
-        <div class="flex-1"><strong class="text-zinc-800 dark:text-white">${name}</strong></div>
-        <div class="w-24 text-sm text-zinc-600 dark:text-zinc-300">Note: ${value}</div>
-        <div class="w-24 text-sm text-zinc-600 dark:text-zinc-300">Gewichtung: ${weight}</div>
-        <div class="space-x-1">
+        <div class="truncate">
+            <strong class="text-zinc-800 dark:text-white">${name}</strong>
+        </div>
+        <div class="text-sm text-zinc-700 dark:text-zinc-300">Note: ${value}</div>
+        <div class="text-sm text-zinc-700 dark:text-zinc-300">Gewichtung: ${weight}${countsText}</div>
+        <div class="flex space-x-1 justify-end">
             <button class="edit-grade-btn p-1.5 text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
             <button class="delete-grade-btn p-1.5 text-zinc-500 hover:text-red-600 dark:hover:text-red-400 rounded-md hover:bg-zinc-200 dark:hover:bg-zinc-600"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
         </div>
