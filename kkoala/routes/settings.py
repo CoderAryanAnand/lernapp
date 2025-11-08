@@ -7,6 +7,7 @@ from flask import (
     redirect,
     render_template,
     url_for,
+    flash,
 )
 
 from ..extensions import db, bcrypt
@@ -155,7 +156,7 @@ def change_password(user):
     GET: Renders the change password form.
 
     Returns:
-        str: Rendered HTML template ('change_password.html') or a redirect/error message.
+        str: Rendered HTML template ('change_password.html') or a redirect.
     """
     if request.method == "POST":
         old_password = request.form["ogpw"]
@@ -164,11 +165,13 @@ def change_password(user):
 
         # Check old password
         if not bcrypt.check_password_hash(user.password, old_password):
-            return "Incorrect old password. Try again."
+            flash("Incorrect old password. Please try again.", "error")
+            return render_template("change_password.html")
 
         # Check new password confirmation
         if new_password != confirm_password:
-            return "Passwords do not match. Try again."
+            flash("Passwords do not match. Please try again.", "error")
+            return render_template("change_password.html")
 
         # Hash and update new password
         hashed_password = bcrypt.generate_password_hash(new_password).decode("utf-8")
