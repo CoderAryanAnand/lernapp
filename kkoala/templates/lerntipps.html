@@ -16,6 +16,8 @@
         <!-- Main Content Area -->
         <main class="flex-grow p-8">
             <h1 class="text-4xl font-bold text-zinc-800 dark:text-white mb-8">Lerntipps</h1>
+
+            
             
             <!-- Accordion Container -->
             <div id="tips-accordion" class="space-y-4">
@@ -41,6 +43,15 @@
                         </div>
                     </div>
                 {% endfor %}
+
+                <!-- SOURCE DISCLAIMER -->
+                <div class=" bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden">
+                    <div class="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden">
+                        <label class="accordion-toggle flex justify-between items-center w-full p-5 text-left font-semibold text-zinc-600 dark:text-zinc-100 focus:outline-none">
+                                <span class="text-sm">DISCLAIMER: Diese Lerntipps wurden aus unseren Interviews und einer Umfrage zusammengestellt.</span>
+                        </label>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
