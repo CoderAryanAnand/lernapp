@@ -35,6 +35,13 @@ def settings_view(user):
     settings = Settings.query.filter_by(user_id=user.id).first()
 
     if request.method == "POST":
+        # Handle account deletion first as it's a terminal action
+        if "delete_account" in request.form:
+            db.session.delete(user)
+            db.session.commit()
+            session.clear()
+            return redirect(url_for("main.index"))
+
         # Handle adding a new priority level
         if "add_priority" in request.form:
             # ... (priority addition logic, including shifting existing events/settings) ...
@@ -134,23 +141,6 @@ def settings_view(user):
         study_block_color=settings.study_block_color,
         import_color=settings.import_color,
     )
-
-
-@settings_bp.route("/delete_account")
-@csrf_protect
-@login_required
-def delete_account(user):
-    """
-    Delete account route: Deletes the user account and all associated data
-    due to cascade delete relationships in the SQLAlchemy models.
-
-    Returns:
-        redirect: Redirects to the home route.
-    """
-    db.session.delete(user)
-    db.session.commit()
-    session.clear()
-    return redirect(url_for("main.index"))
 
 
 @settings_bp.route("/change_password", methods=["GET", "POST"])
