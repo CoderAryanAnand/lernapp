@@ -272,7 +272,7 @@ function renderGradeRow(gradesList, name, value, weight, counts, gradeRow = null
     }
     gradeRow.className = "grade-row flex items-center justify-between p-2 rounded-md " + (counts ? "bg-zinc-50 dark:bg-zinc-700/50" : "bg-zinc-100 dark:bg-zinc-700/20 opacity-70");
     gradeRow.innerHTML = `
-        <div class="flex-1"><strong class="text-zinc-800 dark:text-zinc-100">${name}</strong></div>
+        <div class="flex-1"><strong class="text-zinc-800 dark:text-white">${name}</strong></div>
         <div class="w-24 text-sm text-zinc-600 dark:text-zinc-300">Note: ${value}</div>
         <div class="w-24 text-sm text-zinc-600 dark:text-zinc-300">Gewichtung: ${weight}</div>
         <div class="space-x-1">
