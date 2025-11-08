@@ -100,3 +100,13 @@ def lerntipps():
         tips = json.load(file)
 
     return render_template("lerntipps.html", tips=tips)
+
+@main_bp.route("/about")
+def about():
+    """
+    About Us route: Displays information about Kanti Koala.
+
+    Returns:
+        str: Rendered HTML template ('about.html').
+    """
+    return render_template("about.html")
