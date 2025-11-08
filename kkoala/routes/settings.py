@@ -103,6 +103,7 @@ def settings_view(user):
         settings.import_color = request.form.get(
             "import_color", settings.import_color
         )
+        settings.dark_mode = request.form.get("dark_mode", "system") # Save the dark mode setting
 
         # Update specific priority settings (color, days_to_learn, etc.)
         for prio in settings.priority_settings:

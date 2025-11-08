@@ -871,7 +871,7 @@ Die Farbwahl folgt praktischen Erwägungen: gut unterscheidbare Zustände, ruhig
 Die Töne sind bewusst leicht gedämpft gewählt, um eine ruhige, einheitliche Anmutung über helle und dunkle Oberflächen zu erhalten.
 
 \subsection{Dark Mode}
-Die App richtet sich nach der Systemeinstellung (\texttt{prefers-color-scheme}). Ein früh geladenes Skript setzt die Klasse \texttt{dark} auf \texttt{<html>} bei dunkler Präferenz und entfernt sie sonst. Die Styles sind als Dualklassen (z.\,B. \texttt{bg-zinc-100} / \texttt{dark:bg-zinc-900}) angelegt. So ergibt sich eine konsistente Darstellung ohne separate Stylesheets und ohne sichtbare Umschalt­effekte.
+Wir haben die Rückmeldung aus den Usability-Tests aufgenommen und einen wechselbaren Dark Mode (das heisst, er wird nicht automatisch aktiviert, sondern man kann ihn an- und ausschalten) implementiert. Nutzer:innen können in den Einstellungen zwischen Light Mode, Dark Mode und automatischem Modus (abhängig von Systemeinstellungen) wählen. Das Design wurde so angepasst, dass alle Elemente in beiden Modi gut lesbar und ansprechend sind. Tailwind CSS erleichtert die Umsetzung durch integrierte Dark-Mode-Klassen. Flask kann mit einem Content Processor so konfiguriert werden, dass jede Seite die gebrauchte Einstellung erhält.
 
 \subsection{Fehlerseiten (404/500): Gestaltung und Zweck}
 \textbf{404} signalisiert, dass eine angeforderte Ressource nicht existiert; \textbf{500} steht für einen internen Fehler.

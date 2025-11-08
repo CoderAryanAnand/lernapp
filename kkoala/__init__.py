@@ -1,4 +1,5 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, session
+from kkoala.models import User
 from dotenv import load_dotenv
 import resend
 
@@ -38,6 +39,19 @@ def create_app(config_class="config.ProdConfig"):
         return render_template("403.html"), 403
 
     register_blueprints(app)
+
+    @app.context_processor
+    def inject_dark_mode_setting():
+        """
+        Injects the user's dark mode preference into all templates.
+        Defaults to 'system' if the user is not logged in or has no setting.
+        """
+        dark_mode = 'system'  # Default value
+        if 'username' in session:
+            user = User.query.filter_by(username=session['username']).first()
+            if user and user.settings:
+                dark_mode = user.settings.dark_mode
+        return dict(dark_mode_setting=dark_mode)
 
     if app.config.get("CREATE_DB"):
         with app.app_context():

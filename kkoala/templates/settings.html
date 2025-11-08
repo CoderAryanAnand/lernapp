@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-theme-setting="{{ dark_mode_setting }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -60,6 +60,14 @@
                                 <label class="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
                                     <span>Importierte Events-Farbe:</span>
                                     <input type="color" id="import_color" name="import_color" value="{{ import_color }}" class="w-10 h-10 p-0 border-none rounded-md bg-transparent">
+                                </label>
+                                <label class="block text-zinc-700 dark:text-zinc-300">
+                                    <span>Aussehen:</span>
+                                    <select name="dark_mode" class="mt-1 block w-full px-3 py-2 bg-zinc-100 dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="system" {% if dark_mode_setting == 'system' %}selected{% endif %}>Systemeinstellung</option>
+                                        <option value="light" {% if dark_mode_setting == 'light' %}selected{% endif %}>Hell</option>
+                                        <option value="dark" {% if dark_mode_setting == 'dark' %}selected{% endif %}>Dunkel</option>
+                                    </select>
                                 </label>
                             </div>
                         </div>
