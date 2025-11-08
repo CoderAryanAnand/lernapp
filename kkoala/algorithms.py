@@ -30,11 +30,15 @@ def learning_time_algorithm(events, user):
         "user_tz": ZoneInfo("Europe/Zurich"),  # Add user's timezone
     }
 
+    # Filter out past exams and sort remaining exams
+    now = datetime.now(timezone.utc)
     exams = sorted(
         [
             e
             for e in events
-            if int(e.priority) > 0 and int(e.priority) <= max_exam_priority
+            if int(e.priority) > 0 
+            and int(e.priority) <= max_exam_priority
+            and to_dt(e.start) > now  # Only include future exams
         ],
         key=lambda e: (int(e.priority), to_dt(e.start)),
     )
@@ -73,12 +77,12 @@ def learning_time_algorithm(events, user):
         # Calculate hours already done from past or locked blocks
         exam_blocks = [e for e in events_for_scheduling if e.exam_id == exam.id]
         past_blocks = [
-            b for b in exam_blocks if to_dt(b.start) < datetime.now(timezone.utc)
+            b for b in exam_blocks if to_dt(b.start) < now
         ]
         locked_future_blocks = [
             b
             for b in exam_blocks
-            if to_dt(b.start) >= datetime.now(timezone.utc) and b.locked
+            if to_dt(b.start) >= now and b.locked
         ]
 
         hours_done = sum(
@@ -102,6 +106,10 @@ def learning_time_algorithm(events, user):
             if new_scheduled >= hours_left:
                 break
             current_day = window_end - timedelta(days=day_offset)
+
+            # Skip if current_day is in the past
+            if current_day.date() < datetime.now().date():
+                continue
 
             # Day Pre-Checks
             is_day_blocked = any(
