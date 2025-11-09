@@ -229,5 +229,6 @@ report/*.xml
 report/*blx.bib
 report/.bak 
 report/.mtc
+report/main.synctex(busy)
 report/build/
 report/main.bbl-SAVE-ERROR
