@@ -166,18 +166,19 @@ def change_password(user):
 
         # Check old password
         if not bcrypt.check_password_hash(user.password, old_password):
-            flash("Incorrect old password. Please try again.", "error")
+            flash("Altes Passwort ist falsch. Bitte versuche es erneut.", "error")
             return render_template("change_password.html")
 
         # Check new password confirmation
         if new_password != confirm_password:
-            flash("Passwords do not match. Please try again.", "error")
+            flash("Die Passwörter stimmen nicht überein. Bitte versuche es erneut.", "error")
             return render_template("change_password.html")
 
         # Hash and update new password
         hashed_password = bcrypt.generate_password_hash(new_password).decode("utf-8")
         user.password = hashed_password
         db.session.commit()
-        return redirect(url_for("main.index"))
+        flash("Passwort erfolgreich geändert.", "success")
+        return render_template("change_password.html")
 
     return render_template("change_password.html")
