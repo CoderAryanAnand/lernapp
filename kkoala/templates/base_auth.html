@@ -9,7 +9,6 @@
     
     <!-- Common CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='flash.css') }}">
     
     <!-- Page-specific CSS -->
     {% block extra_css %}{% endblock %}
@@ -36,9 +35,13 @@
             <!-- Flash Messages -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="flash {{ category }}">{{ message }}</div>
-                    {% endfor %}
+                    <div class="mb-6">
+                        {% for category, message in messages %}
+                            <div class="flash-message {{ category }} p-4 rounded-lg mb-3 {% if category == 'error' %}bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 border border-red-300 dark:border-red-700{% elif category == 'success' %}bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 border border-green-300 dark:border-green-700{% elif category == 'info' %}bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 border border-blue-100 dark:border-blue-800{% else %}bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700{% endif %}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    </div>
                 {% endif %}
             {% endwith %}
 
