@@ -741,13 +741,13 @@ Für das Hosting der Produktivumgebung fiel die Wahl auf DigitalOcean. Ausschlag
 
 \section[Anforderungen]{Anforderungen\texorpdfstring{\aifootnotemark}{}}
 \aifootnotetext{04.11.2025}
-Bevor wir mit dem Programmieren der Web-Applikation beginnen konnten, mussten wir uns zuerst über die Anforderungen an die Applikation klar werden. Da es sich um eine Web-Applikation handelt, welche den Schüler:innen der Kantonsschule Baden helfen soll, mussten wir uns überlegen, welche Funktionen die Applikation beinhalten sollte und wie diese umgesetzt werden könnten.
+Bevor wir mit dem Programmieren der Web-Applikation beginnen konnten, mussten wir uns zuerst über die Anforderungen an die Applikation klar werden. Da es sich um eine Web-Applikation handelt, welche den Schüler:innen der Kantonsschule Baden helfen soll, mussten wir uns überlegen, welche Funktionen die Applikation beinhalten sollte und wie diese umgesetzt werden könnten. Manche Anforderungen stammen aus dem Maturitätsarbeitvertrag und andere aus unserer Recherchephase (Literaturstudie, Interviews, Umfrage).
 
 Die Anforderungen an die Kanti Koala Web-Applikation sind wie folgt:
 \begin{itemize}
     \item \textbf{Home-Screen}: Von dem Home-Screen sollte man auf seinen Account und die Agenda zugreifen können. Zusätzlich sollte hier jeden Tag ein allgemeiner Tipp für die Kantonsschule angezeigt werden.
     \item \textbf{Account Management}: Die Nutzer:innen sollten sich registrieren, einloggen, ihr Passwort zurücksetzen und ihre Account-Einstellungen ändern können. Sie sollten die Möglichkeit haben, ihr Passwort zu ändern und allfälligerweise ihr Account zu löschen.
-    \item \textbf{Agenda}: Die Nutzer:innen sollten ihren Stundenplan eintragen können, sowohl manuell wie auch durch den Import einer .ics-Datei. Ebenso sollte man neue Ereignisse eintragen können. Die Ereignisse sollten veränderbar sein. Die Farbe der Ereignisse sollten auch frei bestimmbar sein. Die Agenda sollte auch einen Lernzeitalgorithmus beinhalten, welcher automatisch Lernzeiten basierend auf den eingetragenen Ereignissen und den Prioritätseinstellungen der Nutzer:innen plant.
+    \item \textbf{Agenda}: Die Nutzer:innen sollten ihren Stundenplan eintragen können, sowohl manuell wie auch durch den Import einer \texttt{.ics}-Datei. Ebenso sollte man neue Ereignisse eintragen können. Die Ereignisse sollten veränderbar sein. Die Farbe der Ereignisse sollten auch frei bestimmbar sein. Man sollte auch die Agenda als \texttt{.ics}-Datei exportieren können. Die Agenda sollte auch einen Lernzeitalgorithmus beinhalten, welcher automatisch Lernzeiten basierend auf den eingetragenen Ereignissen und den Prioritätseinstellungen der Nutzer:innen plant.
     \item \textbf{Notenverwaltung}: Die Nutzer:innen sollten ihre Noten für jedes Fach eintragen können. Die Noten sollten veränderbar und löschbar sein. Die Nutzer:innen sollten auch ihre Semester verwalten können, indem sie neue Semester hinzufügen, bestehende Semester bearbeiten und löschen können.
     \item \textbf{Lerntimer}: Die Nutzer:innen sollten einen Pomodoro-Timer verwenden können, um ihre Lernzeiten zu strukturieren. Der Timer sollte anpassbar sein, sodass die Nutzer:innen die Länge der Lern- und Pausenintervalle einstellen können.
     \item \textbf{UI}: Die Web-Applikation sollte ein ansprechendes UI haben, welches die Kernfunktionen (Agenda, Noten, Timer) ohne Schulung zugänglich macht.
@@ -916,6 +916,7 @@ So wird an jedem Tag genau ein Tipp angezeigt und über das Jahr hinweg zyklisch
 
 Der Titel dieses Features steht als englischer UI-Anker (\enquote{Tip of the Day}) in der Oberfläche, weil der Ausdruck als prägnanter UI-Anker wiedererkennbar ist; der eigentliche Inhalt (der Tipp) bleibt jedoch vollständig auf Deutsch, um Verständlichkeit und lokalen Bezug sicherzustellen.
 
+\textbf{Hinweis}: Das Dashboard ist keine Kernanforderung der Arbeit, wurde aber als nützliches Feature zur Verbesserung der Nutzererfahrung hinzugefügt. Die täglichen Tipps hingegen sind eine explizite Anforderung.
 
 \begin{figure}[!htp]     
     \centering     
@@ -1132,6 +1133,8 @@ Wir haben auch ein Scroll-To-Top Button implementiert, da wir von einer Rückmel
 \subsection{Einstellungen}
 In den Einstellungen kann der Nutzer verschiedene globale Einstellungen für die App vornehmen, wie zum Beispiel das Farbschema der App (hell oder dunkel), die bevorzugte Lernzeit, ob am Wochenende gelernt werden soll und die Farben der Prioritätsstufen. Diese Einstellungen werden in der Datenbank gespeichert und beim Laden der App abgerufen, um eine personalisierte Erfahrung zu bieten. Zusätzlich kann man hier auch sein Konto löschen und sein Passwort ändern.
 
+Aus unserer Recherche haben wir es auch für nützlich gehalten, dass die Nutzer:innen eine Anzeige bekommen, falls sie hier beides Samstag und Sonntag zum Lernen aktiviert haben, da dies nicht empfohlen wird laut unserer Recherche. Die Nutzer:innen bekommen dann eine kleine Warnung angezeigt, die sie darauf hinweist, mindestens ein Wochentag freizuhalten.
+
 \begin{figure}[!htp]
     \centering
     \includegraphics[width=\linewidth]{img/einstellungen-screenshot.png}
@@ -1148,6 +1151,8 @@ Auf der \enquote{Über uns}-Seite stellen wir das Team hinter KantiKoala vor. Wi
 
 Als kleines \enquote{Easter Egg} haben wir auf der Teamseite außerdem die Kanti-Katze als Mitgründer hinzugefügt, um zu zeigen, dass die App von Schüler:innen entwickelt wurde. Das Bild der Katze haben wir von einem Freund.
 
+\textbf{Hinweis}: Die \enquote{Über uns}-Seite ist keine Kernanforderung der Arbeit, wurde aber als nützliches Feature zur Verbesserung der Nutzererfahrung hinzugefügt.    
+
 \begin{figure}[!htp]
     \centering
     \includegraphics[width=\linewidth]{img/aboutus-easteregg.png}
@@ -1160,6 +1165,8 @@ Als kleines \enquote{Easter Egg} haben wir auf der Teamseite außerdem die Kanti
 \subsection[Hilfe-Seite]{Hilfe-Seite\texorpdfstring{\aifootnotemark}{}}
 \footnotetext{ChatGPT (Version GPT-5 mini): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 09.11.2025. Antwort ganz übernommen.}
 Aus den Usability-Tests erhielten wir die Rückmeldung, eine Anleitung für die Nutzer:innen zu erstellen, damit klar wird, welche Funktionen die App bietet. Deshalb haben wir die Hilfeseite angelegt, die eine vollständige Anleitung zur Nutzung der Anwendung enthält. Sie erklärt alle Features, bietet einen Schnellstart und Best Practices zur optimalen Nutzung der App. 
+
+\textbf{Hinweis}: Die \enquote{Über uns}-Seite ist keine Kernanforderung der Arbeit, wurde aber als nützliches Feature zur Verbesserung der Nutzererfahrung hinzugefügt.
 
 \begin{figure}[!htp]
     \centering
