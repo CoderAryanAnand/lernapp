@@ -1,32 +1,19 @@
-<!DOCTYPE html>
-<html lang="de" data-theme-setting="{{ dark_mode_setting }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Startseite</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='flash.css') }}">
-</head>
-<body class="bg-zinc-100 dark:bg-zinc-900 font-sans">
-    <!-- Main layout container -->
-    <div class="md:flex">
-        <!-- Include the reusable navbar component -->
-        {% include '_navbar.html' %}
+{% extends "base.html" %}
 
-        <!-- Main Content Area -->
-        <main class="flex-grow p-8">
-            <h1 class="text-4xl font-bold text-zinc-800 dark:text-white mb-8">Dashboard</h1>
-            
-            <!-- Tip of the Day Card -->
-            <div class="max-w-2xl p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
-                <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Tip of the Day</h3>
-                <p class="text-zinc-700 dark:text-zinc-300">{{ tip }}</p>
-            </div>
+{% block title %}KantiKoala{% endblock %}
 
-            <!-- Add other dashboard widgets here -->
+{% block extra_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='flash.css') }}">
+{% endblock %}
 
-        </main>
-    </div>
-    <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
-</body>
-</html>
+{% block content %}
+<h1 class="text-4xl font-bold text-zinc-800 dark:text-white mb-8">Dashboard</h1>
+
+<!-- Tip of the Day Card -->
+<div class="max-w-2xl p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
+    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Tip of the Day</h3>
+    <p class="text-zinc-700 dark:text-zinc-300">{{ tip }}</p>
+</div>
+
+<!-- Add other dashboard widgets here -->
+{% endblock %}

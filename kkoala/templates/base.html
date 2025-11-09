@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="de" data-theme-setting="{{ dark_mode_setting }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Page-specific title -->
+    <title>{% block title %}KantiKoala{% endblock %}</title>
+    
+    <!-- Common CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
+    
+    <!-- Page-specific CSS -->
+    {% block extra_css %}{% endblock %}
+    
+    <!-- Page-specific meta tags -->
+    {% block meta %}{% endblock %}
+    
+    <!-- Page-specific head content -->
+    {% block head %}{% endblock %}
+</head>
+<body class="bg-zinc-100 dark:bg-zinc-900 font-sans">
+    <!-- Main layout container -->
+    <div class="md:flex">
+        <!-- Include the reusable navbar component -->
+        {% include '_navbar.html' %}
+
+        <!-- Main Content Area -->
+        <main class="flex-grow p-4 sm:p-8">
+            {% block content %}
+            <!-- Page-specific content goes here -->
+            {% endblock %}
+        </main>
+    </div>
+
+    <!-- Common scripts -->
+    <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
+    
+    <!-- Page-specific scripts -->
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="de" data-theme-setting="{{ dark_mode_setting }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Page-specific title -->
+    <title>{% block title %}KantiKoala{% endblock %}</title>
+    
+    <!-- Common CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='flash.css') }}">
+    
+    <!-- Page-specific CSS -->
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="bg-zinc-200 dark:bg-zinc-900 font-sans">
+
+    <!-- Header Section -->
+    <header class="w-full h-[10vh] flex items-center justify-center relative border-b border-zinc-300 dark:border-zinc-700">
+        <a href="{{ url_for('main.index') }}">
+            <img class="h-[8vh] dark:invert" src="{{ url_for('static', filename='img/KantiKoalaLogoVar2.png') }}" alt="KantiKoala Logo">
+        </a>
+    </header>
+
+    <!-- Main Content - Centered -->
+    <main class="w-full h-[90vh] flex items-center justify-center p-4">
+        
+        <!-- Form Container -->
+        <div class="w-full max-w-sm p-8 space-y-6 bg-white dark:bg-zinc-800 rounded-xl shadow-lg">
+            
+            <h1 class="text-3xl font-bold text-center text-zinc-900 dark:text-white">
+                {% block heading %}{% endblock %}
+            </h1>
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="flash {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <!-- Page-specific content -->
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+    
+    <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
+    
+    <!-- Page-specific scripts -->
+    {% block scripts %}{% endblock %}
+</body>
+</html>

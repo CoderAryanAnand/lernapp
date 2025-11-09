@@ -110,3 +110,13 @@ def about():
         str: Rendered HTML template ('about.html').
     """
     return render_template("about.html")
+
+@main_bp.route("/hilfe")
+def hilfe():
+    """
+    Help route: Displays the help page.
+
+    Returns:
+        str: Rendered HTML template ('hilfe.html').
+    """
+    return render_template("hilfe.html")

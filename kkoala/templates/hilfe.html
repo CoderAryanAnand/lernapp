@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+
+{% block title %}Hilfe & Anleitung{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+    <div class="text-center mb-12">
+        <h1 class="text-4xl sm:text-5xl font-bold text-zinc-800 dark:text-white mb-4">Willkommen bei KantiKoala!</h1>
+        <p class="text-lg text-zinc-600 dark:text-zinc-400">Dein persönlicher Assistent für erfolgreiches Lernen und Organisation</p>
+    </div>
+
+    <!-- Quick Start Guide -->
+    <div class="mb-8 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl border-2 border-blue-200 dark:border-blue-800">
+        <h2 class="text-2xl font-bold text-blue-900 dark:text-blue-100 mb-3 flex items-center">
+            <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+            Schnellstart
+        </h2>
+        <p class="text-blue-800 dark:text-blue-200 mb-3">Neu hier? Folge diesen drei Schritten:</p>
+        <ol class="list-decimal list-inside space-y-2 text-blue-900 dark:text-blue-100">
+            <li><strong>Importiere deinen Stundenplan</strong> in der Agenda (.ics-Datei)</li>
+            <li><strong>Konfiguriere deine Lernzeiten</strong> in den Einstellungen</li>
+            <li><strong>Führe den Lernzeit-Algorithmus aus</strong> für automatische Planung</li>
+        </ol>
+    </div>
+
+    <!-- Feature Sections -->
+    <div class="space-y-8">
+
+        <!-- 1. Dashboard -->
+        <section class="p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-12 h-12 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center mr-4">
+                    <span class="text-2xl font-bold text-green-600 dark:text-green-400">1</span>
+                </div>
+                <div class="flex-grow">
+                    <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-3 flex items-center">
+                        Dashboard
+                    </h2>
+                    <p class="text-zinc-700 dark:text-zinc-300 mb-3">
+                        Deine Startseite mit täglichen Tipps. Hier findest du allgemeine Tipps zu deinem Schulalltag, Lernstrategien und Produktivität.
+                    </p>
+                    <div class="bg-zinc-50 dark:bg-zinc-700/50 p-4 rounded-lg">
+                        <p class="text-sm text-zinc-600 dark:text-zinc-400"><strong>Tipp:</strong> Besuche das Dashboard regelmässig für neue Inspiration!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Agenda -->
+        <section class="p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center mr-4">
+                    <span class="text-2xl font-bold text-blue-600 dark:text-blue-400">2</span>
+                </div>
+                <div class="flex-grow">
+                    <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-3">
+                        Agenda - Das Herzstück von KantiKoala
+                    </h2>
+                    <p class="text-zinc-700 dark:text-zinc-300 mb-4">
+                        Die Agenda ist dein Kalender für Termine, Prüfungen und automatisch geplante Lernzeiten.
+                    </p>
+                    
+                    <h3 class="text-lg font-semibold text-zinc-800 dark:text-white mb-2">Grundfunktionen</h3>
+                    <ul class="space-y-2 mb-4 text-zinc-700 dark:text-zinc-300">
+                        <li class="flex items-start">
+                            <span class="text-blue-500 mr-2">•</span>
+                            <span><strong>Termine erstellen:</strong> Klicke auf einen Tag oder eine Zeit, um einen neuen Termin anzulegen</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-500 mr-2">•</span>
+                            <span><strong>Termine bearbeiten:</strong> Klicke auf einen bestehenden Termin, um ihn anzupassen oder zu löschen</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-500 mr-2">•</span>
+                            <span><strong>Wiederholungen:</strong> Erstelle wöchentliche, tägliche oder monatliche Serientermine</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-blue-500 mr-2">•</span>
+                            <span><strong>Prioritäten:</strong> Weise jedem Termin eine Prioritätsstufe zu (definiert in den Einstellungen)</span>
+                        </li>
+                    </ul>
+
+                    <h3 class="text-lg font-semibold text-zinc-800 dark:text-white mb-2">ICS-Import</h3>
+                    <p class="text-zinc-700 dark:text-zinc-300 mb-2">
+                        Importiere deinen Stundenplan direkt aus dem Schul-Netz oder anderen Kalendersystemen:
+                    </p>
+                    <ol class="list-decimal list-inside space-y-1 mb-4 text-zinc-700 dark:text-zinc-300 ml-4">
+                        <li>Exportiere deinen Stundenplan als .ics-Datei</li>
+                        <li>Klicke auf ".ics-Datei importieren"</li>
+                        <li>Wähle die Datei aus - fertig!</li>
+                    </ol>
+
+                    <h3 class="text-lg font-semibold text-zinc-800 dark:text-white mb-2">ICS-Export</h3>
+                    <p class="text-zinc-700 dark:text-zinc-300 mb-2">
+                        Exportiere deinen Stundenplan als .ics-Datei:
+                    </p>
+                    <ol class="list-decimal list-inside space-y-1 mb-4 text-zinc-700 dark:text-zinc-300 ml-4">
+                        <li>Öffne die Agenda und wähle den gewünschten Zeitraum aus</li>
+                        <li>Klicke auf ".ics-Datei exportieren"</li>
+                        <li>Speichere die Datei auf deinem Gerät!</li>
+                    </ol>
+                    <div class="bg-zinc-50 dark:bg-zinc-700/50 p-4 rounded-lg mb-4">
+                        <p class="text-sm text-zinc-600 dark:text-zinc-400"><strong>Tipp:</strong> Wenn du eine .ics-Datei, die du von KantiKoala exportiert hast, importierst, werden Farben und Prioritäten erhalten!</p>
+                    </div>
+
+                    <h3 class="text-lg font-semibold text-zinc-800 dark:text-white mb-2">Lernzeit-Algorithmus (Das Highlight!)</h3>
+                    <p class="text-zinc-700 dark:text-zinc-300 mb-2">
+                        Der intelligente Kern von KantiKoala: Automatische Planung deiner Lernzeiten basierend auf:
+                    </p>
+                    <ul class="space-y-2 mb-3 text-zinc-700 dark:text-zinc-300 ml-4">
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span><strong>Deinen Prioritäten:</strong> Wichtige Prüfungen bekommen mehr Zeit</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span><strong>Deinen freien Zeiten:</strong> Der Algorithmus findet automatisch Lücken in deinem Kalender</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="text-green-500 mr-2">✓</span>
+                            <span><strong>Deinen Präferenzen:</strong> Bevorzugte Lernzeiten und freie Tage werden berücksichtigt</span>
+                        </li>
+                    </ul>
+                    <div class="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg border border-green-200 dark:border-green-800">
+                        <p class="text-sm text-green-800 dark:text-green-200">
+                            <strong>So funktioniert's:</strong> Klicke auf "Lernzeit-Algorithmus ausführen" und der Algorithmus plant automatisch optimale Lernblöcke für alle deine Prioritäten. Du kannst die generierten Blöcke natürlich noch manuell anpassen!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Settings -->
+        <section class="p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-12 h-12 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center mr-4">
+                    <span class="text-2xl font-bold text-purple-600 dark:text-purple-400">3</span>
+                </div>
+                <div class="flex-grow">
+                    <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-3">
+                        Einstellungen - Personalisiere KantiKoala
+                    </h2>
+                    
+                    <h3 class="text-lg font-semibold text-zinc-800 dark:text-white mb-2">Agenda-Einstellungen</h3>
+                    <ul class="space-y-2 mb-4 text-zinc-700 dark:text-zinc-300 ml-4">
+                        <li><strong>Lerntage:</strong> Wähle, ob du am Samstag/Sonntag lernen möchtest</li>
+                        <li><strong>Bevorzugte Lernzeit:</strong> Um welche Uhrzeit lernst du am liebsten?</li>
+                        <li><strong>Farben:</strong> Passe die Farben für Lernblöcke und importierte Events an</li>
+                    </ul>
+
+                    <h3 class="text-lg font-semibold text-zinc-800 dark:text-white mb-2">Prioritäten-System</h3>
+                    <p class="text-zinc-700 dark:text-zinc-300 mb-2">
+                        Das Herzstück der Lernplanung. Für jede Priorität kannst du definieren:
+                    </p>
+                    <ul class="space-y-2 mb-3 text-zinc-700 dark:text-zinc-300 ml-4">
+                        <li><strong>Farbe:</strong> Visuelle Unterscheidung im Kalender</li>
+                        <li><strong>Max. Stunden pro Tag:</strong> Verhindert Überlastung (z.B. max. 2h Mathe pro Tag)</li>
+                        <li><strong>Totale Stundenanzahl:</strong> Wie viele Stunden du insgesamt für diese Priorität lernen möchtest</li>
+                    </ul>
+                    <div class="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                        <p class="text-sm text-purple-800 dark:text-purple-200">
+                            <strong>Beispiel:</strong> Priorität 1 für eine wichtige Matheprüfung: 15 Stunden total, max. 2 Stunden/Tag → Der Algorithmus verteilt 15 Stunden über mehrere Tage, jeweils max. 2h pro Tag
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Grades -->
+        <section class="p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-12 h-12 bg-orange-100 dark:bg-orange-900/30 rounded-lg flex items-center justify-center mr-4">
+                    <span class="text-2xl font-bold text-orange-600 dark:text-orange-400">4</span>
+                </div>
+                <div class="flex-grow">
+                    <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-3">
+                        Notenverwaltung
+                    </h2>
+                    <p class="text-zinc-700 dark:text-zinc-300 mb-4">
+                        Behalte den Überblick über deine Leistungen mit unserem intelligenten Notensystem.
+                    </p>
+                    
+                    <h3 class="text-lg font-semibold text-zinc-800 dark:text-white mb-2">Funktionen</h3>
+                    <ul class="space-y-2 mb-4 text-zinc-700 dark:text-zinc-300 ml-4">
+                        <li><strong>Semester erstellen:</strong> Organisiere deine Noten semesterweise</li>
+                        <li><strong>Fächer hinzufügen:</strong> Jedes Fach kann mehrere Noten enthalten</li>
+                        <li><strong>Gewichtung:</strong> Manche Prüfungen sind mehr gewichtet? Kein Problem!</li>
+                        <li><strong>Automatische Durchschnitte und Pluspunkte:</strong> Fach-, Semesterdurchschnitt und Pluspunkte werden berechnet</li>
+                        <li><strong>Wunschnoten-Rechner:</strong> Berechne, welche Note du brauchst, um deinen gewünschten Schnitt zu erreichen</li>
+                    </ul>
+
+                    <div class="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg border border-orange-200 dark:border-orange-800">
+                        <p class="text-sm text-orange-800 dark:text-orange-200">
+                            <strong>Tipp:</strong> Jedes Semester kommt automatisch vorgeladen mit den Fächern, die du in diesem Semester haben wirst.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Study Timer -->
+        <section class="p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-12 h-12 bg-red-100 dark:bg-red-900/30 rounded-lg flex items-center justify-center mr-4">
+                    <span class="text-2xl font-bold text-red-600 dark:text-red-400">5</span>
+                </div>
+                <div class="flex-grow">
+                    <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-3">
+                        Lerntimer - Pomodoro-Technik
+                    </h2>
+                    <p class="text-zinc-700 dark:text-zinc-300 mb-4">
+                        Strukturiertes Lernen mit der bewährten Pomodoro-Methode: Konzentrierte Arbeitsphasen mit regelmässigen Pausen.
+                    </p>
+                    
+                    <h3 class="text-lg font-semibold text-zinc-800 dark:text-white mb-2">Wie es funktioniert</h3>
+                    <ul class="space-y-2 mb-4 text-zinc-700 dark:text-zinc-300 ml-4">
+                        <li><strong>Arbeitsphase:</strong> 25 Minuten fokussiertes Lernen (anpassbar)</li>
+                        <li><strong>Kurze Pause:</strong> 5 Minuten Erholung</li>
+                        <li><strong>Lange Pause:</strong> Nach 4 Runden eine 15-minütige Pause</li>
+                        <li><strong>Individuell anpassbar:</strong> Ändere alle Zeiten nach deinen Bedürfnissen</li>
+                    </ul>
+
+                    <div class="bg-red-50 dark:bg-red-900/20 p-4 rounded-lg border border-red-200 dark:border-red-800">
+                        <p class="text-sm text-red-800 dark:text-red-200">
+                            <strong>Wissenschaftlich belegt:</strong> Regelmässige Pausen erhöhen die Konzentration und Lerneffizienz deutlich!
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Learning Tips -->
+        <section class="p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
+            <div class="flex items-start">
+                <div class="flex-shrink-0 w-12 h-12 bg-teal-100 dark:bg-teal-900/30 rounded-lg flex items-center justify-center mr-4">
+                    <span class="text-2xl font-bold text-teal-600 dark:text-teal-400">6</span>
+                </div>
+                <div class="flex-grow">
+                    <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-3">
+                        Lerntipps
+                    </h2>
+                    <p class="text-zinc-700 dark:text-zinc-300 mb-3">
+                        Eine kuratierte Sammlung von wissenschaftlich fundierten Lerntipps, organisiert nach Kategorien:
+                    </p>
+                    <ul class="space-y-1 mb-3 text-zinc-700 dark:text-zinc-300 ml-4">
+                        <li>• Lernen</li>
+                        <li>• Lernmethoden</li>
+                        <li>• Zeitmanagement</li>
+                        <li>• Lern- und Prüfungsstress</li>
+                        <li>• Die Matura</li>
+                        <li>• Allgemeines der Kanti Baden</li>
+                    </ul>
+                    <p class="text-zinc-700 dark:text-zinc-300">
+                        Durchstöbere die Kategorien und finde Tipps, die zu deinem Lernstil passen!
+                    </p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Best Practices -->
+    <div class="mt-12 p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl border-2 border-blue-200 dark:border-blue-800">
+        <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-4 flex items-center">
+            <svg class="w-6 h-6 mr-2 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+            Best Practices für optimale Nutzung
+        </h2>
+        <div class="grid md:grid-cols-2 gap-4">
+            <div class="bg-white dark:bg-zinc-800 p-4 rounded-lg">
+                <h3 class="font-bold text-zinc-900 dark:text-white mb-2">Wöchentliche Routine</h3>
+                <p class="text-sm text-zinc-700 dark:text-zinc-300">Plane jeden Sonntag die kommende Woche: Trage Prüfungen ein, setze Prioritäten, führe den Algorithmus aus.</p>
+            </div>
+            <div class="bg-white dark:bg-zinc-800 p-4 rounded-lg">
+                <h3 class="font-bold text-zinc-900 dark:text-white mb-2">Realistische Ziele</h3>
+                <p class="text-sm text-zinc-700 dark:text-zinc-300">Setze realistische Lernstunden pro Tag. Lieber 1 Stunde fokussiert als 3 Stunden unkonzentriert!</p>
+            </div>
+            <div class="bg-white dark:bg-zinc-800 p-4 rounded-lg">
+                <h3 class="font-bold text-zinc-900 dark:text-white mb-2">Lerntipps nutzen</h3>
+                <p class="text-sm text-zinc-700 dark:text-zinc-300">Schau regelmässig in die Lerntipps-Sektion, um neue Methoden und Strategien für effektiveres Lernen zu entdecken.</p>
+            </div>
+            <div class="bg-white dark:bg-zinc-800 p-4 rounded-lg">
+                <h3 class="font-bold text-zinc-900 dark:text-white mb-2">Bleib flexibel</h3>
+                <p class="text-sm text-zinc-700 dark:text-zinc-300">Der Algorithmus ist nur ein Vorschlag. Passe Lernblöcke an, wenn sich deine Situation ändert!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Support Section -->
+    <div class="mt-8 p-6 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl text-center border border-zinc-200 dark:border-zinc-700">
+        <h2 class="text-xl font-bold text-zinc-900 dark:text-white mb-3">Brauchst du weitere Hilfe?</h2>
+        <p class="text-zinc-700 dark:text-zinc-300 mb-4">
+            Besuche unsere <a href="{{ url_for('main.about') }}" class="text-blue-600 hover:underline dark:text-blue-400 font-semibold">Über uns</a> Seite für Kontaktinformationen und Feedback-Möglichkeiten.
+        </p>
+        <p class="text-sm text-zinc-600 dark:text-zinc-400">
+            Viel Erfolg beim Lernen! 🐨
+        </p>
+    </div>
+</div>
+{% endblock %}

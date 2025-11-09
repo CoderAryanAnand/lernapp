@@ -1,88 +1,52 @@
-<!DOCTYPE html>
-<html lang="de" data-theme-setting="{{ dark_mode_setting }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registrieren</title>
-    <!-- Correctly link static files using url_for -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='flash.css') }}">
-</head>
-<body class="bg-zinc-200 dark:bg-zinc-900 font-sans">
+{% extends "base_auth.html" %}
 
-    <!-- Header Section -->
-    <header class="w-full h-[10vh] flex items-center justify-center relative border-b border-zinc-300 dark:border-zinc-700">
-        <a href="{{ url_for('main.index') }}">
-            <img class="h-[8vh] dark:invert" src="{{ url_for('static', filename='img/KantiKoalaLogoVar2.png') }}" alt="KantiKoala Logo">
-        </a>
-        <!-- <p class="absolute bottom-1 text-xs text-zinc-600 dark:text-zinc-400">KantiKoala, 2025</p> -->
-    </header>
+{% block title %}Registrieren{% endblock %}
 
-    <!-- Main Content - Centered -->
-    <main class="w-full h-[90vh] flex items-center justify-center p-4">
-        
-        <!-- Form Container -->
-        <div class="w-full max-w-sm p-8 space-y-6 bg-white dark:bg-zinc-800 rounded-xl shadow-lg">
-            
-            <h1 class="text-3xl font-bold text-center text-zinc-900 dark:text-white">
-                Konto erstellen
-            </h1>
+{% block heading %}Konto erstellen{% endblock %}
 
-            <!-- Flash Messages -->
-            {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="flash {{ category }}">{{ message }}</div>
-                    {% endfor %}
-                {% endif %}
-            {% endwith %}
+{% block content %}
+<!-- Form -->
+<form action="{{ url_for('auth.register') }}" method="post" class="space-y-6">
+    <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
+    
+    <!-- Username Field -->
+    <div>
+        <label for="username" class="block mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">Benutzername</label>
+        <input type="text" id="username" name="username" required
+               class="w-full px-4 py-2 text-zinc-900 bg-zinc-100 dark:bg-zinc-700 dark:text-white border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
 
-            <!-- Form -->
-            <form action="{{ url_for('auth.register') }}" method="post" class="space-y-6">
-                <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
-                
-                <!-- Username Field -->
-                <div>
-                    <label for="username" class="block mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">Benutzername</label>
-                    <input type="text" id="username" name="username" required
-                           class="w-full px-4 py-2 text-zinc-900 bg-zinc-100 dark:bg-zinc-700 dark:text-white border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
+    <!-- Email Field -->
+    <div>
+        <label for="email" class="block mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">E-Mail</label>
+        <input type="email" id="email" name="email" required
+               class="w-full px-4 py-2 text-zinc-900 bg-zinc-100 dark:bg-zinc-700 dark:text-white border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
 
-                <!-- Email Field -->
-                <div>
-                    <label for="email" class="block mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">E-Mail</label>
-                    <input type="email" id="email" name="email" required
-                           class="w-full px-4 py-2 text-zinc-900 bg-zinc-100 dark:bg-zinc-700 dark:text-white border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
+    <!-- Password Field -->
+    <div>
+        <label for="password" class="block mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">Passwort</label>
+        <input type="password" id="password" name="password" required
+               class="w-full px-4 py-2 text-zinc-900 bg-zinc-100 dark:bg-zinc-700 dark:text-white border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
 
-                <!-- Password Field -->
-                <div>
-                    <label for="password" class="block mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">Passwort</label>
-                    <input type="password" id="password" name="password" required
-                           class="w-full px-4 py-2 text-zinc-900 bg-zinc-100 dark:bg-zinc-700 dark:text-white border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
+    <!-- Confirm Password Field -->
+    <div>
+        <label for="confirm_password" class="block mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">Confirm Password</label>
+        <input type="password" id="confirm_password" name="confirm_password" required
+               class="w-full px-4 py-2 text-zinc-900 bg-zinc-100 dark:bg-zinc-700 dark:text-white border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+    
+    <!-- Submit Button -->
+    <button type="submit" 
+            class="w-full px-4 py-2.5 text-white font-semibold bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-zinc-800 transition-colors duration-200">
+        Registrieren
+    </button>
+</form>
 
-                <!-- Confirm Password Field -->
-                <div>
-                    <label for="confirm_password" class="block mb-2 text-sm font-medium text-zinc-700 dark:text-zinc-300">Confirm Password</label>
-                    <input type="password" id="confirm_password" name="confirm_password" required
-                           class="w-full px-4 py-2 text-zinc-900 bg-zinc-100 dark:bg-zinc-700 dark:text-white border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-                
-                <!-- Submit Button -->
-                <button type="submit" 
-                        class="w-full px-4 py-2.5 text-white font-semibold bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-zinc-800 transition-colors duration-200">
-                    Registrieren
-                </button>
-            </form>
-
-            <!-- Secondary Link to Login -->
-            <p class="text-sm text-center text-zinc-600 dark:text-zinc-400">
-                Haben Sie bereits ein Konto?
-                <a href="{{ url_for('auth.login') }}" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">Anmelden</a>
-            </p>
-        </div>
-    </main>
-    <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
-</body>
-</html>
+<!-- Secondary Link to Login -->
+<p class="text-sm text-center text-zinc-600 dark:text-zinc-400">
+    Haben Sie bereits ein Konto?
+    <a href="{{ url_for('auth.login') }}" class="font-medium text-blue-600 dark:text-blue-400 hover:underline">Anmelden</a>
+</p>
+{% endblock %}
