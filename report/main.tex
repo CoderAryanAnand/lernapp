@@ -123,9 +123,9 @@ language=ngerman
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 % LAST SENTENCE OF THIS LINE TO BE EDITED.
-Diese Maturitätsarbeit behandelt die Konzeption und prototypische Umsetzung einer webbasierten Applikation für Schüler:innen der Kantonsschule Baden mit dem Ziel, schulische Termine, Aufgaben und Lernzeiten zentral organisierbar zu machen und regelmässige, abgegrenzte Lernphasen zu unterstützen. Eine umfassende Wirkungskontrolle war nicht Teil der Zielsetzung; stattdessen wurde die Bedienbarkeit in einem Usability-Test geprüft.; die Ergebnisse bestätigten grundlegende Bedienbarkeit und identifizierten kleinere Optimierungspunkte (Navigationstiefe, Beschriftungen einzelner Formularfelder).
+Diese Maturitätsarbeit behandelt die Konzeption und prototypische Umsetzung einer webbasierten Applikation für Schüler:innen der Kantonsschule Baden. Diese Applikation hat das Ziel, schulische Termine, Aufgaben und Lernzeiten zentral organisierbar zu machen und regelmässige, abgegrenzte Lernphasen zu unterstützen. Eine umfassende Wirkungskontrolle war nicht Teil der Zielsetzung; stattdessen wurde die Bedienbarkeit in einem Usability-Test geprüft. Die Ergebnisse bestätigten grundlegende Bedienbarkeit und identifizierten kleinere Optimierungspunkte (Navigationstiefe, Beschriftungen einzelner Formularfelder).
 
-Zur Ableitung der Anforderungen wurden eine fokussierte Literatur- und Internetrecherche (Lernmethoden, Zeit- und Pausenorganisation, Stressaspekte), Interviews mit zwei PPP-Lehrpersonen sowie eine Umfrage unter Schüler:innen eingesetzt. Die Ergebnisse strukturierten die Funktionsprioritäten (Agenda, Lernblöcke, Noten, Timer, Tipps) und die Parametrisierung des Lernzeitalgorithmus.
+Zur Ableitung der Anforderungen und Validation unserer Arbeit wurden eine fokussierte Literatur- und Internetrecherche (Lernmethoden, Zeit- und Pausenorganisation, Stressaspekte), Interviews mit zwei PPP-Lehrpersonen sowie eine Umfrage unter Schüler:innen eingesetzt. Die Ergebnisse strukturierten die Funktionsprioritäten (Agenda, Lernblöcke, Noten, Timer, Tipps) und die Parametrisierung des Lernzeitalgorithmus.
 
 Die Applikation wurde mit Python (Flask), einem relationalen Datenmodell und modularer Architektur implementiert. Kernfunktionen sind: eine Agenda mit manueller Ereigniserfassung, Import von \texttt{.ics}-Stundenplänen und algorithmischer Lernblock-Generierung nach Prioritäten; Notenverwaltung; ein konfigurierbarer Pomodoro-basiertes Lerntimer-Modul; kategorisierte tägliche Tipps, sowie auch allgemeine Lerntipps (Zeit-, Pausen-, Stressmanagement, Lernmethoden); Authentifizierung mit Basis-Schutzmassnahmen (u. a. Passwort Hashing). Der Lernzeitalgorithmus verteilt definierte Lernstunden rückwärts vom Prüfungstermin unter Berücksichtigung von Tageslimits, bevorzugten Zeiten und Konfliktvermeidung.
 
@@ -134,6 +134,7 @@ Die Arbeit zeigt die technische Machbarkeit eines integrierten, strukturierten A
 % Table of Contents
 \tableofcontents
 
+\break
 % ------------------------------Einleitung------------------------------
 \chapter[Einleitung -- unsere Vision]{Einleitung -- unsere Vision\texorpdfstring{\aifootnotemark}{}}
 \aifootnotetext{04.11.2025}
