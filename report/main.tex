@@ -492,7 +492,7 @@ Deshalb wurden die Fragen auf das Verhalten der Befragten gerichtet, wie beispie
 Zuerst mussten wir aber wählen, mit was für einem Programm wir die Umfrage erstellen wollten. 
 Als Host für die Umfrage wählten wir Microsoft Forms, da wir bereits mit Forms vertraut waren und dies verwenden konnten. 
 Dies machte Kollaboration einfach, da wir unsere Microsoft-Accounts von der Schule brauchen konnten. 
-Ebenso lässt Microsoft Forms zu, dass die Daten einfach in einer verbundenen Excel-Datei geöffnet werden können, was die spätere Analyse vereinfachte.
+Ebenfalls lässt Microsoft Forms zu, dass die Daten einfach in einer verbundenen Excel-Datei geöffnet werden können, was die spätere Analyse vereinfachte.
 
 Somit konnten wir mit der Entwicklung der Umfrage beginnen.
 Wir stützten uns dabei stark auf das bisherig erwähnte Theorie-Dokument, welches uns von den PPP-Lehrpersonen zur Verfügung gestellt wurde: \textcite{umfrageDesign}.
@@ -794,6 +794,51 @@ Die Abhängigkeiten und Kaskadenlöschungen (z.B. ein gelöschter \texttt{User} 
 
 \section{Kernfunktionen (Features)}
 
+\subsection{Homescreen / Dashboard}
+Der Homescreen (Dashboard) ist die zentrale Einstiegsseite nach dem Login. Er fasst die wichtigsten Informationen kompakt zusammen, um Nutzer:innen einen schnellen Überblick über ihren aktuellen Stand zu geben.
+
+Wichtig: Der Homescreen ist auch für nicht angemeldete Besucher:innen verfügbar. In diesem öffentlichen Modus wird eine gekürzte Ansicht präsentiert, die prominente Aufrufe zum Anmelden oder Registrieren enthält. Der tägliche Tipp wird gezeigt, aber alle User-spezifischen Daten (Noten, Termine, Prüfungen) sind ausgeblendet.
+
+\myparagraph{Aufbau} Das Dashboard ist in mehrere Kacheln (Cards) in einem Grid-Layout gegliedert, die die folgenden Informationen anzeigen:
+
+\begin{itemize} 
+    \item \textbf{Notenübersicht:} Diese Kachel zeigt eine Zusammenfassung der akademischen Leistung aus dem neuesten Semester (aktueller Schnitt, Pluspunkte, wie auch das beste und schwächste Fach). Falls noch keine Noten eingetragen sind, wird ein Aufruf zur Eingabe von Noten angezeigt.
+    \item \textbf{Heutige Termine:} Listet alle für den aktuellen Tag im Kalender eingetragenen Ereignisse mit Titel und Uhrzeit auf.
+    \item \textbf{Nächste Prüfungen:} Zeigt eine Liste der anstehenden Prüfungen innerhalb der nächsten 21 Tage. Wenn die Prüfung innerhalb sieben Tage ist, wird sie hervorgehoben indem ihr Text rot dargestellt wird. Die späteren Prüfungen sind orange dargestellt.
+    \item \textbf{Tip of the Day:} Ein Bereich mit täglich wechselnden, kurzen Hinweisen -- dieser Bereich ist sowohl für eingeloggte als auch für nicht eingeloggte Nutzer:innen sichtbar. Diese Funktion ist unten ausführlicher beschrieben.
+    \item \textbf{Hilfe-Hinweis:} Eine Kachel, die Nutzer:innen auf die Hilfe-Seite (/hilfe) aufmerksam macht, um den Einstieg zu erleichtern.
+\end{itemize}
+
+\myparagraph{Tip of the Day}
+Eine Kernanforderung unserer App ist die tägliche Bereitstellung eines neuen Tipps auf der Startseite, entweder über die Kantonsschule oder allgemeine Lerntipps. Die einfachste Möglichkeit, dies zu implementieren, ist eine simple Modulo-Rechnung:
+\begin{equation*}
+\text{Tipp des Tages (Index)} = (\text{Tag des Jahres}) \bmod (\text{Anzahl der Tipps})
+\end{equation*}
+Somit wird an einem bestimmten Tag nur ein Tipp gezeigt und über das ganze Jahr sollten alle Tipps in einem Zyklus gezeigt werden.
+
+Der Titel dieses Features ist auf Englisch (\enquote{Tip of the Day}), weil der Ausdruck als prägnanter UI-Anker wiedererkennbar ist; der eigentliche Inhalt (der Tipp) bleibt vollständig auf Deutsch, sodass Verständlichkeit und lokaler Bezug erhalten bleiben.
+
+\begin{figure}[!htp]     
+    \centering     
+    \begin{tabular}{c c}         
+        \includegraphics[width=0.45\textwidth]{img/lightmode-home.png} &
+        \includegraphics[width=0.45\textwidth]{img/darkmode-home.png} \\
+        (a) Homescreen -- Light Mode & (b) Homescreen -- Dark Mode     
+    \end{tabular}
+    \caption[Homescreen für angemeldete Nutzer:innen in Light und Dark Mode. Eigene Screenshots von KantiKoala, 09.11.2025.]{Homescreen / Dashboard in Light (links) und Dark Mode (rechts). Die Darstellung zeigt die Kacheln für Notenübersicht, heutige Termine, nächste Prüfungen und den \enquote{Tip of the Day}.}
+    \label{fig:homescreen_screens} 
+\end{figure}
+
+
+\begin{figure}[!htp]     
+    \centering     
+    \includegraphics[width=0.6\textwidth]{img/homescreen-loggedout.png} 
+    \caption[Homescreen für nicht angemeldete Nutzer:innen im Dark Mode. Eigener Screenshot von KantiKoala, 09.11.2025.]{Homescreen für nicht angemeldete Nutzer:innen im Dark Mode.}
+    \label{fig:homescreen_loggedout}
+\end{figure}
+
+\FloatBarrier
+
 \subsection[Authentifizierung]{Authentifizierung\texorpdfstring{\aifootnotemark}{}}
 \aifootnotebasis{04.11.2025}
 Um eine App mit verschiedenen Nutzern zu haben, brauchen wir ein gutes Authentifizierungssystem. Das bedeutet, dass es eine Anmelde- und Registrierungsfunktion sowie eine Option zum Vergessen des Passworts, eine Option zum Ändern des Passworts und schliesslich auch eine Option zum Löschen des Kontos geben muss.
@@ -938,7 +983,9 @@ Falls ein Ereignis keine Endzeit besitzt, behandelt der Algorithmus dieses Ereig
 \end{enumerate}
 
 \subsection{Notenverwaltung}
-In der Kantonsschule muss man immer wieder Prüfungen schreiben. Die Noten, die man erhält, sind dann wichtig für die Promotion in die nächste Stufe. Deswegen haben wir ein Feature, in dem man seine Noten pro Semester speichern kann. Jedes Semester hat schon die jeweiligen Fächer, die man dann in diesem Semester haben würde, geladen. Man kann natürlich immer noch Fächer löschen und hinzufügen. Man kann mit diesem Feature dann seine Durchschnitte pro Fach und Semester sehen. Ebenfalls kann man mit dem Notenrechner sehen, welche Note man in einem Fach brauchen würde, um einen bestimmten Schnitt in diesem Fach zu haben. Die Idee von diesem Feature stammt aus der App \enquote{Pluspoints} \parencite{pluspoints_app}. Das Feature, das uns dort fehlte, war die automatische Fächeraddition pro Semester, welches wir in unserer App implementiert haben.
+In der Kantonsschule muss man immer wieder Prüfungen schreiben. Die Noten, die man erhält, sind dann wichtig für die Promotion in die nächste Stufe. Deswegen haben wir ein Feature, in dem man seine Noten pro Semester speichern kann. Jedes Semester hat schon die jeweiligen Fächer, die man dann in diesem Semester haben würde, geladen. Man kann natürlich immer noch Fächer löschen und hinzufügen. Man kann mit diesem Feature dann seine Durchschnitte pro Fach und Semester sehen. Ebenfalls kann man mit dem Notenrechner sehen, welche Note man in einem Fach brauchen würde, um einen bestimmten Schnitt in diesem Fach zu haben. Die Idee von diesem Feature stammt aus der App \enquote{Pluspoints} \parencite{pluspoints_app}. Das Feature, das uns dort fehlte, war die automatische Fächeraddition pro Semester, welches wir in unserer App implementiert haben. 
+
+Da die App an Kanti-Schüler:innen gerichtet ist, kann man maximal nur acht Semester hinzufügen, da wir nur acht Semester in der Kantonsschule haben. Jedes neue Semester wird in der Anzeige oben hinzugefügt, damit man das neuste immer als erstes sieht.
 
 \begin{figure}[!htp]
     \centering
@@ -946,6 +993,8 @@ In der Kantonsschule muss man immer wieder Prüfungen schreiben. Die Noten, die 
     \caption[Screenshot der Notenverwaltungs-Seite. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Notenverwaltungs-Seite}
     \label{fig:notenverwaltung_page}
 \end{figure}
+
+\FloatBarrier
 
 \subsection{Lerntimer}
 Ein weiteres wichtiges Feature unserer App ist der Lerntimer. Dieser Timer basiert auf der Pomodoro-Technik, welche im Recherche Teil dieses Berichts erklärt wurde. Mit der Recherche, die wir führten, fanden wir es wichtig, einen solchen Lerntimer zu implementieren, da es eine sehr effektive Lerntechnik ist. Der Timer hat die Standard-Einstellungen von 25 Minuten Lernen und 5 Minuten Pause, welche man aber auch ändern kann, falls man das möchte.
@@ -956,6 +1005,8 @@ Ein weiteres wichtiges Feature unserer App ist der Lerntimer. Dieser Timer basie
     \caption[Screenshot der Lerntimer-Seite. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Lerntimer-Seite}
     \label{fig:lerntimer_page}
 \end{figure}
+
+\FloatBarrier
 
 \subsection{Daily Tipps}
 Ein relativ wichtiges Feature unserer App sind die Daily Tipps. Es sollte jeden Tag ein neuer Tipp an den Nutzer gezeigt werden auf der Startseite, entweder über die Kantonsschule oder allgemeine Lerntipps. Die einfachste Möglichkeit, dies zu implementieren, ist eine simple Modulo-Rechnung:
@@ -986,6 +1037,8 @@ Wir haben auch ein Scroll-To-Top Button implementiert, da wir von einer Rückmel
     \label{fig:lerntipps_page}
 \end{figure}
 
+\FloatBarrier
+
 \subsection{Einstellungen}
 In den Einstellungen kann der Nutzer verschiedene globale Einstellungen für die App vornehmen, wie zum Beispiel das Farbschema der App (hell oder dunkel), die bevorzugte Lernzeit, ob am Wochenende gelernt werden soll und die Farben der Prioritätsstufen. Diese Einstellungen werden in der Datenbank gespeichert und beim Laden der App abgerufen, um eine personalisierte Erfahrung zu bieten. Zusätzlich kann man hier auch sein Konto löschen und sein Passwort ändern.
 
@@ -995,6 +1048,8 @@ In den Einstellungen kann der Nutzer verschiedene globale Einstellungen für die
     \caption[Screenshot der Einstellungen-Seite. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Einstellungen-Seite}
     \label{fig:settings_page}
 \end{figure}
+
+\FloatBarrier
 
 
 \section[Sicherheitskonzept]{Sicherheitskonzept\texorpdfstring{\aifootnotemark}{}}
