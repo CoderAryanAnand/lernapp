@@ -351,11 +351,21 @@ def import_ics(user):
 
         for component in calendar.walk():
             if component.name == "VEVENT":
-                title = str(component.get("SUMMARY", "Untitled Event"))
-                # DTSTART/DTEND objects are converted to datetime objects
-                start = component.get("DTSTART").dt
-                end = component.get("DTEND").dt if component.get("DTEND") else None
-                color = user_settings.import_color or DEFAULT_IMPORT_COLOR
+                title = str(component.get("summary"))
+                start = component.get("dtstart").dt
+                end = component.get("dtend").dt if component.get("dtend") else None
+                is_all_day = not isinstance(start, datetime)
+                # --- Read custom Kanti Koala tags if present ---
+                priority = component.get("X-KKOALA-PRIORITY")
+                color = component.get("X-KKOALA-COLOR")
+                # Fallbacks if not present
+                if priority is not None:
+                    priority = int(priority)
+                else:
+                    priority = 4  # define this as needed
+                if color is None:
+                    color = DEFAULT_IMPORT_COLOR  # define this as needed
+                # ----------------------------------------------
 
                 new_event = Event(
                     title=title,
@@ -363,10 +373,11 @@ def import_ics(user):
                     end=end.isoformat() if end else None,
                     color=color,
                     user_id=user.id,
-                    priority=4,  # Assigns a default priority of 4 to imported events
+                    priority=priority,
                     recurrence="None",
                     recurrence_id="0",
                     locked=True,
+                    all_day=is_all_day,
                 )
                 db.session.add(new_event)
 
@@ -533,13 +544,20 @@ def export_ics(user):
     for event in user_events:
         vevent = icalendar.Event()
         vevent.add('summary', event.title)
-        vevent.add('dtstart', datetime.fromisoformat(event.start))
-        if event.end:
-            vevent.add('dtend', datetime.fromisoformat(event.end))
+        if event.all_day:
+            # Use only the date part for all-day events
+            vevent.add('dtstart', datetime.fromisoformat(event.start).date())
+            if event.end:
+                vevent.add('dtend', datetime.fromisoformat(event.end).date())
+        else:
+            vevent.add('dtstart', datetime.fromisoformat(event.start))
+            if event.end:
+                vevent.add('dtend', datetime.fromisoformat(event.end))
         vevent.add('uid', f'{event.id}@kantikoala.com')
         vevent.add('description', f'Priority: {event.priority}')
-        # Add color as a custom property (not all calendar apps support this)
         vevent.add('color', event.color)
+        vevent.add('X-KKOALA-PRIORITY', str(event.priority))
+        vevent.add('X-KKOALA-COLOR', event.color)
         cal.add_component(vevent)
     
     # Generate the .ics file content
