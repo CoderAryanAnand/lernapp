@@ -122,14 +122,13 @@ language=ngerman
 
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
-% LAST SENTENCE OF THIS LINE TO BE EDITED.
-Diese Maturitätsarbeit behandelt die Konzeption und prototypische Umsetzung einer webbasierten Applikation für Schüler:innen der Kantonsschule Baden. Diese Applikation hat das Ziel, schulische Termine, Aufgaben und Lernzeiten zentral organisierbar zu machen und regelmässige, abgegrenzte Lernphasen zu unterstützen. Eine umfassende Wirkungskontrolle war nicht Teil der Zielsetzung; stattdessen wurde die Bedienbarkeit in einem Usability-Test geprüft. Die Ergebnisse bestätigten grundlegende Bedienbarkeit und identifizierten kleinere Optimierungspunkte (Navigationstiefe, Beschriftungen einzelner Formularfelder).
+Diese Maturitätsarbeit behandelt die Konzeption und Umsetzung einer webbasierten Applikation für Schüler:innen der Kantonsschule Baden. Diese Applikation hat das Ziel, schulische Termine, Aufgaben und Lernzeiten zentral organisierbar zu machen und regelmässige, abgegrenzte Lernphasen zu unterstützen. Eine umfassende Wirkungskontrolle war nicht Teil der Zielsetzung; stattdessen wurde die Bedienbarkeit in einem Usability-Test geprüft. Die Ergebnisse bestätigten grundlegende Bedienbarkeit und identifizierten kleinere Optimierungspunkte.
 
-Zur Ableitung der Anforderungen und Validation unserer Arbeit wurden eine fokussierte Literatur- und Internetrecherche (Lernmethoden, Zeit- und Pausenorganisation, Stressaspekte), Interviews mit zwei PPP-Lehrpersonen sowie eine Umfrage unter Schüler:innen eingesetzt. Die Ergebnisse strukturierten die Funktionsprioritäten (Agenda, Lernblöcke, Noten, Timer, Tipps) und die Parametrisierung des Lernzeitalgorithmus.
+Zur Ableitung der Anforderungen und Validation unserer Arbeit wurden eine fokussierte Literatur- und Internetrecherche, Interviews mit zwei PPP-Lehrpersonen sowie eine Umfrage unter Schüler:innen eingesetzt. Die Ergebnisse strukturierten die Funktionsprioritäten und die Parametrisierung des Lernzeitalgorithmus, welcher Lernzeiten regelbasiert verteilt.
 
-Die Applikation wurde mit Python (Flask), einem relationalen Datenmodell und modularer Architektur implementiert. Kernfunktionen sind: eine Agenda mit manueller Ereigniserfassung, Import von \texttt{.ics}-Stundenplänen und algorithmischer Lernblock-Generierung nach Prioritäten; Notenverwaltung; ein konfigurierbarer Pomodoro-basiertes Lerntimer-Modul; kategorisierte tägliche Tipps, sowie auch allgemeine Lerntipps (Zeit-, Pausen-, Stressmanagement, Lernmethoden); Authentifizierung mit Basis-Schutzmassnahmen (u. a. Passwort Hashing). Der Lernzeitalgorithmus verteilt definierte Lernstunden rückwärts vom Prüfungstermin unter Berücksichtigung von Tageslimits, bevorzugten Zeiten und Konfliktvermeidung.
+Die Applikation wurde mit Flask, ein Python-Modul, SQL, einem relationalen Datenmodell, und modularer Architektur implementiert. Kernfunktionen sind eine Agenda mit manueller Ereigniserfassung, Import, sowie Export, von \texttt{.ics}-Stundenplänen und algorithmischer Lernblock-Generierung nach Prioritäten; Notenverwaltung; ein konfigurierbarer Pomodoro-basiertes Lerntimer-Modul; tägliche Tipps, sowie auch allgemeine Lerntipps; Authentifizierung mit Basis-Schutzmassnahmen, sowie Schutzmassnahmen für die ganze App.
 
-Die Arbeit zeigt die technische Machbarkeit eines integrierten, strukturierten Ansatzes zur Lern- und Organisationsunterstützung; eine weitergehende Wirkungsevaluation (über die durchgeführte Usability-Prüfung hinaus) steht aus und bildet zukünftige Arbeit. Der Prototyp bildet eine erweiterbare Grundlage für nachfolgende empirische Validierung. \aifootnote{06.11.2025}
+Die Arbeit zeigt die technische Machbarkeit eines integrierten, strukturierten Ansatzes zur Lern- und Organisationsunterstützung; eine weitergehende Wirkungsevaluation (über die durchgeführte Usability-Prüfung hinaus) steht aus und bildet zukünftige Arbeit. Das Produkt bildet eine erweiterbare Grundlage für nachfolgende empirische Validierung. \aifootnote{06.11.2025}
 \clearpage
 % Table of Contents
 \tableofcontents
@@ -140,8 +139,23 @@ Die Arbeit zeigt die technische Machbarkeit eines integrierten, strukturierten A
 \aifootnotetext{04.11.2025}
 Der Schulalltag an der Kantonsschule Baden ist durch eine hohe Arbeitsdichte geprägt. Neben zahlreichen Prüfungen, auf die man vorbereiten muss, fallen kontinuierlich Hausaufgaben an. In Kombination mit ausserschulischen Verpflichtungen entstehen Anforderungen an Planung und Selbstorganisation, die ohne strukturierende Hilfsmittel nur begrenzt überschaubar bleiben. 
 
+\section{Fragestellung und Zielsetzung}
+\textbf{Hauptfragestellung:}
+\begin{quote}
+Kann eine digitale Applikation so konzipiert und umgesetzt werden, dass sie Schüler:innen eine übersichtliche Organisation von Terminen, Aufgaben und Lernzeiten ermöglicht und zugleich Funktionen bereitstellt, die regelmässige Lerngewohnheiten unterstützen?
+\end{quote}
+\textit{Begriffsklärung:} Unter „Organisation erleichtern“ verstehen wir eine bessere Übersicht über anstehende Termine/Aufgaben und eine Verringerung des manuellen Planungsaufwands. „Lerngewohnheiten unterstützen“ meint Funktionen, die regelmässige, zeitlich abgegrenzte Lernphasen fördern (z. B. Lernblöcke und Timer).\\
+
+\noindent
+\textit{Zielsetzung:} Entwicklung einer Applikation, die die zur Messung dieser Indikatoren notwendigen funktionalen Strukturen (Agenda mit algorithmischer Lernblock-Generierung, Lerntimer und -tipps, etc.) bereitstellt.
+
+
 \section{Motivation und Relevanz}
-Aus unserer Erfahrung als Schüler der Kantonsschule Baden besteht ein wiederkehrendes Problem für Schüler:innen darin, Lernaufwand, Fristen und verfügbare Zeitblöcke koordiniert abzubilden. Fehlende Übersicht kann -- wie in unseren Interviews und der Umfrage als wiederkehrendes Problem identifiziert -- zu subjektivem Stress, übermässiger Arbeitslast und Burnout führen. Eine zentral organisierende Applikation, welche Lernzeiten, Termine und Noten gemeinsam verwaltet, ist daher potenziell relevant. In diesem Kontext wird unter Unterstützung des Selbstmanagements ausdrücklich Folgendes verstanden: (1) Reduktion des individuellen Planungsaufwands (Zeit zur manuellen Wochenplanung), (2) Erhöhung der Vorlauftransparenz (Sichtbarkeit bevorstehender Prüfungen in Tagen), (3) strukturierte Segmentierung von Lernblöcken (klar definierte Start-/Endzeiten). Die Plattformwahl (Web oder nativ) bleibt zum Untersuchungszeitpunkt offen; die Konzeption erfolgt plattformneutral.
+Aus unserer Erfahrung als Schülerinnen und Schüler der Kantonsschule Baden besteht ein wiederkehrendes Problem: Lernaufwand, Fristen und verfügbare Zeitfenster lassen sich nur schwer koordinieren. Die Recherche bestätigte diese Beobachtungen und in den Interviews und den Umfragen wurden ähnliche Herausforderungen identifiziert. 
+
+Eine zentral organisierende Anwendung, die Lernzeiten, Termine und Noten gemeinsam verwaltet, ist daher relevant. Solch eine Applikation könnte die Selbstorganisation unterstützen, damit Stress reduzieren und die Lernmotivation steigern. Die Selbstorganisation wird unterstützt, indem die Planung der Lernzeiten nicht manuell erfolgen muss, sondern durch einen Algorithmus, der die Lernzeiten priorisiert, nach Präferenz, und verteilt.
+
+Ob das Produkt als Web‑Anwendung oder als native App umgesetzt wird, blieb zum Zeitpunkt der Untersuchung offen; die Konzeption erfolgte plattformneutral.
 
 \section{Name und Logo}
 Der Name \enquote{KantiKoala} verbindet \enquote{Kanti} (Kurzform von Kantonsschule) mit dem Koala als sympathischem Maskottchen. Die Alliteration macht den Namen einprägsam; der Koala haben wir als Tier gerne, deswegen wurde er gewählt. Das Logo wurde bewusst schlicht gehalten, um freundlich und zugänglich zu wirken und gleichzeitig in der Kalender- und UI-Darstellung gut lesbar zu bleiben.
@@ -153,15 +167,6 @@ Der Name \enquote{KantiKoala} verbindet \enquote{Kanti} (Kurzform von Kantonssch
     \label{fig:logo}
 \end{figure}
 
-\section{Fragestellung und Zielsetzung}
-\textbf{Hauptfragestellung:}
-\begin{quote}
-Kann eine digitale Applikation so konzipiert und prototypisch umgesetzt werden, dass sie Schüler:innen eine übersichtliche Organisation von Terminen, Aufgaben und Lernzeiten ermöglicht und zugleich Funktionen bereitstellt, die regelmässige Lerngewohnheiten unterstützen?
-\end{quote}
-\textit{Begriffsklärung:} Unter „Organisation erleichtern“ verstehen wir eine bessere Übersicht über anstehende Termine/Aufgaben und eine Verringerung des manuellen Planungsaufwands. „Lerngewohnheiten unterstützen“ meint Funktionen, die regelmässige, zeitlich abgegrenzte Lernphasen fördern (z. B. Lernblöcke und Timer).\\
-
-\noindent
-\textit{Zielsetzung:} Entwicklung eines Prototyps, der die zur Messung dieser Indikatoren notwendigen funktionalen Strukturen (Agenda mit Prioritäten, Lernblock-Generierung, Notenerfassung, Timer) bereitstellt.
 
 \section{Aufbau und Begründung des schriftlichen Kommentars}
 Der Bericht ist entlang der Entwicklungslogik aufgebaut und führt von der Ausgangslage über die Umsetzung zur Einordnung:
