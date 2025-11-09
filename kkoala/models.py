@@ -28,7 +28,7 @@ class User(db.Model):
         "Semester", backref="user", lazy=True, cascade="all, delete-orphan"
     )
     settings = db.relationship(
-        "Settings", backref="user", lazy=True, cascade="all, delete-orphan"
+        "Settings", backref="user", uselist=False, lazy=True, cascade="all, delete-orphan"
     )
 
 
@@ -53,6 +53,7 @@ class Settings(db.Model):
     preferred_learning_time = db.Column(db.String(20), default="18:00")
     study_block_color = db.Column(db.String(7), default="#0000FF")
     import_color = db.Column(db.String(7), default="#6C757D")
+    dark_mode = db.Column(db.String(10), default="system")
 
     # Relationship to detailed priority rules
     priority_settings = db.relationship(

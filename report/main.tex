@@ -733,6 +733,13 @@ Sehr wichtig bei jedem Anmeldesystem ist natürlich eine Option das Passwort zur
 
 Im Falle, dass ein Nutzer zum Beispiel mit einer E-Mail, die schon gebraucht wird, sich registrieren will, oder mit einem falschen Passwort sich anmelden will, bekommt der Nutzer eine Fehlermeldung angezeigt, die ihm sagt, was falsch gelaufen ist, mithilfe von Flash-Nachrichten, welche eine Funktion von Flask ist \parencite{realpython_flask_flashes}.
 
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{img/login-screenshot.png}
+    \caption[Screenshot des Anmeldeprozesses. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot des Anmeldeprozesses}
+    \label{fig:auth_flow}
+\end{figure}
+
 \subsection[Agenda]{Agenda\texorpdfstring{\aifootnotemark}{}}
 \aifootnotebasis{04.11.2025}
 Die Agenda ist eine zentrale Kernfunktion der Anwendung. Sie sollte die Operationen Erstellen, Bearbeiten und Löschen von Terminen mit minimalem Aufwand ermöglichen.
@@ -807,6 +814,8 @@ Der Lernzeitalgorithmus (LZA) verwendet globale Benutzereinstellungen sowie prü
 
 Das zentrale Planungsziel des LZA ist es, die definierten totalen Lernstunden für jede Prüfung innerhalb des gültigen Lernfensters zu erreichen, während das tägliche Maximum und alle bestehenden Kalenderkonflikte des Nutzers strikt eingehalten werden.
 
+Wir haben die Eingabeparameter so gewählt, weil wir sie so aus der Recherche als wichtig erachteten, um eine gute Lernplanung zu ermöglichen. 
+
 \myparagraph{Globale Parameter}
 Diese Einstellungen gelten für den gesamten Planungszeitraum:
 \begin{itemize}
@@ -824,6 +833,9 @@ Diese Werte werden basierend auf der Priorität jeder Prüfung zugewiesen:
 
 \subsubsection{Ablauf und Planungsstrategie}
 Der Algorithmus arbeitet iterativ und bearbeitet alle als Prüfung markierten Ereignisse in aufsteigender Reihenfolge ihrer Priorität. Eine niedrigere Prioritätsnummer kennzeichnet dabei eine höhere Wichtigkeit.
+
+\textbf{Hinweis zum Umgang mit fehlenden Endzeiten:} 
+Falls ein Ereignis keine Endzeit besitzt, behandelt der Algorithmus dieses Ereignis als sogenanntes \emph{Punkt-Ereignis}, d.\,h. das Start- und Endzeitpunkt sind identisch. Dies ist insbesondere relevant, da importierte Kalenderdaten manchmal keine Endzeit angeben. Eine Korrektur dieses Verhaltens bereits beim Import könnte zu Darstellungsproblemen in der Kalenderansicht führen. Daher wurde entschieden, diese Anpassung erst im Algorithmus selbst vorzunehmen, um sowohl die Integrität der Planung als auch die Kompatibilität mit der Kalenderdarstellung zu gewährleisten.
 
 \begin{enumerate}
     \item \textbf{Zyklische Neuberechnung der Anforderungen (Recycling)}:
@@ -862,6 +874,13 @@ In der Kantonsschule muss man immer wieder Prüfungen schreiben. Die Noten, die 
 \subsection{Lerntimer}
 Ein weiteres wichtiges Feature unserer App ist der Lerntimer. Dieser Timer basiert auf der Pomodoro-Technik, welche im Recherche Teil dieses Berichts erklärt wurde. Mit der Recherche, die wir führten, fanden wir es wichtig, einen solchen Lerntimer zu implementieren, da es eine sehr effektive Lerntechnik ist. Der Timer hat die Standard-Einstellungen von 25 Minuten Lernen und 5 Minuten Pause, welche man aber auch ändern kann, falls man das möchte.
 
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=\linewidth]{img/lerntimer-screenshot.png}
+    \caption[Screenshot der Lerntimer-Seite. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Lerntimer-Seite}
+    \label{fig:lerntimer_page}
+\end{figure}
+
 \subsection{Daily Tipps}
 Ein relativ wichtiges Feature unserer App sind die Daily Tipps. Es sollte jeden Tag ein neuer Tipp an den Nutzer gezeigt werden auf der Startseite, entweder über die Kantonsschule oder allgemeine Lerntipps. Die einfachste Möglichkeit, dies zu implementieren, ist eine simple Modulo-Rechnung:
 \begin{equation}
@@ -872,7 +891,7 @@ Somit wird an einem bestimmten Tag nur ein Tipp gezeigt und über das ganze Jahr
 Der Titel dieses Features ist auf Englisch (\enquote{Tip of the Day}), weil der Ausdruck als prägnanter UI-Anker wiedererkennbar ist; der eigentliche Inhalt (der Tipp) bleibt vollständig auf Deutsch, sodass Verständlichkeit und lokaler Bezug erhalten bleiben.
 
 \subsection{Lerntipps}
-Ein weiteres Feature unserer App sind die Lerntipps. Diese sind in verschiedene Kategorien aufgeteilt, wie zum Beispiel Zeitmanagement, Pausenmanagement, Stressmanagement und Lernmethoden. In jeder Kategorie gibt es verschiedene Tipps, welche wir aus unserer Recherche und den Interviews gesammelt haben. Diese Tipps sollen den Nutzer:innen helfen, ihr Lernverhalten zu verbessern.
+Ein weiteres Feature unserer App sind die Lerntipps. Diese sind in verschiedene Kategorien aufgeteilt, u. a. Zeitmanagement, allgemeine Tipps der Kanti Baden, Stressmanagement und Lernmethoden. In jeder Kategorie gibt es verschiedene Tipps, welche wir aus unserer Recherche und den Interviews gesammelt haben. Diese Tipps sollen den Nutzer:innen helfen, ihr Lernverhalten zu verbessern.
 Beim Design für dieses Feature haben wir uns entschieden, dass die Bullet-Points der Tipps ein kleines Koala-Symbol sein sollen, um das Thema der App widerzuspiegeln. Der Koala wurde von uns selber entworfen.
 Wir haben auch ein Scroll-To-Top Button implementiert, da wir von einer Rückmeldung von den Usability Tests die Rückmeldung bekamen, dass es ein gewünschtes Feature sei, um schnell wieder nach oben zu gelangen.
 
@@ -889,6 +908,16 @@ Wir haben auch ein Scroll-To-Top Button implementiert, da wir von einer Rückmel
     \includegraphics[width=\linewidth]{img/lerntipps-screenshot.png}
     \caption[Screenshot der Lerntipps-Seite. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Lerntipps-Seite}
     \label{fig:lerntipps_page}
+\end{figure}
+
+\subsection{Einstellungen}
+In den Einstellungen kann der Nutzer verschiedene globale Einstellungen für die App vornehmen, wie zum Beispiel das Farbschema der App (hell oder dunkel), die bevorzugte Lernzeit, ob am Wochenende gelernt werden soll und die Farben der Prioritätsstufen. Diese Einstellungen werden in der Datenbank gespeichert und beim Laden der App abgerufen, um eine personalisierte Erfahrung zu bieten. Zusätzlich kann man hier auch sein Konto löschen und sein Passwort ändern.
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=\linewidth]{img/einstellungen-screenshot.png}
+    \caption[Screenshot der Einstellungen-Seite. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Einstellungen-Seite}
+    \label{fig:settings_page}
 \end{figure}
 
 
@@ -937,7 +966,7 @@ Die Farbwahl folgt praktischen Erwägungen: gut unterscheidbare Zustände, ruhig
 Die Töne sind bewusst leicht gedämpft gewählt, um eine ruhige, einheitliche Anmutung über helle und dunkle Oberflächen zu erhalten.
 
 \subsection{Dark Mode}
-Die App richtet sich nach der Systemeinstellung (\texttt{prefers-color-scheme}). Ein früh geladenes Skript setzt die Klasse \texttt{dark} auf \texttt{<html>} bei dunkler Präferenz und entfernt sie sonst. Die Styles sind als Dualklassen (z.\,B. \texttt{bg-zinc-100} / \texttt{dark:bg-zinc-900}) angelegt. So ergibt sich eine konsistente Darstellung ohne separate Stylesheets und ohne sichtbare Umschalt­effekte.
+Wir haben die Rückmeldung aus den Usability-Tests aufgenommen und einen wechselbaren Dark Mode (das heisst, er wird nicht automatisch aktiviert, sondern man kann ihn an- und ausschalten) implementiert. Nutzer:innen können in den Einstellungen zwischen Light Mode, Dark Mode und automatischem Modus (abhängig von Systemeinstellungen) wählen. Das Design wurde so angepasst, dass alle Elemente in beiden Modi gut lesbar und ansprechend sind. Tailwind CSS erleichtert die Umsetzung durch integrierte Dark-Mode-Klassen. Flask kann mit einem Content Processor so konfiguriert werden, dass jede Seite die gebrauchte Einstellung erhält.
 
 \subsection{Fehlerseiten (404/500): Gestaltung und Zweck}
 \textbf{404} signalisiert, dass eine angeforderte Ressource nicht existiert; \textbf{500} steht für einen internen Fehler.
@@ -948,6 +977,13 @@ Die Seiten sind reduziert gestaltet:
   \item Keine technischen Details; klare Orientierung statt Verunsicherung.
 \end{itemize}
 Ziel ist, Nutzer:innen schnell zurück in einen funktionierenden Kontext zu führen und gleichzeitig sensible Interna nicht offenzulegen.
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=0.6\linewidth]{img/404-page.png}
+    \caption[Screenshot der 404-Fehlerseite. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der 404-Fehlerseite}
+    \label{fig:404_page}
+\end{figure}
 
 % ------------------ keep existing structure below ------------------
 
