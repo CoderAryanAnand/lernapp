@@ -475,10 +475,76 @@ Hier fliessen die Erkenntnisse der Literaturstudie und der Interviews hinein, da
 
 \subsection{Entwicklung}
 Hauptsächlich wurden hier wieder die selben Themenbereiche wie bei den Interviews abgedeckt, wie bei den anderen Recherche-Segmenten, jedoch mit leichten Änderungen.
-Hier interessierte uns, wie die Schüler:innen selbst zu diesen Themen stehen anstatt theoretisches Wissen.
-Deshalb wurden die Fragen auf das Verhalten der Befragten gerichtet, wie beispielsweise ob sie oftmals Prüfungsstress erleben und weshalb, wie früh sie mit dem Lernen anfangen, ob sie regelmässig Pausen machen, etc.
+Hier interessierte uns hauptsächlich, ob die Probleme, welche unser Produkt lösen soll, tatsächlich in unserer Zielgruppe existieren, d.h. wir suchten Validation für unsere Web-Applikation.
+Deshalb wurden die Fragen auf das Verhalten der Befragten gerichtet, wie beispielsweise ob sie oftmals Prüfungsstress erleben und weshalb, wie früh sie mit dem Lernen anfangen, ob sie regelmässig Pausen machen und ob sie interesse an einer Lern-Applikation hätten.
 
-Somit konnten wir mit der Entwicklung 
+Zuerst mussten wir aber wählen, mit was für einem Programm wir die Umfrage erstellen wollten. 
+Als Host für die Umfrage wählten wir Microsoft Forms, da wir bereits mit Forms vertraut waren und dies verwenden konnten. 
+Dies machte Kollaboration einfach, da wir unsere Microsoft-Accounts von der Schule brauchen konnten. 
+Ebenso lässt Microsoft Forms zu, dass die Daten einfach in einer verbundenen Excel-Datei geöffnet werden können, was die spätere Analyse vereinfachte.
+
+Somit konnten wir mit der Entwicklung der Umfrage beginnen.
+Wir stützten uns dabei stark auf das bisherig erwähnte Theorie-Dokument, welches uns von den PPP-Lehrpersonen zur Verfügung gestellt wurde: \textcite{umfrageDesign}.
+Dieses Dokument brachte uns einige Konzepte bei, darunter, wie man die Beibehaltung von den Befragten erhöht, indem man die Umfrage kurz und möglichst unkompliziert entwirft, für eine gute Vergleichbarkeit möglichst geschlossene Fragen verwendet.
+Deswegen lagen unsere Kernziele für das Design der Umfrage folgendermassen:
+\begin{itemize}
+    \item Die Umfrage ist unkompliziert, sodass die Motivation der Befragten die Umfrage auszufüllen und somit die Antwortenquote bleibt, und sodass wenig missverstanden werden kann.
+    \item Eine klare Gruppierung der Themenbereiche.
+    \item Keine unnötigen Fragen - die Fragen sind stets nach unseren Zielen in der Recherche gerichtet.
+\end{itemize}
+
+\subsubsection{Grundlegende Informationen}
+Als Erstes mussten wir natürlich ein paar grundlegende Daten über unsere Befragten sammeln, damit wir gut Vergleiche zwischen Gruppen ziehen können.
+Die Umfrage ist jedoch anonym - die einzigen Informationen, welche wir hier sammeln wollten sind die Mittelschule, also Gymnasium, WMS \& IMS, und die Stufe (1. - 4. Klasse) in der die Befragten sind.
+Somit wollten wir aber später gut vergleichen können, wie sich beispielsweise das Lernverhalten zwischen den Stufen und Mittelschulen unterscheidet. 
+
+\subsubsection{Lernverhalten}
+Hier interessierte uns hauptsächlich, wann die Schüler:innen mit dem Lernen anfangen, da dies klar mit der Theorie aus der Literaturstudie und den Interviews vergleichbar ist.
+Wir lernten dort, dass früheres und wiederholtes Lernen zu einem besseren Lernergebnis führen soll, aber wir wissen auch aus eigener Erfahrung, dass dies viel mehr Aufwand darstellt und die Versuchung, erst sehr spät anzufangen, deswegen sehr gross ist.
+Gleich danach stellten wir zwei einfache Fragen, wie zufrieden die Befragten mit ihrem Lernaufwand seien und was sich ändern müsste, damit sie zufriedener wären.
+Somit wollten wir vergleichen können, ob es eine Korrelation zwischen der Lernzufriedenheit und dem Lernzeitpunkt gibt, und was die Schüler:innen selbst denken, dass sie machen könnten bzw. bräuchten.
+
+\subsubsection{Stress- und Pausenmanagement}
+Wir haben in den Interviews zum Stressmanagement hauptsächlich einiges über Methoden, um Stress abzubauen gelernt, und die Perspektive der Lehrpersonen zu was die häufigsten Gründe für Prüfungsstress seien.
+Hier konnten wir nun aber selbst nachfragen, ob die Schüler:innen oftmals sich vor Prüfungen gestresst fühlen und weshalb dies so sei.
+So erhofften wir uns herauszufinden, was die häufigsten Motivationen für diesen Stress sind, damit wir uns auch Gedanken machen konnten, ob und wie das in der Applikation adressiert werden könnte.
+Wir benutzten hierfür eine sogenannte Likert-Frage, wo mehrere Aussagen mit gewissen Häufigkeitsgraden beantwortet werden können, in unserer Umfrage verwendeten wir: \enquote{Nie}, \enquote{Selten}, \enquote{Manchmal}, \enquote{Oft} und \enquote{Immer}.
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{img/StressGründeFrage.png}
+    \caption[Darstellung einer Likert-Frage zu den Gründen für Prüfungsstress.  Eigener Screenshot von KantiKoala, 9.11.25]{Darstellung einer Likert-Frage zu den Gründen für Prüfungsstress}
+    \label{fig:placeholder}
+\end{figure}
+
+Da wir möglichst geschlossene Fragen haben wollten, gaben wir vier für uns plausible Gründe für Prüfungsstress basiert auf den Interviews und unseren persönlichen Erfahrungen.
+Nach Feedback von Frau Suter beschlossen wir uns jedoch auch, ein \enquote{Weiteres}-Feld einzubauen, da es wohl wahrscheinlich noch andere Gründe für Prüfungsstress geben könnte.
+
+Da das Stressmanagement kein besonders Feld darstellt, beschlossen wir uns, das Pausenmanagement auf die gleiche Seite zu packen, da Pausen als Entspannung und Stressabbau für uns eine Antithese zum Stress darstellten.
+So wollten wir auch untersuchen, ob und wie die Befragten bisher Pausen führten, da dies von Relevanz für unsere Lerntipps und unseren Lerntimer sein könnte, und als Vergleich mit den theoretischen Grundlagen aus den Interviews interessant sein könnte.
+
+Wegen unserem Ziel, die Umfrage unkompliziert darzustellen, beschlossen wir uns, das sogenannte \enquote{Branching} zu verwenden, damit nur die Befragten, welche die ersten Ja/Nein-Fragen zum Prüfungsstress und dem Pausenmanagement mit \enquote{Ja} beantworten, überhaupt die weiterführenden Fragen sehen.
+Die folgenden Abbildungen demonstrieren, wie solches \enquote{Branching} aussieht.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{img/BranchingOn.png}
+    \caption[Demonstration des Branching-Features vosn Microsoft Forms in unserer Umfrage (Bild 1). Eigener Screenshot von KantiKoala, 9.11.25]{Ansicht der Seite wenn bei \enquote{Fühlen Sie sich vor Prüfungen oft gestresst?} mit \enquote{Nein} beantwortet wird.}
+    \label{fig:placeholder}
+\end{figure}
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{img/BranchingOff.png}
+    \caption[Demonstration des Branching-Features von Microsoft Forms in unserer Umfrage (Bild 2). Eigener Screenshot von KantiKoala, 9.11.25]{Ansicht der Seite wenn mit \enquote{Ja} beantwortet wird.}
+    \label{fig:placeholder}
+\end{figure}
+
+\break
+
+\subsubsection{Zeitmanagement}
+
+
+
+Die abgeschlossene Umfrage kann im Anhang vorgefunden werden.
 
 \subsection{Durchführung}
 
@@ -990,7 +1056,7 @@ Der Prototyp schafft eine funktionale Grundlage zur strukturierten Erfassung und
                          Der Code wird aber auch noch separat beigefügt.
     \item \textbf{KI-Nachweis}
     \item \textbf{Tests}
-    \item \textbf{Umfragen und Interviews}
+    \item \textbf{Unsere Umfrage}
     \item \textbf{Interviewfragebogen}
     \item \textbf{Interviewtranskripte}
     \item \textbf{Interview- und Umfrageanalysen}
