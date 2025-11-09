@@ -165,7 +165,7 @@ def free_slots(events, day):
 
     for event in events_today:
         event_start = to_dt(event.start)
-        event_end = to_dt(event.end)
+        event_end = to_dt(event.end) if event.end else to_dt(event_start)
         if event.all_day:
             return []  # No free slots if there's an all-day event
 
