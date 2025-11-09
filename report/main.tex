@@ -1069,13 +1069,12 @@ Nicht beantwortet ist die weitergehende empirische Wirkung (Langzeitnutzung, Ler
 
 \section*{Erkenntnisse aus dem Arbeitsprozess}
 \begin{itemize}
-  \item Früh definierte Datenbeziehungen erleichtern Erweiterungen (z.B. zusätzliche Leistungsmetriken).
+  \item Früh definierte Datenbeziehungen erleichtern Erweiterungen (z.B. zusätzliche Einstellungen).
   \item Iterative Anpassung des Lernzeitalgorithmus notwendig (Rückwärtsplanung erwies sich zur Priorisierung naher Prüfungen als praktikabel; Konfliktpuffer reduzierten Engstellen).
-  \item Klare Prioritätsparameter (tägliches Maximum, Gesamtstunden) verhindern Überlastung, erforderten aber konsistente Validierung.
-  \item Modularisierung (Blueprints, \texttt{extensions.py}, Factory) minimierte Kopplung und vereinfachte Tests.
+  \item Klare Prioritätsparameter (tägliches Maximum, Gesamtstunden) verhindern Überlastung, erforderten aber konsistente Validierung. % ?
+  \item Modularisierung (Blueprints, \texttt{extensions.py}, Factory) vereinfachte die Übersichtlichkeit und spätere Anpassungen.
   \item Sicherheitsthemen (CSRF, Passwort-Hashing) müssen früh integriert werden, um Nacharbeiten zu vermeiden.
   \item Transkription in Mundart führte zu hohem Aufwand; Standardisierung der Interviewsprache wäre effizienter.
-  \item Heuristische Betrachtung der Bedienlogik ersetzt keine Nutzerbeobachtung.
 \end{itemize}
 
 \section*{Ausblick und offene Punkte}
