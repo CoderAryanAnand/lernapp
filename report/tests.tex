@@ -31,6 +31,7 @@
 
 \newcommand{\aifootnotemark}{\footnotemark}
 \newcommand{\aifootnotetext}{\footnotetext{Gemini (Model 2.5 Pro): \enquote{Korrigiere Fehler in den Test-Cases, und verbessere die Sprache [...]. }, 23.10.2025. Antwort ganz übernommen.}}
+\newcommand{\aifootnoteintro}{\footnotetext{Gemini (Model 2.5 Pro): \enquote{Korrigiere Grammatik und Rechtschreibfehler, und verbessere die Sprache [...]. }, 23.10.2025. Antwort ganz übernommen.}}
 
 
 % Define a new environment for Test Cases
@@ -48,10 +49,12 @@
 \maketitle
 \thispagestyle{empty}
 
-\section{Einführung}
+\section[Einführung]{Einführung\texorpdfstring{\aifootnotemark}{}}
+\aifootnoteintro
 Dieses Dokument dient als Protokoll für die manuelle Qualitätssicherung der KantiKoala Webanwendung. Der Testplan ist darauf ausgerichtet, die Kernfunktionen der App zu validieren, darunter Benutzer-Authentifizierung, Notenverwaltung, Kalenderfunktionen, Lern-Tools und die User Interface. Jeder Testfall ist klar definiert mit Ziel, Schritten zur Durchführung, erwarteten Resultaten und dem Status (Bestanden/Nicht Bestanden).
 
-\section{Abdeckung der Bewertungskriterien (Produkt)}
+\section[Abdeckung der Bewertungskriterien (Produkt)]{Abdeckung der Bewertungskriterien (Produkt)\texorpdfstring{\aifootnotemark}{}}
+\aifootnoteintro
 Die manuelle Testspezifikation zielt primär auf die Überprüfung der folgenden Bewertungskriterien ab:
 
 \begin{itemize}
