@@ -629,10 +629,10 @@ Die Klassenverteilung war ein wenig einheitlicher (Vgl. Abbildung \ref{fig:graph
 Für die folgenden Abbildungen gilt: Je heller, desto früher, und demnach grundsätzlich auch besser (Da wiederholtes Lernen zu einem längerfristigen / festeren Lernerfolg führt).
 \begin{figure}[!htp]
     \centering
-    \includegraphics[width=0.9\textwidth]{img/graphs/Graph_WieFrühLernenInsgesamt.png}
-    \includegraphics[width=0.3\textwidth]{img/graphs/Graph_WieFrühLernen1Gym.png}
-    \includegraphics[width=0.3\textwidth]{img/graphs/Graph_WieFrühLernen2Gym.png}
-    \includegraphics[width=0.3\textwidth]{img/graphs/Graph_WieFrühLernen3Gym.png}
+    \includegraphics[width=0.9\textwidth]{img/graphs/Graph_WieFrühLernenInsgesamt.png}
+    \includegraphics[width=0.3\textwidth]{img/graphs/Graph_WieFrühLernen1Gym.png}
+    \includegraphics[width=0.3\textwidth]{img/graphs/Graph_WieFrühLernen2Gym.png}
+    \includegraphics[width=0.3\textwidth]{img/graphs/Graph_WieFrühLernen3Gym.png}
     \caption[Pie-Chart für wie früh mit Lernen angefangen wird (Insgesamt \& pro Stufe). Eigener Screenshot von KantiKoala, 9.11.25]{Antworten nach wie früh gelernt wird, alle Antworten und aufgebrochen in Gym. Stufe}
     \label{fig:graph-learningI}
 \end{figure}
@@ -654,14 +654,14 @@ Dies sehen die Befragten auch ein, denn eines der häufigsten genannten Verbesse
 
 \myparagraph{Stressmanagement}
 Dieser Abschnitt validiert unsere Vermutungen zum Lernstress stark, nämlich dass Lernstress unter den Schüler:innen oft vorkommt.
-Tatsächlich gaben rund \textbf{57\%} aller Schüler:innen (Vgl. Abbildung \ref{graph-stressI}) an, dass sie oftmals Stress empfinden, und dieser Prozentsatz steigt in höheren Stufen und ist nie geringer als \textbf{50\%}.
+Tatsächlich gaben rund \textbf{57\%} aller Schüler:innen (Vgl. Abbildung \ref{fig:graph-stressI}) an, dass sie oftmals Stress empfinden, und dieser Prozentsatz steigt in höheren Stufen und ist nie geringer als \textbf{50\%}.
 
 \begin{figure}[!htp]
     \centering
-    \includegraphics[width=0.9\textwidth]{img/graphs/Graph_SchülerStressINS.png}
-    \includegraphics[width=0.3\textwidth]{img/graphs/Graph_SchülerStress1Gym.png}
-    \includegraphics[width=0.3\textwidth]{img/graphs/Graph_SchülerStress2Gym.png}
-    \includegraphics[width=0.3\textwidth]{img/graphs/Graph_SchülerStress3Gym.png}
+    \includegraphics[width=0.9\textwidth]{img/graphs/Graph_SchülerStressINS.png}
+    \includegraphics[width=0.3\textwidth]{img/graphs/Graph_SchülerStress1Gym.png}
+    \includegraphics[width=0.3\textwidth]{img/graphs/Graph_SchülerStress2Gym.png}
+    \includegraphics[width=0.3\textwidth]{img/graphs/Graph_SchülerStress3Gym.png}
     \caption[Pie-Chart für wie viele der Schüler oft Lernstress empfinden (Insgesamt \& pro Stufe). Eigener Screenshot von KantiKoala, 9.11.25]{Ja/Nein-Antworten zur Frage \enquote{Fühlen Schüler:innen sich oft gestresst?}, dargestellt pro Stufe und Insgesamt, in Prozent.}
     \label{fig:graph-stressI}
 \end{figure}
@@ -880,29 +880,31 @@ Die Abhängigkeiten und Kaskadenlöschungen (z.B. ein gelöschter \texttt{User} 
 
 \section{Kernfunktionen (Features)}
 
-\subsection{Homescreen / Dashboard}
+\subsection[Homescreen / Dashboard]{Homescreen / Dashboard\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 09.11.2025. Antwort ganz übernommen.}
 Der Homescreen (Dashboard) ist die zentrale Einstiegsseite nach dem Login. Er fasst die wichtigsten Informationen kompakt zusammen, um Nutzer:innen einen schnellen Überblick über ihren aktuellen Stand zu geben.
 
-Wichtig: Der Homescreen ist auch für nicht angemeldete Besucher:innen verfügbar. In diesem öffentlichen Modus wird eine gekürzte Ansicht präsentiert, die prominente Aufrufe zum Anmelden oder Registrieren enthält. Der tägliche Tipp wird gezeigt, aber alle User-spezifischen Daten (Noten, Termine, Prüfungen) sind ausgeblendet.
+Wichtig: Der Homescreen ist auch für nicht angemeldete Besucher:innen verfügbar. In diesem öffentlichen Modus wird eine gekürzte Ansicht präsentiert, die prominente Aufrufe zum Anmelden oder Registrieren enthält. Der tägliche Tipp wird angezeigt, persönliche Daten wie Noten, Termine oder Prüfungen bleiben jedoch ausgeblendet.
 
-\myparagraph{Aufbau} Das Dashboard ist in mehrere Kacheln (Cards) in einem Grid-Layout gegliedert, die die folgenden Informationen anzeigen:
+\myparagraph{Aufbau} Das Dashboard ist in mehrere Kacheln (Cards) gegliedert, die folgende Informationen anzeigen:
 
-\begin{itemize} 
-    \item \textbf{Notenübersicht:} Diese Kachel zeigt eine Zusammenfassung der akademischen Leistung aus dem neuesten Semester (aktueller Schnitt, Pluspunkte, wie auch das beste und schwächste Fach). Falls noch keine Noten eingetragen sind, wird ein Aufruf zur Eingabe von Noten angezeigt.
+\begin{itemize}
+    \item \textbf{Notenübersicht:} Diese Kachel zeigt eine Zusammenfassung der schulischen Leistung des aktuellsten Semesters (aktueller Schnitt, Pluspunkte sowie bestes und schwächstes Fach). Sind noch keine Noten eingetragen, erscheint ein Hinweis mit Aufforderung zur Eingabe.
     \item \textbf{Heutige Termine:} Listet alle für den aktuellen Tag im Kalender eingetragenen Ereignisse mit Titel und Uhrzeit auf.
-    \item \textbf{Nächste Prüfungen:} Zeigt eine Liste der anstehenden Prüfungen innerhalb der nächsten 21 Tage. Wenn die Prüfung innerhalb sieben Tage ist, wird sie hervorgehoben indem ihr Text rot dargestellt wird. Die späteren Prüfungen sind orange dargestellt.
-    \item \textbf{Tip of the Day:} Ein Bereich mit täglich wechselnden, kurzen Hinweisen -- dieser Bereich ist sowohl für eingeloggte als auch für nicht eingeloggte Nutzer:innen sichtbar. Diese Funktion ist unten ausführlicher beschrieben.
+    \item \textbf{Nächste Prüfungen:} Zeigt die anstehenden Prüfungen der nächsten 21 Tage. Findet eine Prüfung innerhalb der nächsten sieben Tage statt, wird sie hervorgehoben (rot); spätere Prüfungen werden orange markiert.
+    \item \textbf{Tipp des Tages:} Ein Bereich mit täglich wechselnden, kurzen Hinweisen — dieser Bereich ist sowohl für eingeloggte als auch für nicht eingeloggte Nutzer:innen sichtbar. Die Funktion wird weiter unten ausführlicher beschrieben.
     \item \textbf{Hilfe-Hinweis:} Eine Kachel, die Nutzer:innen auf die Hilfe-Seite (/hilfe) aufmerksam macht, um den Einstieg zu erleichtern.
 \end{itemize}
 
-\myparagraph{Tip of the Day}
-Eine Kernanforderung unserer App ist die tägliche Bereitstellung eines neuen Tipps auf der Startseite, entweder über die Kantonsschule oder allgemeine Lerntipps. Die einfachste Möglichkeit, dies zu implementieren, ist eine simple Modulo-Rechnung:
+\myparagraph{Tipp des Tages}
+Eine Kernanforderung der App ist die tägliche Bereitstellung eines neuen Tipps auf der Startseite, etwa zu schulbezogenen oder allgemeinen Lernthemen. Die einfachste Implementierung hierfür ist eine einfache Modulo-Rechnung:
 \begin{equation*}
 \text{Tipp des Tages (Index)} = (\text{Tag des Jahres}) \bmod (\text{Anzahl der Tipps})
 \end{equation*}
-Somit wird an einem bestimmten Tag nur ein Tipp gezeigt und über das ganze Jahr sollten alle Tipps in einem Zyklus gezeigt werden.
+So wird an jedem Tag genau ein Tipp angezeigt und über das Jahr hinweg zyklisch alle Tipps durchlaufen.
 
-Der Titel dieses Features ist auf Englisch (\enquote{Tip of the Day}), weil der Ausdruck als prägnanter UI-Anker wiedererkennbar ist; der eigentliche Inhalt (der Tipp) bleibt vollständig auf Deutsch, sodass Verständlichkeit und lokaler Bezug erhalten bleiben.
+Der Titel dieses Features steht als englischer UI-Anker (\enquote{Tip of the Day}) in der Oberfläche, weil der Ausdruck als prägnanter UI-Anker wiedererkennbar ist; der eigentliche Inhalt (der Tipp) bleibt jedoch vollständig auf Deutsch, um Verständlichkeit und lokalen Bezug sicherzustellen.
+
 
 \begin{figure}[!htp]     
     \centering     
@@ -1094,15 +1096,6 @@ Ein weiteres wichtiges Feature unserer App ist der Lerntimer. Dieser Timer basie
 
 \FloatBarrier
 
-\subsection{Daily Tipps}
-Ein relativ wichtiges Feature unserer App sind die Daily Tipps. Es sollte jeden Tag ein neuer Tipp an den Nutzer gezeigt werden auf der Startseite, entweder über die Kantonsschule oder allgemeine Lerntipps. Die einfachste Möglichkeit, dies zu implementieren, ist eine simple Modulo-Rechnung:
-\begin{equation}
-\text{Tipp des Tages (Index)} = (\text{Tag des Jahres}) \bmod (\text{Anzahl der Tipps})
-\end{equation}
-Somit wird an einem bestimmten Tag nur ein Tipp gezeigt und über das ganze Jahr sollten alle Tipps in einem Zyklus gezeigt werden.
-
-Der Titel dieses Features ist auf Englisch (\enquote{Tip of the Day}), weil der Ausdruck als prägnanter UI-Anker wiedererkennbar ist; der eigentliche Inhalt (der Tipp) bleibt vollständig auf Deutsch, sodass Verständlichkeit und lokaler Bezug erhalten bleiben.
-
 \subsection{Lerntipps}
 Ein weiteres Feature unserer App sind die Lerntipps. Diese sind in verschiedene Kategorien aufgeteilt, u. a. Zeitmanagement, allgemeine Tipps der Kanti Baden, Stressmanagement und Lernmethoden. In jeder Kategorie gibt es verschiedene Tipps, welche wir aus unserer Recherche und den Interviews gesammelt haben. Diese Tipps sollen den Nutzer:innen helfen, ihr Lernverhalten zu verbessern.
 Beim Design für dieses Feature haben wir uns entschieden, dass die Bullet-Points der Tipps ein kleines Koala-Symbol sein sollen, um das Thema der App widerzuspiegeln. Der Koala wurde von uns selber entworfen.
@@ -1137,6 +1130,34 @@ In den Einstellungen kann der Nutzer verschiedene globale Einstellungen für die
 
 \FloatBarrier
 
+\subsection[Über uns-Seite]{Über uns-Seite\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5 mini): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 09.11.2025. Antwort ganz übernommen.}
+
+Auf der \enquote{Über uns}-Seite stellen wir das Team hinter KantiKoala vor. Wir geben einen Einblick in unsere Motivation, die App zu entwickeln, und erläutern die Ziele, die wir mit KantiKoala verfolgen. Außerdem erklären wir, worin sich die KantiKoala-Web-App von anderen Lern-Apps unterscheidet. Zudem bieten wir Kontaktinformationen an, damit Nutzer:innen uns bei Fragen oder Feedback erreichen können.
+
+Als kleines \enquote{Easter Egg} haben wir auf der Teamseite außerdem die Kanti-Katze als Mitgründer hinzugefügt, um zu zeigen, dass die App von Schüler:innen entwickelt wurde.
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=\linewidth]{img/aboutus-easteregg.png}
+    \caption[Screenshot des Easter-Eggs auf der Über uns-Seite. Eigener Screenshot von Kanti Koala, 09.11.2025.]{Screenshot des Easter-Eggs auf der Über uns-Seite}
+    \label{fig:about_us_page}
+\end{figure}
+
+\FloatBarrier
+
+\subsection[Hilfe-Seite]{Hilfe-Seite\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5 mini): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 09.11.2025. Antwort ganz übernommen.}
+Aus den Usability-Tests erhielten wir die Rückmeldung, eine Anleitung für die Nutzer:innen zu erstellen, damit klar wird, welche Funktionen die App bietet. Deshalb haben wir die Hilfeseite angelegt, die eine vollständige Anleitung zur Nutzung der Anwendung enthält. Sie erklärt alle Features, bietet einen Schnellstart und Best Practices zur optimalen Nutzung der App. 
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=\linewidth]{img/helppage.png}
+    \caption[Screenshot der Hilfe-Seite. Eigener Screenshot von Kanti Koala, 09.11.2025.]{Screenshot der Hilfe-Seite}
+    \label{fig:help_page}
+\end{figure}
+
+\FloatBarrier
 
 \section[Sicherheitskonzept]{Sicherheitskonzept\texorpdfstring{\aifootnotemark}{}}
 \footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
