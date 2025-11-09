@@ -23,6 +23,7 @@
 \usepackage{anyfontsize}
 \usepackage{xurl}
 \usepackage{float}
+\usepackage{placeins}
 \usepackage[
 backend=biber,
 style=apa,
@@ -519,7 +520,7 @@ Wir haben in den Interviews zum Stressmanagement hauptsächlich einiges über Me
 Hier konnten wir nun aber selbst nachfragen, ob die Schüler:innen oftmals sich vor Prüfungen gestresst fühlen und weshalb dies so sei.
 So erhofften wir uns herauszufinden, was die häufigsten Motivationen für diesen Stress sind, damit wir uns auch Gedanken machen konnten, ob und wie das in der Applikation adressiert werden könnte.
 Wir benutzten hierfür eine sogenannte Likert-Frage, wo mehrere Aussagen mit gewissen Häufigkeitsgraden beantwortet werden können, in unserer Umfrage verwendeten wir: \enquote{Nie}, \enquote{Selten}, \enquote{Manchmal}, \enquote{Oft} und \enquote{Immer}.
-\begin{figure}
+\begin{figure}[!htp]
     \centering
     \includegraphics[width=\linewidth]{img/StressGründeFrage.png}
     \caption[Darstellung einer Likert-Frage zu den Gründen für Prüfungsstress.  Eigener Screenshot von KantiKoala, 9.11.25]{Darstellung einer Likert-Frage zu den Gründen für Prüfungsstress}
@@ -527,6 +528,8 @@ Wir benutzten hierfür eine sogenannte Likert-Frage, wo mehrere Aussagen mit gew
 \end{figure}
 
 Da wir möglichst geschlossene Fragen haben wollten, gaben wir vier für uns plausible Gründe für Prüfungsstress basiert auf den Interviews und unseren persönlichen Erfahrungen.
+Likert-Fragen sind hierfür besonders nützlich, da sie geschlossen bleiben aber trotzdem mehr Nuance erlauben, als es eine reine Ja/Nein-Frage erlaubt und dennoch einfach interpretiert werden können, anders als offene Fragen.
+Aufgrund ihres Designs können wir auch sehr einfach mehrere Fragen in ein \enquote{Gerüst} kombinieren.
 Nach Feedback von Frau Suter beschlossen wir uns jedoch auch, ein \enquote{Weiteres}-Feld einzubauen, da es wohl wahrscheinlich noch andere Gründe für Prüfungsstress geben könnte.
 
 Da das Stressmanagement kein besonders Feld darstellt, beschlossen wir uns, das Pausenmanagement auf die gleiche Seite zu packen, da Pausen als Entspannung und Stressabbau für uns eine Antithese zum Stress darstellten.
@@ -534,41 +537,97 @@ So wollten wir auch untersuchen, ob und wie die Befragten bisher Pausen führten
 
 Wegen unserem Ziel, die Umfrage unkompliziert darzustellen, beschlossen wir uns, das sogenannte \enquote{Branching} zu verwenden, damit nur die Befragten, welche die ersten Ja/Nein-Fragen zum Prüfungsstress und dem Pausenmanagement mit \enquote{Ja} beantworten, überhaupt die weiterführenden Fragen sehen.
 Die folgenden Abbildungen demonstrieren, wie solches \enquote{Branching} aussieht.
-\begin{figure}[hbt!]
+\begin{figure}[!htp]
     \centering
     \includegraphics[width=\linewidth]{img/BranchingOn.png}
     \caption[Demonstration des Branching-Features vosn Microsoft Forms in unserer Umfrage (Bild 1). Eigener Screenshot von KantiKoala, 9.11.25]{Ansicht der Seite wenn bei \enquote{Fühlen Sie sich vor Prüfungen oft gestresst?} mit \enquote{Nein} beantwortet wird.}
     \label{fig:branching-1}
 \end{figure}
-\begin{figure}[hbt!]
+\begin{figure}[!htp]
     \centering
     \includegraphics[width=\linewidth]{img/BranchingOff.png}
     \caption[Demonstration des Branching-Features von Microsoft Forms in unserer Umfrage (Bild 2). Eigener Screenshot von KantiKoala, 9.11.25]{Ansicht der Seite wenn mit \enquote{Ja} beantwortet wird.}
     \label{fig:branching-2}
 \end{figure}
 
-\subsubsection{Zeitmanagement}
+\FloatBarrier
 
+\subsubsection{Zeitmanagement}
+Dieser Themenbereich betrachteten wir als Essenziell, um unsere Web-Applikation zu validieren.
+Wir sind persönlich sehr bekannt mit dem Problem der Prokrastination, welches eines der wichtigen Begründungen für den Nutzen unserer Web-App darstellt. Wir konnten aber erst hier tatsächlich herausfinden, ob und wie breit dies auf unser Zielpublikum zutrifft.
+Ebenso wollten wir herausfinden, ob unser Zielpublikum bereits Hilfsmittel verwendet, um das Lernen zu unterstützen, oder nicht.
+
+Hierfür verwendeten wir ebenfalls wieder Likert-Fragen.
 
 \subsubsection{Musik}
-Ein weiteres Feature, welches uns interessierte, wäre die Option, Musik in die Lernapp zu integrieren, welche man beim Lernen hören könnte, ähnlich wie diese \enquote{Lofi hip hop radio beats to relax/study to} videos, welche man auf YouTube vorfinden kann \parencite{LofiVideo}.
+Ein weiteres Feature, welches uns während der Erstellung der Umfrage interessierte, wäre die Option, Musik in die Lernapp zu integrieren, welche man beim Lernen hören könnte, ähnlich wie diese \enquote{Lofi hip hop radio beats to relax/study to} videos, welche man auf YouTube vorfinden kann \parencite{LofiVideo}.
 Das Musik störend für das Lernen ist, ist eine sehr kontroverse These \parencite{Music}.
 Da wir dies aber selbst gern machen, wollten wir untersuchen, ob Musik von unserem Zielpublikum selbst beim Lernen gebraucht wird, und ob sie als störend oder nicht störend empfunden wird.
 
 \subsubsection{Lern-App}
+Als letztes wollten wir das allgemeine Interesse an unserer Applikation und unseren geplanten Features direkt untersuchen.
+So können wir besser einschätzen, ob der Bedarf für so ein Produkt überhaupt in unserer Zielgruppe vorhanden ist, was ebenfalls eine sehr wichtige Validation für unsere Arbeit darstellt und deswegen von kritischer Bedeutung für uns ist.
 
+Auch wollten wir genauer nachfragen, indem wir mithilfe einer Multiple-Choice-Frage das Interesse zu spezifischen Features untersuchten, und dank einer \enquote{Weiteres}-Option Vorschläge für andere Features erlaubten. 
+So erhofften wir uns, direkt zu sehen welche Vorschläge populär bzw. nicht populär sind.
 
-Die abgeschlossene Umfrage kann im Anhang vorgefunden werden.
+Schlussendlich wollten wir für unsere Lern- und Daily-Tipps auch noch unser Zielpublikum direkt einbeziehen. Da wir ja eine Web-Applikation von Schülern für Schüler:innen machen, machte es für uns Sinn, dass unser Zielpublikum wahrscheinlich noch gute Ideen für relevante Lerntipps haben könnte.
+
+\subsubsection{Resultat}
+Nach den Interviews konnten wir, anhand vom Feedback unserer Interviewpartner:innen, noch einiges an Feedback integrieren. Dies umfasste beispielsweise einige Korrekturen und Empfehlungen, wie Fragen einheitlicher und effizienter formattiert werden könnten.
+Ebenso liessen wir ein paar wenige Kollegen die Umfrage ausfüllen um zu testen, dass die Endnutzer-Erfahrung etwa so war, wie wir sie wollten.
+Wir waren, schlussendlich, sehr zufrieden mit dem Ergebnis aus all diesem.
+
+Ein Link zur fertiggestellten Umfrage kann im Anhang vorgefunden werden.
 
 \subsection{Durchführung}
+Nun ging es darum, die Umfrage tatsächlich an unser Zielpublikum zu bringen.
+Dies erreichten wir hauptsächlich, indem wir es durch das offiziele Kanti-Sammelmail an die gesamte Schule verschicken liessen.
+Nach einem kurzen hin-und-her mit der Prorektorin Frau Hoffmann, war dies dann auch eine Woche, nachdem unsere Umfrage fertiggestellt war, am 27. Mai 2025 erreicht und die Umfrage war für die Schüler:innen der Kantonsschule Baden frei zugänglich.
+Ebenso verbreiteten wir die Umfrage selbst auf privaten Kommunikationskanälen mit unseren Freunden, und baten diese, sie ebenfalls an andere Kantischüler weiterzuschicken.
+
+Nach vier Wochen, dem eigentlichen Ende unserer Erhebungszeit, hatten wir schlussendlich \textbf{84} Antworten eingesammelt, welches wir als eine gute repräsentive Stichprobe in unser Zielpublikum betrachten.
+Diese sollten uns wertvolle Einblicke für unsere Arbeit liefern.
 
 \subsection{Analyse}
 \subsubsection{Vorgehensweise}
+Nachdem die Erhebungszeit erfolgreich verlaufen war, mussten wir die Umfrage analysieren. 
+Dies verlief hauptsächlich über Excel und Microsoft Forms selbst, wo wir die eingesammelten Daten grafisch darstellen konnten.
+Dies half uns, konkrete Schlüsse aus unseren Fragestellungen zu ziehen und qualitative Vergleiche zu ziehen. 
+So arbeiteten wir uns Schritt für Schritt durch die jeweiligen Daten und werteten diese aus.
 
+Nachdem wir diese graphischen Vergleiche gezogen hatten, sammelten wir diese zu Erkenntnissen zum Lernen und für die Web-Applikation zusammen und achteten uns jeweils auf ob diese Ergebnisse unsere Web-Applikation validieren oder nicht. Schlussendlich formulierten daraus konkrete Empfehlungen, ähnlich wie bei der Interview-Analyse.
+Diese konkreten Empfehlungen sollten uns tiefgründig über die Bedürfnisse unseres Zielpublikums informieren.
+
+Die vollständige Analyse kann im Umfrage-Analyse Dokument im Anhang eingesehen werden.
 \subsubsection{Ergebnisse}
+Nun präsentieren wir die grundsätzlichen Ergebnisse unserer Umfrage, analysiert wie in der \hyperlink{Vorgehensweise}{Vorgehensweise} beschrieben.
 
+\myparagraph{Generelle Informationen}
+Insgesamt gab es, wie schon erwähnt, \textbf{84} Antworten (Vgl. Abbildung 2.4). 
+Davon kamen 76 aus dem Gymnasium, 4 aus der IMS und 4  aus der WMS. 
+Aus diesem Grund liessen sich qualitative Vergleiche nur für das Gymnasium oder als Ganzes ziehen, aber nicht zwischen den Mittelschulen. 
+Zu diesem Ende wurden die meisten Vergleiche zwischen den einzelnen Gymnasiums-Stufen geführt.
+Die Klassenverteilung war ein wenig einheitlicher (Vgl. Abbildung 2.5), leider gab es aber keine Antworten aus der 4. Klasse, da zum Zeitpunkt der Umfrage die Maturaprüfungen schon grösstenteils vorbei waren und die Schüler:innen der 4. Klasse nicht mehr präsent waren.
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{img/graphs/Graph_AntwortenMittelschule.png}
+    \caption[Pie-Chart der Antworten nach Mittelschule. Eigener Screenshot von KantiKoala, 9.11.25]{Antworten nach Mittelschule}
+    \label{fig:graph-middleschool}
+\end{figure}
+
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=0.75\textwidth]{img/graphs/Graph_AntwortenKlasse.png}
+    \caption[Pie-Chart der Antworten nach Klasse. Eigener Screenshot von KantiKoala, 9.11.25]{Antworten nach Klasse}
+    \label{fig:graph-class}
+\end{figure}
+\FloatBarrier
 
 \section{Fazit der Recherche}
+
+\section{Reflexion}
 % ------------------------------Programmieren------------------------------
 \chapter{Methodik -- Programmieren der Web-Applikation}
 
