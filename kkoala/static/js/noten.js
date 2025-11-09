@@ -127,24 +127,21 @@ function renameSemester(semesterDiv) {
         saveAllSemestersToBackend();
     }
 }
-function saveSubjectEdit() {
+async function saveSubjectEdit() {
     if (editingSubjectHeader && editingSubjectContainer) {
         const newName = document.getElementById("subjectNameEdit").value.trim();
         const newCountsAverage = document.getElementById("subjectCountsAverage").checked;
         if (newName) {
             editingSubjectHeader.textContent = newName;
-            editingSubjectContainer.dataset.countsAverage = newCountsAverage; 
+            editingSubjectContainer.dataset.countsAverage = newCountsAverage;
+            const gradesList = editingSubjectContainer.querySelector(".grades-list");
             const avgSpan = editingSubjectContainer.querySelector(".subject-average");
-            if (newCountsAverage) {
-                updateSubjectAverage(editingSubjectContainer.querySelector(".grades-list"), avgSpan, editingSubjectContainer.closest('.semester'));
-            } else {
-                avgSpan.textContent = "Zählt nicht";
-                updateSemesterAverage(editingSubjectContainer.closest('.semester'));
-            }
+            // Recalculate and display Schnitt consistently (will append '(zählt nicht)' if needed)
+            updateSubjectAverage(gradesList, avgSpan, editingSubjectContainer.closest('.semester'));
         }
     }
     closeSubjectPopup();
-    saveAllSemestersToBackend();
+    await saveAllSemestersToBackend();
 }
 async function addOrEditGradeToSubject() {
     const name = document.getElementById("gradeName").value.trim();
@@ -171,7 +168,8 @@ function updateSubjectAverage(gradesList, avgSpan, semesterDiv) {
         }
     });
     const avg = (weightSum && hasGrade) ? (total / weightSum).toFixed(2) : 0;
-    avgSpan.textContent = countsAverage ? `Schnitt: ${hasGrade ? avg : 0}` : "Zählt nicht";
+    // Always show Schnitt; append " (zählt nicht)" when the subject does not count
+    avgSpan.textContent = `Schnitt: ${hasGrade ? avg : 0}${countsAverage ? '' : ' (zählt nicht)'}`;
     updateSemesterAverage(semesterDiv);
 }
 function updateSemesterAverage(semesterDiv) {
@@ -221,13 +219,14 @@ function addSubject(container, subjectName, grades = [], countsAverage = true) {
     header.innerHTML = `
         <div class="flex items-center space-x-3">
             <span class="subject-title font-semibold text-lg text-zinc-800 dark:text-white">${subjectName}</span>
-            <span class="subject-average text-sm text-zinc-500 dark:text-zinc-400">${countsAverage ? 'Schnitt: 0' : 'Zählt nicht'}</span>
+            <span class="subject-average text-sm text-zinc-500 dark:text-zinc-400">${`Schnitt: 0${countsAverage ? '' : ' (zählt nicht)'}`}</span>
         </div>
         <div class="flex items-center space-x-2">
             <button class="edit-subject-btn p-1.5 text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
             <svg class="chevron w-5 h-5 text-zinc-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
         </div>
     `;
+    
     const content = document.createElement("div");
     content.className = "dropdown-content hidden p-4 border-t border-zinc-200 dark:border-zinc-700";
     const gradesList = document.createElement("div");

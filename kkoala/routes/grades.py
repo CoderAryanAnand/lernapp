@@ -29,7 +29,7 @@ def get_noten(user):
             subj_data = {
                 "id": subj.id,
                 "name": subj.name,
-                "counts_towards_average": subj.counts_towards_average,
+                "counts_average": subj.counts_towards_average,
                 "grades": [],
             }
             for grade in subj.grades:
