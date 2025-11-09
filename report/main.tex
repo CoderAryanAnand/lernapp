@@ -122,33 +122,30 @@ language=ngerman
 
 \chapter*{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
+% LAST SENTENCE OF THIS LINE TO BE EDITED.
+Diese Maturitätsarbeit behandelt die Konzeption und prototypische Umsetzung einer webbasierten Applikation für Schüler:innen der Kantonsschule Baden mit dem Ziel, schulische Termine, Aufgaben und Lernzeiten zentral organisierbar zu machen und regelmässige, abgegrenzte Lernphasen zu unterstützen. Eine umfassende Wirkungskontrolle war nicht Teil der Zielsetzung; stattdessen wurde die Bedienbarkeit in einem Usability-Test geprüft.; die Ergebnisse bestätigten grundlegende Bedienbarkeit und identifizierten kleinere Optimierungspunkte (Navigationstiefe, Beschriftungen einzelner Formularfelder).
 
-Diese Maturitätsarbeit untersucht, ob eine digitale Applikation so konzipiert und prototypisch umgesetzt werden kann, dass sie Schüler:innen der Kantonsschule Baden eine übersichtliche Organisation von Terminen, Aufgaben und Lernzeiten ermöglicht und zugleich Funktionen bereitstellt, die regelmässige Lerngewohnheiten unterstützen. Unter «Organisation erleichtern» verstehen wir eine Verringerung des manuellen Planungsaufwands. «Lerngewohnheiten unterstützen» bezeichnet Funktionen für regelmässige, zeitlich abgegrenzte Lernphasen.
+Zur Ableitung der Anforderungen wurden eine fokussierte Literatur- und Internetrecherche (Lernmethoden, Zeit- und Pausenorganisation, Stressaspekte), Interviews mit zwei PPP-Lehrpersonen sowie eine Umfrage unter Schüler:innen eingesetzt. Die Ergebnisse strukturierten die Funktionsprioritäten (Agenda, Lernblöcke, Noten, Timer, Tipps) und die Parametrisierung des Lernzeitalgorithmus.
 
+Die Applikation wurde mit Python (Flask), einem relationalen Datenmodell und modularer Architektur implementiert. Kernfunktionen sind: eine Agenda mit manueller Ereigniserfassung, Import von \texttt{.ics}-Stundenplänen und algorithmischer Lernblock-Generierung nach Prioritäten; Notenverwaltung; ein konfigurierbarer Pomodoro-basiertes Lerntimer-Modul; kategorisierte tägliche Tipps, sowie auch allgemeine Lerntipps (Zeit-, Pausen-, Stressmanagement, Lernmethoden); Authentifizierung mit Basis-Schutzmassnahmen (u. a. Passwort Hashing). Der Lernzeitalgorithmus verteilt definierte Lernstunden rückwärts vom Prüfungstermin unter Berücksichtigung von Tageslimits, bevorzugten Zeiten und Konfliktvermeidung.
 
-Die Anforderungsableitung erfolgte durch eine fokussierte Literaturstudie (Lernmethoden, Zeit- und Pausenmanagement, Stressaspekte), zwei Interviews mit PPP-Lehrpersonen der Kantonsschule Baden sowie eine Umfrage unter 84 Schüler:innen. Die Erkenntnisse strukturierten Funktionsprioritäten und Algorithmusparameter. Die technische Umsetzung erfolgte als webbasierte Applikation mit Python (Flask), PostgreSQL-Datenbank und modularer Architektur. Kernfunktionen umfassen: Agenda mit manuellem Event-Management und \texttt{.ics}-Import/Export, einen rückwärts planenden Lernzeitalgorithmus mit Konfliktprüfung, Notenverwaltung nach Semester-Fach-Hierarchie, einen konfigurierbaren Pomodoro-Timer sowie kategorisierte Lerntipps. Die Bedienbarkeit wurde formativ durch Usability-Tests mit drei Testpersonen geprüft.
-
-
-Der funktionsfähige Prototyp demonstriert die technische Machbarkeit eines integrierten Lern- und Organisationstools. Der Lernzeitalgorithmus platziert definierte Lernstunden rückwärts vom Prüfungstermin unter Einhaltung täglicher Limits, bevorzugter Zeiten und Konfliktvermeidung. Die Usability-Tests bestätigten grundlegende Bedienbarkeit und identifizierten Optimierungspotenzial (Hilfe-Seite, Dark-Mode-Umschaltung, Scroll-Navigation). Die Umfrage validierte den Bedarf: 57\% der Befragten erleben häufig Prüfungsstress, die Mehrheit beginnt erst 1–2 Tage vor Prüfungen zu lernen. Die technische Umsetzung der Zielkomponenten ist erfolgreich; eine weitergehende empirische Wirkungsevaluation steht aus und bildet zukünftige Forschung. Der Prototyp liefert eine erweiterbare Grundlage für Langzeitstudien zur tatsächlichen Verhaltensänderung.\aifootnote{09.11.2025}
+Die Arbeit zeigt die technische Machbarkeit eines integrierten, strukturierten Ansatzes zur Lern- und Organisationsunterstützung; eine weitergehende Wirkungsevaluation (über die durchgeführte Usability-Prüfung hinaus) steht aus und bildet zukünftige Arbeit. Der Prototyp bildet eine erweiterbare Grundlage für nachfolgende empirische Validierung. \aifootnote{06.11.2025}
 \clearpage
 % Table of Contents
 \tableofcontents
 
 % ------------------------------Einleitung------------------------------
-% ------------------------------Einleitung------------------------------
 \chapter[Einleitung -- unsere Vision]{Einleitung -- unsere Vision\texorpdfstring{\aifootnotemark}{}}
-\aifootnotetext{09.11.2025}
-Der Schulalltag an der Kantonsschule Baden ist durch eine hohe Arbeitsdichte geprägt. Neben zahlreichen Prüfungen, auf die vorzubereiten ist, fallen kontinuierlich Hausaufgaben an. In Kombination mit ausserschulischen Verpflichtungen entstehen Anforderungen an Planung und Selbstorganisation, die ohne strukturierende Hilfsmittel schwer überschaubar bleiben. Aus unserer Erfahrung als Schüler der Kantonsschule Baden sowie aus ersten Beobachtungen im Umfeld besteht ein wiederkehrendes Problem darin, Lernaufwand, Fristen und verfügbare Zeitblöcke koordiniert abzubilden. Fehlende Übersicht kann zu subjektivem Stress, übermässiger Arbeitslast und im Extremfall zu Burnout führen -- ein Befund, der sich in unseren späteren Interviews und der Umfrage als relevantes Problemfeld bestätigte.
+\aifootnotetext{04.11.2025}
+Der Schulalltag an der Kantonsschule Baden ist durch eine hohe Arbeitsdichte geprägt. Neben zahlreichen Prüfungen, auf die man vorbereiten muss, fallen kontinuierlich Hausaufgaben an. In Kombination mit ausserschulischen Verpflichtungen entstehen Anforderungen an Planung und Selbstorganisation, die ohne strukturierende Hilfsmittel nur begrenzt überschaubar bleiben. 
 
 \section{Motivation und Relevanz}
-Eine zentral organisierende Applikation, welche Lernzeiten, Termine und Noten gemeinsam verwaltet, erscheint daher als potenziell relevante Unterstützung. In diesem Kontext verstehen wir unter «Unterstützung des Selbstmanagements» ausdrücklich Folgendes: (1) Reduktion des individuellen Planungsaufwands durch algorithmische Lernplanung, (2) strukturierte Segmentierung von Lernblöcken mit klar definierten Start- und Endzeiten. Diese Arbeit untersucht, ob und wie eine digitale Lösung diese Unterstützungsfunktionen technisch realisieren kann.
-
-Die Plattformwahl (Web oder nativ) bleibt zum Untersuchungszeitpunkt bewusst offen; die konzeptionelle Entwicklung erfolgt plattformneutral, wobei wir uns aufgrund der Implementierungseffizienz und Geräteunabhängigkeit letztlich für eine webbasierte Lösung entschieden haben. Diese Entscheidung ermöglicht den Zugriff über verschiedene Endgeräte ohne Installation und reduziert den Wartungsaufwand erheblich.
+Aus unserer Erfahrung als Schüler der Kantonsschule Baden besteht ein wiederkehrendes Problem für Schüler:innen darin, Lernaufwand, Fristen und verfügbare Zeitblöcke koordiniert abzubilden. Fehlende Übersicht kann -- wie in unseren Interviews und der Umfrage als wiederkehrendes Problem identifiziert -- zu subjektivem Stress, übermässiger Arbeitslast und Burnout führen. Eine zentral organisierende Applikation, welche Lernzeiten, Termine und Noten gemeinsam verwaltet, ist daher potenziell relevant. In diesem Kontext wird unter Unterstützung des Selbstmanagements ausdrücklich Folgendes verstanden: (1) Reduktion des individuellen Planungsaufwands (Zeit zur manuellen Wochenplanung), (2) Erhöhung der Vorlauftransparenz (Sichtbarkeit bevorstehender Prüfungen in Tagen), (3) strukturierte Segmentierung von Lernblöcken (klar definierte Start-/Endzeiten). Die Plattformwahl (Web oder nativ) bleibt zum Untersuchungszeitpunkt offen; die Konzeption erfolgt plattformneutral.
 
 \section{Name und Logo}
-Der Name «KantiKoala» verbindet «Kanti» (Kurzform von Kantonsschule) mit dem Koala als sympathischem Maskottchen. Die Alliteration macht den Namen einprägsam; der Koala wurde gewählt, da er uns als Tier gefällt und eine ruhige, fokussierte Assoziation vermittelt. Das Logo wurde bewusst schlicht gehalten, um freundlich und zugänglich zu wirken und gleichzeitig in der Kalender- und UI-Darstellung gut lesbar zu bleiben. Die visuelle Identität soll eine niederschwellige, einladende Nutzung fördern.
+Der Name \enquote{KantiKoala} verbindet \enquote{Kanti} (Kurzform von Kantonsschule) mit dem Koala als sympathischem Maskottchen. Die Alliteration macht den Namen einprägsam; der Koala haben wir als Tier gerne, deswegen wurde er gewählt. Das Logo wurde bewusst schlicht gehalten, um freundlich und zugänglich zu wirken und gleichzeitig in der Kalender- und UI-Darstellung gut lesbar zu bleiben.
 
-\begin{figure}[H]
+\begin{figure}
     \centering
     \includegraphics[width=0.4\textwidth]{img/KantiKoala-Logo-Var2.png}
     \caption[Logo der Applikation Kanti Koala. Eigene Darstellung, 22.05.2025.]{Logo der Applikation Kanti Koala}
@@ -160,22 +157,19 @@ Der Name «KantiKoala» verbindet «Kanti» (Kurzform von Kantonsschule) mit dem
 \begin{quote}
 Kann eine digitale Applikation so konzipiert und prototypisch umgesetzt werden, dass sie Schüler:innen eine übersichtliche Organisation von Terminen, Aufgaben und Lernzeiten ermöglicht und zugleich Funktionen bereitstellt, die regelmässige Lerngewohnheiten unterstützen?
 \end{quote}
+\textit{Begriffsklärung:} Unter „Organisation erleichtern“ verstehen wir eine bessere Übersicht über anstehende Termine/Aufgaben und eine Verringerung des manuellen Planungsaufwands. „Lerngewohnheiten unterstützen“ meint Funktionen, die regelmässige, zeitlich abgegrenzte Lernphasen fördern (z. B. Lernblöcke und Timer).\\
 
 \noindent
-\textbf{Begriffsklärung:} Unter «Organisation erleichtern» verstehen wir konkret eine bessere Übersicht über anstehende Termine und Aufgaben sowie eine messbare Verringerung des manuellen Planungsaufwands durch algorithmische Lernblock-Generierung. «Lerngewohnheiten unterstützen» bezeichnet Funktionen, die regelmässige, zeitlich abgegrenzte Lernphasen fördern (z.\,B. algorithmisch geplante Lernblöcke), wodurch strukturiertes, wiederholtes Lernen ermöglicht wird.
-
-\noindent
-\textbf{Zielsetzung:} Das primäre Ziel dieser Arbeit ist die Entwicklung eines funktionsfähigen Prototyps, der die zur Beantwortung der Fragestellung notwendigen funktionalen Strukturen bereitstellt. Konkret bedeutet dies: (1) Eine Agenda mit Prioritätssteuerung und ICS-Import/Export, (2) einen regelbasierten Lernzeitalgorithmus mit Konfliktprüfung, (3) Notenerfassung und -darstellung, (4) einen konfigurierbaren Timer sowie (5) recherchierte Lerntipps. Eine umfassende empirische Wirkungsevaluation über Verhaltensänderungen liegt ausserhalb des Projektrahmens; stattdessen wird die Bedienbarkeit formativ durch Usability-Tests geprüft. Der Prototyp soll als Grundlage für zukünftige Langzeitstudien dienen.
+\textit{Zielsetzung:} Entwicklung eines Prototyps, der die zur Messung dieser Indikatoren notwendigen funktionalen Strukturen (Agenda mit Prioritäten, Lernblock-Generierung, Notenerfassung, Timer) bereitstellt.
 
 \section{Aufbau und Begründung des schriftlichen Kommentars}
 Der Bericht ist entlang der Entwicklungslogik aufgebaut und führt von der Ausgangslage über die Umsetzung zur Einordnung:
 \begin{enumerate}
-  \item \textbf{Recherche}: Darstellung der Literaturstudie, Interviews mit PPP-Lehrpersonen und Umfrage unter Schüler:innen. Dieser Teil begründet die Anforderungsableitung und zeigt, wie theoretische Erkenntnisse (Lernmethoden, Zeit-, Pausen- und Stressmanagement) sowie empirische Validierung (Bedarf, Nutzerpräferenzen) in konkrete Funktionsprioritäten überführt wurden.
-  \item \textbf{Methodik -- Programmierung}: Beschreibung der technischen Umsetzung, einschliesslich Systemarchitektur, Datenstrukturen, detaillierter Darstellung der Features (Agenda, Lernzeitalgorithmus, Notenverwaltung, Timer, Lerntipps), Sicherheitsaspekte (CSRF-Schutz, Passwort-Hashing, HTTPS) und Testing (funktionale Tests, Usability-Tests).
-  \item \textbf{Schlussfolgerung und Ausblick}: Bilanz zur Fragestellung, gewonnene Erkenntnisse aus dem Arbeitsprozess, Limitationen der Arbeit und offene Forschungsfragen für zukünftige Weiterentwicklung.
+  \item \textbf{Recherche}: TBA
+  \item \textbf{Methodik - Programmierung}: Systemarchitektur, Datenstrukturen, Darstellung der Features, Sicherheitsaspekte und schliesslich noch Testing.
+  \item \textbf{Schlussfolgerung und Ausblick}: Bilanz zur Fragestellung, gewonnene Erkenntnisse und offene Arbeitsschritte.
 \end{enumerate}
-
-Diese Gliederung macht nachvollziehbar, wie aus Problemstellung und Zielsetzung konkrete technische Komponenten abgeleitet, implementiert und evaluiert wurden. Der Fokus liegt auf der transparenten Darstellung des gesamten Entwicklungsprozesses von der Bedarfsanalyse bis zur prototypischen Realisierung.
+Die Gliederung macht nachvollziehbar, wie aus Problemstellung und Zielsetzung konkrete Komponenten abgeleitet, implementiert und dokumentiert wurden; ein Usability-Test der Bedienbarkeit und Verständlichkeit ist auch Bestandteil der Arbeit und wurde durchgeführt.
 
 % ------------------------------Recherche------------------------------
 \chapter{Recherche}
@@ -712,16 +706,27 @@ Unsere Fragen zur Musik waren extrem kontrovers. Bei beiden Teilen der Likert-Fr
 Somit zeigte dies uns, dass die Musik kein besonders begehrtes Feature sein würde, vor allem wenn viele diese als ablenkend empfinden.
 
 Das Konzept einer Web-Applikation selbst wurde aber sehr begrüsst, mit \enquote{Ja} als rund \textbf{77\%} aller Antworten.
-Auch waren alle vorgeschlagenen Features sehr beliebt, mit der Agenda an der Spitze mit \textbf{55} Stimmen und die Notendarstellung am wenigsten 
+Auch waren alle vorgeschlagenen Features sehr beliebt, mit der Agenda an der Spitze mit \textbf{55} Stimmen und die Notenorganisation am wenigsten mit \textbf{40} Stimmen.
+Aber dennoch wurden fast alle Features von mehr als der Hälfte der Befragten gewünscht.
 
-\myparagraph{Erkenntnisse zum Lernen}
+Leider gab es hier keine nützlichen Feature-Requests, aber wir bekamen insgesamt \textbf{35} seriöse Tipp-Vorschläge für unsere Web-Applikation, was für uns einen grossen Erfolg darstellt.
 
-\myparagraph{Erkenntnisse zur Web-Applikation}
+\myparagraph{Erkenntnisse}
+Aus der Umfrage kamen hauptsächlich einige Erkenntnisse zur Web-Applikation heraus, und nur wenige zum Lernverhalten, welche hauptsächlich auch schon alle in den vorherigen Abschnitten aufgeführt wurden.
+
+Wichtige Erkenntnisse für die Web-Applikation beinhalten unter anderem:
+\begin{itemize}
+    \item Prüfungsstress tritt in unserer Zielgruppe tatsächlich häufig auf und kommt am meisten von innen.
+    \item Die Agenda ist indes das meistgewollte Feature für unsere Web-Applikation, aber alle unsere Vorschläge in der Umfrage sind populär.
+    \item Wir konnten einige gute Tipps direkt von den Befragten gewinnen.
+\end{itemize}
 
 \myparagraph{Empfehlungen}
+Somit konnten wir nun auch als letztens konkrete Empfehlungen formulieren. 
+Diese bestanden zum grössten Teil aus den Vorschlägen für Tipps aus der Umfrage, aber auch Inhalte wie, dass ein Feature gegen Prokrastination, beispielsweise Lern-Erinnerungen, nützlich sein könnten und dass die Agenda unsere Priorität sein sollte.
 
 
-
+Also hatten wir schlussendlich auch aus der Umfrage-Analyse, neben den Validationen für unsere Arbeit, auch ein paar konkrete Empfehlungen gewonnen.
 \section{Fazit der Recherche}
 
 \section{Reflexion}
@@ -741,13 +746,13 @@ Für das Hosting der Produktivumgebung fiel die Wahl auf DigitalOcean. Ausschlag
 
 \section[Anforderungen]{Anforderungen\texorpdfstring{\aifootnotemark}{}}
 \aifootnotetext{04.11.2025}
-Bevor wir mit dem Programmieren der Web-Applikation beginnen konnten, mussten wir uns zuerst über die Anforderungen an die Applikation klar werden. Da es sich um eine Web-Applikation handelt, welche den Schüler:innen der Kantonsschule Baden helfen soll, mussten wir uns überlegen, welche Funktionen die Applikation beinhalten sollte und wie diese umgesetzt werden könnten. Manche Anforderungen stammen aus dem Maturitätsarbeitvertrag und andere aus unserer Recherchephase (Literaturstudie, Interviews, Umfrage).
+Bevor wir mit dem Programmieren der Web-Applikation beginnen konnten, mussten wir uns zuerst über die Anforderungen an die Applikation klar werden. Da es sich um eine Web-Applikation handelt, welche den Schüler:innen der Kantonsschule Baden helfen soll, mussten wir uns überlegen, welche Funktionen die Applikation beinhalten sollte und wie diese umgesetzt werden könnten.
 
 Die Anforderungen an die Kanti Koala Web-Applikation sind wie folgt:
 \begin{itemize}
     \item \textbf{Home-Screen}: Von dem Home-Screen sollte man auf seinen Account und die Agenda zugreifen können. Zusätzlich sollte hier jeden Tag ein allgemeiner Tipp für die Kantonsschule angezeigt werden.
     \item \textbf{Account Management}: Die Nutzer:innen sollten sich registrieren, einloggen, ihr Passwort zurücksetzen und ihre Account-Einstellungen ändern können. Sie sollten die Möglichkeit haben, ihr Passwort zu ändern und allfälligerweise ihr Account zu löschen.
-    \item \textbf{Agenda}: Die Nutzer:innen sollten ihren Stundenplan eintragen können, sowohl manuell wie auch durch den Import einer \texttt{.ics}-Datei. Ebenso sollte man neue Ereignisse eintragen können. Die Ereignisse sollten veränderbar sein. Die Farbe der Ereignisse sollten auch frei bestimmbar sein. Man sollte auch die Agenda als \texttt{.ics}-Datei exportieren können. Die Agenda sollte auch einen Lernzeitalgorithmus beinhalten, welcher automatisch Lernzeiten basierend auf den eingetragenen Ereignissen und den Prioritätseinstellungen der Nutzer:innen plant.
+    \item \textbf{Agenda}: Die Nutzer:innen sollten ihren Stundenplan eintragen können, sowohl manuell wie auch durch den Import einer .ics-Datei. Ebenso sollte man neue Ereignisse eintragen können. Die Ereignisse sollten veränderbar sein. Die Farbe der Ereignisse sollten auch frei bestimmbar sein. Die Agenda sollte auch einen Lernzeitalgorithmus beinhalten, welcher automatisch Lernzeiten basierend auf den eingetragenen Ereignissen und den Prioritätseinstellungen der Nutzer:innen plant.
     \item \textbf{Notenverwaltung}: Die Nutzer:innen sollten ihre Noten für jedes Fach eintragen können. Die Noten sollten veränderbar und löschbar sein. Die Nutzer:innen sollten auch ihre Semester verwalten können, indem sie neue Semester hinzufügen, bestehende Semester bearbeiten und löschen können.
     \item \textbf{Lerntimer}: Die Nutzer:innen sollten einen Pomodoro-Timer verwenden können, um ihre Lernzeiten zu strukturieren. Der Timer sollte anpassbar sein, sodass die Nutzer:innen die Länge der Lern- und Pausenintervalle einstellen können.
     \item \textbf{UI}: Die Web-Applikation sollte ein ansprechendes UI haben, welches die Kernfunktionen (Agenda, Noten, Timer) ohne Schulung zugänglich macht.
@@ -916,7 +921,6 @@ So wird an jedem Tag genau ein Tipp angezeigt und über das Jahr hinweg zyklisch
 
 Der Titel dieses Features steht als englischer UI-Anker (\enquote{Tip of the Day}) in der Oberfläche, weil der Ausdruck als prägnanter UI-Anker wiedererkennbar ist; der eigentliche Inhalt (der Tipp) bleibt jedoch vollständig auf Deutsch, um Verständlichkeit und lokalen Bezug sicherzustellen.
 
-\textbf{Hinweis}: Das Dashboard ist keine Kernanforderung der Arbeit, wurde aber als nützliches Feature zur Verbesserung der Nutzererfahrung hinzugefügt. Die täglichen Tipps hingegen sind eine explizite Anforderung.
 
 \begin{figure}[!htp]     
     \centering     
@@ -1133,8 +1137,6 @@ Wir haben auch ein Scroll-To-Top Button implementiert, da wir von einer Rückmel
 \subsection{Einstellungen}
 In den Einstellungen kann der Nutzer verschiedene globale Einstellungen für die App vornehmen, wie zum Beispiel das Farbschema der App (hell oder dunkel), die bevorzugte Lernzeit, ob am Wochenende gelernt werden soll und die Farben der Prioritätsstufen. Diese Einstellungen werden in der Datenbank gespeichert und beim Laden der App abgerufen, um eine personalisierte Erfahrung zu bieten. Zusätzlich kann man hier auch sein Konto löschen und sein Passwort ändern.
 
-Aus unserer Recherche haben wir es auch für nützlich gehalten, dass die Nutzer:innen eine Anzeige bekommen, falls sie hier beides Samstag und Sonntag zum Lernen aktiviert haben, da dies nicht empfohlen wird laut unserer Recherche. Die Nutzer:innen bekommen dann eine kleine Warnung angezeigt, die sie darauf hinweist, mindestens ein Wochentag freizuhalten.
-
 \begin{figure}[!htp]
     \centering
     \includegraphics[width=\linewidth]{img/einstellungen-screenshot.png}
@@ -1149,9 +1151,7 @@ Aus unserer Recherche haben wir es auch für nützlich gehalten, dass die Nutzer
 
 Auf der \enquote{Über uns}-Seite stellen wir das Team hinter KantiKoala vor. Wir geben einen Einblick in unsere Motivation, die App zu entwickeln, und erläutern die Ziele, die wir mit KantiKoala verfolgen. Außerdem erklären wir, worin sich die KantiKoala-Web-App von anderen Lern-Apps unterscheidet. Zudem bieten wir Kontaktinformationen an, damit Nutzer:innen uns bei Fragen oder Feedback erreichen können.
 
-Als kleines \enquote{Easter Egg} haben wir auf der Teamseite außerdem die Kanti-Katze als Mitgründer hinzugefügt, um zu zeigen, dass die App von Schüler:innen entwickelt wurde. Das Bild der Katze haben wir von einem Freund.
-
-\textbf{Hinweis}: Die \enquote{Über uns}-Seite ist keine Kernanforderung der Arbeit, wurde aber als nützliches Feature zur Verbesserung der Nutzererfahrung hinzugefügt.    
+Als kleines \enquote{Easter Egg} haben wir auf der Teamseite außerdem die Kanti-Katze als Mitgründer hinzugefügt, um zu zeigen, dass die App von Schüler:innen entwickelt wurde.
 
 \begin{figure}[!htp]
     \centering
@@ -1165,8 +1165,6 @@ Als kleines \enquote{Easter Egg} haben wir auf der Teamseite außerdem die Kanti
 \subsection[Hilfe-Seite]{Hilfe-Seite\texorpdfstring{\aifootnotemark}{}}
 \footnotetext{ChatGPT (Version GPT-5 mini): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 09.11.2025. Antwort ganz übernommen.}
 Aus den Usability-Tests erhielten wir die Rückmeldung, eine Anleitung für die Nutzer:innen zu erstellen, damit klar wird, welche Funktionen die App bietet. Deshalb haben wir die Hilfeseite angelegt, die eine vollständige Anleitung zur Nutzung der Anwendung enthält. Sie erklärt alle Features, bietet einen Schnellstart und Best Practices zur optimalen Nutzung der App. 
-
-\textbf{Hinweis}: Die \enquote{Über uns}-Seite ist keine Kernanforderung der Arbeit, wurde aber als nützliches Feature zur Verbesserung der Nutzererfahrung hinzugefügt.
 
 \begin{figure}[!htp]
     \centering
@@ -1288,100 +1286,53 @@ Um die Anonymität der Tester:innen zu gewährleisten, lassen wir die Namen weg.
 
 % Schlussfolgerung und Ausblick
 %\clearpage
-% Schlussfolgerung und Ausblick
 \chapter[Schlussfolgerung und Ausblick]{Schlussfolgerung und Ausblick\texorpdfstring{\aifootnotemark}{}}
-\aifootnotetext{09.11.2025}
+\aifootnotetext{06.11.2025}
+\section*{Zusammenfassung}
+% Folgende Linie zu überarbeiten:
+Ausgehend von der in der Einleitung formulierten Zielsetzung -- Übersicht über Termine/Aufgaben/Lernzeiten schaffen und regelmässige, abgegrenzte Lernphasen unterstützen -- wurde ein prototypischer Web-Ansatz umgesetzt. Die zuvor durch Literaturstudie (Lern-, Zeit-, Pausen-, Stressaspekte), Interviews mit PPP-Lehrpersonen und eine Schüler:innen-Umfrage gewonnenen Erkenntnisse dienten der Ableitung der funktionalen Kernanforderungen (zentrale Agenda, automatische Lernblock-Erzeugung, strukturierte Zeitsegmente, einfache Notenerfassung, Basis-Schutzmassnahmen).
 
-\section{Zusammenfassung der Arbeit}
-Diese Maturitätsarbeit hatte zum Ziel, eine digitale Applikation zu konzipieren und prototypisch umzusetzen, die Schüler:innen der Kantonsschule Baden bei der Organisation von Terminen, Aufgaben und Lernzeiten unterstützt und gleichzeitig regelmässige Lerngewohnheiten fördert. Der Entwicklungsprozess gliederte sich in drei Hauptphasen: Recherche, technische Umsetzung und Evaluation.
-
-In der \textbf{Recherchephase} wurden durch eine fokussierte Literaturstudie grundlegende Erkenntnisse zu Lernmethoden, Zeit- und Pausenmanagement sowie Stressaspekten gewonnen. Diese theoretische Basis wurde durch zwei ausführliche Interviews mit PPP-Lehrpersonen der Kantonsschule Baden vertieft, die sowohl fachliches Wissen als auch praktische Erfahrungen aus dem Schulalltag einbrachten. Die anschliessende Umfrage unter 84 Schüler:innen validierte den identifizierten Bedarf empirisch: 57\% der Befragten gaben an, häufig Prüfungsstress zu erleben, und die Mehrheit beginnt erst 1--2 Tage vor Prüfungen mit dem Lernen. Diese Erkenntnisse strukturierten die Funktionsprioritäten der Applikation und die Parametrisierung des Lernzeitalgorithmus.
-
-Die \textbf{technische Umsetzung} erfolgte als webbasierte Applikation mit Python (Flask) als Backend-Framework, PostgreSQL als Datenbank und einer modularen Architektur nach dem Application-Factory-Pattern. Die Kernfunktionen umfassen:
+Umgesetzt wurden:
 \begin{itemize}
-    \item \textbf{Agenda}: Zentrale Event-Verwaltung mit manueller Erfassung, ICS-Import für Stundenpläne und Prioritätssteuerung als Grundlage für die Lernplanung.
-    \item \textbf{Lernzeitalgorithmus}: Rückwärts planender Algorithmus, der definierte Lernstunden vom Prüfungstermin ausgehend platziert, dabei tägliche Limits einhält, bevorzugte Lernzeiten berücksichtigt und Konflikte mit bestehenden Terminen vermeidet.
-    \item \textbf{Notenverwaltung}: Hierarchische Strukturierung nach Semester, Fach und einzelnen Noten mit automatischer Durchschnittsberechnung.
-    \item \textbf{Lerntimer}: Konfigurierbarer Pomodoro-Timer zur zeitlichen Segmentierung von Lern- und Pausenphasen.
-    \item \textbf{Lerntipps}: Kategorisierte Hinweise zu Lernmethoden, Stressmanagement und allgemeinen Kanti-Tipps, basierend auf den Rechercheergebnissen.
-    \item \textbf{Sicherheitsmassnahmen}: Authentifizierung mit gehashten Passwörtern, CSRF-Schutz und HTTPS-verschlüsselte Kommunikation.
+  \item \textbf{Agenda} als zentrales Organisationsinstrument mit manueller Event-Erfassung, Import von \texttt{.ics}-Stundenplänen und Prioritätsattributen als Grundlage für Lernblöcke (reduziert Mehrfacherfassung).
+  \item \textbf{Lernzeitalgorithmus} mit rückwärtsgerichteter, konfliktvermeidender Platzierung von Lernblöcken innerhalb täglicher Obergrenzen und gesetzter Prioritäten (unterstützt regelmässige, zeitlich definierte Phasen).
+  \item \textbf{Notenverwaltung} (Semester-Fach-Note) zur strukturierten Ablage schulischer Leistungsdaten (fördert konsistente Dokumentation).
+  \item \textbf{Pomodoro-basierter Lerntimer} zur zeitlichen Segmentierung von Lernintervallen und Pausen (Rahmen für wiederholbare Lerngewohnheiten).
+  \item \textbf{Tägliche Tipps} aus recherchierten Bereichen (Zeit-, Pausen-, Stressmanagement, Lernmethoden) als ergänzende Impulse.
+  \item \textbf{Authentifizierung} (Registrierung, Login, Passwort-Reset) mit gehashten/gesalzten Passwörtern (bcrypt) zur sicheren Zugangstrennung.
+  \item \textbf{Basis-Sicherheitsmassnahmen} (CSRF-Token, HTTPS-Kommunikation) zur Integrität von Sitzungsaktionen und Schutz der Transportstrecke.
+\end{itemize}
+Damit liegt ein kohärenter Prototyp vor, der die in der Einleitung definierten organisatorischen und lerngewohnheitsbezogenen Zielkomponenten funktional realisiert; Aussagen zur tatsächlichen Wirkung im Nutzungskontext stehen aus.
+
+\section*{Bilanz zur Fragestellung}
+Die Hauptfragestellung (Erleichterung von Organisation und Unterstützung regelmässiger Lerngewohnheiten) wurde technisch adressiert:
+\begin{itemize}
+  \item \textbf{Organisation erleichtern}: Zentrale Erfassung von Ereignissen, algorithmische Erstellung von Lernblöcken, Prioritätssteuerung und .ics-Import reduzieren manuellen Planungsaufwand (keine Mehrfacherfassung, automatische zeitliche Segmentierung vom Algorithmus).
+  \item \textbf{Unterstützung von Lerngewohnheiten}: Strukturierte Lernblöcke (mit Start-/Endzeiten) und konfigurierbarer Lerntimer bilden wiederkehrende Einheiten ab; Lerntipps liefern ergänzende Handlungsimpulse.
+\end{itemize}
+Nicht beantwortet ist die weitergehende empirische Wirkung (Langzeitnutzung, Lernverhaltensänderung); die Bedienbarkeit wurde jedoch formativ geprüft und Basisakzeptanz bestätigt. Wir dachten uns, dass eine langfristige Evaluation nur über ein Semester Sinn machen würde und im Rahmen einer Maturitätsarbeit nicht realisierbar ist.
+
+\section*{Erkenntnisse aus dem Arbeitsprozess}
+\begin{itemize}
+  \item Früh definierte Datenbeziehungen erleichtern Erweiterungen (z.B. zusätzliche Einstellungen).
+  \item Iterative Anpassung des Lernzeitalgorithmus notwendig (Rückwärtsplanung erwies sich zur Priorisierung naher Prüfungen als praktikabel; Konfliktpuffer reduzierten Engstellen).
+  \item Klare Prioritätsparameter (tägliches Maximum, Gesamtstunden) verhindern Überlastung, erforderten aber konsistente Validierung. % ?
+  \item Modularisierung (Blueprints, \texttt{extensions.py}, Factory) vereinfachte die Übersichtlichkeit und spätere Anpassungen.
+  \item Sicherheitsthemen (CSRF, Passwort-Hashing) müssen früh integriert werden, um Nacharbeiten zu vermeiden.
+  \item Transkription in Mundart führte zu hohem Aufwand; Standardisierung der Interviewsprache wäre effizienter.
 \end{itemize}
 
-Die \textbf{Evaluation} durch formative Usability-Tests mit drei Testpersonen bestätigte die grundlegende Bedienbarkeit und identifizierte konkrete Verbesserungspotenziale (Hilfe-Seite, manuelle Dark-Mode-Umschaltung, Scroll-to-Top-Funktion), die anschliessend implementiert wurden.
-
-\section{Bilanz zur Fragestellung}
-Die zentrale Fragestellung -- ob eine digitale Applikation die Organisation erleichtern und Lerngewohnheiten unterstützen kann -- wurde auf technischer Ebene erfolgreich adressiert:
-
-\textbf{Organisation erleichtern:} Die zentrale Agenda mit algorithmischer Lernblock-Generierung, ICS-Import und Prioritätssteuerung reduziert den manuellen Planungsaufwand erheblich. Statt wöchentlich Lernzeiten manuell einzuplanen, generiert der Algorithmus automatisch Lernblöcke basierend auf Prüfungsterminen und individuellen Einstellungen. Die Vorlauftransparenz wird durch die Kalenderansicht mit farblich codierten Prioritäten und die «Nächste Prüfungen»-Kachel auf dem Dashboard gewährleistet. Der Lernzeitalgorithmus verhindert durch die Konfliktprüfung Überlappungen und berücksichtigt persönliche Präferenzen (Wochenendlernen, bevorzugte Lernzeit).
-
-\textbf{Lerngewohnheiten unterstützen:} Die strukturierte Platzierung von Lernblöcken mit definierten Start- und Endzeiten schafft wiederkehrende, vorhersehbare Lerneinheiten. Der Pomodoro-Timer ermöglicht zusätzlich die Segmentierung innerhalb dieser Blöcke. Die Notenübersicht auf dem Dashboard motiviert durch Transparenz über den aktuellen Leistungsstand.
-
-\textbf{Limitationen:} Die Arbeit demonstriert die technische Machbarkeit und formative Akzeptanz, beantwortet jedoch nicht die weitergehende Frage nach der tatsächlichen Wirkung auf Lernverhalten und Stressniveau im Langzeiteinsatz. Eine empirische Wirkungsevaluation mit Längsschnittdaten (z.\,B. über ein Semester) würde Aufschluss über Verhaltensänderungen, tatsächliche Nutzung der Lernblöcke und Reduktion von Prokrastination geben, lag aber ausserhalb des Projektrahmens einer Maturitätsarbeit, da dies zeitlich nicht umsetzbar war.
-
-\section{Erkenntnisse aus dem Arbeitsprozess}
-Der Entwicklungsprozess lieferte mehrere wichtige Erkenntnisse:
-
-\textbf{Recherche und Anforderungsableitung:}
+\section*{Ausblick und offene Punkte}
 \begin{itemize}
-    \item Die Kombination aus Literaturstudium, Experteninterviews und Zielgruppenumfrage erwies sich als effektiv zur Anforderungsvalidierung. Jede Methode trug spezifische Erkenntnisse bei: Theorie aus der Literatur, praktische Erfahrungswerte aus Interviews und empirische Bedarfsbestätigung aus der Umfrage.
-    \item Die Transkription der Interviews auf Mundart führte zu unerwartet hohem Aufwand. Eine standardisierte Hochdeutsch-Durchführung wäre effizienter gewesen, ohne die Qualität der Inhalte zu beeinträchtigen.
-    \item Die Umfrage mit 84 Antworten lieferte eine statistisch aussagekräftige Stichprobe, die zentrale Annahmen bestätigte (Prüfungsstress, spätes Lernanfangen, Prokrastination).
+  \item Vertiefte Wirkungsstudie (Langzeit-Logdaten, Lernblock-Nutzung).
+  \item Erweiterte Analytics (Verhältnis geplante vs. absolvierte Lernblöcke).
+  \item Dynamische Prioritätsanpassung nach Notenfortschritt.
+  \item Native App-Evaluierung (Offline, Push-Benachrichtigungen).
 \end{itemize}
 
-\textbf{Technische Architektur:}
-\begin{itemize}
-    \item Eine frühere Entscheidung für eine modulare Architektur (Application-Factory-Pattern) hätte spätere Erweiterungen erheblich erleichtert. Es zeigte sich, dass eine klare Trennung von Modulen (Agenda, Notenverwaltung, etc.) die Wartbarkeit und Testbarkeit verbesserte, da es viel übersichtlicher war.
-    \item Die Verwendung von SQL-Datenbanken vereinfachte Datenbankoperationen und Schema-Migrationen. Die Beziehungsstruktur zwischen User, Settings, Events und anderen Modellen musste sorgfältig geplant werden, um Datenintegrität zu gewährleisten.
-\end{itemize}
+\section*{Fazit}
+Der Prototyp schafft eine funktionale Grundlage zur strukturierten Erfassung und Planung von schulischen Aktivitäten und Lernzeiten. Die technische Machbarkeit der Kernfunktionen ist gezeigt; die tatsächliche Wirkung auf Lernorganisation und Gewohnheiten bleibt Gegenstand zukünftiger Evaluation. Damit liegt eine belastbare Ausgangsbasis für eine empirische Validierungs- und Erweiterungsphase vor.
 
-\textbf{Sicherheit:}
-\begin{itemize}
-    \item Die Entwicklung eines eigenen CSRF-Decorators anstatt der Verwendung von Flask-WTF vertiefte das Verständnis für Sicherheitsmechanismen erheblich auf Kosten einer einfacheren Lösung.
-\end{itemize}
-
-\textbf{Usability und Iteratives Design:}
-\begin{itemize}
-    \item Die formativen Usability-Tests identifizierten konkrete Verbesserungspotenziale, die ohne Nutzerfeedback möglicherweise übersehen worden wären (z.\,B. Bedarf nach Hilfe-Seite).
-\end{itemize}
-
-\section{Offene Punkte und zukünftige Entwicklung}
-Der vorliegende Prototyp bildet eine solide Grundlage, weist aber auch klare Grenzen auf, die zukünftige Arbeit definieren:
-
-\textbf{Empirische Wirkungsevaluation:}
-\begin{itemize}
-    \item \textbf{Langzeitstudie über ein Semester}: Systematische Erhebung von Nutzungsdaten (Häufigkeit der Lernblock-Nutzung, Verhältnis geplanter zu absolvierten Lernstunden, Änderungen im Lernverhalten über Zeit).
-    \item \textbf{Vergleichsstudie}: Kontrollierte Vergleiche zwischen Nutzer:innen der App und einer Kontrollgruppe hinsichtlich Prüfungsstress, Prokrastination und Lernerfolg.
-    \item \textbf{Qualitative Interviews nach Langzeiteinsatz}: Vertiefte Exploration der subjektiv wahrgenommenen Wirkungen auf Organisation und Lerngewohnheiten.
-\end{itemize}
-
-\textbf{Funktionale Erweiterungen:}
-\begin{itemize}
-    \item \textbf{Dynamische Prioritätsanpassung}: Automatische Erhöhung der Priorität basierend auf Notenentwicklung oder nahenden Prüfungsterminen.
-    \item \textbf{Kollaborative Features}: Möglichkeit, Lerngruppen zu bilden und gemeinsame Lernzeiten zu planen.
-    \item \textbf{Push-Benachrichtigungen}: Erinnerungen an bevorstehende Lernblöcke und Prüfungen (erfordert native App oder Progressive Web App).
-    \item \textbf{Integration von Agenda-Abonnierung}: Möglichkeit, nicht nur Agendas zu importieren sondern auch zu abonnieren.
-\end{itemize}
-
-\textbf{Technische Optimierungen:}
-\begin{itemize}
-    \item \textbf{Native App-Entwicklung}: Evaluation einer nativen iOS/Android-App für verbesserte Offline-Funktionalität und Integration in mobile Betriebssysteme.
-\end{itemize}
-
-\textbf{Pädagogische Integration:}
-\begin{itemize}
-    \item \textbf{Lehrerintegration}: Funktionen für Lehrpersonen zur Einsicht in Schülerplanung (mit Zustimmung) zur besseren Koordination von Prüfungsterminen.
-\end{itemize}
-
-\section{Fazit}
-Diese Maturitätsarbeit demonstriert die technische Machbarkeit einer integrierten Lern- und Organisationsapplikation für Schüler:innen der Kantonsschule Baden. Der entwickelte Prototyp \enquote{KantiKoala} adressiert die identifizierten Problembereiche -- Prüfungsstress, spätes Lernanfangen, Prokrastination -- durch einen systematischen Ansatz: zentrale Agenda, algorithmische Lernplanung, strukturierte Zeitsegmentierung und recherchierte Lerntipps.
-
-Die Recherchephase validierte den Bedarf empirisch und lieferte die theoretische Grundlage für die Funktionsprioritäten. Die technische Umsetzung resultierte in einem funktionsfähigen, erweiterbaren System mit durchdachter Architektur und grundlegenden Sicherheitsmassnahmen. Die formativen Usability-Tests bestätigten die Bedienbarkeit und führten zu konkreten Verbesserungen.
-
-Die zentrale Fragestellung -- ob eine solche Applikation die Organisation erleichtern und Lerngewohnheiten unterstützen kann -- ist auf Ebene der funktionalen Realisierung positiv zu beantworten. Der Prototyp stellt die notwendigen Strukturen bereit: algorithmische Lernplanung zur Reduktion des manuellen Aufwands und strukturierte Lernblöcke zur Förderung regelmässiger Gewohnheiten.
-
-Die weitergehende Frage nach der empirischen Wirkung -- ob die App tatsächlich Lernverhalten verändert und Stress reduziert -- bleibt offen und bildet das zentrale Forschungsfeld für zukünftige Arbeit. Der vorliegende Prototyp liefert dafür eine belastbare, erweiterbare Grundlage: technisch funktionsfähig, konzeptionell fundiert und formativ validiert. Die nächste Phase würde eine kontrollierte Langzeitstudie über ein Semester umfassen, um die postulierten Effekte auf Lernorganisation, Stressniveau und Prokrastination quantitativ zu evaluieren.
-
-Abschliessend lässt sich festhalten: Die Arbeit hat ihr Ziel erreicht, einen Prototyp zu entwickeln, der die Anforderungen an Organisation und Lernunterstützung funktional umsetzt. Sie schafft damit eine Ausgangsbasis für die empirische Validierung im realen Schulkontext -- ein notwendiger nächster Schritt, um aus einem technischen Prototyp ein nachweislich wirksames Werkzeug für Schüler:innen zu machen.
 
 % References
 
