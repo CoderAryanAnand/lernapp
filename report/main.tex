@@ -768,6 +768,9 @@ Diese Werte werden basierend auf der Priorität jeder Prüfung zugewiesen:
 \subsubsection{Ablauf und Planungsstrategie}
 Der Algorithmus arbeitet iterativ und bearbeitet alle als Prüfung markierten Ereignisse in aufsteigender Reihenfolge ihrer Priorität. Eine niedrigere Prioritätsnummer kennzeichnet dabei eine höhere Wichtigkeit.
 
+\textbf{Hinweis zum Umgang mit fehlenden Endzeiten:} 
+Falls ein Ereignis keine Endzeit besitzt, behandelt der Algorithmus dieses Ereignis als sogenanntes \emph{Punkt-Ereignis}, d.\,h. das Start- und Endzeitpunkt sind identisch. Dies ist insbesondere relevant, da importierte Kalenderdaten manchmal keine Endzeit angeben. Eine Korrektur dieses Verhaltens bereits beim Import könnte zu Darstellungsproblemen in der Kalenderansicht führen. Daher wurde entschieden, diese Anpassung erst im Algorithmus selbst vorzunehmen, um sowohl die Integrität der Planung als auch die Kompatibilität mit der Kalenderdarstellung zu gewährleisten.
+
 \begin{enumerate}
     \item \textbf{Zyklische Neuberechnung der Anforderungen (Recycling)}:
     \begin{itemize}
