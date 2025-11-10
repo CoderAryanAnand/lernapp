@@ -145,7 +145,7 @@ def index():
 
                     # Add to overall semester average calculation
                     total_value_weight += subj_total_value_weight
-                    total_weight += subj_total_weight
+                    total_weight += 1  # add subject weight as 1 for overall average, now only subjects that have grades will be divided
 
             if total_weight > 0:
                 overall_avg = total_value_weight / total_weight
