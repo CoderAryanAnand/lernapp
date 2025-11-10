@@ -89,8 +89,29 @@
         <button onclick="saveSemesterRename()" class="px-4 py-2 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700">Speichern</button>
     </div>
 </div>
+
+<!-- Subject Delete Confirmation Modal -->
+<div id="delete-subject-confirm-popup" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-lg z-50 text-center">
+    <h3 id="confirm-subject-name" class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">Fach löschen bestätigen</h3>
+    <p class="text-zinc-600 dark:text-zinc-300 mb-6">Sind Sie sicher, dass Sie dieses Fach und alle Noten löschen möchten?</p>
+    <div class="flex justify-center space-x-3">
+        <button onclick="closeDeleteSubjectConfirm()" class="px-4 py-2 font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-600 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-500">Abbrechen</button>
+        <button onclick="confirmDeleteSubject()" class="px-4 py-2 font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700">Ja, löschen</button>
+    </div>
+</div>
+
+<!-- Grade Delete Confirmation Modal -->
+<div id="delete-grade-confirm-popup" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-lg z-50 text-center">
+    <h3 id="confirm-grade-name" class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">Note löschen bestätigen</h3>
+    <p class="text-zinc-600 dark:text-zinc-300 mb-6">Sind Sie sicher, dass Sie diese Note löschen möchten?</p>
+    <div class="flex justify-center space-x-3">
+        <button onclick="closeDeleteGradeConfirm()" class="px-4 py-2 font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-600 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-500">Abbrechen</button>
+        <button onclick="confirmDeleteGrade()" class="px-4 py-2 font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700">Ja, löschen</button>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/noten.js') }}"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 {% endblock %}

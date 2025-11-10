@@ -239,8 +239,19 @@ function addSubject(container, subjectName, grades = [], countsAverage = true) {
             <span class="subject-average text-sm text-zinc-500 dark:text-zinc-400">${`Schnitt: 0${countsAverage ? '' : ' (zählt nicht)'}`}</span>
         </div>
         <div class="flex items-center space-x-2">
-            <button class="edit-subject-btn p-1.5 text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-700"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path></svg></button>
-            <svg class="chevron w-5 h-5 text-zinc-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            <button class="edit-subject-btn p-1.5 text-zinc-500 hover:text-blue-600 dark:hover:text-blue-400 rounded-md hover:bg-zinc-100 dark:hover:bg-zinc-700">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"></path>
+                </svg>
+            </button>
+            <svg class="chevron w-5 h-5 text-zinc-500 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+            </svg>
+            <span class="drag-handle cursor-grab active:cursor-grabbing ml-2 p-1 rounded text-zinc-500 hover:text-blue-600 dark:text-zinc-400 dark:hover:text-blue-400 hover:bg-zinc-100 dark:hover:bg-zinc-700 focus:outline-none" tabindex="0" title="Fach verschieben" aria-label="Fach verschieben">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 10h16M4 14h16"></path>
+                </svg>
+            </span>
         </div>
     `;
     
@@ -260,28 +271,26 @@ function addSubject(container, subjectName, grades = [], countsAverage = true) {
     const actionsDiv = document.createElement("div");
     actionsDiv.className = "flex flex-wrap gap-2 mt-4";
     actionsDiv.innerHTML = `
-        <button class="add-grade-btn text-sm px-3 py-1.5 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700">Note hinzufügen</button>
-        <button class="dream-calc-btn text-sm px-3 py-1.5 font-semibold text-white bg-green-600 rounded-md hover:bg-green-700">Wunschnote</button>
-        <button class="delete-subject-btn text-sm px-3 py-1.5 font-semibold text-white bg-red-600 rounded-md hover:bg-red-700">Fach löschen</button>
+        <button class="add-grade-btn text-sm px-3 py-2 font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700">Note hinzufügen</button>
+        <button class="dream-calc-btn text-sm px-3 py-2 font-semibold text-white bg-green-600 rounded-md hover:bg-green-700">Wunschnote</button>
+        <button class="delete-subject-btn text-sm px-3 py-2 font-semibold text-white bg-red-600 rounded-md hover:bg-red-700">Fach löschen</button>
     `;
     content.appendChild(actionsDiv);
     
     header.onclick = (e) => {
-        if (!e.target.closest('button')) {
+        if (!e.target.closest('button') && !e.target.classList.contains('drag-handle')) {
             content.classList.toggle("hidden");
             header.querySelector('.chevron').classList.toggle("rotate-180");
         }
     };
     header.querySelector('.edit-subject-btn').onclick = (e) => { e.stopPropagation(); openSubjectPopup(subjectDiv); };
     actionsDiv.querySelector('.add-grade-btn').onclick = () => {
-        currentSubjectForGrade = { gradesList, avgSpan: header.querySelector(".subject-average"), semesterDiv: subjectDiv.closest('.semester') };
+        currentSubjectForGrade = { gradesList, avgSpan: header.querySelector(".subject-average"), semesterDiv: subjectDiv };
         openGradePopup();
     };
     actionsDiv.querySelector('.dream-calc-btn').onclick = () => openDreamCalcPopup(subjectDiv);
     actionsDiv.querySelector('.delete-subject-btn').onclick = () => { 
-        subjectDiv.remove(); 
-        updateSemesterAverage(subjectDiv.closest('.semester')); 
-        saveAllSemestersToBackend(); 
+        openDeleteSubjectConfirm(subjectDiv);
     };
     updateSubjectAverage(gradesList, header.querySelector(".subject-average"), subjectDiv.closest('.semester'));
 }
@@ -312,9 +321,7 @@ function renderGradeRow(gradesList, name, value, weight, counts, gradeRow = null
     const subjectContext = { gradesList, avgSpan: gradesList.closest('.subject').querySelector('.subject-average'), semesterDiv: gradesList.closest('.semester') };
     gradeRow.querySelector('.edit-grade-btn').onclick = () => { currentSubjectForGrade = subjectContext; openGradePopup(gradeRow); };
     gradeRow.querySelector('.delete-grade-btn').onclick = () => {
-        gradeRow.remove();
-        updateSubjectAverage(subjectContext.gradesList, subjectContext.avgSpan, subjectContext.semesterDiv);
-        saveAllSemestersToBackend();
+        openDeleteGradeConfirm(gradeRow, subjectContext);
     };
 }
 function renderSemester(sem, isNew = false) {
@@ -343,8 +350,8 @@ function renderSemester(sem, isNew = false) {
     const actionsDiv = document.createElement("div");
     actionsDiv.className = "flex gap-2 mt-4";
     actionsDiv.innerHTML = `
-        <button class="add-subject-btn px-3 py-1.5 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700">Fach hinzufügen</button>
-        <button class="delete-semester-btn px-3 py-1.5 text-sm font-semibold text-white bg-red-600 rounded-md hover:bg-red-700">Semester löschen</button>
+        <button class="add-subject-btn px-3 py-2 text-sm font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700">Fach hinzufügen</button>
+        <button class="delete-semester-btn px-3 py-2 text-sm font-semibold text-white bg-red-600 rounded-md hover:bg-red-700">Semester löschen</button>
     `;
     content.appendChild(actionsDiv);
     semesterDiv.append(header, content);
@@ -359,6 +366,24 @@ function renderSemester(sem, isNew = false) {
     actionsDiv.querySelector('.add-subject-btn').onclick = () => addSubjectPrompt(subjectsContainer);
     actionsDiv.querySelector('.delete-semester-btn').onclick = () => openDeleteConfirm(semesterDiv);
     updateSemesterAverage(semesterDiv);
+
+    // --- Make subjects reorderable with SortableJS ---
+    if (typeof Sortable !== "undefined") {
+        new Sortable(subjectsContainer, {
+            animation: 150,
+            handle: '.drag-handle',
+            onStart: function (evt) {
+                evt.item.classList.add('ring-2', 'ring-blue-400', 'bg-blue-50', 'dark:bg-blue-900/30');
+            },
+            onEnd: function (evt) {
+                evt.item.classList.remove('ring-2', 'ring-blue-400', 'bg-blue-50', 'dark:bg-blue-900/30');
+                saveAllSemestersToBackend();
+            },
+            onMove: function (evt) {
+                // Optionally, you can add more feedback here
+            }
+        });
+    }
 }
 
 // --- Backend and Initialization ---
@@ -471,3 +496,51 @@ document.addEventListener('keydown', function (e) {
         }
     }
 });
+// Subject Delete Confirm
+let subjectToDelete = null;
+function openDeleteSubjectConfirm(subjectDiv) {
+    subjectToDelete = subjectDiv;
+    const subjectName = subjectDiv.querySelector('.subject-title').textContent.trim();
+    document.getElementById('confirm-subject-name').textContent = `${subjectName} löschen?`;
+    overlay.classList.remove("hidden");
+    document.getElementById("delete-subject-confirm-popup").classList.remove("hidden");
+}
+function closeDeleteSubjectConfirm() {
+    overlay.classList.add("hidden");
+    document.getElementById("delete-subject-confirm-popup").classList.add("hidden");
+    subjectToDelete = null;
+}
+function confirmDeleteSubject() {
+    if (subjectToDelete) {
+        subjectToDelete.remove();
+        saveAllSemestersToBackend();
+    }
+    closeDeleteSubjectConfirm();
+}
+
+// Grade Delete Confirm
+let gradeToDelete = null;
+function openDeleteGradeConfirm(gradeRow, subjectContext) {
+    gradeToDelete = { gradeRow, subjectContext };
+    const gradeName = gradeRow.dataset.name;
+    document.getElementById('confirm-grade-name').textContent = `${gradeName} löschen?`;
+    overlay.classList.remove("hidden");
+    document.getElementById("delete-grade-confirm-popup").classList.remove("hidden");
+}
+function closeDeleteGradeConfirm() {
+    overlay.classList.add("hidden");
+    document.getElementById("delete-grade-confirm-popup").classList.add("hidden");
+    gradeToDelete = null;
+}
+function confirmDeleteGrade() {
+    if (gradeToDelete) {
+        gradeToDelete.gradeRow.remove();
+        updateSubjectAverage(
+            gradeToDelete.subjectContext.gradesList,
+            gradeToDelete.subjectContext.avgSpan,
+            gradeToDelete.subjectContext.semesterDiv
+        );
+        saveAllSemestersToBackend();
+    }
+    closeDeleteGradeConfirm();
+}
