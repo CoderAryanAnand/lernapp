@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, session, current_app, abort
 from datetime import datetime, timedelta
 import os, json
 
-from ..models import Settings, User, Semester, Event
+from ..models import Settings, User, Semester, Event, ToDoCategory
 from ..utils import login_required
 
 main_bp = Blueprint(
@@ -250,3 +250,15 @@ def hilfe():
         str: Rendered HTML template ('hilfe.html').
     """
     return render_template("hilfe.html")
+
+@main_bp.route("/todo")
+@login_required
+def todo_index(user):
+    """
+    To-Do List route: Displays the user's to-do categories and items.
+
+    Returns:
+        str: Rendered HTML template ('todo.html').
+    """
+    categories = ToDoCategory.query.filter_by(user_id=user.id).all()
+    return render_template("todo.html", categories=categories)

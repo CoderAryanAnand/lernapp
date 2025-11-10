@@ -1,6 +1,7 @@
 {% if session.username %}
     <a href="{{ url_for('main.agenda') }}" class="flex items-center px-4 py-2 text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700">Agenda</a>
     <a href="{{ url_for('main.noten') }}" class="flex items-center px-4 py-2 text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700">Noten</a>
+    <a href="{{ url_for('main.todo_index') }}" class="flex items-center px-4 py-2 text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700">To-Do Liste</a>
     <a href="{{ url_for('main.lerntimer') }}" class="flex items-center px-4 py-2 text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700">Lerntimer</a>
     <a href="{{ url_for('main.lerntipps') }}" class="flex items-center px-4 py-2 text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700">Lerntipps</a>
     <a href="{{ url_for('main.about') }}" class="flex items-center px-4 py-2 text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700">Über uns</a>

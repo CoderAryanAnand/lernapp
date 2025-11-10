@@ -30,6 +30,9 @@ class User(db.Model):
     settings = db.relationship(
         "Settings", backref="user", uselist=False, lazy=True, cascade="all, delete-orphan"
     )
+    todo_categories = db.relationship(
+        "ToDoCategory", backref="user", lazy=True, cascade="all, delete-orphan"
+    )
 
 
 class Settings(db.Model):
@@ -202,3 +205,39 @@ class Grade(db.Model):
     value = db.Column(db.Float, nullable=False)
     weight = db.Column(db.Float, nullable=False)
     counts = db.Column(db.Boolean, nullable=False, default=True)
+
+
+class ToDoCategory(db.Model):
+    """
+    SQLAlchemy model for storing user-specific to-do list categories.
+
+    Attributes:
+        id (int): Primary key.
+        user_id (int): Foreign key to the User model.
+        name (str): Category name (e.g., 'Work', 'Personal').
+        color (str): Hex color code for the category display.
+    """
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+
+    items = db.relationship(
+        "ToDoItem", backref="category", lazy=True, cascade="all, delete-orphan"
+    )
+
+
+class ToDoItem(db.Model):
+    """
+    SQLAlchemy model for storing individual to-do list items.
+
+    Attributes:
+        id (int): Primary key.
+        category_id (int): Foreign key to the ToDoCategory model.
+        description (str): Description of the to-do item.
+        completed (bool): Completion status of the to-do item.
+    """
+
+    id = db.Column(db.Integer, primary_key=True)
+    category_id = db.Column(db.Integer, db.ForeignKey("to_do_category.id"), nullable=False)
+    description = db.Column(db.String(500), nullable=False)
