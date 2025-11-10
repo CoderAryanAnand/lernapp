@@ -822,6 +822,7 @@ Die Nutzer:innen sollten auch ihre Semester verwalten können, indem sie neue Se
 \item \textbf{Lerntimer}: Die Nutzer:innen sollten einen Pomodoro-Timer verwenden können, um ihre Lernzeiten zu strukturieren.
 Der Timer sollte anpassbar sein, sodass die Nutzer:innen die Länge der Lern- und Pausenintervalle einstellen können.
 \item \textbf{UI}: Die Web-Applikation sollte ein ansprechendes UI haben, welches die Kernfunktionen (Agenda, Noten, Timer) ohne Schulung zugänglich macht.
+\item \textbf{To-Do Liste}: Basierend auf den Empfehlungen aus der Recherche (vgl. Abschnitt 2.3.5) sollten Nutzer:innen die Möglichkeit haben, Aufgaben in Kategorien zu organisieren, hinzuzufügen und zu löschen.
 \end{itemize}
 
 \section[Systemarchitektur und Datenmodell]{Systemarchitektur und Datenmodell\texorpdfstring{\aifootnotemark}{}}
@@ -952,6 +953,22 @@ Enthält \textbf{user\_id} (Fremdschlüssel) und \textbf{name}.
 \item[\textbf{Grade}] Speichert Bewertungen für Fächer. Enthält \textbf{subject\_id} (Fremdschlüssel), \textbf{name}, \textbf{value}, \textbf{weight} und \textbf{counts}.
 \end{description}
 
+\myparagraph{ToDoCategory}
+Speichert benutzerdefinierte Kategorien für die To-Do-Liste.
+\begin{description}
+    \item[\textbf{id}] Eindeutige ID (Primary Key).
+    \item[\textbf{user\_id}] Fremdschlüssel zur \texttt{User}-Tabelle (notwendig).
+    \item[\textbf{name}] Name der Kategorie (notwendig).
+\end{description}
+
+\myparagraph{ToDoItem}
+Speichert einzelne Aufgaben (To-Dos) innerhalb einer Kategorie.
+\begin{description}
+    \item[\textbf{id}] Eindeutige ID (Primary Key).
+    \item[\textbf{category\_id}] Fremdschlüssel zur \texttt{ToDoCategory}-Tabelle (notwendig).
+    \item[\textbf{description}] Beschreibung der Aufgabe (notwendig).
+\end{description}
+
 \subsubsection{Beziehungsstruktur}
 Die Tabellen in der Datenbank sind durch Fremdschlüssel (Foreign Keys) miteinander verbunden, um die Beziehungen zwischen den verschiedenen Datenmodellen abzubilden.
 Beispielsweise verknüpft der Fremdschlüssel \texttt{user\_id} in der \texttt{Event}-Tabelle jedes Ereignis mit dem zugehörigen Nutzer.
@@ -960,10 +977,11 @@ Dadurch wird sichergestellt, dass jeder Kalendertermin eindeutig einem Benutzerk
 Die Abhängigkeiten und Kaskadenlöschungen (z.B. ein gelöschter \texttt{User} löscht alle seine \texttt{Events}, \texttt{Semesters} und \texttt{Settings}) sind über Fremdschlüsselverweise in allen untergeordneten Tabellen implementiert.
 Die zentralen Verbindungen sind:
 \begin{itemize}
-    \item \texttt{User} $\to$ \texttt{Settings} (1:1), \texttt{Events} (1:n), \texttt{Semester} (1:n)
+    \item \texttt{User} $\to$ \texttt{Settings} (1:1), \texttt{Events} (1:n), \texttt{Semester} (1:n), \texttt{ToDoCategory} (1:n)
     \item \texttt{Settings} $\to$ \texttt{PrioritySetting} (1:n)
     \item \texttt{Semester} $\to$ \texttt{Subject} (1:n)
     \item \texttt{Subject} $\to$ \texttt{Grade} (1:n)
+    \item \texttt{ToDoCategory} $\to$ \texttt{ToDoItem} (1:n)
 \end{itemize}
 
 \section{Implementierung der Kernfunktionen}
@@ -1017,7 +1035,7 @@ Der tägliche Tipp wird angezeigt, persönliche Daten wie Noten, Termine oder Pr
 \begin{itemize}
     \item \textbf{Notenübersicht:} Zeigt eine Zusammenfassung der schulischen Leistung des aktuellsten Semesters (aktueller Schnitt, Pluspunkte sowie bestes und schwächstes Fach).
 Sind noch keine Noten eingetragen, erscheint ein Hinweis mit Aufforderung zur Eingabe.
-\item \textbf{Heutige Termine:} Listet alle für den aktuellen Tag im Kalender eingetragenen Ereignisse mit Titel und Uhrzeit auf.
+\item \textbf{Heutige Termine:} Listet alle für den aktuellen Tag im Kalender eingetragenen Ereignisse mit Titel und Uhrzeit auf. Dies dient auch zur Erinnerung an Lernblöcke, falls welche am Tag stattfinden, was laut der Recherche von Vorteil ist (vgl. Abschnitt 2.4.4).
 \item \textbf{Nächste Prüfungen:} Zeigt die anstehenden Prüfungen der nächsten 21 Tage.
 Findet eine Prüfung am heutigen Tag statt, wird sie in einem dunklen Rot hervorgehoben; Prüfungen innerhalb der nächsten sieben Tage erscheinen in Rot, spätere Prüfungen werden orange markiert.
 \item \textbf{Tip of the Day:} Ein Bereich mit täglich wechselnden, kurzen Hinweisen — dieser Bereich ist sowohl für eingeloggte als auch für nicht eingeloggte Nutzer:innen sichtbar.
@@ -1123,7 +1141,7 @@ Daher wurde entschieden, diese Anpassung erst im Algorithmus selbst vorzunehmen,
     \item \textbf{Zyklische Neuberechnung der Anforderungen (Recycling)}:
     \begin{itemize}
         \item \textbf{Flexibilitätsbereinigung}: Alle vom System selbst geplanten, aber nicht gesperrten Lernblöcke für die aktuelle Prüfung werden gelöscht.
-Dies ermöglicht eine Neuplanung, falls sich die Rahmenbedingungen geändert haben.
+Dies ermöglicht eine Neuplanung, falls sich die Rahmenbedingungen geändert haben. Ein Block wird gesperrt, wenn der/die Nutzer:in ihn manuell verändert hat.
 \item \textbf{Soll-Stunden-Ermittlung}: Die noch zu erbringende Lernzeit wird neu berechnet unter Berücksichtigung bereits absolvierter oder manuell gesperrter Stunden.
 \end{itemize}
     \item \textbf{Rückwärts-Iterative Planung}:
@@ -1225,7 +1243,7 @@ Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Einstellungen-Se
 
 \FloatBarrier
 
-\subsection{Informationsseiten (Über Uns, Hilfe)}
+\subsection{Informationsseiten}
 \subsubsection[Über uns-Seite]{Über uns-Seite\texorpdfstring{\aifootnotemark}{}}
 \footnotetext{ChatGPT (Version GPT-5 mini): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text.
 [...]. }, 09.11.2025. Antwort ganz übernommen.}
@@ -1260,6 +1278,17 @@ Eigener Screenshot von Kanti Koala, 09.11.2025.]{Screenshot der Hilfe-Seite}
 \end{figure}
 
 \FloatBarrier
+
+\subsection{To-Do Liste}
+Als direkte Umsetzung einer \enquote{Kann}-Anforderung aus den Interviews (vgl. Abschnitt 2.3.5) wurde eine To-Do-Listen-Funktion implementiert. Diese Funktion dient der einfachen Organisation von Hausaufgaben oder anderen anstehenden Aufgaben.
+
+Die Funktionalität ermöglicht es Nutzer:innen:
+\begin{itemize}
+    \item \textbf{Kategorien zu erstellen:} Um Aufgaben thematisch zu gruppieren (z.B. nach Schule, Haushalt oder anderen Lebensbereichen).
+    \item \textbf{Aufgaben hinzuzufügen:} Zu jeder Kategorie können einzelne \texttt{ToDoItem}-Einträge mit einer Beschreibung hinzugefügt werden.
+    \item \textbf{Aufgaben zu löschen:} Sowohl einzelne Aufgaben als auch ganze Kategorien (mitsamt allen enthaltenen Aufgaben) können entfernt werden, sobald die Nutzer:innen dies erledigt haben.
+\end{itemize}
+Dies bietet eine grundlegende Struktur zur Aufgabenverwaltung, wie sie in der Recherche als nützlich identifiziert wurde.
 
 \section[Übergreifende Aspekte: Sicherheit und Design]{Übergreifende Aspekte: Sicherheit und Design\texorpdfstring{\aifootnotemark}{}}
 \footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text.
@@ -1422,55 +1451,234 @@ Das Feedback aus dieser formativen Evaluation war entscheidend für die Finalisi
     \item (Person 2) Die unklare Sektionsaufteilung bei den Lerntipps wurde überprüft und die Kategorien wurden klarer benannt (z.B. \enquote{Allgemeine Lerntipps} statt \enquote{Lernen}).
 \end{itemize}
 
-% Schlussfolgerung und Ausblick
-%\clearpage
+
+% Reflexion in Kapitel 3 (nach Abschnitt 3.7)
+\chapter[Reflexion zum Entwicklungsprozess]{Reflexion zum Entwicklungsprozess\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext{10.11.2025}
+
+Die Entwicklung der Kanti Koala Web-Applikation erstreckte sich über einen Zeitraum von mehreren Monaten und durchlief verschiedene Phasen, die sowohl Lernerfahrungen als auch Herausforderungen mit sich brachten.
+
+\section{Zeitmanagement und Projektplanung}
+Die ursprüngliche Zeitplanung erwies sich als zu optimistisch. Insbesondere die Recherche (Kapitel 2) war zuerst nur als kleiner Teil dieser Maturaarbeit gedacht, jedoch nahm sie schnell einen viel grösseren Umfang an, als wir gedacht hatten. 
+Eigentlich wollten wir die Recherche in den ersten paar Monaten vorüber haben, jedoch war die letzte Analyse erst im Oktober fertig. 
+Sie nahm viel mehr Zeit und Effort in gebrauch, als wir geplant haben und wir fielen so leicht hinter unseren Zeitplan.
+
+Jedoch hat sich der Aufwand gelohnt.
+Die Recherche validiert unsere Web-Applikation wunderbar und zeigt auf, dass alle Probleme, aufgrund dessen wir die Web-Applikation entworfen haben, auch tatsächlich in unserer Zielgruppe existieren.
+Ebenso erwarben wir mithilfe dieser Recherche sehr vieles an nützlichen Wissen, Tipps und Erkenntnissen, sodass dies unser Produkt erheblich verbessert und uns solide Grundlagen gibt, um die Web-Applikation gut weiterzuentwickeln.
+Dies war, unserer Meinung nach, den extra Aufwand absolut wert. Wir lernten vieles darüber, wie man eine sinnvolle und ziel-orientierte Recherche durchführt und auch, was für ein Zeitaufwand dies sein kann.
+
+Würden wir diese Recherche noch einmal durchführen, würden wir uns definitiv mehr darauf achten, dass genug Zeit dafür ausgelegt ist und dass uns gewisse Fehler, wie zum Beispiel dass die Interviews auf Mundart durchgeführt wurden, nicht mehr unterlaufen, da dies noch einmal viel mehr Aufwand beim transkribieren bedeutete.
+Somit sind wir, im grossen Ganzen, dennoch sehr zufrieden mit dem Verlauf der Recherche und der Ergebnisse, die sie uns geliefert hat.
+
+\section{Technische Herausforderungen}
+Die Implementierung des Lernzeitalgorithmus stellte ebenfalls eine grosse technische Herausforderung dar. Mehrere Iterationen waren notwendig, um einen funktionsfähigen Algorithmus zu entwickeln, der alle Anforderungen erfüllte:
+
+\begin{itemize}
+    \item Die anfängliche Vorwärtsplanung (vom heutigen Datum zum Prüfungstermin) führte zu suboptimalen Ergebnissen, da Lernblöcke zu früh platziert wurden und nähere Prüfungen nicht ausreichend priorisiert wurden. Die Umstellung auf eine rückwärtsgerichtete Planung (vom Prüfungstermin zum aktuellen Datum) löste dieses Problem.
+    \item Die Konfliktprüfung musste mehrfach überarbeitet werden, um zeitliche Überlappungen zuverlässig zu vermeiden. Die Einführung eines 30-minütigen Puffers vor und nach jedem Ereignis erwies sich als praktikable Lösung.
+    \item Die Behandlung von Zeitzonen erwies sich als komplexer als erwartet. Man musste immer sicherstellen, dass alle Zeitangaben konsistent in der gleichen Zeitzone verarbeitet wurden, um Fehler bei der Planung zu vermeiden.
+\end{itemize}
+
+Diese iterative Entwicklung war lehrreich, verbrauchte aber erhebliche Entwicklungszeit. 
+In zukünftigen Projekten würden wir versuchen, solche komplexen Algorithmen früher zu prototypisieren und zu testen, um technische Risiken besser einschätzen zu können.
+
+\section{Architekturentscheidungen}
+Die anfängliche Code-Struktur mit einer einzigen \texttt{app.py}-Datei erwies sich schnell als unübersichtlich. Die Umstrukturierung in ein modulares Python-Paket mit dem Application Factory Pattern war zeitaufwendig, verbesserte aber die Wartbarkeit erheblich. Diese Entscheidung hätte früher im Projekt getroffen werden sollen, um Refactoring-Aufwand zu minimieren.
+
+Die Wahl von Flask als Framework war grundsätzlich richtig, da unsere Vorkenntnisse eine schnellere Entwicklung ermöglichten. 
+
+\section{Usability-Testing}
+Der formative Usability-Test mit drei Personen lieferte wertvolles Feedback, das direkt umgesetzt werden konnte (Hilfe-Seite, manueller Dark-Mode-Wechsel, Scroll-To-Top-Button). Die Stichprobengrösse von drei Testern ist jedoch für eine umfassende Usability-Evaluation zu klein. Ein grösserer und diverserer Testerpool hätte möglicherweise weitere Schwachstellen identifiziert.
+
+Positiv zu vermerken ist, dass die identifizierten Mängel zeitnah behoben werden konnten, was den iterativen Entwicklungsansatz bestätigte. Allerdings erfolgte der Test relativ spät im Projekt, wodurch grössere strukturelle Änderungen schwieriger umsetzbar gewesen wären, welche aber glücklicherweise nicht notwendig waren.
+
+\section{Sicherheitsimplementierung}
+Die Implementierung von Sicherheitsmassnahmen (CSRF-Schutz, Passwort-Hashing, HTTPS) erfolgte teilweise parallel zur Funktionsentwicklung. Rückblickend wäre es effizienter gewesen, diese Aspekte von Anfang an systematisch zu integrieren, anstatt sie nachträglich hinzuzufügen. Dies hätte Refactoring-Aufwand reduziert.
+
+Die Entscheidung, einen eigenen CSRF-Decorator zu implementieren anstatt Flask-WTF zu verwenden, war aus Lernperspektive wertvoll, erhöhte aber den Entwicklungsaufwand. Für ein produktives System wäre die Verwendung etablierter Bibliotheken möglicherweise vorzuziehen.
+
+\section{Zusammenarbeit und Arbeitsteilung}
+Die Zusammenarbeit über Git und GitHub funktionierte grundsätzlich gut, erforderte aber Einarbeitungszeit. Merge-Konflikte traten gelegentlich auf, konnten aber durch regelmässige Synchronisation minimiert werden. Die Aufteilung der Arbeitspakete basierte auf individuellen Stärken, was die Effizienz steigerte. Dennoch zeigte sich, dass eine klarere Aufgabenverteilung und regelmässigere Abstimmungen den Fortschritt weiter hätten optimieren können.
+
+\section{Erkenntnisse für zukünftige Projekte}
+Aus dem Arbeitsprozess lassen sich folgende Erkenntnisse für zukünftige Projekte ableiten:
+
+\begin{itemize}
+    \item Realistische Zeitplanung mit ausreichenden Puffern ist essentiell.
+    \item Interviews sollten in der Zielsprache des Berichts geführt werden, um Transkriptionsaufwand zu reduzieren.
+    \item Architekturentscheidungen (Modularisierung, Design Patterns) sollten früh getroffen werden.
+    \item Sicherheitsaspekte sollten von Anfang an systematisch integriert werden.
+    \item Usability-Tests sollten früher und mit grösserer Stichprobe durchgeführt werden.
+    \item Regelmässige Code-Reviews und Refactoring-Phasen sollten eingeplant werden.
+\end{itemize}
+
+Trotz der genannten Herausforderungen konnten nicht nur alle Kernfunktionen erfolgreich implementiert werden, sondern auch weitere nützliche Features. Die gewonnenen Erkenntnisse tragen zur persönlichen Entwicklung im Bereich Projektmanagement und Software-Engineering bei und bieten eine solide Grundlage für zukünftige Projekte.
+
+% ------------------------------Schlussfolgerung und Ausblick------------------------------
 \chapter[Schlussfolgerung und Ausblick]{Schlussfolgerung und Ausblick\texorpdfstring{\aifootnotemark}{}}
-\aifootnotetext{06.11.2025}
-\section*{Zusammenfassung}
-% Folgende Linie zu überarbeiten:
-Ausgehend von der in der Einleitung formulierten Zielsetzung -- Übersicht über Termine/Aufgaben/Lernzeiten schaffen und regelmässige, abgegrenzte Lernphasen unterstützen -- wurde ein prototypischer Web-Ansatz umgesetzt. Die zuvor durch Literaturstudie (Lern-, Zeit-, Pausen-, Stressaspekte), Interviews mit PPP-Lehrpersonen und eine Schüler:innen-Umfrage gewonnenen Erkenntnisse dienten der Ableitung der funktionalen Kernanforderungen (zentrale Agenda, automatische Lernblock-Erzeugung, strukturierte Zeitsegmente, einfache Notenerfassung, Basis-Schutzmassnahmen).
+\aifootnotetext{10.11.2025}
 
-Umgesetzt wurden:
-\begin{itemize}
-  \item \textbf{Agenda} als zentrales Organisationsinstrument mit manueller Event-Erfassung, Import von \texttt{.ics}-Stundenplänen und Prioritätsattributen als Grundlage für Lernblöcke (reduziert Mehrfacherfassung).
-  \item \textbf{Lernzeitalgorithmus} mit rückwärtsgerichteter, konfliktvermeidender Platzierung von Lernblöcken innerhalb täglicher Obergrenzen und gesetzter Prioritäten (unterstützt regelmässige, zeitlich definierte Phasen).
-  \item \textbf{Notenverwaltung} (Semester-Fach-Note) zur strukturierten Ablage schulischer Leistungsdaten (fördert konsistente Dokumentation).
-  \item \textbf{Pomodoro-basierter Lerntimer} zur zeitlichen Segmentierung von Lernintervallen und Pausen (Rahmen für wiederholbare Lerngewohnheiten).
-  \item \textbf{Tägliche Tipps} aus recherchierten Bereichen (Zeit-, Pausen-, Stressmanagement, Lernmethoden) als ergänzende Impulse.
-  \item \textbf{Authentifizierung} (Registrierung, Login, Passwort-Reset) mit gehashten/gesalzten Passwörtern (bcrypt) zur sicheren Zugangstrennung.
-  \item \textbf{Basis-Sicherheitsmassnahmen} (CSRF-Token, HTTPS-Kommunikation) zur Integrität von Sitzungsaktionen und Schutz der Transportstrecke.
-\end{itemize}
-Damit liegt ein kohärenter Prototyp vor, der die in der Einleitung definierten organisatorischen und lerngewohnheitsbezogenen Zielkomponenten funktional realisiert; Aussagen zur tatsächlichen Wirkung im Nutzungskontext stehen aus.
+\section{Zusammenfassung der Arbeit}
+Diese Maturitätsarbeit hatte zum Ziel, eine webbasierte Applikation zu konzipieren und umzusetzen, die Schüler:innen der Kantonsschule Baden eine übersichtliche Organisation von Terminen, Aufgaben und Lernzeiten ermöglicht und Funktionen bereitstellt, die regelmässige Lerngewohnheiten unterstützen.
 
-\section*{Bilanz zur Fragestellung}
-Die Hauptfragestellung (Erleichterung von Organisation und Unterstützung regelmässiger Lerngewohnheiten) wurde technisch adressiert:
-\begin{itemize}
-  \item \textbf{Organisation erleichtern}: Zentrale Erfassung von Ereignissen, algorithmische Erstellung von Lernblöcken, Prioritätssteuerung und .ics-Import reduzieren manuellen Planungsaufwand (keine Mehrfacherfassung, automatische zeitliche Segmentierung vom Algorithmus).
-  \item \textbf{Unterstützung von Lerngewohnheiten}: Strukturierte Lernblöcke (mit Start-/Endzeiten) und konfigurierbarer Lerntimer bilden wiederkehrende Einheiten ab; Lerntipps liefern ergänzende Handlungsimpulse.
-\end{itemize}
-Nicht beantwortet ist die weitergehende empirische Wirkung (Langzeitnutzung, Lernverhaltensänderung); die Bedienbarkeit wurde jedoch formativ geprüft und Basisakzeptanz bestätigt. Wir dachten uns, dass eine langfristige Evaluation nur über ein Semester Sinn machen würde und im Rahmen einer Maturitätsarbeit nicht realisierbar ist.
+Die Arbeit gliederte sich in drei Hauptphasen:
 
-\section*{Erkenntnisse aus dem Arbeitsprozess}
+\textbf{Recherchephase (Kapitel 2):} Durch eine kombinierte Methodik aus Literaturstudie, Interviews mit zwei PPP-Lehrpersonen und einer Umfrage unter 84 Schüler:innen der Kantonsschule Baden wurden die Bedürfnisse der Zielgruppe systematisch erhoben. Die Recherche identifizierte vier zentrale Themenbereiche (Lernverhalten, Pausen-, Stress- und Zeitmanagement) und lieferte konkrete Anforderungen für die Applikation. Wichtige Erkenntnisse waren unter anderem, dass 57\% der befragten Schüler:innen häufig Prüfungsstress empfinden und die Mehrheit erst sehr spät (maximal zwei Tage vor einer Prüfung) mit dem Lernen beginnt.
+
+\textbf{Entwicklungsphase (Kapitel 3):} Basierend auf den Rechercheergebnissen wurde eine Flask-basierte Web-Applikation mit folgenden Kernfunktionen implementiert:
 \begin{itemize}
-  \item Früh definierte Datenbeziehungen erleichtern Erweiterungen (z.B. zusätzliche Einstellungen).
-  \item Iterative Anpassung des Lernzeitalgorithmus notwendig (Rückwärtsplanung erwies sich zur Priorisierung naher Prüfungen als praktikabel; Konfliktpuffer reduzierten Engstellen).
-  \item Klare Prioritätsparameter (tägliches Maximum, Gesamtstunden) verhindern Überlastung, erforderten aber konsistente Validierung. % ?
-  \item Modularisierung (Blueprints, \texttt{extensions.py}, Factory) vereinfachte die Übersichtlichkeit und spätere Anpassungen.
-  \item Sicherheitsthemen (CSRF, Passwort-Hashing) müssen früh integriert werden, um Nacharbeiten zu vermeiden.
-  \item Transkription in Mundart führte zu hohem Aufwand; Standardisierung der Interviewsprache wäre effizienter.
+    \item Eine zentrale Agenda mit Import-/Export-Funktionalität für \texttt{.ics}-Dateien
+    \item Ein Lernzeitalgorithmus (LZA), der auf Basis von Prioritätseinstellungen und Benutzerparametern automatisch Lernblöcke plant
+    \item Eine Notenverwaltung mit Semester-Fach-Struktur
+    \item Ein konfigurierbarer Pomodoro-Timer für strukturierte Lernphasen
+    \item Lerntipps und tägliche Tipps, basierend auf den Rechercheergebnissen
+    \item Ein Authentifizierungssystem mit Sicherheitsmassnahmen (bcrypt-Hashing, CSRF-Schutz, HTTPS)
 \end{itemize}
 
-\section*{Ausblick und offene Punkte}
+\textbf{Evaluationsphase (Kapitel 3.7):} Die Applikation wurde durch funktionale Tests und einen formativen Usability-Test mit drei Personen evaluiert. Das Feedback führte zu direkten Verbesserungen (Hilfe-Seite, manueller Dark-Mode, Scroll-To-Top-Button).
+
+\section{Beantwortung der Fragestellung}
+Die zentrale Fragestellung lautete:
+
+\begin{quote}
+Kann eine digitale Applikation so konzipiert und umgesetzt werden, dass sie Schüler:innen eine übersichtliche Organisation von Terminen, Aufgaben und Lernzeiten ermöglicht und zugleich Funktionen bereitstellt, die regelmässige Lerngewohnheiten unterstützen?
+\end{quote}
+
+Diese Fragestellung kann auf technischer Ebene bejaht werden. Die entwickelte Applikation stellt die notwendigen funktionalen Strukturen bereit:
+
+\textbf{Organisation von Terminen, Aufgaben und Lernzeiten:}
 \begin{itemize}
-  \item Vertiefte Wirkungsstudie (Langzeit-Logdaten, Lernblock-Nutzung).
-  \item Erweiterte Analytics (Verhältnis geplante vs. absolvierte Lernblöcke).
-  \item Dynamische Prioritätsanpassung nach Notenfortschritt.
-  \item Native App-Evaluierung (Offline, Push-Benachrichtigungen).
+    \item Die zentrale Agenda ermöglicht die Erfassung aller relevanten Termine an einem Ort.
+    \item Der Import von Stundenplänen als \texttt{.ics}-Datei reduziert den manuellen Erfassungsaufwand erheblich.
+    \item Der Lernzeitalgorithmus generiert automatisch Lernblöcke basierend auf Prüfungsterminen und Prioritätseinstellungen, wodurch die Planung von Lernzeiten erheblich vereinfacht wird.
+    \item Die Notenverwaltung bietet eine strukturierte Übersicht über schulische Leistungen.
 \end{itemize}
 
-\section*{Fazit}
-Der Prototyp schafft eine funktionale Grundlage zur strukturierten Erfassung und Planung von schulischen Aktivitäten und Lernzeiten. Die technische Machbarkeit der Kernfunktionen ist gezeigt; die tatsächliche Wirkung auf Lernorganisation und Gewohnheiten bleibt Gegenstand zukünftiger Evaluation. Damit liegt eine belastbare Ausgangsbasis für eine empirische Validierungs- und Erweiterungsphase vor.
+\textbf{Unterstützung regelmässiger Lerngewohnheiten:}
+\begin{itemize}
+    \item Der Lernzeitalgorithmus platziert Lernblöcke mit festen Start- und Endzeiten, was zeitlich abgegrenzte Lernphasen schafft.
+    \item Der Pomodoro-Timer strukturiert Lernintervalle und Pausen, was die Etablierung regelmässiger Lernroutinen unterstützt.
+    \item Tägliche Tipps liefern kontinuierliche Impulse zu verschiedenen Lernaspekten.
+    \item Die Priorisierung von Lernblöcken nach Dringlichkeit fördert frühzeitiges und wiederholtes Lernen.
+\end{itemize}
 
+\textbf{Einschränkungen der Beantwortung:}
+
+Es ist jedoch wichtig zu betonen, dass diese Arbeit die Frage nur auf der Ebene der technischen Umsetzbarkeit und der grundlegenden Bedienbarkeit beantwortet. Folgende Aspekte wurden nicht untersucht:
+
+\begin{itemize}
+    \item \textbf{Tatsächliche Nutzung:} Es liegen keine Daten über die Langzeitnutzung der Applikation vor. Ob Schüler:innen die App regelmässig verwenden würden, ist nicht belegt.
+    \item \textbf{Verhaltensänderung:} Ob die Nutzung der App tatsächlich zu einer Verbesserung des Lernverhaltens führt (z.B. früherer Lernbeginn, regelmässigere Lernphasen, reduzierter Stress), wurde nicht empirisch überprüft.
+    \item \textbf{Vergleichsstudien:} Ein Vergleich mit anderen Organisationsmethoden oder -apps wurde nicht durchgeführt.
+    \item \textbf{Wirksamkeitsevaluation:} Eine systematische Evaluation der Wirksamkeit einzelner Features (z.B. des Lernzeitalgorithmus) auf das Lernverhalten steht aus.
+\end{itemize}
+
+Die durchgeführte Umfrage validierte zwar das Vorhandensein der Probleme (Prokrastination, Stress, spätes Lernen) in der Zielgruppe und das grundsätzliche Interesse an einer solchen Applikation (77\% der Befragten äusserten Interesse). Dies belegt jedoch nicht die tatsächliche Wirksamkeit der implementierten Lösung.
+
+Der formative Usability-Test bestätigte die grundsätzliche Bedienbarkeit der Applikation, jedoch mit einer sehr kleinen Stichprobe (n=3). Eine umfassendere Usability-Evaluation mit grösserer und diverserer Nutzergruppe wäre für eine fundierte Aussage zur Gebrauchstauglichkeit notwendig.
+
+Zusammenfassend lässt sich sagen: Die Fragestellung wurde hinsichtlich der technischen Konzeption und Umsetzung beantwortet. Die Applikation bietet die notwendigen Funktionen und wurde als grundsätzlich bedienbar evaluiert. Ob sie die angestrebten Ziele (bessere Organisation, verbesserte Lerngewohnheiten) in der tatsächlichen Nutzung erreicht, bleibt eine offene empirische Frage, die weiterführende Forschung erfordert.
+
+\section{Wichtigste Erkenntnisse aus dem Arbeitsprozess}
+
+Aus dem gesamten Arbeitsprozess lassen sich mehrere zentrale Erkenntnisse ableiten:
+
+\subsection{Methodische Erkenntnisse}
+\begin{itemize}
+    \item Die Kombination verschiedener Recherchemethoden (Literatur, Interviews, Umfrage) lieferte komplementäre Perspektiven und ermöglichte eine fundierte Anforderungserhebung.
+    \item Interviews auf Mundart führten zu erheblichem Transkriptionsaufwand; die Durchführung in der Zielsprache des Berichts ist zu empfehlen.
+    \item Eine Umfragestichprobe von 84 Personen ermöglichte grundlegende Aussagen zur Zielgruppe, jedoch waren bestimmte Subgruppen (4. Klasse, IMS, WMS) unterrepräsentiert.
+    \item Frühes und iteratives Usability-Testing ist wertvoll; der Test sollte jedoch früher und mit grösserer Stichprobe erfolgen.
+\end{itemize}
+
+\subsection{Technische Erkenntnisse}
+\begin{itemize}
+    \item Frühzeitige Architekturentscheidungen (Modularisierung, Application Factory Pattern) erleichtern spätere Erweiterungen erheblich.
+    \item Iterative Algorithmenentwicklung ist notwendig; die Rückwärtsplanung des Lernzeitalgorithmus erwies sich als praktikabler als die anfängliche Vorwärtsplanung.
+    \item Sicherheitsaspekte (CSRF-Schutz, Passwort-Hashing) sollten von Anfang an systematisch integriert werden, nicht nachträglich hinzugefügt.
+    \item Klare Datenmodelle und Beziehungen (Foreign Keys, Cascade-Logik) sind fundamental für die Wartbarkeit.
+    \item Die Wahl etablierter Frameworks (Flask, SQLAlchemy) beschleunigt die Entwicklung, wenn Vorkenntnisse vorhanden sind.
+\end{itemize}
+
+\subsection{Projektmanagement-Erkenntnisse}
+\begin{itemize}
+    \item Realistische Zeitplanung mit ausreichenden Puffern ist essentiell; die Recherchephase dauerte deutlich länger als geplant.
+    \item Regelmässige Synchronisation über Git minimiert Merge-Konflikte bei kollaborativer Entwicklung.
+    \item Die Aufteilung nach Features ist sinnvoll, erfordert aber gute Abstimmung bei Schnittstellen.
+    \item Feedback-Schleifen (Usability-Tests, Code-Reviews) sollten frühzeitig eingeplant werden.
+\end{itemize}
+
+\subsection{Inhaltliche Erkenntnisse zur Zielgruppe}
+\begin{itemize}
+    \item Prokrastination und später Lernbeginn sind weit verbreitet (nur wenige beginnen früher als zwei Tage vor Prüfungen).
+    \item Prüfungsstress ist ein häufiges Phänomen (57\% der Befragten), primär verursacht durch internen Druck.
+    \item Interesse an organisatorischen Hilfsmitteln ist vorhanden (77\% Interesse an einer Lern-App), jedoch nutzen die wenigsten bereits systematische Planungstools.
+    \item Die Agenda wurde als wichtigstes Feature identifiziert, gefolgt vom Lerntimer und den Lerntipps.
+\end{itemize}
+
+\section{Ausblick und weiterführende Forschung}
+
+Die vorliegende Arbeit bietet eine solide technische Grundlage, wirft aber gleichzeitig mehrere Fragen auf, die weiterführende Forschung erfordern:
+
+\subsection{Empirische Wirksamkeitsevaluation}
+Die wichtigste offene Frage ist die tatsächliche Wirksamkeit der Applikation in der Praxis:
+
+\begin{itemize}
+    \item \textbf{Langzeit-Nutzungsstudie:} Eine Studie über mindestens ein Semester mit einer grösseren Nutzergruppe könnte erfassen, ob und wie regelmässig die App genutzt wird, welche Features am häufigsten verwendet werden und welche vernachlässigt werden.
+    \item \textbf{Verhaltensänderung:} Vergleichsstudien (z.B. Prä-Post-Design oder Kontrollgruppenvergleich) könnten untersuchen, ob die Nutzung der App tatsächlich zu früherem Lernbeginn, regelmässigeren Lernphasen oder reduziertem Stress führt.
+    \item \textbf{Lernzeitalgorithmus-Evaluation:} Spezifische Untersuchung, ob und wie die algorithmisch generierten Lernblöcke genutzt werden. Werden sie eingehalten? Werden sie manuell angepasst? Korreliert ihre Nutzung mit Lernerfolg?
+\end{itemize}
+
+\subsection{Funktionale Erweiterungen}
+Basierend auf den gewonnenen Erkenntnissen und dem Feedback bieten sich mehrere Erweiterungsmöglichkeiten an:
+
+\begin{itemize}
+    \item \textbf{Analytics und Feedback:} Integration von Statistiken zur Lernzeit (geplant vs. tatsächlich absolviert), Fortschrittsanzeigen und personalisierte Empfehlungen basierend auf Nutzungsmustern.
+    \item \textbf{Dynamische Prioritätsanpassung:} Automatische Anpassung der Lernblockpriorität basierend auf Notenentwicklung oder verbleibender Zeit bis zur Prüfung.
+    \item \textbf{Kollaborative Funktionen:} Möglichkeit zum Teilen von Lernplänen oder Tipps zwischen Nutzer:innen, Lerngruppen-Features.
+    \item \textbf{Erweiterte Reminder-Funktionen:} Push-Benachrichtigungen für anstehende Lernblöcke oder Prüfungen (würde native App oder Web-Push erfordern).
+    \item \textbf{KI-Integration:} Wie in den Interview-Empfehlungen vorgeschlagen, könnte eine Seite über den bewussten Umgang mit KI-Tools beim Lernen integriert werden.
+\end{itemize}
+
+\subsection{Technische Weiterentwicklungen}
+\begin{itemize}
+    \item \textbf{Native App-Entwicklung:} Evaluation, ob eine native App für iOS/Android Vorteile bietet (Offline-Funktionalität, bessere Push-Notifications, App-Store-Präsenz).
+    \item \textbf{Synchronisation über Geräte:} Cloud-Sync-Funktionalität für Nutzung auf mehreren Geräten.
+    \item \textbf{Performance-Optimierung:} Bei steigender Nutzerzahl und Datenvolumen könnten Caching-Strategien und Datenbank-Optimierungen notwendig werden.
+    \item \textbf{Barrierefreiheit:} Systematische Evaluation und Verbesserung der Accessibility (WCAG-Konformität).
+\end{itemize}
+
+\subsection{Skalierung und Verbreitung}
+\begin{itemize}
+    \item \textbf{Pilot-Implementierung:} Testlauf mit einer begrenzten Gruppe von Schüler:innen über ein Semester mit begleitender Evaluation.
+    \item \textbf{Institutionelle Integration:} Prüfung, ob eine Integration mit bestehenden Schulsystemen (z.B. direkter Import aus schulnetz) möglich und sinnvoll ist.
+    \item \textbf{Erweiterung auf andere Schulen:} Anpassung der Applikation für andere Kantonsschulen oder Bildungsinstitutionen.
+\end{itemize}
+
+\subsection{Offene Probleme}
+Mehrere identifizierte Probleme konnten im Rahmen dieser Arbeit nicht gelöst werden:
+
+\begin{itemize}
+    \item \textbf{Motivations-Problematik:} Die App kann Tools bereitstellen, aber die intrinsische Motivation zum Lernen nicht erzeugen. Wie kann die App Anreize schaffen, sie tatsächlich zu nutzen?
+    \item \textbf{Komplexität vs. Einfachheit:} Spannungsfeld zwischen umfangreicher Funktionalität und einfacher Bedienbarkeit. Weitere Usability-Tests mit grösseren Nutzergruppen sind notwendig.
+    \item \textbf{Individuelle Unterschiede:} Die Recherche zeigte, dass Lernstrategien individuell sehr unterschiedlich sind. Wie kann die App personalisierbar bleiben, ohne überkomplex zu werden?
+    \item \textbf{Datenvalidität:} Bei selbsterfassten Daten (Noten, Termine) besteht keine Garantie für Korrektheit oder Vollständigkeit. Validierungsmechanismen könnten helfen.
+\end{itemize}
+
+\section{Schlussbemerkung}
+
+Diese Maturitätsarbeit hat gezeigt, dass die Konzeption und technische Umsetzung einer Lern- und Organisationsapplikation für Kantonsschüler:innen machbar ist. Die entwickelte Web-Applikation Kanti Koala bietet eine kohärente Lösung zur zentralen Verwaltung von Terminen, automatisierten Planung von Lernzeiten und Unterstützung strukturierter Lernphasen.
+
+Die durchgeführte Recherche validierte die Relevanz der adressierten Probleme (Prokrastination, Stress, spätes Lernen) in der Zielgruppe und lieferte fundierte Anforderungen für die Implementierung. Die technische Umsetzung demonstriert die Funktionsfähigkeit der Kernkomponenten, insbesondere des Lernzeitalgorithmus als zentralem Alleinstellungsmerkmal.
+
+Gleichzeitig wurde deutlich, dass die Frage nach der tatsächlichen Wirksamkeit einer solchen Applikation – also ob sie das Lernverhalten von Schüler:innen nachhaltig verbessert – über den Rahmen dieser Arbeit hinausgeht. Eine umfassende empirische Evaluation über einen längeren Zeitraum mit einer grösseren Nutzerbasis wäre notwendig, um diese Frage zu beantworten.
+
+Die vorliegende Arbeit schafft somit eine belastbare Ausgangsbasis für weiterführende Forschung und Entwicklung. Sie demonstriert die technische Machbarkeit, identifiziert offene Fragen und bietet konkrete Ansatzpunkte für Verbesserungen und Erweiterungen.
+
+Der Arbeitsprozess selbst war lehrreich und forderte sowohl in methodischer (Recherche, Interviews, Umfragen) als auch in technischer Hinsicht (Software-Architektur, Algorithmenentwicklung, Sicherheit). Die gewonnenen Erkenntnisse zu Projektplanung, kollaborativer Softwareentwicklung und wissenschaftlicher Arbeitsweise bieten eine wertvolle Grundlage für zukünftige Projekte und das weitere Studium.
+
+Abschliessend lässt sich festhalten: Kanti Koala ist ein funktionsfähiger Prototyp, der die identifizierten Bedürfnisse technisch adressiert. Ob er sein Potenzial zur Verbesserung von Lernorganisation und -gewohnheiten in der Praxis entfalten kann, bleibt eine spannende Frage für zukünftige Untersuchungen.
 
 % References
 
