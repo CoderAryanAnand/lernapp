@@ -89,6 +89,14 @@ def settings_view(user):
                 for p in higher_prios:
                     p.priority_level -= 1
                 db.session.commit()
+            
+            # shift all user events a priority up, if their priority was below the one deleted
+            user_events = Event.query.filter(
+                Event.user_id == user.id, Event.priority > level_to_remove
+            ).all()
+            for event in user_events:
+                event.priority -= 1
+            db.session.commit()
             return redirect(url_for("settings.settings_view"))
 
         # Update general settings
