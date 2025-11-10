@@ -49,7 +49,11 @@
             {% block content %}{% endblock %}
         </div>
     </main>
-    
+    <footer class="w-full mt-8 py-4 bg-zinc-200 dark:bg-zinc-800 text-center text-sm text-zinc-600 dark:text-zinc-300">
+        <a href="{{ url_for('main.datenschutzerklaerung') }}" class="hover:underline text-blue-600 dark:text-blue-400">
+            Datenschutzerklärung
+        </a>
+    </footer>
     <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
     
     <!-- Page-specific scripts -->

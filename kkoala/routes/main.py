@@ -262,3 +262,13 @@ def todo_index(user):
     """
     categories = ToDoCategory.query.filter_by(user_id=user.id).all()
     return render_template("todo.html", categories=categories)
+
+@main_bp.route("/datenschutzerklaerung")
+def datenschutzerklaerung():
+    """
+    Datenschutz­erklärung route: Displays the privacy policy.
+
+    Returns:
+        str: Rendered HTML template ('datenschutzerklaerung.html').
+    """
+    return render_template("datenschutzerklaerung.html")
