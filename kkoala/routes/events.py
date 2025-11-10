@@ -359,10 +359,19 @@ def import_ics(user):
                 priority = component.get("X-KKOALA-PRIORITY")
                 color = component.get("X-KKOALA-COLOR")
                 # Fallbacks if not present
+
+                settings = Settings.query.filter_by(user_id=user.id).first()
+
+                if settings and settings.priority_settings:
+                    all_priorities = [p.priority_level for p in settings.priority_settings]
+                    if all_priorities:
+                        # An exam is any priority that is not the maximum (lowest) one
+                        lowest_priority = max(all_priorities)
+
                 if priority is not None:
                     priority = int(priority)
                 else:
-                    priority = 4  # define this as needed
+                    priority = lowest_priority  # define this as needed
                 if color is None:
                     color = DEFAULT_IMPORT_COLOR  # define this as needed
                 # ----------------------------------------------

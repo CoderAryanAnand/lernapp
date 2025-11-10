@@ -39,7 +39,7 @@ def index():
 
         # --- New approach: Define what an "exam priority" is ---
         settings = Settings.query.filter_by(user_id=user.id).first()
-        exam_priorities = [1, 2]  # Default exam priorities if no settings are found
+        exam_priorities = [1]  # Default exam priorities if no settings are found, so that app doesn't crash
 
         if settings and settings.priority_settings:
             all_priorities = [p.priority_level for p in settings.priority_settings]
