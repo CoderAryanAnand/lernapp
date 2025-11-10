@@ -81,7 +81,7 @@
                                         <p class="font-semibold text-zinc-800 dark:text-zinc-200">{{ exam.title }}</p>
                                         <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ exam.start.strftime('%d. %b %Y') }}</p>
                                     </div>
-                                    <span class="text-sm font-bold {{ 'text-red-600' if days_until <= 7 else 'text-orange-500' }}">{{ days_until }} Tage</span>
+                                    <span class="text-sm font-bold {{ 'text-red-600' if days_until <= 7 else 'text-orange-500' }}">{{ days_until }} {{ 'Tag' if days_until == 1 else 'Tage' }}</span>
                                 </li>
                             {% endfor %}
                             </ul>

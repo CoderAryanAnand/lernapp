@@ -82,6 +82,7 @@ language=ngerman
 \newcommand{\aifootnotemark}{\footnotemark}
 \newcommand{\aifootnotetext}[1]{\footnotetext{ChatGPT (Version GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, #1. Antwort ganz übernommen.}}
 \newcommand{\aifootnotebasis}[1]{\footnotetext{ChatGPT (Version GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, #1. Antwort als Basis.}}
+\newcommand{\aifootnotegrammar}[1]{\footnotetext{Claude (Version Sonnet 4.5): \enquote{Korrigiere bitte diesen Abschnitt - behalte den Text so gut bei wie möglich, aber korrigiere alle grammatischen Fehler und markiere die Korrekturen. Mach auch Vorschläge, wie man problematische Sätze besser formulieren könnte. [...]. }, #1. Antwort als Basis.}}
 
 % Fix for font issue
 \DeclareRobustCommand{\ttfamily}{\fontencoding{T1}\fontfamily{lmtt}\selectfont}
@@ -155,7 +156,7 @@ Aus unserer eigenen Erfahrung als Schüler:innen an der Kantonsschule Baden best
 
 Eine zentral organisierende Anwendung, die Lernzeiten, Termine und Noten gemeinsam verwaltet, ist daher relevant. Solch eine Applikation könnte die Selbstorganisation unterstützen, damit Stress reduzieren und die Lernmotivation steigern. Die Selbstorganisation wird unterstützt, indem die Planung der Lernzeiten nicht manuell erfolgen muss, sondern durch einen Algorithmus, der die Lernzeiten priorisiert, nach Präferenz, und verteilt.
 
-Ob das Produkt als Web‑Anwendung oder als native App umgesetzt wird, blieb zum Zeitpunkt der Untersuchung offen; die Konzeption erfolgte plattformneutral.
+Ob das Produkt als Web-Anwendung oder als native App umgesetzt wird, blieb zum Zeitpunkt der Untersuchung offen; die Konzeption erfolgte plattformneutral.
 
 \section{Name und Logo}
 Der Name \enquote{KantiKoala} verbindet \enquote{Kanti} (Kurzform von Kantonsschule) mit dem Koala als sympathisches Maskottchen. Die Alliteration macht den Namen einprägsam; den Koala haben wir als Tier gerne, deswegen wurde er gewählt. Das Logo wurde bewusst schlicht gehalten, um freundlich und zugänglich zu wirken und gleichzeitig in der Kalender- und UI-Darstellung gut lesbar zu bleiben.
@@ -184,12 +185,13 @@ Die Gliederung macht nachvollziehbar, wie aus Problemstellung und Zielsetzung ko
 
 % ------------------------------Recherche------------------------------
 \chapter{Recherche}
-\section{Einführung}
+\section[Einführung]{Einführung\texorpdfstring{\aifootnotemark}{}}
+\aifootnotegrammar{10.11.2025}
 \subsection{Warum brauchten wir eine Recherche?}
 Da wir eine Web-App erstellen wollten, die gut an die Bedürfnisse von Schüler:innen angepasst ist, durften wir uns nicht nur auf unsere eigenen Erfahrungen als Schüler verlassen. Ein gewisses Mass an Recherche war notwendig, damit wir wichtige Entscheidungen sinnvoll begründen konnten. 
 Zu diesem Zweck haben wir uns entschieden, uns tiefgründig mit unserem Zielpublikum - Schüler:innen der Kantonsschule Baden - auseinanderzusetzen, indem wir Interviews mit PPP-Lehrpersonen führten und eine Umfrage für Schüler:innen gestalteten.
 
-Die Recherche stellte zwar nicht das Kernstück unserer Arbeit dar, jedoch einen unterstützenden, aber dennoch sehr wichtiger, Bestandteil für die Entwicklung der Web-Applikation. Sie ermöglichte es, dass wir uns in unsere Zielgrupe versetzen und ihre Bedürfnisse verstehen konnten.
+Die Recherche stellte zwar nicht das Kernstück unserer Arbeit dar, jedoch einen unterstützenden, aber dennoch sehr wichtigen, Bestandteil für die Entwicklung der Web-Applikation. Sie ermöglichte es, dass wir uns in unsere Zielgruppe versetzen und ihre Bedürfnisse verstehen konnten.
 Wir setzten grossen Wert auf begründete Entscheidungen und strebten eine hohe Qualität an.
 
 \subsection{Was recherchierten wir?}
@@ -205,7 +207,7 @@ Um genaue Recherche-Themen auszusuchen, stellten wir einige W-Fragen zum Lernen:
 \end{itemize}
 
 Ebenso überlegten wir, welche Rolle unsere geplanten Features für die Web-Applikation spielen und welche Themenbereiche für sie wichtig sein könnten.
-Beispielsweise ist die Recherche zur Zeitplanung wichtig, damit wir unsere Agenda und den Lernzeitalgorithmus sinnvoll gestalten und an die Bedürfnisse von Schüler:innen anpassen konnten. Informationen zu Stress beim Lernen oder vor Prüfungen und dessen Vorbeugung könnten uns helfen, gute Lerntipps zu gestalten.
+Beispielsweise war die Recherche zur Zeitplanung wichtig, damit wir unsere Agenda und den Lernzeitalgorithmus sinnvoll gestalten und an die Bedürfnisse von Schüler:innen anpassen konnten. Informationen zu Stress beim Lernen oder vor Prüfungen und dessen Vorbeugung könnten uns helfen, gute Lerntipps zu gestalten.
 Somit entstanden unsere vier Hauptbereiche, welche die obigen vier Fragen abdecken: Lerntechniken, das Pausen- und Zeitmanagement und das Stressmanagement.
 
 Auch bestand die Möglichkeit, dass aus der Recherche zu diesen Themenblöcken weitere Features entstehen könnten.
@@ -229,7 +231,7 @@ Das Ziel der Interviews und der Umfrage bestand auch wesentlich darin, konkrete 
 
 \section{Literaturstudie}
 \subsection{Ziel}
-Da die Literaturstudie als Unterstüztung für die anderen, für uns weitaus wichtigeren Elemente unserer Recherche gedacht war, lag nicht besonders viel Fokus darauf.
+Da die Literaturstudie als Unterstützung für die anderen, für uns weitaus wichtigeren Elemente unserer Recherche gedacht war, lag nicht besonders viel Fokus darauf.
 Ziel war, hier ein kleines Stückchen an grundlegendem Wissen zu erreichen ohne dass wir komplett in der Materie verloren gehen und die Übersicht über was tatsächlich für unsere Arbeit nötig ist verlieren.
 
 \subsection{Vorgehensweise}
