@@ -103,6 +103,7 @@
                         <input type="text" 
                                id="new-item-{{ category.id }}"
                                placeholder="Neue Aufgabe hinzufügen..."
+                               maxlength="100"
                                class="flex-1 min-w-0 px-3 py-2 mb-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
                                onkeypress="if(event.key === 'Enter') addTodoItem({{ category.id }})">
                         <button onclick="addTodoItem({{ category.id }})" class="px-4 py-2 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors text-sm whitespace-nowrap">
@@ -132,6 +133,7 @@
             <input type="text" 
                    id="category-name" 
                    name="name" 
+                   maxlength="100"
                    required 
                    placeholder="z.B. Schule, Privat, Arbeit..."
                    class="w-full px-4 py-3 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
