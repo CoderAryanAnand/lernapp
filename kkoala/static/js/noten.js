@@ -99,6 +99,29 @@ function closeSubjectPopup() {
     document.getElementById("subject-popup").classList.add("hidden");
 }
 
+// Add: Semester Rename Popup
+function openSemesterRenamePopup(semesterDiv) {
+    window._semesterDivToRename = semesterDiv;
+    const headerSpan = semesterDiv.querySelector('.semester-name');
+    document.getElementById('semesterNameEdit').value = headerSpan ? headerSpan.textContent.trim() : '';
+    overlay.classList.remove("hidden");
+    document.getElementById("semester-rename-popup").classList.remove("hidden");
+}
+function closeSemesterRenamePopup() {
+    overlay.classList.add("hidden");
+    document.getElementById("semester-rename-popup").classList.add("hidden");
+    window._semesterDivToRename = null;
+}
+function saveSemesterRename() {
+    const newName = document.getElementById("semesterNameEdit").value.trim();
+    if (window._semesterDivToRename && newName) {
+        const headerSpan = window._semesterDivToRename.querySelector('.semester-name');
+        if (headerSpan) headerSpan.textContent = newName;
+        saveAllSemestersToBackend();
+    }
+    closeSemesterRenamePopup();
+}
+
 // --- Calculation and Core Logic ---
 function calculateDreamGradeFromPopup() {
     const wishedAvg = parseFloat(document.getElementById('wishedAvgInput').value);
@@ -119,13 +142,7 @@ function calculateDreamGradeFromPopup() {
     outputP.textContent = `Benötigte Note: ${neededGrade.toFixed(2)}` + (neededGrade > 6 ? ' (Unmöglich)' : (neededGrade < 1 ? ' (Jede Note)' : ''));
 }
 function renameSemester(semesterDiv) {
-    const headerSpan = semesterDiv.querySelector('.semester-name');
-    const oldName = headerSpan ? headerSpan.textContent.trim() : 'Semester';
-    const newName = prompt('Semester umbenennen:', oldName);
-    if (newName && newName.trim() !== '' && newName !== oldName) {
-        headerSpan.textContent = newName;
-        saveAllSemestersToBackend();
-    }
+    openSemesterRenamePopup(semesterDiv);
 }
 async function saveSubjectEdit() {
     if (editingSubjectHeader && editingSubjectContainer) {
@@ -378,4 +395,79 @@ async function saveAllSemestersToBackend() {
         body: JSON.stringify(semesters)
     });
 }
-document.addEventListener("DOMContentLoaded", loadSemestersFromBackend);
+
+// --- Grade input: enforce 1-6 range in real time ---
+document.addEventListener("DOMContentLoaded", function() {
+    loadSemestersFromBackend();
+
+    // Enforce 1-6 for gradeValue input
+    const gradeValueInput = document.getElementById("gradeValue");
+    if (gradeValueInput) {
+        gradeValueInput.addEventListener("input", function() {
+            let val = parseFloat(this.value);
+            if (isNaN(val)) return;
+            if (val < 1) this.value = 1;
+            if (val > 6) this.value = 6;
+        });
+    }
+});
+
+// --- Keyboard Shortcuts for Popups ---
+document.addEventListener('keydown', function (e) {
+    // ESC: Close any open popup
+    if (e.key === 'Escape' || e.key === 'Esc') {
+        try {
+            // List all popup IDs you use
+            const popups = {
+                grade: document.getElementById("grade-popup"),
+                subject: document.getElementById("subject-popup"),
+                semesterRename: document.getElementById("semester-rename-popup"),
+                dreamCalc: document.getElementById("dream-calc-popup"),
+                deleteConfirm: document.getElementById("delete-confirm-popup")
+            };
+            const anyVisible = Object.values(popups).some(p => p && !p.classList.contains('hidden'));
+            if (anyVisible) {
+                // Close all popups
+                if (typeof closeGradePopup === 'function') closeGradePopup();
+                if (typeof closeSubjectPopup === 'function') closeSubjectPopup();
+                if (typeof closeSemesterRenamePopup === 'function') closeSemesterRenamePopup();
+                if (typeof closeDreamCalcPopup === 'function') closeDreamCalcPopup();
+                if (typeof closeDeleteConfirm === 'function') closeDeleteConfirm();
+                e.preventDefault();
+            }
+        } catch (err) {
+            // fail silently
+            console.error('Escape handler error:', err);
+        }
+    }
+    // ENTER: Confirm/save if a popup is open and focused
+    if (e.key === 'Enter') {
+        // Grade popup
+        if (document.getElementById("grade-popup") && !document.getElementById("grade-popup").classList.contains('hidden')) {
+            if (document.activeElement.tagName !== "TEXTAREA") {
+                addOrEditGradeToSubject();
+                e.preventDefault();
+            }
+        }
+        // Subject popup
+        if (document.getElementById("subject-popup") && !document.getElementById("subject-popup").classList.contains('hidden')) {
+            saveSubjectEdit();
+            e.preventDefault();
+        }
+        // Semester rename popup
+        if (document.getElementById("semester-rename-popup") && !document.getElementById("semester-rename-popup").classList.contains('hidden')) {
+            saveSemesterRename();
+            e.preventDefault();
+        }
+        // Dream calc popup
+        if (document.getElementById("dream-calc-popup") && !document.getElementById("dream-calc-popup").classList.contains('hidden')) {
+            calculateDreamGradeFromPopup();
+            e.preventDefault();
+        }
+        // Delete confirm popup
+        if (document.getElementById("delete-confirm-popup") && !document.getElementById("delete-confirm-popup").classList.contains('hidden')) {
+            confirmDeleteSemester();
+            e.preventDefault();
+        }
+    }
+});

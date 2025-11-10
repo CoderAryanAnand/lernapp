@@ -77,6 +77,18 @@
         <button onclick="closeDreamCalcPopup()" class="px-4 py-2 font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-600 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-500">Schliessen</button>
     </div>
 </div>
+
+<!-- Semester Rename Modal -->
+<div id="semester-rename-popup" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-lg z-50">
+    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-6">Semester umbenennen</h3>
+    <div class="space-y-4">
+        <input type="text" id="semesterNameEdit" placeholder="Semestername" maxlength="100" class="w-full px-4 py-2 text-zinc-900 bg-zinc-100 dark:bg-zinc-700 dark:text-white border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+    </div>
+    <div class="flex justify-end space-x-3 mt-6">
+        <button onclick="closeSemesterRenamePopup()" class="px-4 py-2 font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-600 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-500">Abbrechen</button>
+        <button onclick="saveSemesterRename()" class="px-4 py-2 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700">Speichern</button>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
