@@ -275,4 +275,18 @@ document.addEventListener('DOMContentLoaded', function () {
         // Standardfarbe der Priorität entsprechen muss, wenn der Benutzer sie zuvor 
         // manuell geändert hat.
     }
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' || e.key === 'Esc') {
+            try {
+                const anyVisible = Object.values(popups).some(p => p && !p.classList.contains('hidden'));
+                if (anyVisible && typeof closeAllPopups === 'function') {
+                    closeAllPopups();
+                    e.preventDefault();
+                }
+            } catch (err) {
+                // fail silently
+                console.error('Escape handler error:', err);
+            }
+        }
+    });
 });
