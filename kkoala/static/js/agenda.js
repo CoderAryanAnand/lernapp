@@ -82,33 +82,13 @@ document.addEventListener('DOMContentLoaded', function () {
     // --- GLOBAL FUNCTIONS (ATTACHED TO WINDOW) ---
 
     // *** MODIFIED: Replaced deleteEvent and deleteRecurringEvents with a single handleDelete ***
-    window.handleDelete = async function() {
-        const recurrenceSelect = document.getElementById('edit-recurrence');
+    window.handleDelete = function() {
         const recurrenceId = document.getElementById('recurrence-id').value;
-        const deleteType = recurrenceSelect.value;
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        
-        // Check if the event is recurring AND the user selected 'all'
-        if (recurrenceId !== '0' && recurrenceId != null && deleteType === 'all') {
-            // Logic for deleting the entire series
-            if (!confirm("Sind Sie sicher, dass Sie diese gesamte Terminserie löschen möchten?")) return;
-            await fetch(`/api/events/recurring/${recurrenceId}`, { 
-                method: 'DELETE', 
-                headers: { 'X-CSRF-Token': csrfToken } 
-            });
-        } else {
-            // Logic for deleting a single event (or single instance of a series)
-            if (!confirm("Sind Sie sicher, dass Sie diesen Termin löschen möchten?")) return;
-            const eventId = document.getElementById('event-id').value;
-            await fetch(`/api/events/${eventId}`, { 
-                method: 'DELETE', 
-                headers: { 'X-CSRF-Token': csrfToken } 
-            });
-        }
-        
-        // After either delete action, refetch and close
-        calendar.refetchEvents();
-        closeAllPopups();
+        const isRecurring = recurrenceId !== '0' && recurrenceId != null;
+        const eventId = document.getElementById('event-id').value;
+        const recurrenceSelect = document.getElementById('edit-recurrence');
+        const deleteType_ = recurrenceSelect.value;
+        openDeleteEventConfirm(isRecurring, eventId, recurrenceId, deleteType_);
     }
     // *** END MODIFICATION ***
 
@@ -289,4 +269,53 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
     });
+
+    let eventToDelete = null;
+    let deleteType = "single"; // "single" or "all"
+
+    window.openDeleteEventConfirm = function(isRecurring, eventId, recurrenceId, deleteAllorSingle) {
+        eventToDelete = eventId;
+        // Show overlay and popup
+        document.getElementById('overlay').classList.remove('hidden');
+        document.getElementById('delete-event-confirm-popup').classList.remove('hidden');
+        // Set message depending on recurring or not
+        const msgDiv = document.getElementById('delete-event-confirm-message');
+        if (isRecurring && deleteAllorSingle == 'all') {
+            eventToDelete = recurrenceId; // Use recurrence ID to delete whole series
+            msgDiv.textContent = `Möchtest du die gesamte Serie wirklich löschen?`;
+            deleteType = "all";
+        } else {
+            eventToDelete = eventId;
+            msgDiv.textContent = `Möchtest du diesen Termin wirklich löschen?`;
+            deleteType = "single";
+        }
+    };
+
+    window.closeDeleteEventConfirm = function() {
+        document.getElementById('overlay').classList.add('hidden');
+        document.getElementById('delete-event-confirm-popup').classList.add('hidden');
+        eventToDelete = null;
+    };
+
+    window.confirmDeleteEvent = async function() {
+        if (!eventToDelete) return;
+        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        if (deleteType === "all") {
+            // Delete recurring series
+            await fetch(`/api/events/recurring/${eventToDelete}`, { 
+                method: 'DELETE', 
+                headers: { 'X-CSRF-Token': csrfToken } 
+            });
+        } else {
+            // Delete single event
+            await fetch(`/api/events/${eventToDelete}`, { 
+                method: 'DELETE', 
+                headers: { 'X-CSRF-Token': csrfToken } 
+            });
+        }
+        // Refresh calendar and close
+        if (typeof calendar !== "undefined") calendar.refetchEvents();
+        closeDeleteEventConfirm();
+        closeAllPopups();
+    };
 });

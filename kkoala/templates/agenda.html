@@ -220,6 +220,16 @@
         </div>
     </form>
 </div>
+
+<!-- Event Delete Confirmation Modal -->
+<div id="delete-event-confirm-popup" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-lg z-50 text-center">
+    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">Termin löschen bestätigen</h3>
+    <div id="delete-event-confirm-message" class="text-zinc-600 dark:text-zinc-300 mb-6"></div>
+    <div class="flex justify-center space-x-3">
+        <button type="button" onclick="closeDeleteEventConfirm()" class="px-4 py-2 font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-600 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-500">Abbrechen</button>
+        <button type="button" onclick="confirmDeleteEvent()" class="px-4 py-2 font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700">Ja, löschen</button>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
