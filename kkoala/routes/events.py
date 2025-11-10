@@ -366,7 +366,7 @@ def import_ics(user):
                     all_priorities = [p.priority_level for p in settings.priority_settings]
                     if all_priorities:
                         # An exam is any priority that is not the maximum (lowest) one
-                        lowest_priority = max(all_priorities)
+                        lowest_priority = max(all_priorities) + 1
 
                 if priority is not None:
                     priority = int(priority)

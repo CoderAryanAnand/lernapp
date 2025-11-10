@@ -45,7 +45,7 @@ def index():
             all_priorities = [p.priority_level for p in settings.priority_settings]
             if all_priorities:
                 # An exam is any priority that is not the maximum (lowest) one
-                lowest_priority = max(all_priorities)
+                lowest_priority = max(all_priorities) + 1
                 exam_priorities = [p for p in all_priorities if p != lowest_priority]
 
         # 1. Get upcoming exams by checking if their priority is in the exam_priorities list
@@ -78,6 +78,13 @@ def index():
         # Convert string dates to datetime objects for the template
         todays_events = []
         for event in todays_events_query:
+            if event.all_day:
+                # For all-day events, set start and end to date objects
+                event.start = datetime.fromisoformat(event.start).date()
+                if event.end:
+                    event.end = datetime.fromisoformat(event.end).date()
+                else:
+                    event.end = event.start
             # Only convert if the attribute is still a string
             if isinstance(event.start, str):
                 event.start = datetime.fromisoformat(event.start)

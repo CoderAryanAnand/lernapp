@@ -57,7 +57,13 @@
                                 <li class="flex items-center space-x-3">
                                     <span class="h-2 w-2 rounded-full" style="background-color: {{ event.color }};"></span>
                                     <span class="font-semibold text-zinc-800 dark:text-zinc-200">{{ event.title }}</span>
-                                    <span class="text-sm text-zinc-500 dark:text-zinc-400">{{ event.start.strftime('%H:%M') }} - {{ event.end.strftime('%H:%M') }}</span>
+                                    {% if event.start and event.end %}
+                                        <span class="text-sm text-zinc-500 dark:text-zinc-400">{{ event.start.strftime('%H:%M') }} - {{ event.end.strftime('%H:%M') }}</span>
+                                    {% elif event.start %}
+                                        <span class="text-sm text-zinc-500 dark:text-zinc-400">{{ event.start.strftime('%H:%M') }}</span>
+                                    {% else %}
+                                        <span class="text-sm text-zinc-500 dark:text-zinc-400">Alltägig</span>
+                                    {% endif %}
                                 </li>
                             {% endfor %}
                             </ul>
