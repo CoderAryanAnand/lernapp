@@ -166,7 +166,6 @@ def update_event(user):
     # Case 1: Update a single event (or one that becomes a single event)
     if (
         data["edit-recurrence"] != "all"
-        and data["recurrence-id"] == "0"
         or len(Event.query.filter_by(recurrence_id=data["recurrence-id"]).all()) == 1
     ):
         event = Event.query.get(data["id"])
