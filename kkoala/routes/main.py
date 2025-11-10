@@ -144,7 +144,7 @@ def index():
                     # If rounded_avg is 4.0, 0 plus points are added, so no case is needed.
 
                     # Add to overall semester average calculation
-                    total_value_weight += subj_total_value_weight
+                    total_value_weight += subj_avg
                     total_weight += 1  # add subject weight as 1 for overall average, now only subjects that have grades will be divided
 
             if total_weight > 0:
