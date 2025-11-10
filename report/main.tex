@@ -9,7 +9,7 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 \usepackage{hyperref}
-\usepackage[T1]{fontenc}        % proper glyphs for äöüß, hyphenation
+\usepackage[T1]{fontenc}        % proper glyphs for äöüss, hyphenation
 \usepackage[utf8]{inputenc}     % source file is UTF-8
 \usepackage{lmodern}            % Latin Modern fonts
 \usepackage[ngerman]{babel}     % modern German hyphenation
@@ -788,106 +788,119 @@ Somit sind wir, im grossen Ganzen, dennoch sehr zufrieden mit dem Verlauf der Re
 % ------------------------------Programmieren------------------------------
 \chapter{Methodik -- Programmieren der Web-Applikation}
 
-\section[Erste Entscheidungen]{Erste Entscheidungen\texorpdfstring{\aifootnotemark}{}}
+\section[Technologie- und Plattformwahl]{Technologie- und Plattformwahl\texorpdfstring{\aifootnotemark}{}}
 \aifootnotetext{04.11.2025}
-Zu Beginn stand die grundsätzliche Plattformwahl im Zentrum: eine native Applikation (z.\,B. für Smartphones) oder eine webbasierte Lösung. Unter Berücksichtigung der Geräteunabhängigkeit, dem Verteil- und Updateaufwand, Entwicklungsressourcen sowie dem verfügbaren Zeitrahmen erwies sich eine Web-Applikation als zweckmässig. Sie ist plattformagnostisch im Browser nutzbar, benötigt keine Installation und lässt sich zentral aktualisieren. Zudem reduziert eine einheitliche Codebasis den Implementierungs- und Wartungsaufwand gegenüber mehreren nativen Anwendungen für unterschiedliche Betriebssysteme.
+Zu Beginn stand die grundsätzliche Plattformwahl im Zentrum: eine native Applikation (z.\,B. für Smartphones) oder eine webbasierte Lösung.
+Unter Berücksichtigung der Geräteunabhängigkeit, dem Verteil- und Updateaufwand, Entwicklungsressourcen sowie dem verfügbaren Zeitrahmen erwies sich eine Web-Applikation als zweckmässig.
+Sie ist plattformagnostisch im Browser nutzbar, benötigt keine Installation und lässt sich zentral aktualisieren.
+Zudem reduziert eine einheitliche Codebasis den Implementierungs- und Wartungsaufwand gegenüber mehreren nativen Anwendungen für unterschiedliche Betriebssysteme.
 
-Auf Basis dieser Entscheidung fiel die Wahl der Technologie auf Python mit dem Microframework Flask \parencite{flask_docs}. Ausschlaggebend waren vorhandene Vorkenntnisse. Als Entwicklungsumgebung wurde Visual Studio Code verwendet, da es durch integrierte Funktionen wie Code-Assistenz (z. B. Copilot) einen effizienten Entwicklungsprozess ermöglicht und schnelle Unterstützung bietet.
+Auf Basis dieser Entscheidung fiel die Wahl des Technologie-Stacks auf Python mit dem Microframework Flask \parencite{flask_docs}. Entscheidend waren vorhandene Vorkenntnisse, welche eine einfachere Umsetzung ermöglichten.
+Als Entwicklungsumgebung wurde Visual Studio Code verwendet, da es durch integrierte Funktionen wie Code-Assistenz (z. B. Copilot) einen effizienten Entwicklungsprozess ermöglicht und schnelle Unterstützung bietet.
+Für die kollaborative Arbeit kamen Git als Versionsverwaltung und GitHub als zentrales Remote-Repository zum Einsatz.
+Der Code wurde dort gemeinsam versioniert und ausgetauscht; regelmässige Synchronisationen (Push/Pull) stellten einen konsistenten, aktuellen Projektstand sicher.
 
-Für die kollaborative Arbeit kamen Git als Versionsverwaltung und GitHub als zentrales Remote-Repository zum Einsatz. Der Quellcode wurde dort gemeinsam versioniert und ausgetauscht; regelmässige Synchronisationen (Push/Pull) stellten einen konsistenten, aktuellen Projektstand sicher.
+Für das Hosting der Produktivumgebung fiel die Wahl auf DigitalOcean.
+Ausschlaggebend waren die Verfügbarkeit kostenloser Credits über das GitHub Student Developer Pack, integrierte PostgreSQL-Datenbank-Hosting-Optionen und Unterstützung für Gunicorn/WSGI-Deployment.
+Die Domain \texttt{kantikoala.app} wurde ebenfalls über das Student Pack mit kostenloser \texttt{.app}-TLD registriert.
 
-\subsection{Server- und Hosting-Entscheidung}
-Für das Hosting der Produktivumgebung fiel die Wahl auf DigitalOcean. Ausschlaggebend waren: (1) Verfügbarkeit kostenloser Credits über das GitHub Student Developer Pack, (2) integrierte PostgreSQL-Datenbank-Hosting-Optionen, (3) Unterstützung für Gunicorn/WSGI-Deployment. Die Domain \texttt{kantikoala.app} wurde ebenfalls über das Student Pack mit kostenloser \texttt{.app}-TLD registriert.
-
-\section[Anforderungen]{Anforderungen\texorpdfstring{\aifootnotemark}{}}
+\section[Anforderungsanalyse und -definition]{Anforderungsanalyse und -definition\texorpdfstring{\aifootnotemark}{}}
 \aifootnotetext{04.11.2025}
-Bevor wir mit dem Programmieren der Web-Applikation beginnen konnten, mussten wir uns zuerst über die Anforderungen an die Applikation klar werden. Da es sich um eine Web-Applikation handelt, welche den Schüler:innen der Kantonsschule Baden helfen soll, mussten wir uns überlegen, welche Funktionen die Applikation beinhalten sollte und wie diese umgesetzt werden könnten.
-
-Die Anforderungen an die Kanti Koala Web-Applikation sind wie folgt:
+Die im Folgenden definierten Anforderungen sind das direkte Resultat der in Kapitel 2 (Recherche) durchgeführten Analyse. Die Interviews mit den PPP-Lehrpersonen und die Umfrage unter den Schüler:innen lieferten die \enquote{Must}- und \enquote{Kann}-Anforderungen (vgl. Abschnitt 2.3.5), welche die Basis für die funktionale Spezifikation der Applikation bildeten.
+Bevor wir mit dem Programmieren der Web-Applikation beginnen konnten, mussten wir uns zuerst über die Anforderungen an die Applikation klar werden.
+Da es sich um eine Web-Applikation handelt, welche den Schüler:innen der Kantonsschule Baden helfen soll, mussten wir uns überlegen, welche Funktionen die Applikation beinhalten sollte und wie diese umgesetzt werden könnten.
+Die abgeleiteten Anforderungen an die Kanti Koala Web-Applikation sind wie folgt:
 \begin{itemize}
-    \item \textbf{Home-Screen}: Von dem Home-Screen sollte man auf seinen Account und die Agenda zugreifen können. Zusätzlich sollte hier jeden Tag ein allgemeiner Tipp für die Kantonsschule angezeigt werden.
-    \item \textbf{Account Management}: Die Nutzer:innen sollten sich registrieren, einloggen, ihr Passwort zurücksetzen und ihre Account-Einstellungen ändern können. Sie sollten die Möglichkeit haben, ihr Passwort zu ändern und allfälligerweise ihr Account zu löschen.
-    \item \textbf{Agenda}: Die Nutzer:innen sollten ihren Stundenplan eintragen können, sowohl manuell wie auch durch den Import einer .ics-Datei. Ebenso sollte man neue Ereignisse eintragen können. Die Ereignisse sollten veränderbar sein. Die Farbe der Ereignisse sollten auch frei bestimmbar sein. Die Agenda sollte auch einen Lernzeitalgorithmus beinhalten, welcher automatisch Lernzeiten basierend auf den eingetragenen Ereignissen und den Prioritätseinstellungen der Nutzer:innen plant.
-    \item \textbf{Notenverwaltung}: Die Nutzer:innen sollten ihre Noten für jedes Fach eintragen können. Die Noten sollten veränderbar und löschbar sein. Die Nutzer:innen sollten auch ihre Semester verwalten können, indem sie neue Semester hinzufügen, bestehende Semester bearbeiten und löschen können.
-    \item \textbf{Lerntimer}: Die Nutzer:innen sollten einen Pomodoro-Timer verwenden können, um ihre Lernzeiten zu strukturieren. Der Timer sollte anpassbar sein, sodass die Nutzer:innen die Länge der Lern- und Pausenintervalle einstellen können.
-    \item \textbf{UI}: Die Web-Applikation sollte ein ansprechendes UI haben, welches die Kernfunktionen (Agenda, Noten, Timer) ohne Schulung zugänglich macht.
+    \item \textbf{Home-Screen}: Von dem Home-Screen sollte man auf seinen Account und die Agenda zugreifen können.
+Zusätzlich sollte hier jeden Tag ein allgemeiner Tipp für die Kantonsschule angezeigt werden.
+\item \textbf{Account Management}: Die Nutzer:innen sollten sich registrieren, einloggen, ihr Passwort zurücksetzen und ihre Account-Einstellungen ändern können.
+Sie sollten die Möglichkeit haben, ihr Passwort zu ändern und allfälligerweise ihr Account zu löschen.
+\item \textbf{Agenda}: Die Nutzer:innen sollten ihren Stundenplan eintragen können, sowohl manuell wie auch durch den Import einer \texttt{.ics}-Datei. Natürlich sollte man die Agenda auch als \texttt{.ics}-Datei exportieren können.
+Ebenso sollte man neue Ereignisse eintragen können. Die Ereignisse sollten veränderbar sein.
+Die Farbe der Ereignisse sollten auch frei bestimmbar sein. Die Agenda sollte auch einen Lernzeitalgorithmus beinhalten, welcher automatisch Lernzeiten basierend auf den eingetragenen Ereignissen und den Prioritätseinstellungen der Nutzer:innen plant.
+\item \textbf{Notenverwaltung}: Die Nutzer:innen sollten ihre Noten für jedes Fach eintragen können. Die Noten sollten veränderbar und löschbar sein.
+Die Nutzer:innen sollten auch ihre Semester verwalten können, indem sie neue Semester hinzufügen, bestehende Semester bearbeiten und löschen können.
+\item \textbf{Lerntimer}: Die Nutzer:innen sollten einen Pomodoro-Timer verwenden können, um ihre Lernzeiten zu strukturieren.
+Der Timer sollte anpassbar sein, sodass die Nutzer:innen die Länge der Lern- und Pausenintervalle einstellen können.
+\item \textbf{UI}: Die Web-Applikation sollte ein ansprechendes UI haben, welches die Kernfunktionen (Agenda, Noten, Timer) ohne Schulung zugänglich macht.
 \end{itemize}
 
-\section[Systemarchitektur]{Systemarchitektur\texorpdfstring{\aifootnotemark}{}}
+\section[Systemarchitektur und Datenmodell]{Systemarchitektur und Datenmodell\texorpdfstring{\aifootnotemark}{}}
 \aifootnotetext{04.11.2025}
-Dieser Abschnitt beschreibt die technische Grundlage der Kanti Koala Web-Applikation, einschliesslich der Systemarchitektur, der Code-Struktur und der Deployment-Infrastruktur.
+Dieser Abschnitt beschreibt die technische Grundlage der Kanti Koala Web-Applikation, einschliesslich der Systemarchitektur, der Code-Struktur und der zugrundeliegenden Datenstruktur.
 
-\subsection{Überblick und Framework-Wahl}
-Die Kanti Koala App ist als monolithische Webanwendung konzipiert, die auf einem zentralen Backend-Server läuft. Das Kernstück der Anwendung ist das Python-Microframework Flask \parencite{flask_docs}. Es steuert das Routing (die Zuordnung von URLs zu Funktionen), verarbeitet HTTP-Anfragen (GET, POST, usw.) und rendert die HTML-Templates für den Benutzer.
-
-\subsection{Wichtige Komponenten und Pakete}
+\subsection{Systemarchitektur und Framework-Wahl}
+Die Kanti Koala App ist als Webanwendung konzipiert, die auf einem zentralen Backend-Server läuft.
+Das Kernstück der Anwendung ist das Python-Microframework Flask \parencite{flask_docs}. Es steuert das Routing (die Zuordnung von URLs zu Funktionen), verarbeitet HTTP-Anfragen (GET, POST, etc.) und rendert die HTML-Templates für den Benutzer.
+\subsubsection{Wichtige Komponenten und Pakete}
 \begin{itemize}
-    \item \textbf{Flask-SQLAlchemy} \parencite{flask_sqlalchemy}: Dient als Object-Relational Mapper (ORM) für die Datenbank. Es ermöglicht die Definition von Datenbanktabellen als Python-Klassen (Models) und vereinfacht Datenbankabfragen.
-    \item \textbf{Flask-Bcrypt} \parencite{flask_bcrypt_docs}: Wird für die Sicherheit der Benutzerpasswörter eingesetzt. Es hasht und verifiziert Passwörter mithilfe des bcrypt-Algorithmus.
-    \item \textbf{Flask-Migrate} \parencite{flask_migrate}: Erleichtert Schema-Migrationen der Datenbank, wenn sich die Modelle (Tabellenstruktur) ändern.
-    \item \textbf{Resend} \parencite{resend_docs}: Dient als E-Mail-API für den Versand von systemgenerierten E-Mails, insbesondere für die \enquote{Passwort vergessen}-Funktion.
-    \item \textbf{icalendar} \parencite{icalendar_docs}: Eine Python-Bibliothek, die zum Parsen und Importieren von \texttt{.ics}-Kalenderdateien verwendet wird, um den Schulnetz-Stundenplan zu importieren.
-    \item \textbf{itsdangerous} \parencite{itsdangerous_docs}: Wird verwendet, um sichere, zeitlich begrenzte Tokens zu generieren, die für die \enquote{Passwort zurücksetzen}-Links benötigt werden.
+    \item \textbf{Flask-SQLAlchemy} \parencite{flask_sqlalchemy}: Dient als Object-Relational Mapper (ORM) für die Datenbank.
+Es ermöglicht die Definition von Datenbanktabellen als Python-Klassen (Models) und vereinfacht Datenbankabfragen.
+\item \textbf{Flask-Bcrypt} \parencite{flask_bcrypt_docs}: Wird für die Sicherheit der Benutzerpasswörter eingesetzt. Es hasht und verifiziert Passwörter mithilfe des bcrypt-Algorithmus.
+\item \textbf{Flask-Migrate} \parencite{flask_migrate}: Erleichtert Schema-Migrationen der Datenbank, wenn sich die Modelle (Tabellenstruktur) ändern.
+\item \textbf{Resend} \parencite{resend_docs}: Dient als E-Mail-API für den Versand von systemgenerierten E-Mails, insbesondere für die \enquote{Passwort vergessen}-Funktion.
+\item \textbf{icalendar} \parencite{icalendar_docs}: Eine Python-Bibliothek, die zum Parsen und Importieren von \texttt{.ics}-Kalenderdateien verwendet wird, um den Schulnetz-Stundenplan zu importieren.
+\item \textbf{itsdangerous} \parencite{itsdangerous_docs}: Wird verwendet, um sichere, zeitlich begrenzte Tokens zu generieren, die für die \enquote{Passwort zurücksetzen}-Links benötigt werden.
 \end{itemize}
 
-\subsection{Code-Struktur und Application Factory Pattern}
-Um die Wartbarkeit und Skalierbarkeit der Anwendung zu verbessern, wurde die ursprüngliche Code-Struktur von einer einzigen \texttt{app.py}-Datei in ein modulares Python-Paket namens \texttt{kkoala} umstrukturiert. Dieser Ansatz folgt dem \enquote{Application Factory}-Pattern, einer bewährten Methode für Flask-Anwendungen \parencite{flask_structure_best_practices}.
+\subsubsection{Code-Struktur und Application Factory Pattern}
+Um die Wartbarkeit und Skalierbarkeit der Anwendung zu verbessern, wurde die ursprüngliche Code-Struktur von einer einzigen \texttt{app.py}-Datei in ein modulares Python-Paket namens \texttt{kkoala} umstrukturiert.
+Dieser Ansatz folgt dem \enquote{Application Factory}-Pattern, einer bewährten Methode für Flask-Anwendungen \parencite{flask_structure_best_practices}.
 
-\subsubsection{Application Factory (\texttt{kkoala/\_\_init\_\_.py})}
-Das Herzstück des Pakets ist die \texttt{create\_app}-Funktion. Anstatt einer globalen App-Instanz wird die Anwendung durch diesen \enquote{Factory}-Aufruf erzeugt. Dies ermöglicht es, verschiedene Konfigurationen (z.B. für Entwicklung, Test oder Produktion) dynamisch zu laden und macht die Anwendung robuster. In dieser Datei werden auch die Flask-Erweiterungen initialisiert und die Blueprints registriert.
+Das Herzstück des Pakets ist die \texttt{create\_app}-Funktion in \texttt{kkoala/\_\_init\_\_.py}. Anstatt einer globalen App-Instanz wird die Anwendung durch diesen \enquote{Factory}-Aufruf erzeugt.
+Dies ermöglicht es, verschiedene Konfigurationen (z.B. für Entwicklung, Test oder Produktion) dynamisch zu laden.
+In dieser Datei werden auch die Flask-Erweiterungen initialisiert und die Blueprints registriert.
 
-\subsubsection{Konfiguration (\texttt{kkoala/config.py})}
-Diese Datei enthält Konfigurationsklassen (z.B. \texttt{DevConfig}, \texttt{ProdConfig}). Sie verwalten wichtige Einstellungen wie den \texttt{SECRET\_KEY}, die Datenbank-URL und API-Schlüssel. Die Konfiguration wird je nach Umgebungsvariable beim Start der App ausgewählt.
+Die Datei \texttt{kkoala/config.py} enthält Konfigurationsklassen (z.B. \texttt{DevConfig}, \texttt{ProdConfig}),
+welche wichtige Einstellungen wie den \texttt{SECRET\_KEY}, die Datenbank-URL und API-Schlüssel verwalten.
+Die Konfiguration wird je nach Umgebungsvariable beim Start der App ausgewählt.
 
-\subsubsection{Blueprints für Routen (\texttt{kkoala/routes/})}
-Die Routen der Anwendung sind in \enquote{Blueprints} aufgeteilt, die eine Gruppierung von zusammengehörigen Endpunkten ermöglichen:
+Die Routen der Anwendung sind in Blueprints aufgeteilt (\texttt{kkoala/routes/}), die eine Gruppierung von zusammengehörigen Endpunkten ermöglichen:
 \begin{itemize}
     \item \textbf{\texttt{auth.py}}: Enthält alle Routen für die Benutzerauthentifizierung (Login, Registrierung, Passwort zurücksetzen).
-    \item \textbf{\texttt{events.py}}: Verwaltet die API-Endpunkte für die Agenda, einschliesslich des Erstellens, Bearbeitens und Löschens von Kalendereinträgen sowie den Start des Lernalgorithmus.
-    \item \textbf{\texttt{grades.py}}: Beinhaltet die API für das Notenmanagement.
+\item \textbf{\texttt{events.py}}: Verwaltet die API-Endpunkte für die Agenda, einschliesslich des Erstellens, Bearbeitens und Löschens von Kalendereinträgen sowie den Start des Lernalgorithmus.
+\item \textbf{\texttt{grades.py}}: Beinhaltet die API für das Notenmanagement.
     \item \textbf{\texttt{main.py}}: Definiert die Hauptrouten der Webseite, wie die Startseite.
-    \item \textbf{\texttt{settings.py}}: Steuert die Einstellungsseite und die zugehörige Speicherlogik.
+\item \textbf{\texttt{settings.py}}: Steuert die Einstellungsseite und die zugehörige Speicherlogik.
 \end{itemize}
 
-\subsubsection{Kernlogik und Hilfsfunktionen}
+Die Kernlogik ist ebenfalls modularisiert:
 \begin{itemize}
     \item \textbf{\texttt{kkoala/algorithms.py}}: Enthält ausschliesslich die komplexe Logik des Lernzeitalgorithmus (LZA).
-    \item \textbf{\texttt{kkoala/utils.py}}: Beinhaltet wiederverwendbare Hilfsfunktionen und Decorators:
-    \begin{itemize}
-        \item \textbf{\texttt{@login\_required}}: Prüft automatisch, ob ein Benutzer angemeldet ist; andernfalls Umleitung zur Login-Seite.
-        \item \textbf{\texttt{@csrf\_protect}}: Schützt vor Cross-Site Request Forgery Angriffen.
-    \end{itemize}
-    \item \textbf{\texttt{kkoala/extensions.py}}: Initialisiert Flask-Erweiterungen, um zirkuläre Importfehler zu vermeiden.
+\item \textbf{\texttt{kkoala/utils.py}}: Beinhaltet wiederverwendbare Hilfsfunktionen und Decorators wie \texttt{@login\_required} (prüft ob ein Benutzer angemeldet ist) und \texttt{@csrf\_protect} (Schutz vor Cross-Site Request Forgery Angriffen).
+\item \textbf{\texttt{kkoala/extensions.py}}: Initialisiert Flask-Erweiterungen, um zirkuläre Importfehler zu vermeiden.
 \end{itemize}
 
-\subsection{Deployment und WSGI-Schnittstelle}
-Die Datei \texttt{wsgi.py} im Hauptverzeichnis ist der standardisierte Einstiegspunkt für den Webserver. Sie importiert die \texttt{create\_app}-Factory und erstellt das Flask-\texttt{application}-Objekt, das der WSGI (Web Server Gateway Interface) Spezifikation entspricht \parencite{chaitanya_srivastav_wsgi}.
+\subsubsection{Deployment und WSGI-Schnittstelle}
+Die Datei \texttt{wsgi.py} im Hauptverzeichnis ist der standardisierte Einstiegspunkt für den Webserver.
+Sie importiert die \texttt{create\_app}-Factory und erstellt das Flask-\texttt{application}-Objekt, das der WSGI (Web Server Gateway Interface) Spezifikation entspricht \parencite{chaitanya_srivastav_wsgi}.
+Für den produktiven Einsatz verwenden wir Gunicorn (\enquote{Green Unicorn}), einen robusten WSGI-HTTP-Server.
+Während der eingebaute Entwicklungsserver von Flask für Tests ausreicht, ist er nicht für hohe Last ausgelegt.
+Gunicorn agiert als leistungsfähiger \enquote{Middleman} zwischen dem Internet und unserer Flask-Anwendung, verwaltet mehrere Worker-Prozesse und stellt so Leistung und Stabilität sicher \parencite{codesignal_gunicorn}.
 
-Für den produktiven Einsatz verwenden wir Gunicorn (\enquote{Green Unicorn}), einen robusten WSGI-HTTP-Server. Während der eingebaute Entwicklungsserver von Flask für Tests ausreicht, ist er nicht für hohe Last ausgelegt. Gunicorn agiert als leistungsfähiger \enquote{Middleman} zwischen dem Internet und unserer Flask-Anwendung, verwaltet mehrere Worker-Prozesse und stellt so Leistung und Stabilität sicher \parencite{codesignal_gunicorn}.
-
-\subsection{Frontend-Struktur}
+\subsubsection{Frontend-Struktur}
 Die Benutzeroberfläche wird dynamisch auf dem Server generiert und als fertige HTML-Seiten an den Browser gesendet.
-
 \begin{itemize}
-    \item \textbf{Templates (\texttt{kkoala/templates/})}: Enthalten alle HTML-Dateien. Flask verwendet die Template-Engine Jinja, um Python-Code direkt in HTML einzubetten (Schleifen, bedingte Blöcke, Variablenausgabe), was die Seiten dynamisch und personalisiert macht \parencite{jinja_templates, flask_templating}.
-    \item \textbf{Statische Dateien (\texttt{kkoala/static/})}: Enthält CSS-Dateien für das Styling und Bilder (Logos, grafische Elemente), die vom Browser direkt geladen werden.
+    \item \textbf{Templates (\texttt{kkoala/templates/})}: Enthalten alle HTML-Dateien.
+Flask verwendet die Template-Engine Jinja, um Python-Code direkt in HTML einzubetten (Schleifen, bedingte Blöcke, Variablenausgabe), was die Seiten dynamisch und personalisiert macht \parencite{jinja_templates, flask_templating}.
+\item \textbf{Statische Dateien (\texttt{kkoala/static/})}: Enthält CSS-Dateien für das Styling, JavaScript-Dateien für clientseitige Logik sowie Bilder (Logos, grafische Elemente), die vom Browser direkt geladen werden.
 \end{itemize}
 
-\section{Datenstruktur und Datenbankmodelle}
+\subsection{Datenmodell und -struktur}
 
-\subsection{Datenbankwahl und Konfiguration}
-Die Datenstruktur ist in der Datei \texttt{models.py} durch SQLAlchemy-Modelle definiert. Für die lokale Entwicklung wird SQLite verwendet; für die Produktionsumgebung kommt PostgreSQL zum Einsatz, das besser für Mehrbenutzerbetrieb und hohe Last geeignet ist \parencite{astera_postgres_vs_sqlite, flask_database_tutorial}.
-
-\subsection[Datenbankmodelle und Schema]{Datenbankmodelle und Schema\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5): \enquote{Describe the models from models.py in LaTeX in German, without using tables. Just use text. }, 04.11.2025. Antwort ganz übernommen.}
+\subsubsection{Datenbankwahl und Konfiguration}
+Die Datenstruktur ist in der Datei \texttt{models.py} durch SQLAlchemy-Modelle definiert.
+Für die lokale Entwicklung wird SQLite verwendet, da es einfach einzurichten ist. Für die Produktionsumgebung kommt PostgreSQL zum Einsatz, das besser für Mehrbenutzerbetrieb und hohe Last geeignet ist \parencite{astera_postgres_vs_sqlite, flask_database_tutorial}.
+\subsubsection[Datenbankmodelle und Schema]{Datenbankmodelle und Schema\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Describe the models from models.py in LaTeX in German, without using tables.
+Just use text. }, 04.11.2025. Antwort ganz übernommen.}
 Die Datenbank besteht aus sieben Hauptmodellen, die die Nutzerdaten und die Planungslogik abbilden.
-
 \myparagraph{User}
 Dieses Modell speichert die Authentifizierungsdetails und dient als zentraler Ankerpunkt für alle anderen Daten des Nutzers.
 \begin{description}
     \item[\textbf{id}] Eindeutige ID des Nutzers (Primary Key).
     \item[\textbf{username}] Der gewählte Benutzername (eindeutig, notwendig).
-    \item[\textbf{password}] Das gehashte Passwort (notwendig).
+\item[\textbf{password}] Das gehashte Passwort (notwendig).
     \item[\textbf{email}] Die E-Mail-Adresse des Nutzers (eindeutig, notwendig).
 \end{description}
 
@@ -895,11 +908,11 @@ Dieses Modell speichert die Authentifizierungsdetails und dient als zentraler An
 Speichert globale Einstellungen für den Lernalgorithmus, die dem \texttt{User} zugeordnet sind.
 \begin{description}
     \item[\textbf{id}] Eindeutige ID (Primary Key).
-    \item[\textbf{user\_id}] Fremdschlüssel zur \texttt{User}-Tabelle (notwendig).
+\item[\textbf{user\_id}] Fremdschlüssel zur \texttt{User}-Tabelle (notwendig).
     \item[\textbf{learn\_on\_saturday}] Boolesche Variable, ob am Samstag gelernt werden soll (Standard: False).
-    \item[\textbf{learn\_on\_sunday}] Boolesche Variable, ob am Sonntag gelernt werden soll (Standard: False).
+\item[\textbf{learn\_on\_sunday}] Boolesche Variable, ob am Sonntag gelernt werden soll (Standard: False).
     \item[\textbf{preferred\_learning\_time}] Bevorzugte Startzeit für Lernblöcke (Standard: 18:00).
-    \item[\textbf{study\_block\_color}] Hex-Code für die Farbe der Lernblöcke (Standard: \#0000FF).
+\item[\textbf{study\_block\_color}] Hex-Code für die Farbe der Lernblöcke (Standard: \#0000FF).
 \end{description}
 
 \myparagraph{PrioritySetting}
@@ -908,9 +921,9 @@ Definiert die spezifischen Parameter für jede Prioritätsstufe des Lernalgorith
     \item[\textbf{id}] Eindeutige ID (Primary Key).
     \item[\textbf{settings\_id}] Fremdschlüssel zur \texttt{Settings}-Tabelle (notwendig).
     \item[\textbf{priority\_level}] Die Prioritätsstufe (Integer, notwendig).
-    \item[\textbf{color}] Die dem Prioritätslevel zugeordnete Farbe (Hex-Code, notwendig).
-    \item[\textbf{max\_hours\_per\_day}] Maximale Lernstunden pro Tag für diese Priorität.
-    \item[\textbf{total\_hours\_to\_learn}] Die gesamte zu lernende Stundenanzahl für diese Priorität.
+\item[\textbf{color}] Die dem Prioritätslevel zugeordnete Farbe (Hex-Code, notwendig).
+    \item[\textbf{max\_hours\_per\_day}] Maximale Lernstunden pro Tag für diese Priorität (notwendig).
+\item[\textbf{total\_hours\_to\_learn}] Die gesamte zu lernende Stundenanzahl für diese Priorität (notwendig).
 \end{description}
 
 \myparagraph{Event}
@@ -919,29 +932,34 @@ Speichert Kalendereinträge des Nutzers sowie Metadaten für den Planungsalgorit
     \item[\textbf{id}] Eindeutige ID (Primary Key).
     \item[\textbf{user\_id}] Fremdschlüssel zur \texttt{User}-Tabelle (notwendig).
     \item[\textbf{title}] Titel des Ereignisses.
-    \item[\textbf{start}] Startzeitpunkt im ISO-Format (notwendig).
+\item[\textbf{start}] Startzeitpunkt im ISO-Format (notwendig).
     \item[\textbf{end}] Endzeitpunkt im ISO-Format (optional).
-    \item[\textbf{color}] Farbe des Ereignisses.
-    \item[\textbf{priority}] Prioritätsstufe (Integer).
-    \item[\textbf{recurrence}] Wiederholungsregel des Ereignisses.
+    \item[\textbf{color}] Farbe des Ereignisses (notwendig).
+    \item[\textbf{priority}] Prioritätsstufe (Integer, notwendig).
+\item[\textbf{recurrence}] Wiederholungsregel des Ereignisses.
     \item[\textbf{recurrence\_id}] Eindeutige ID zur Gruppierung wiederkehrender Ereignisse.
-    \item[\textbf{all\_day}] Boolesche Variable, ob das Ereignis ganztägig ist (Standard: False).
-    \item[\textbf{locked}] Boolesche Variable für den Algorithmus; \texttt{True} bedeutet, das Ereignis ist fixiert (Standard: True).
+\item[\textbf{all\_day}] Boolesche Variable, ob das Ereignis ganztägig ist (Standard: False, notwendig).
+    \item[\textbf{locked}] Boolesche Variable für den Algorithmus;
+\texttt{True} bedeutet, das Ereignis ist fixiert (Standard: True).
     \item[\textbf{exam\_id}] ID des zugehörigen Examens, falls zutreffend.
 \end{description}
 
 \myparagraph{Semester, Subject und Grade}
 Diese Modelle bilden die akademische Hierarchie ab.
 \begin{description}
-    \item[\textbf{Semester}] Speichert akademische Abschnitte. Enthält \textbf{user\_id} (Fremdschlüssel) und \textbf{name}.
-    \item[\textbf{Subject}] Speichert Fächer innerhalb eines Semesters. Enthält \textbf{semester\_id} (Fremdschlüssel) und \textbf{name}.
-    \item[\textbf{Grade}] Speichert Bewertungen für Fächer. Enthält \textbf{subject\_id} (Fremdschlüssel), \textbf{name}, \textbf{value}, \textbf{weight} und \textbf{counts}.
+    \item[\textbf{Semester}] Speichert akademische Abschnitte.
+Enthält \textbf{user\_id} (Fremdschlüssel) und \textbf{name}.
+    \item[\textbf{Subject}] Speichert Fächer innerhalb eines Semesters. Enthält \textbf{semester\_id} (Fremdschlüssel), \textbf{name} und \textbf{counts\_towards\_average}.
+\item[\textbf{Grade}] Speichert Bewertungen für Fächer. Enthält \textbf{subject\_id} (Fremdschlüssel), \textbf{name}, \textbf{value}, \textbf{weight} und \textbf{counts}.
 \end{description}
 
-\subsection{Beziehungsstruktur}
-Die Tabellen in der Datenbank sind durch Fremdschlüssel (Foreign Keys) miteinander verbunden, um die Beziehungen zwischen den verschiedenen Datenmodellen abzubilden. Beispielsweise verknüpft der Fremdschlüssel \texttt{user\_id} in der \texttt{Event}-Tabelle jedes Ereignis mit dem zugehörigen Nutzer. Dadurch wird sichergestellt, dass jeder Kalendertermin eindeutig einem Benutzerkonto zugeordnet ist. Ähnliche Verknüpfungen existieren auch zwischen \texttt{Settings} und \texttt{User}, \texttt{PrioritySetting} und \texttt{Settings}, \texttt{Semester} und \texttt{User}, \texttt{Subject} und \texttt{Semester} sowie \texttt{Grade} und \texttt{Subject}.
-
-Die Abhängigkeiten und Kaskadenlöschungen (z.B. ein gelöschter \texttt{User} löscht alle seine \texttt{Events}, \texttt{Semesters} und \texttt{Settings}) sind über Fremdschlüsselverweise in allen untergeordneten Tabellen implementiert. Die zentralen Verbindungen sind:
+\subsubsection{Beziehungsstruktur}
+Die Tabellen in der Datenbank sind durch Fremdschlüssel (Foreign Keys) miteinander verbunden, um die Beziehungen zwischen den verschiedenen Datenmodellen abzubilden.
+Beispielsweise verknüpft der Fremdschlüssel \texttt{user\_id} in der \texttt{Event}-Tabelle jedes Ereignis mit dem zugehörigen Nutzer.
+Dadurch wird sichergestellt, dass jeder Kalendertermin eindeutig einem Benutzerkonto zugeordnet ist.
+Ähnliche Verknüpfungen existieren auch zwischen \texttt{Settings} und \texttt{User}, \texttt{PrioritySetting} und \texttt{Settings}, \texttt{Semester} und \texttt{User}, \texttt{Subject} und \texttt{Semester} sowie \texttt{Grade} und \texttt{Subject}.
+Die Abhängigkeiten und Kaskadenlöschungen (z.B. ein gelöschter \texttt{User} löscht alle seine \texttt{Events}, \texttt{Semesters} und \texttt{Settings}) sind über Fremdschlüsselverweise in allen untergeordneten Tabellen implementiert.
+Die zentralen Verbindungen sind:
 \begin{itemize}
     \item \texttt{User} $\to$ \texttt{Settings} (1:1), \texttt{Events} (1:n), \texttt{Semester} (1:n)
     \item \texttt{Settings} $\to$ \texttt{PrioritySetting} (1:n)
@@ -949,34 +967,73 @@ Die Abhängigkeiten und Kaskadenlöschungen (z.B. ein gelöschter \texttt{User} 
     \item \texttt{Subject} $\to$ \texttt{Grade} (1:n)
 \end{itemize}
 
-\section{Kernfunktionen (Features)}
+\section{Implementierung der Kernfunktionen}
+
+\subsection[Authentifizierung und Account Management]{Authentifizierung und Account Management\texorpdfstring{\aifootnotemark}{}}
+\aifootnotebasis{04.11.2025}
+Ein sicheres Authentifizierungssystem ist die Voraussetzung für eine personalisierte App.
+Dies umfasst Anmelde- und Registrierungsfunktionen, eine \enquote{Passwort vergessen}-Option, eine Option zum Ändern des Passworts und zum Löschen des Kontos.
+
+Sicherheit der Passwörter:
+Passwörter dürfen aus Sicherheits- und ethischen Gründen niemals im Klartext gespeichert werden.
+Die gewählte Lösung ist das Passwort-Hashing.
+Darunter versteht man die algorithmische Umwandlung eines Passworts in eine unumkehrbar verschleierte Version (Chiffretext) \parencite{password_hashing}.
+
+Zusätzlich wird Salting angewendet: Vor dem Hashing werden zufällige Daten (ein \enquote{Salt}) zum Passwort hinzugefügt.
+Dies verhindert Angriffe mit vorgefertigten Tabellen (Rainbow Tables), da das gleiche Passwort mit unterschiedlichen Salts zu unterschiedlichen Hashes führt \parencite{password_salting_rainbow_tables}.
+Das Modul Flask-Bcrypt übernimmt diese Aufgaben automatisch \parencite{flask_bcrypt_docs}.
+Beim Login-Vorgang wird das eingegebene Passwort ebenfalls gehasht und dieser Hash wird mit dem in der Datenbank gespeicherten Hash verglichen.
+Da dieser Prozess unumkehrbar ist, kann selbst bei einem direkten Zugriff auf die Datenbank das ursprüngliche Passwort nicht wiederhergestellt werden.
+
+\enquote{Forgot-Password}:
+Eine wesentliche Funktion ist das Zurücksetzen des Passworts, falls man ihn vergessen hat.
+Um den Reset-Link nur einmal verwendbar zu machen,
+wird der Token (der die Identität des Nutzers prüft) mit dem Hash des alten Passworts generiert.
+Diese Idee stammt von \textcite{password_reset}. Da das Passwort beim Zurücksetzen geändert wird, ändert sich auch der Hash, wodurch der alte Token sofort ungültig wird.
+
+Für den E-Mail-Versand (z.B. des Reset-Links) wird die API von Resend genutzt, da sie eine für unser Projekt ausreichende kostenlose Stufe bietet und den Versand über unsere eigene Domain \texttt{kantikoala.app} erlaubt.
+
+Bei Fehlern (z.B. E-Mail bereits vergeben, falsches Passwort) erhält der Nutzer eine spezifische Rückmeldung über \enquote{Flash-Nachrichten}, eine Funktion von Flask \parencite{realpython_flask_flashes}.
+\begin{figure}[!htp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{img/login-screenshot.png}
+    \caption[Screenshot des Anmeldeprozesses.
+Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot des Anmeldeprozesses}
+    \label{fig:auth_flow}
+\end{figure}
+
+\FloatBarrier
 
 \subsection[Homescreen / Dashboard]{Homescreen / Dashboard\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 09.11.2025. Antwort ganz übernommen.}
-Der Homescreen (Dashboard) ist die zentrale Einstiegsseite nach dem Login. Er fasst die wichtigsten Informationen kompakt zusammen, um Nutzer:innen einen schnellen Überblick über ihren aktuellen Stand zu geben.
-
-Wichtig: Der Homescreen ist auch für nicht angemeldete Besucher:innen verfügbar. In diesem öffentlichen Modus wird eine gekürzte Ansicht präsentiert, die prominente Aufrufe zum Anmelden oder Registrieren enthält. Der tägliche Tipp wird angezeigt, persönliche Daten wie Noten, Termine oder Prüfungen bleiben jedoch ausgeblendet.
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text.
+[...]. }, 09.11.2025. Antwort ganz übernommen.}
+Der Homescreen (Dashboard) ist die zentrale Einstiegsseite nach dem Login.
+Er fasst die wichtigsten Informationen kompakt zusammen, um Nutzer:innen einen schnellen Überblick über ihren aktuellen Stand zu geben.
+Der Homescreen ist auch für nicht angemeldete Besucher:innen verfügbar.
+In diesem öffentlichen Modus wird eine gekürzte Ansicht präsentiert, die prominente Aufrufe zum Anmelden oder Registrieren enthält.
+Der tägliche Tipp wird angezeigt, persönliche Daten wie Noten, Termine oder Prüfungen bleiben jedoch ausgeblendet.
 
 \myparagraph{Aufbau} Das Dashboard ist in mehrere Kacheln (Cards) gegliedert, die folgende Informationen anzeigen:
 
 \begin{itemize}
-    \item \textbf{Notenübersicht:} Diese Kachel zeigt eine Zusammenfassung der schulischen Leistung des aktuellsten Semesters (aktueller Schnitt, Pluspunkte sowie bestes und schwächstes Fach). Sind noch keine Noten eingetragen, erscheint ein Hinweis mit Aufforderung zur Eingabe.
-    \item \textbf{Heutige Termine:} Listet alle für den aktuellen Tag im Kalender eingetragenen Ereignisse mit Titel und Uhrzeit auf.
-    \item \textbf{Nächste Prüfungen:} Zeigt die anstehenden Prüfungen der nächsten 21 Tage. Findet eine Prüfung innerhalb der nächsten sieben Tage statt, wird sie hervorgehoben (rot); spätere Prüfungen werden orange markiert.
-    \item \textbf{Tipp des Tages:} Ein Bereich mit täglich wechselnden, kurzen Hinweisen — dieser Bereich ist sowohl für eingeloggte als auch für nicht eingeloggte Nutzer:innen sichtbar. Die Funktion wird weiter unten ausführlicher beschrieben.
-    \item \textbf{Hilfe-Hinweis:} Eine Kachel, die Nutzer:innen auf die Hilfe-Seite (/hilfe) aufmerksam macht, um den Einstieg zu erleichtern.
+    \item \textbf{Notenübersicht:} Zeigt eine Zusammenfassung der schulischen Leistung des aktuellsten Semesters (aktueller Schnitt, Pluspunkte sowie bestes und schwächstes Fach).
+Sind noch keine Noten eingetragen, erscheint ein Hinweis mit Aufforderung zur Eingabe.
+\item \textbf{Heutige Termine:} Listet alle für den aktuellen Tag im Kalender eingetragenen Ereignisse mit Titel und Uhrzeit auf.
+\item \textbf{Nächste Prüfungen:} Zeigt die anstehenden Prüfungen der nächsten 21 Tage.
+Findet eine Prüfung am heutigen Tag statt, wird sie in einem dunklen Rot hervorgehoben; Prüfungen innerhalb der nächsten sieben Tage erscheinen in Rot, spätere Prüfungen werden orange markiert.
+\item \textbf{Tip of the Day:} Ein Bereich mit täglich wechselnden, kurzen Hinweisen — dieser Bereich ist sowohl für eingeloggte als auch für nicht eingeloggte Nutzer:innen sichtbar.
+\item \textbf{Hilfe-Hinweis:} Eine Kachel, die Nutzer:innen auf die Hilfe-Seite (/hilfe) aufmerksam macht, um den Einstieg zu erleichtern.
 \end{itemize}
 
-\myparagraph{Tipp des Tages}
-Eine Kernanforderung der App ist die tägliche Bereitstellung eines neuen Tipps auf der Startseite, etwa zu schulbezogenen oder allgemeinen Lernthemen. Die einfachste Implementierung hierfür ist eine einfache Modulo-Rechnung:
+\myparagraph{Tip of the Day}
+Eine Kernanforderung der App ist die tägliche Bereitstellung eines neuen Tipps auf der Startseite, etwa zu schulbezogenen oder allgemeinen Lernthemen.
+Die Implementierung hierfür nutzt eine einfache Modulo-Rechnung:
 \begin{equation*}
-\text{Tipp des Tages (Index)} = (\text{Tag des Jahres}) \bmod (\text{Anzahl der Tipps})
+\text{Tip of the Day (Index)} = (\text{Tag des Jahres}) \bmod (\text{Anzahl der Tipps})
 \end{equation*}
 So wird an jedem Tag genau ein Tipp angezeigt und über das Jahr hinweg zyklisch alle Tipps durchlaufen.
-
-Der Titel dieses Features steht als englischer UI-Anker (\enquote{Tip of the Day}) in der Oberfläche, weil der Ausdruck als prägnanter UI-Anker wiedererkennbar ist; der eigentliche Inhalt (der Tipp) bleibt jedoch vollständig auf Deutsch, um Verständlichkeit und lokalen Bezug sicherzustellen.
-
-
+Der Titel dieses Features steht als englischer UI-Anker (\enquote{Tip of the Day}) in der Oberfläche, weil der Ausdruck als prägnanter UI-Anker wiedererkennbar ist;
+der eigentliche Inhalt (der Tipp) bleibt jedoch vollständig auf Deutsch, um Verständlichkeit und lokalen Bezug sicherzustellen.
 \begin{figure}[!htp]     
     \centering     
     \begin{tabular}{c c}         
@@ -984,7 +1041,9 @@ Der Titel dieses Features steht als englischer UI-Anker (\enquote{Tip of the Day
         \includegraphics[width=0.45\textwidth]{img/darkmode-home.png} \\
         (a) Homescreen -- Light Mode & (b) Homescreen -- Dark Mode     
     \end{tabular}
-    \caption[Homescreen für angemeldete Nutzer:innen in Light und Dark Mode. Eigene Screenshots von KantiKoala, 09.11.2025.]{Homescreen / Dashboard in Light (links) und Dark Mode (rechts). Die Darstellung zeigt die Kacheln für Notenübersicht, heutige Termine, nächste Prüfungen und den \enquote{Tip of the Day}.}
+    \caption[Homescreen für angemeldete Nutzer:innen in Light und Dark Mode.
+Eigene Screenshots von KantiKoala, 09.11.2025.]{Homescreen / Dashboard in Light (links) und Dark Mode (rechts).
+Die Darstellung zeigt die Kacheln für Notenübersicht, heutige Termine, nächste Prüfungen und den \enquote{Tip of the Day}.}
     \label{fig:homescreen_screens} 
 \end{figure}
 
@@ -992,190 +1051,151 @@ Der Titel dieses Features steht als englischer UI-Anker (\enquote{Tip of the Day
 \begin{figure}[!htp]     
     \centering     
     \includegraphics[width=0.6\textwidth]{img/homescreen-loggedout.png} 
-    \caption[Homescreen für nicht angemeldete Nutzer:innen im Dark Mode. Eigener Screenshot von KantiKoala, 09.11.2025.]{Homescreen für nicht angemeldete Nutzer:innen im Dark Mode.}
+    \caption[Homescreen für nicht angemeldete Nutzer:innen im Dark Mode.
+Eigener Screenshot von KantiKoala, 09.11.2025.]{Homescreen für nicht angemeldete Nutzer:innen im Dark Mode.}
     \label{fig:homescreen_loggedout}
 \end{figure}
 
 \FloatBarrier
 
-\subsection[Authentifizierung]{Authentifizierung\texorpdfstring{\aifootnotemark}{}}
+\subsection[Agenda und Kalenderverwaltung]{Agenda und Kalenderverwaltung\texorpdfstring{\aifootnotemark}{}}
 \aifootnotebasis{04.11.2025}
-Um eine App mit verschiedenen Nutzern zu haben, brauchen wir ein gutes Authentifizierungssystem. Das bedeutet, dass es eine Anmelde- und Registrierungsfunktion sowie eine Option zum Vergessen des Passworts, eine Option zum Ändern des Passworts und schliesslich auch eine Option zum Löschen des Kontos geben muss.
+Die Agenda ist eine zentrale Kernfunktion der Anwendung.
+Sie ermöglicht das Erstellen, Bearbeiten und Löschen von Terminen mit minimalem Aufwand.
+Jedes Ereignis umfasst die Attribute Titel, Start- und Endzeit, eine optionale Wiederholungsregel, eine Farbe sowie eine Priorität, die für den Lernzeitalgorithmus relevant ist.
+Zusätzlich kann ein Ereignis als ganztägig gekennzeichnet werden. Die Zuordnung zum jeweiligen Konto erfolgt über die aktuell authentifizierte Sitzung;
+die Benutzer-ID wird beim Anlegen eines Ereignisses automatisch hinterlegt.
 
-Natürlich können wir ein Passwort nicht im Klartext speichern, denn das wäre ein Sicherheitsrisiko und ein ethisches Risiko, weil wir als Entwickler dann die Passwörter der einzelnen Konten einsehen können. Die einfachste Lösung für dieses Problem besteht darin, das Kennwort zu hashen. Unter Passwort-Hashing versteht man die algorithmische Umwandlung eines Passworts in Chiffretext oder eine unumkehrbar verschleierte Version seiner selbst \parencite{password_hashing}. Ein anderes wichtiges Konzept ist das Salting. Salting ist die Praxis, zufällige Daten (ein \enquote{Salt}) zu einem Passwort hinzuzufügen, bevor es gehasht wird. Dies verhindert Angriffe mit vorgefertigten Tabellen (Rainbow Tables), da das gleiche Passwort mit unterschiedlichen Salts zu unterschiedlichen Hashes führt \parencite{password_salting_rainbow_tables}. Glücklicherweise kümmert sich das Flask-Bcrypt-Modul um all diese Dinge für uns, sodass wir uns keine Sorgen machen müssen, wie wir das Passwort hashen und salten \parencite{flask_bcrypt_docs}.
+Für die Darstellung setzen wir die JavaScript-Bibliothek FullCalendar ein \parencite{full_calendar}.
+Diese Wahl wurde getroffen, da sie etabliert, funktionsreich und gut dokumentiert ist. 
 
-Sobald man sich anmeldet oder registriert, wird man auf die Startseite der Website weitergeleitet.
-
-Sehr wichtig bei jedem Anmeldesystem ist natürlich eine Option das Passwort zurückzusetzen wenn man es vergisst. Um so ein System zu haben, ist es wichtig, dass man den Link, um das Passwort zurückzusetzen, nur einmal verwenden kann. Um dies zu erreichen, haben wir den Token, welches gebraucht wird, um zu überprüfen, dass das Passwort für den richtigen User zurückgesetzt wird, mit dem Hash vom alten Passworts generiert. Wir sind dank \textcite{password_reset} auf diese Idee gekommen. Das Prinzip funktioniert, da das Passwort sich ändern wird, und somit kann man den gleichen Token nicht wieder verwenden. Zudem brauchen wir, um die E-Mail zu verschicken, eine API, damit wir sie mit unserer eigenen Domaine verschicken können. Wir haben uns für die API von Resend entschieden, da sie eine kostenlose Stufe hat, die für unser Projekt ausreicht.
-
-Im Falle, dass ein Nutzer zum Beispiel mit einer E-Mail, die schon gebraucht wird, sich registrieren will, oder mit einem falschen Passwort sich anmelden will, bekommt der Nutzer eine Fehlermeldung angezeigt, die ihm sagt, was falsch gelaufen ist, mithilfe von Flash-Nachrichten, welche eine Funktion von Flask ist \parencite{realpython_flask_flashes}.
-
-\begin{figure}[!htp]
-    \centering
-    \includegraphics[width=0.6\textwidth]{img/login-screenshot.png}
-    \caption[Screenshot des Anmeldeprozesses. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot des Anmeldeprozesses}
-    \label{fig:auth_flow}
-\end{figure}
-
-\subsection[Agenda]{Agenda\texorpdfstring{\aifootnotemark}{}}
-\aifootnotebasis{04.11.2025}
-Die Agenda ist eine zentrale Kernfunktion der Anwendung. Sie sollte die Operationen Erstellen, Bearbeiten und Löschen von Terminen mit minimalem Aufwand ermöglichen.
-
-Jedes Ereignis umfasst die Attribute Titel, Start- und Endzeit, eine optionale Wiederholungsregel, eine Farbe sowie eine Priorität, die für den Lernzeitalgorithmus relevant ist. Zusätzlich kann ein Ereignis als ganztägig gekennzeichnet werden. Die Zuordnung zum jeweiligen Konto erfolgt über die aktuell authentifizierte Sitzung; die Benutzer-ID wird beim Anlegen eines Ereignisses automatisch hinterlegt.
-
-Für die Darstellung setzen wir die JavaScript-Bibliothek FullCalendar ein \parencite{full_calendar}. Sie ist etabliert, funktionsreich und gut dokumentiert und ermöglicht unterschiedliche Ansichten (z.\,B. Monat, Woche, Liste), Drag-and-Drop-Anpassungen sowie eine direkte Synchronisation mit dem Backend über JSON-Endpunkte.
-
-Die Agenda unterstützt zudem den Import des individuellen Stundenplans aus \texttt{schulnetz}, der von der Kantonsschule zur Anzeige von Stundenplänen genutzt wird. Da \texttt{schulnetz} Kalenderdaten im \texttt{.ics}-Format exportiert, kann die Datei zunächst dort exportiert und anschliessend in unsere Anwendung importiert werden. Dies reduziert manuellen Erfassungsaufwand.
-
-\subsubsection{Farbkonzept für Ereignisse}
-Die Farbgebung in der Agenda folgt einem durchdachten System zur visuellen Unterscheidung verschiedener Ereignistypen (vgl. \texttt{kkoala/consts.py}, \texttt{kkoala/routes/events.py}, \texttt{kkoala/templates/settings.html}):
-
-\myparagraph{Importierte Ereignisse (Stundenplan)}
-Beim Import von \texttt{.ics}-Dateien werden alle Ereignisse automatisch mit der Standardfarbe \texttt{\#6C757D} (mittleres Grau) eingefärbt. Diese Wahl basiert auf mehreren Überlegungen:
-\begin{itemize}
-    \item \textbf{Visuelle Hierarchie}: Grau ist neutral und tritt gegenüber den farbcodierten Prioritätsstufen (rot, orange, grün) und Lernblöcken (blau) zurück, sodass wichtigere Ereignisse visuell dominieren.
-    \item \textbf{Lesbarkeit}: \texttt{\#6C757D} bietet ausreichenden Kontrast zu weissen Hintergründen, ohne visuell dominant zu wirken.
-\end{itemize}
-
-Diese Standardfarbe kann in den Einstellungen global angepasst werden, falls Nutzer:innen persönliche Präferenzen haben. Alle bereits importierten Ereignisse übernehmen dann die neue Farbe, was eine konsistente visuelle Darstellung des gesamten Stundenplans gewährleistet.
-
-\myparagraph{Prüfungsereignisse nach Prioritätsstufen}
-Prüfungen werden basierend auf ihrer Prioritätsstufe automatisch eingefärbt, um die Dringlichkeit visuell zu kommunizieren (vgl. \texttt{kkoala/consts.py}). Die Farbwahl folgt einem Ampel-System mit abgestufter Intensität:
-
-\begin{itemize}
-    \item \textbf{Priorität 1 (Höchste Dringlichkeit): \texttt{\#770000} -- Dunkles Rot}
-    \begin{itemize}
-        \item Rot wird im Ampel-System für \enquote{Stopp} verwendet und signalisiert hohe Dringlichkeit.
-        \item Das dunkle Rot \texttt{\#770000} ist weniger intensiv als reines Rot (\texttt{\#FF0000}), bleibt aber gut sichtbar.
-    \end{itemize}
-    
-    \item \textbf{Priorität 2 (Mittlere Dringlichkeit): \texttt{\#ca8300} -- Orange}
-    \begin{itemize}
-        \item Orange liegt im Ampel-System zwischen Rot und Grün und signalisiert mittlere Dringlichkeit.
-        \item Bildet eine Abstufung zwischen Priorität 1 (Rot) und Priorität 3 (Grün).
-    \end{itemize}
-    
-    \item \textbf{Priorität 3 (Niedrigste Dringlichkeit): \texttt{\#097200} -- Dunkles Grün}
-    \begin{itemize}
-        \item Grün wird im Ampel-System für \enquote{Freigabe} verwendet und signalisiert niedrige Dringlichkeit.
-        \item Das dunkle Grün \texttt{\#097200} bietet ausreichenden Kontrast zum weissen Hintergrund.
-    \end{itemize}
-\end{itemize}
-
-Die Farbwahl orientiert sich am Ampel-System (Rot → Orange → Grün), das aus dem Verkehrswesen bekannt ist. Die Farbtöne sind abgedunkelt, um eine gleichmässige visuelle Darstellung zu gewährleisten. Alle Prioritätsfarben können in den Einstellungen angepasst werden.
-
-\myparagraph{Algorithmisch generierte Lernblöcke}
-Die vom Lernzeitalgorithmus erzeugten Lernblöcke erhalten standardmässig die Farbe \texttt{\#0000FF} (reines Blau). Diese Entscheidung wurde aus folgenden Gründen getroffen:
-\begin{itemize}
-    \item Blau liegt ausserhalb des Ampel-Farbspektrums (Rot-Orange-Grün) und der Stundenplanfarbe (Grau), wodurch Lernblöcke klar erkennbar sind.
-    \item Reines Blau bietet hohen Kontrast zum weissen Hintergrund.
-\end{itemize}
-
-Diese Standardfarbe kann in den Einstellungen angepasst werden, falls Nutzer:innen eine andere Farbe bevorzugen (vgl. \texttt{kkoala/templates/settings.html}).
-
-\subsubsection{Import und Export}
-Wie oben beschrieben, kann der Stundenplan aus \texttt{schulnetz} im \texttt{.ics}-Format importiert werden. Zusätzlich besteht die Möglichkeit, die gesamte Agenda als \texttt{.ics}-Datei zu exportieren, um sie in anderen Kalenderanwendungen zu nutzen. Wenn man den Kalendar aus unserer Applikation exportiert und dann auch wieder in unserer Applikation importiert, bleiben Priorität und Farbe erhalten.
-
-
+\subsubsection{Import und Export von .ics-Dateien}
+Die Agenda unterstützt den Import des individuellen Stundenplans aus \texttt{schulnetz}, der von der Kantonsschule zur Anzeige von Stundenplänen genutzt wird.
+Da \texttt{schulnetz} Kalenderdaten im \texttt{.ics}-Format exportiert, kann die Datei zunächst dort exportiert und anschliessend in unsere Anwendung importiert werden.
+Dies reduziert manuellen Erfassungsaufwand erheblich.
+Zusätzlich besteht die Möglichkeit, die gesamte Agenda als \texttt{.ics}-Datei zu exportieren, um sie in anderen Kalenderanwendungen zu nutzen.
+Wenn man den Kalendar aus unserer Applikation exportiert und dann auch wieder in unserer Applikation importiert, bleiben Priorität und Farbe erhalten.
 \begin{figure}
     \centering
     \includegraphics[width=\linewidth]{img/agenda.png}
-    \caption[Beispiel einer Agenda mit Lernblöcken der LZA. Eigener Screenshot von Kanti Koala, 31.10.2025.]{Beispiel einer Agenda mit Lernblöcken der LZA}
+    \caption[Beispiel einer Agenda mit Lernblöcken der LZA.
+Eigener Screenshot von Kanti Koala, 31.10.2025.]{Beispiel einer Agenda mit Lernblöcken der LZA}
     \label{fig:placeholder}
 \end{figure}
 
 \subsection[Der Lernzeitalgorithmus]{Der Lernzeitalgorithmus\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
-Der Lernzeitalgorithmus (LZA) ist der Kern unserer Web-App. Er automatisiert die Planung der notwendigen Lernzeiten für die anstehenden Prüfungen eines Nutzers.
-Wir bezeichnen unseren Mechanismus als Algorithmus, da er die formalen Kriterien eines Algorithmus erfüllt: Jeder Planungsschritt ist ausführbar (existierende Funktionen), deterministisch und determiniert (gleiche Eingabedaten führen stets zur gleichen Priorisierung und Planung). Zudem ist die Anzahl der zur Erstellung des Lernplans notwendigen Schritte endlich (Finitheit), wodurch der Mechanismus garantiert terminiert und eine strukturierte Ausgabe (den Lernplan) basierend auf den Eingabedaten (Benutzereinstellungen und Prüfungstermine) liefert \parencite{studyflix_algorithmus}.
-
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text.
+[...]. }, 04.11.2025. Antwort ganz übernommen.}
+Der Lernzeitalgorithmus (LZA) ist der Kern unserer Web-App.
+Er automatisiert die Planung der notwendigen Lernzeiten für die anstehenden Prüfungen eines Nutzers.
+Wir bezeichnen unseren Mechanismus als Algorithmus, da er die formalen Kriterien eines Algorithmus erfüllt: Jeder Planungsschritt ist ausführbar (existierende Funktionen), deterministisch und determiniert (gleiche Eingabedaten führen stets zur gleichen Priorisierung und Planung).
+Zudem ist die Anzahl der zur Erstellung des Lernplans notwendigen Schritte endlich (Finitheit), wodurch der Mechanismus garantiert terminiert und eine strukturierte Ausgabe (den Lernplan) basierend auf den Eingabedaten (Benutzereinstellungen und Prüfungstermine) liefert \parencite{studyflix_algorithmus}.
 \subsubsection{Eingabeparameter und Planungsziel}
-Der Lernzeitalgorithmus (LZA) verwendet globale Benutzereinstellungen sowie prüfungsspezifische Prioritätseinstellungen als Eingabeparameter, um eine regelbasierte Lernplanung zu ermöglichen.
+Der LZA verwendet globale Benutzereinstellungen sowie prüfungsspezifische Prioritätseinstellungen als Eingabeparameter, um eine regelbasierte Lernplanung zu ermöglichen.
+Diese Parameter wurden auf Basis der Ergebnisse aus der Recherche (Kapitel 2) als wichtig erachtet, um eine flexible und realistische Lernplanung zu ermöglichen.
 
 Das zentrale Planungsziel des LZA ist es, die definierten totalen Lernstunden für jede Prüfung innerhalb des gültigen Lernfensters zu erreichen, während das tägliche Maximum und alle bestehenden Kalenderkonflikte des Nutzers strikt eingehalten werden.
-
-Wir haben die Eingabeparameter so gewählt, weil wir sie so aus der Recherche als wichtig erachteten, um eine gute Lernplanung zu ermöglichen. 
 
 \myparagraph{Globale Parameter}
 Diese Einstellungen gelten für den gesamten Planungszeitraum:
 \begin{itemize}
     \item \textbf{Lernen am Samstag}: Definiert, ob der Algorithmus Lernblöcke an Samstagen planen darf.
-    \item \textbf{Lernen am Sonntag}: Definiert, ob der Algorithmus Lernblöcke an Sonntagen planen darf.
-    \item \textbf{Bevorzugte Lernzeit}: Die bevorzugte Uhrzeit am Tag, zu der die Platzierung von Lernblöcken primär angestrebt wird.
+\item \textbf{Lernen am Sonntag}: Definiert, ob der Algorithmus Lernblöcke an Sonntagen planen darf.
+\item \textbf{Bevorzugte Lernzeit}: Die bevorzugte Uhrzeit am Tag, zu der die Platzierung von Lernblöcken primär angestrebt wird.
 \end{itemize}
 
 \myparagraph{Prüfungsspezifische Parameter (Pro Prioritätstufe)}
 Diese Werte werden basierend auf der Priorität jeder Prüfung zugewiesen:
 \begin{itemize}
     \item \textbf{Tägliches Maximum}: Die maximale Stundenzahl, die pro Tag für Prüfungen dieser Priorität geplant werden darf.
-    \item \textbf{Total Lernstunden}: Die gesamte Anzahl an Lernstunden, die für Prüfungen dieser Priorität absolviert werden muss.
+\item \textbf{Total Lernstunden}: Die gesamte Anzahl an Lernstunden, die für Prüfungen dieser Priorität absolviert werden muss.
 \end{itemize}
 
 \subsubsection{Ablauf und Planungsstrategie}
-Der Algorithmus arbeitet iterativ und bearbeitet alle als Prüfung markierten Ereignisse in aufsteigender Reihenfolge ihrer Priorität. Eine niedrigere Prioritätsnummer kennzeichnet dabei eine höhere Wichtigkeit.
+Der Algorithmus arbeitet iterativ und bearbeitet alle als Prüfung markierten Ereignisse in aufsteigender Reihenfolge ihrer Priorität.
+Eine niedrigere Prioritätsnummer kennzeichnet dabei eine höhere Wichtigkeit.
 
 \textbf{Hinweis zum Umgang mit fehlenden Endzeiten:} 
-Falls ein Ereignis keine Endzeit besitzt, behandelt der Algorithmus dieses Ereignis als sogenanntes \emph{Punkt-Ereignis}, d.\,h. das Start- und Endzeitpunkt sind identisch. Dies ist insbesondere relevant, da importierte Kalenderdaten manchmal keine Endzeit angeben. Eine Korrektur dieses Verhaltens bereits beim Import könnte zu Darstellungsproblemen in der Kalenderansicht führen. Daher wurde entschieden, diese Anpassung erst im Algorithmus selbst vorzunehmen, um sowohl die Integrität der Planung als auch die Kompatibilität mit der Kalenderdarstellung zu gewährleisten.
-
+Falls ein Ereignis keine Endzeit besitzt, behandelt der Algorithmus dieses Ereignis als sogenanntes \emph{Punkt-Ereignis}, d.\,h.
+das Start- und Endzeitpunkt sind identisch. Dies ist insbesondere relevant, da importierte Kalenderdaten (z.B. aus \texttt{schulnetz}) manchmal keine Endzeit angeben.
+Eine Korrektur dieses Verhaltens bereits beim Import könnte zu Darstellungsproblemen in der Kalenderansicht führen.
+Daher wurde entschieden, diese Anpassung erst im Algorithmus selbst vorzunehmen, um sowohl die Integrität der Planung als auch die Kompatibilität mit der Kalenderdarstellung zu gewährleisten.
 \begin{enumerate}
     \item \textbf{Zyklische Neuberechnung der Anforderungen (Recycling)}:
     \begin{itemize}
-        \item \textbf{Flexibilitätsbereinigung}: Alle vom System selbst geplanten, aber nicht gesperrten Lernblöcke für die aktuelle Prüfung werden gelöscht. Dies ermöglicht eine Neuplanung, falls sich die Rahmenbedingungen geändert haben.
-        \item \textbf{Soll-Stunden-Ermittlung}: Die noch zu erbringende Lernzeit wird neu berechnet unter Berücksichtigung bereits absolvierter oder manuell gesperrter Stunden.
-    \end{itemize}
+        \item \textbf{Flexibilitätsbereinigung}: Alle vom System selbst geplanten, aber nicht gesperrten Lernblöcke für die aktuelle Prüfung werden gelöscht.
+Dies ermöglicht eine Neuplanung, falls sich die Rahmenbedingungen geändert haben.
+\item \textbf{Soll-Stunden-Ermittlung}: Die noch zu erbringende Lernzeit wird neu berechnet unter Berücksichtigung bereits absolvierter oder manuell gesperrter Stunden.
+\end{itemize}
     \item \textbf{Rückwärts-Iterative Planung}:
     \begin{itemize}
-        \item Die Planungsstrategie beginnt beim Prüfungstermin und arbeitet sich tageweise, jedoch maximal drei Wochen, bis zum aktuellen Datum vor. Dies stellt sicher, dass Lernblöcke mit höchster Dringlichkeit (nächste zur Prüfung) zuerst belegt werden.
-        \item An jedem Tag wird die maximale Lernzeit für diese spezifische Prüfung ermittelt, um das tägliche Zeitlimit einzuhalten.
-    \end{itemize}
+        \item Die Planungsstrategie beginnt beim Prüfungstermin und arbeitet sich tageweise, jedoch maximal drei Wochen, bis zum aktuellen Datum vor.
+Dies stellt sicher, dass Lernblöcke mit höchster Dringlichkeit (nächste zur Prüfung) zuerst belegt werden.
+\item An jedem Tag wird die maximale Lernzeit für diese spezifische Prüfung ermittelt, um das tägliche Zeitlimit einzuhalten.
+\end{itemize}
     \item \textbf{Platzierung und strikte Konfliktvermeidung}:
     \begin{itemize}
         \item \textbf{Bevorzugter Slot}: Primär wird versucht, einen Lernblock in der vom Nutzer festgelegten bevorzugten Lernzeit zu platzieren.
-        \item \textbf{Konfliktprüfung}: Die Verfügbarkeit wird gegen alle Kalendereinträge geprüft. Ein 30-minütiger Puffer vor und nach jedem Ereignis verhindert zeitliche Überlappungen.
-        \item \textbf{Alternative Slots}: Falls die bevorzugte Zeit belegt ist, sucht eine dedizierte Funktion den grössten verfügbaren, konfliktfreien Zeitabschnitt.
-        \item \textbf{Echtzeit-Aktualisierung}: Nach erfolgreicher Generierung wird der Lernblock sofort zur Liste der aktuellen Ereignisse hinzugefügt, um nachfolgende Überlappungen auszuschliessen.
-    \end{itemize}
+\item \textbf{Konfliktprüfung}: Die Verfügbarkeit wird gegen alle Kalendereinträge geprüft. Ein 30-minütiger Puffer vor und nach jedem Ereignis verhindert zeitliche Überlappungen.
+\item \textbf{Alternative Slots}: Falls die bevorzugte Zeit belegt ist, sucht eine dedizierte Funktion den grössten verfügbaren, konfliktfreien Zeitabschnitt.
+\item \textbf{Echtzeit-Aktualisierung}: Nach erfolgreicher Generierung wird der Lernblock sofort zur Liste der aktuellen Ereignisse hinzugefügt, um nachfolgende Überlappungen auszuschliessen.
+\end{itemize}
              \item \textbf{Ergebnisrückgabe und Zusammenfassung}:
     \begin{itemize}
         \item Der Algorithmus gibt eine detaillierte Zusammenfassung zurück: Gesamtzahl hinzugefügter Lernblöcke, geplante Gesamtstunden und Planungsstatus pro Prüfung.
-    \end{itemize}
+\end{itemize}
 \end{enumerate}
 
 \subsection{Notenverwaltung}
-In der Kantonsschule muss man immer wieder Prüfungen schreiben. Die Noten, die man erhält, sind dann wichtig für die Promotion in die nächste Stufe. Deswegen haben wir ein Feature, in dem man seine Noten pro Semester speichern kann. Jedes Semester hat schon die jeweiligen Fächer, die man dann in diesem Semester haben würde, geladen. Man kann natürlich immer noch Fächer löschen und hinzufügen. Man kann mit diesem Feature dann seine Durchschnitte pro Fach und Semester sehen. Ebenfalls kann man mit dem Notenrechner sehen, welche Note man in einem Fach brauchen würde, um einen bestimmten Schnitt in diesem Fach zu haben. Die Idee von diesem Feature stammt aus der App \enquote{Pluspoints} \parencite{pluspoints_app}. Das Feature, das uns dort fehlte, war die automatische Fächeraddition pro Semester, welches wir in unserer App implementiert haben. 
+In der Kantonsschule sind die Noten entscheidend für die Promotion in die nächste Stufe.
+Aus diesem Grund wurde ein Feature implementiert, in dem man seine Noten pro Semester speichern kann.
+Jedes Semester wird beim Erstellen automatisch mit den jeweiligen Fächern des entsprechenden Semesters an der Kanti Baden vorbefüllt.
+Nutzer:innen können Fächer löschen und hinzufügen. Das Feature berechnet automatisch die Durchschnitte pro Fach und Semester.
 
-Da die App an Kanti-Schüler:innen gerichtet ist, kann man maximal nur acht Semester hinzufügen, da wir nur acht Semester in der Kantonsschule haben. Jedes neue Semester wird in der Anzeige oben hinzugefügt, damit man das neuste immer als erstes sieht.
-
+Ebenfalls ist ein Notenrechner integriert, mit dem man ermitteln kann, welche Note man in einem Fach benötigen würde, um einen bestimmten Zielschnitt zu erreichen.
+Die Idee zu diesem Feature stammt von der App \enquote{Pluspoints} \parencite{pluspoints_app}.
+Ein Manko dieser App war jedoch das Fehlen einer automatischen Fächeraddition pro Semester, welches wir in unserer App implementiert haben.
+Da die App an Kanti-Schüler:innen gerichtet ist, ist die Anzahl der Semester auf acht begrenzt.
+Neue Semester werden in der Anzeige stets oben hinzugefügt, um das aktuellste Semester zuerst anzuzeigen.
 \begin{figure}[!htp]
     \centering
     \includegraphics[width=\linewidth]{img/notenorg-screenshot.png}
-    \caption[Screenshot der Notenverwaltungs-Seite. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Notenverwaltungs-Seite}
+    \caption[Screenshot der Notenverwaltungs-Seite.
+Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Notenverwaltungs-Seite}
     \label{fig:notenverwaltung_page}
 \end{figure}
 
 \FloatBarrier
 
-\subsection{Lerntimer}
-Ein weiteres wichtiges Feature unserer App ist der Lerntimer. Dieser Timer basiert auf der Pomodoro-Technik, welche im Recherche Teil dieses Berichts erklärt wurde. Mit der Recherche, die wir führten, fanden wir es wichtig, einen solchen Lerntimer zu implementieren, da es eine sehr effektive Lerntechnik ist. Der Timer hat die Standard-Einstellungen von 25 Minuten Lernen und 5 Minuten Pause, welche man aber auch ändern kann, falls man das möchte.
-
+\subsection{Lerntools (Timer und Tipps)}
+\subsubsection{Lerntimer}
+Ein weiteres wichtiges Feature ist der Lerntimer.
+Dieser Timer basiert auf der Pomodoro-Technik, welche in Kapitel 2 (Recherche) erläutert wurde.
+Die Recherche, insbesondere die Interviews, validierte die Nützlichkeit dieser Technik zur Förderung der Disziplin (vgl. Abschnitt 2.3.5), weshalb die Implementierung eines solchen Timers als sinnvoll erachtet wurde.
+Der Timer hat die Standard-Einstellungen von 25 Minuten Lernen und 5 Minuten Pause, welche vom Nutzer individuell angepasst werden können.
 \begin{figure}[!htp]
     \centering
     \includegraphics[width=\linewidth]{img/lerntimer-screenshot.png}
-    \caption[Screenshot der Lerntimer-Seite. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Lerntimer-Seite}
+    \caption[Screenshot der Lerntimer-Seite.
+Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Lerntimer-Seite}
     \label{fig:lerntimer_page}
 \end{figure}
 
 \FloatBarrier
 
-\subsection{Lerntipps}
-Ein weiteres Feature unserer App sind die Lerntipps. Diese sind in verschiedene Kategorien aufgeteilt, u. a. Zeitmanagement, allgemeine Tipps der Kanti Baden, Stressmanagement und Lernmethoden. In jeder Kategorie gibt es verschiedene Tipps, welche wir aus unserer Recherche und den Interviews gesammelt haben. Diese Tipps sollen den Nutzer:innen helfen, ihr Lernverhalten zu verbessern.
-Beim Design für dieses Feature haben wir uns entschieden, dass die Bullet-Points der Tipps ein kleines Koala-Symbol sein sollen, um das Thema der App widerzuspiegeln. Der Koala wurde von uns selber entworfen.
-Wir haben auch ein Scroll-To-Top Button implementiert, da wir von einer Rückmeldung von den Usability Tests die Rückmeldung bekamen, dass es ein gewünschtes Feature sei, um schnell wieder nach oben zu gelangen.
-
+\subsubsection{Lerntipps}
+Ein weiteres Feature unserer App sind die Lerntipps.
+Diese sind in verschiedene Kategorien aufgeteilt, u. a. Zeitmanagement, allgemeine Tipps der Kanti Baden, Stressmanagement und Lernmethoden.
+In jeder Kategorie gibt es verschiedene Tipps, welche wir direkt aus unserer Recherche (Interviews, Umfrage, Literatur) gesammelt haben.
+Diese Tipps sollen den Nutzer:innen helfen, ihr Lernverhalten zu verbessern.
+Beim Design für dieses Feature haben wir uns entschieden, dass die Bullet-Points der Tipps ein kleines Koala-Symbol sind, um das Thema der App widerzuspiegeln.
+Der Koala wurde von uns selber entworfen.
+Basierend auf dem Feedback aus dem Usability-Test (siehe Abschnitt 3.7.2, Person 2) haben wir auch einen \enquote{Scroll-To-Top}-Button implementiert, um die Navigation auf dieser langen Seite zu erleichtern.
 \begin{figure}[!htp]
     \centering
     \includegraphics[width=0.2\linewidth]{img/koala-lerntipps-cropped.png}
-    \caption[Koala Bullet Point für Lerntipps. Eigene Darstellung, 06.11.2025.]{Koala Bullet Point für Lerntipps}
+    \caption[Koala Bullet Point für Lerntipps.
+Eigene Darstellung, 06.11.2025.]{Koala Bullet Point für Lerntipps}
     \label{fig:koala_bullet_point}
 \end{figure}
 
@@ -1183,135 +1203,189 @@ Wir haben auch ein Scroll-To-Top Button implementiert, da wir von einer Rückmel
 \begin{figure}[!htp]
     \centering
     \includegraphics[width=\linewidth]{img/lerntipps-screenshot.png}
-    \caption[Screenshot der Lerntipps-Seite. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Lerntipps-Seite}
+    \caption[Screenshot der Lerntipps-Seite.
+Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Lerntipps-Seite}
     \label{fig:lerntipps_page}
 \end{figure}
 
 \FloatBarrier
 
-\subsection{Einstellungen}
-In den Einstellungen kann der Nutzer verschiedene globale Einstellungen für die App vornehmen, wie zum Beispiel das Farbschema der App (hell oder dunkel), die bevorzugte Lernzeit, ob am Wochenende gelernt werden soll und die Farben der Prioritätsstufen. Diese Einstellungen werden in der Datenbank gespeichert und beim Laden der App abgerufen, um eine personalisierte Erfahrung zu bieten. Zusätzlich kann man hier auch sein Konto löschen und sein Passwort ändern.
-
+\subsection{Benutzerkonfiguration (Einstellungen)}
+In den Einstellungen kann der Nutzer verschiedene globale Einstellungen für die App vornehmen.
+Dazu gehören die globalen Parameter für den LZA (bevorzugte Lernzeit, ob am Wochenende gelernt werden soll) und die Farben der Prioritätsstufen.
+Diese Einstellungen werden in der Datenbank gespeichert und beim Laden der App abgerufen, um eine personalisierte Erfahrung zu bieten.
+Zusätzlich kann man hier auch sein Konto löschen und sein Passwort ändern.
+Wie im Abschnitt 3.7.2 (Feedback Person 2) erwähnt, wurde hier auch die Einstellung für das Farbschema (hell, dunkel, automatisch) implementiert.
 \begin{figure}[!htp]
     \centering
     \includegraphics[width=\linewidth]{img/einstellungen-screenshot.png}
-    \caption[Screenshot der Einstellungen-Seite. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Einstellungen-Seite}
+    \caption[Screenshot der Einstellungen-Seite.
+Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Einstellungen-Seite}
     \label{fig:settings_page}
 \end{figure}
 
 \FloatBarrier
 
-\subsection[Über uns-Seite]{Über uns-Seite\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5 mini): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 09.11.2025. Antwort ganz übernommen.}
+\subsection{Informationsseiten (Über Uns, Hilfe)}
+\subsubsection[Über uns-Seite]{Über uns-Seite\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5 mini): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text.
+[...]. }, 09.11.2025. Antwort ganz übernommen.}
 
-Auf der \enquote{Über uns}-Seite stellen wir das Team hinter KantiKoala vor. Wir geben einen Einblick in unsere Motivation, die App zu entwickeln, und erläutern die Ziele, die wir mit KantiKoala verfolgen. Außerdem erklären wir, worin sich die KantiKoala-Web-App von anderen Lern-Apps unterscheidet. Zudem bieten wir Kontaktinformationen an, damit Nutzer:innen uns bei Fragen oder Feedback erreichen können.
-
-Als kleines \enquote{Easter Egg} haben wir auf der Teamseite außerdem die Kanti-Katze als Mitgründer hinzugefügt, um zu zeigen, dass die App von Schüler:innen entwickelt wurde.
-
+Auf der \enquote{Über uns}-Seite stellen wir das Team hinter KantiKoala vor.
+Wir geben einen Einblick in unsere Motivation, die App zu entwickeln, und erläutern die Ziele, die wir mit KantiKoala verfolgen.
+Ausserdem erklären wir, worin sich die KantiKoala-Web-App von anderen Lern-Apps unterscheidet.
+Zudem bieten wir Kontaktinformationen an, damit Nutzer:innen uns bei Fragen oder Feedback erreichen können.
+Als kleines \enquote{Easter Egg} haben wir auf der Teamseite ausserdem die Kanti-Katze als Mitgründer hinzugefügt, um zu weiter den Punkt zu stärken, dass die App von Schüler entwickelt wurde.
 \begin{figure}[!htp]
     \centering
     \includegraphics[width=\linewidth]{img/aboutus-easteregg.png}
-    \caption[Screenshot des Easter-Eggs auf der Über uns-Seite. Eigener Screenshot von Kanti Koala, 09.11.2025.]{Screenshot des Easter-Eggs auf der Über uns-Seite}
+    \caption[Screenshot des Easter-Eggs auf der Über uns-Seite.
+Eigener Screenshot von Kanti Koala, 09.11.2025.]{Screenshot des Easter-Eggs auf der Über uns-Seite}
     \label{fig:about_us_page}
 \end{figure}
 
 \FloatBarrier
 
-\subsection[Hilfe-Seite]{Hilfe-Seite\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5 mini): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 09.11.2025. Antwort ganz übernommen.}
-Aus den Usability-Tests erhielten wir die Rückmeldung, eine Anleitung für die Nutzer:innen zu erstellen, damit klar wird, welche Funktionen die App bietet. Deshalb haben wir die Hilfeseite angelegt, die eine vollständige Anleitung zur Nutzung der Anwendung enthält. Sie erklärt alle Features, bietet einen Schnellstart und Best Practices zur optimalen Nutzung der App. 
-
+\subsubsection[Hilfe-Seite]{Hilfe-Seite\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5 mini): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text.
+[...]. }, 09.11.2025. Antwort ganz übernommen.}
+Basierend auf dem Feedback aus den Usability-Tests (siehe Abschnitt 3.7.2, Person 1) wurde deutlich, dass eine Anleitung für die App fehlte.
+Deshalb haben wir die Hilfeseite angelegt, die eine vollständige Anleitung zur Nutzung der Anwendung enthält.
+Sie erklärt alle Features, bietet einen Schnellstart und Best Practices zur optimalen Nutzung der App.
 \begin{figure}[!htp]
     \centering
     \includegraphics[width=\linewidth]{img/helppage.png}
-    \caption[Screenshot der Hilfe-Seite. Eigener Screenshot von Kanti Koala, 09.11.2025.]{Screenshot der Hilfe-Seite}
+    \caption[Screenshot der Hilfe-Seite.
+Eigener Screenshot von Kanti Koala, 09.11.2025.]{Screenshot der Hilfe-Seite}
     \label{fig:help_page}
 \end{figure}
 
 \FloatBarrier
 
-\section[Sicherheitskonzept]{Sicherheitskonzept\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
-Neben der reinen Authentifizierung wurden weitere grundlegende Sicherheitsmassnahmen implementiert, um die Daten der Nutzer und die Integrität der Anwendung zu schützen.
+\section[Übergreifende Aspekte: Sicherheit und Design]{Übergreifende Aspekte: Sicherheit und Design\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text.
+[...]. }, 04.11.2025. Antwort ganz übernommen.}
+Neben den Kernfunktionen wurden übergreifende Aspekte wie Sicherheit und ein konsistentes Design implementiert, die die gesamte Anwendung betreffen.
 
-\subsection[Datenspeicherung und Passwort-Sicherheit]{Datenspeicherung und Passwort-Sicherheit\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
-Die Sicherheit der Benutzerdaten hat höchste Priorität. Wie im Abschnitt zur Authentifizierung beschrieben, werden Passwörter niemals im Klartext gespeichert. Stattdessen wird die Flask-Bcrypt-Bibliothek verwendet, um von jedem Passwort einen kryptografischen Hash zu erzeugen. Beim Login-Vorgang wird das eingegebene Passwort ebenfalls gehasht und dieser Hash wird mit dem in der Datenbank gespeicherten Hash verglichen. Da dieser Prozess unumkehrbar ist, kann selbst bei einem direkten Zugriff auf die Datenbank das ursprüngliche Passwort nicht wiederhergestellt werden.
+\subsection{Sicherheitskonzept}
+Zusätzlich zur Passwortsicherheit (behandelt in Abschnitt 3.4.1) wurden weitere Massnahmen zum Schutz der Nutzerdaten und der Anwendungsintegrität implementiert.
 
-\subsection[Transportverschlüsselung (HTTPS)]{Transportverschlüsselung (HTTPS)\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
-Die gesamte Kommunikation zwischen dem Browser des Nutzers und unserem Server wird durch das HTTPS-Protokoll verschlüsselt. Dies wird durch ein SSL/TLS-Zertifikat realisiert, das auf unserem Server bei DigitalOcean installiert ist. Die Verschlüsselung stellt sicher, dass alle übertragenen Daten, von Login-Informationen über Kalendereinträge bis hin zu Noten, vor dem Abhören durch Dritte geschützt sind. Ein Angreifer in einem öffentlichen WLAN könnte beispielsweise die Daten nicht mitlesen. Der Browser zeigt dies durch ein Schlosssymbol in der Adressleiste an und stellt so eine verschlüsselte Verbindung zur Domain \texttt{kantikoala.app} sicher \parencite{cloudflare_https}.
+\subsubsection[Transportverschlüsselung (HTTPS)]{Transportverschlüsselung (HTTPS)\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025.
+Antwort ganz übernommen.}
+Die gesamte Kommunikation zwischen dem Browser des Nutzers und unserem Server wird durch das HTTPS-Protokoll verschlüsselt.
+Dies wird durch ein SSL/TLS-Zertifikat realisiert, das auf unserem Server bei DigitalOcean installiert ist.
+Die Verschlüsselung stellt sicher, dass alle übertragenen Daten – von Login-Informationen über Kalendereinträge bis hin zu Noten – vor dem Abhören durch Dritte geschützt sind.
+Ein Angreifer in einem öffentlichen WLAN könnte beispielsweise die Daten nicht mitlesen.
+Der Browser zeigt dies durch ein Schlosssymbol in der Adressleiste an und stellt so eine verschlüsselte Verbindung zur Domain \texttt{kantikoala.app} sicher \parencite{cloudflare_https}.
+\subsubsection[CSRF-Schutz]{CSRF-Schutz\texorpdfstring{\aifootnotemark}{}}
+\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025.
+Antwort ganz übernommen.}
+Neben der reinen Authentifizierung ist es entscheidend, die Aktionen eines angemeldeten Benutzers abzusichern.
+Eine häufige Schwachstelle ist Cross-Site Request Forgery (CSRF) \parencite{rapid7_csrf}.
+Bei einem CSRF-Angriff bringt ein Angreifer den Browser eines authentifizierten Benutzers dazu, eine unerwünschte Aktion auszuführen (z.B. Konto löschen), ohne dass der Benutzer es merkt, etwa durch Klick auf einen bösartigen Link \parencite{TestDriven_CSRF}.
 
-\subsection[CSRF-Schutz]{CSRF-Schutz\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025. Antwort ganz übernommen.}
-Neben der reinen Authentifizierung ist es entscheidend, die Aktionen eines angemeldeten Benutzers abzusichern. Eine häufige Schwachstelle in Webanwendungen ist die Cross-Site Request Forgery (CSRF) \parencite{rapid7_csrf}. Bei einem CSRF-Angriff bringt ein Angreifer den Browser eines authentifizierten Benutzers dazu, eine unerwünschte Aktion in einer Webanwendung auszuführen, bei der der Benutzer gerade angemeldet ist. Dies geschieht, ohne dass der Benutzer es merkt. So könnte ein Angreifer beispielsweise einen Benutzer dazu verleiten, auf einen bösartigen Link zu klicken, der im Hintergrund unbemerkt das Passwort des Benutzers ändert oder sein Konto löscht \parencite{TestDriven_CSRF}.
-
-Um dies zu verhindern, haben wir das \enquote{Synchronizer Token Pattern} implementiert, eine von \textcite{OWASP_CSRF} empfohlene Methode. Das Prinzip ist einfach, aber sehr wirksam:
+Um dies zu verhindern, haben wir das \enquote{Synchronizer Token Pattern} implementiert, eine von \textcite{OWASP_CSRF} empfohlene Methode.
 \begin{enumerate}
-    \item Für jede Benutzersitzung wird ein einzigartiges, geheimes und unvorhersehbares Token generiert und auf dem Server gespeichert.
-    \item Dieses Token wird in alle Formulare, die eine Zustandsänderung bewirken (z.B. das Ändern von Einstellungen oder das Löschen eines Kontos), als verstecktes Feld eingebettet.
-    \item Wenn der Benutzer das Formular abschickt, wird das Token zusammen mit den anderen Formulardaten an den Server gesendet.
-    \item Der Server vergleicht das vom Client gesendete Token mit dem in der Sitzung gespeicherten Token. Stimmen die beiden nicht überein, wird die Anfrage abgelehnt.
+    \item Für jede Benutzersitzung wird ein einzigartiges, geheimes Token generiert und auf dem Server gespeichert.
+\item Dieses Token wird in alle Formulare, die eine Zustandsänderung bewirken (z.B. Einstellungen ändern), als verstecktes Feld eingebettet.
+\item Beim Abschicken vergleicht der Server das vom Client gesendete Token mit dem in der Sitzung gespeicherten Token.
+\item Stimmen sie nicht überein, wird die Anfrage abgelehnt.
 \end{enumerate}
 Da ein Angreifer auf einer fremden Website dieses geheime Token nicht kennen kann, schlägt der Fälschungsversuch fehl.
+In unserer Flask-Anwendung haben wir diese Logik mithilfe eines eigenen Decorators (\texttt{@csrf\_protect}) umgesetzt.
+Dieser Decorator wird auf alle Routen angewendet, die Daten durch \texttt{POST}-, \texttt{PUT}- oder \texttt{DELETE}-Anfragen ändern.
+Bei Standard-HTML-Formularen wird das Token als verstecktes \texttt{<input>}-Feld übergeben. Für unsere dynamischen Agenda-Funktionen (AJAX) wird das Token aus einem Meta-Tag ausgelesen und in einem HTTP-Header (\texttt{X-CSRF-Token}) mitgesendet.
+Dies stellt sicher, dass jede datenverändernde Aktion legitim vom Benutzer und von unserer eigenen Webseite stammt.
 
-In unserer Flask-Anwendung haben wir diese Logik mithilfe eines eigenen Decorators (\texttt{@csrf\_protect}) umgesetzt. Dieser Decorator wird auf alle Routen angewendet, die Daten durch \texttt{POST}-, \texttt{PUT}- oder \texttt{DELETE}-Anfragen ändern. Bei Standard-HTML-Formularen wird das Token als verstecktes \texttt{<input>}-Feld übergeben. Für unsere dynamischen Agenda-Funktionen, die auf AJAX basieren, wird das Token aus einem Meta-Tag ausgelesen und in einem benutzerdefinierten HTTP-Header (\texttt{X-CSRF-Token}) mit jeder Anfrage gesendet. Dies stellt sicher, dass jede datenverändernde Aktion, die in unserer Applikation ausgeführt wird, legitim vom Benutzer und von unserer eigenen Webseite stammt.
+Obwohl es fertige Module wie \texttt{Flask-WTF} gibt, haben wir uns entschieden, unseren eigenen Decorator zu schreiben, um ein tieferes Verständnis für die Funktionsweise von CSRF-Schutzmechanismen zu erlangen.
 
-Eine wichtige Anmerkung ist, dass es schon Module wie \texttt{Flask-WTF} gibt, die CSRF-Schutz bieten. Wir haben uns jedoch entschieden, unseren eigenen Decorator zu schreiben, um ein tieferes Verständnis für die Funktionsweise von CSRF-Schutzmechanismen zu erlangen.
-
-\section{Design und Benutzeroberfläche}
-Das Design der Web-App haben wir mit der CSS-Bibliothek Tailwind CSS umgesetzt \parencite{tailwind_css}. Tailwind ermöglicht es uns, schnell und konsistent ansprechende Oberflächen zu gestalten, indem wir vordefinierte Utility-Klassen verwenden. Dies erleichtert die Umsetzung eines einheitlichen Designs und beschleunigt den Entwicklungsprozess erheblich.
-
-\subsection{Farbkonzept}
-Die Farbwahl folgt praktischen Erwägungen: gut unterscheidbare Zustände, ruhige Grundflächen und konsistente Akzente. Manche Farbwahlen wurden schon vorher im Abschnitt zur Agenda erläutert. Hier eine Übersicht des generellen Farbkonzepts:
+\subsection{Design und Benutzeroberfläche}
+Das Design der Web-App haben wir mit der CSS-Bibliothek Tailwind CSS umgesetzt \parencite{tailwind_css}.
+Diese Wahl wurde getroffen, da Tailwind es uns ermöglicht, schnell und konsistent ansprechende Oberflächen zu gestalten, indem wir vordefinierte Utility-Klassen verwenden.
+Dies erleichtert die Umsetzung eines einheitlichen Designs und beschleunigt den Entwicklungsprozess erheblich.
+\subsubsection{Farbkonzept und Theming}
+Die Farbwahl folgt praktischen Erwägungen: gut unterscheidbare Zustände, ruhige Grundflächen und konsistente Akzente.
 \begin{itemize}
   \item Neutrale Hintergründe (hell/dunkel): dezente Grau-/Zinc-Töne als Bühne für Inhalte.
-  \item Prioritäten in der Agenda: abgestufte Rot–Orange–Grün-Töne für eine nachvollziehbare Dringlichkeitsskala.
-  \item Lernblöcke: Blau ausserhalb des Rot–Grün-Spektrums zur klaren Abgrenzung.
-  \item Importierte Stundenplan-Elemente: neutrales Grau, damit sie Informationen liefern ohne zu dominieren.
-  \item Rückmeldungen: Grün für erfolgreiche Aktionen, Rot für Fehlerzustände.
-  \item Akzente: Primärfarbe Blau und Grün für interaktive Elemente (Buttons, Links) zur Hervorhebung.
+\item Akzente: Primärfarbe Blau und Grün für interaktive Elemente (Buttons, Links) zur Hervorhebung.
+\item Rückmeldungen: Grün für erfolgreiche Aktionen, Rot für Fehlerzustände.
 \end{itemize}
 Die Töne sind bewusst leicht gedämpft gewählt, um eine ruhige, einheitliche Anmutung über helle und dunkle Oberflächen zu erhalten.
 
-\subsection{Dark Mode}
-Wir haben die Rückmeldung aus den Usability-Tests aufgenommen und einen wechselbaren Dark Mode (das heisst, er wird nicht automatisch aktiviert, sondern man kann ihn an- und ausschalten) implementiert. Nutzer:innen können in den Einstellungen zwischen Light Mode, Dark Mode und automatischem Modus (abhängig von Systemeinstellungen) wählen. Das Design wurde so angepasst, dass alle Elemente in beiden Modi gut lesbar und ansprechend sind. Tailwind CSS erleichtert die Umsetzung durch integrierte Dark-Mode-Klassen. Flask kann mit einem Content Processor so konfiguriert werden, dass jede Seite die gebrauchte Einstellung erhält.
+Ein spezifisches Farbkonzept wurde für die Agenda (vgl. \texttt{kkoala/consts.py}) entwickelt:
 
-\subsection{Fehlerseiten (404/500): Gestaltung und Zweck}
-\textbf{404} signalisiert, dass eine angeforderte Ressource nicht existiert; \textbf{500} steht für einen internen Fehler.
-Die Seiten sind reduziert gestaltet:
+\myparagraph{Importierte Ereignisse (Stundenplan)}
+Beim Import von \texttt{.ics}-Dateien werden alle Ereignisse automatisch mit der Standardfarbe \texttt{\#6C757D} (mittleres Grau) eingefärbt.
+Grau ist neutral und tritt gegenüber den farbcodierten Prioritätsstufen zurück, sodass wichtigere Ereignisse visuell dominieren.
+Es bietet dennoch ausreichenden Kontrast zu weissen Hintergründen.
+Diese Standardfarbe kann in den Einstellungen global angepasst werden.
+Alle bereits importierten Ereignisse übernehmen dann die neue Farbe, was eine konsistente visuelle Darstellung des gesamten Stundenplans gewährleistet.
+
+\myparagraph{Prüfungsereignisse nach Prioritätsstufen}
+Prüfungen werden basierend auf ihrer Prioritätsstufe automatisch eingefärbt, um die Dringlichkeit visuell zu kommunizieren (vgl. \texttt{kkoala/consts.py}).
+Die Farbwahl folgt einem Ampel-System:
+\begin{itemize}
+    \item \textbf{Priorität 1 (Höchste Dringlichkeit): \texttt{\#770000} -- Dunkles Rot}
+    (Dunkles Rot ist weniger intensiv als reines Rot, bleibt aber gut sichtbar).
+\item \textbf{Priorität 2 (Mittlere Dringlichkeit): \texttt{\#ca8300} -- Orange}
+    (Bildet die Abstufung zwischen Rot und Grün).
+\item \textbf{Priorität 3 (Niedrigste Dringlichkeit): \texttt{\#097200} -- Dunkles Grün}
+    (Dunkles Grün bietet ausreichenden Kontrast).
+\end{itemize}
+Alle Prioritätsfarben können in den Einstellungen angepasst werden.
+
+\myparagraph{Algorithmisch generierte Lernblöcke}
+Die vom LZA erzeugten Lernblöcke erhalten standardmässig die Farbe \texttt{\#0000FF} (reines Blau).
+Blau liegt ausserhalb des Ampel-Farbspektrums (Rot-Orange-Grün) und der Stundenplanfarbe (Grau), wodurch Lernblöcke klar als eigene Kategorie erkennbar sind.
+Auch diese Farbe kann in den Einstellungen angepasst werden.
+
+\subsubsection{Dark Mode}
+Basierend auf dem Feedback aus den Usability-Tests (Abschnitt 3.7.2, Person 2) wurde ein wechselbarer Dark Mode implementiert.
+Nutzer:innen können in den Einstellungen (Abschnitt 3.4.7) zwischen Light Mode, Dark Mode und automatischem Modus (abhängig von Systemeinstellungen) wählen.
+Das Design wurde so angepasst, dass alle Elemente in beiden Modi gut lesbar und ansprechend sind.
+Tailwind CSS erleichtert die Umsetzung durch integrierte Dark-Mode-Klassen. Flask kann mit einem Content Processor so konfiguriert werden, dass jede Seite die gebrauchte Einstellung erhält.
+
+\subsubsection{Fehlerbehandlung (404/500)}
+Spezielle Fehlerseiten wurden für die HTTP-Statuscodes 404 (Nicht gefunden) und 500 (Interner Serverfehler) gestaltet.
+Die Seiten sind bewusst reduziert gestaltet:
 \begin{itemize}
   \item Zentrale Karte mit Statuscode, kurzer Erklärung und primärer Aktion (zurück zur Startseite).
-  \item Konsistentes Branding (Logo, Basisfarben) für Wiedererkennung.
+\item Konsistentes Branding (Logo, Basisfarben) für Wiedererkennung.
   \item Keine technischen Details; klare Orientierung statt Verunsicherung.
 \end{itemize}
-Ziel ist, Nutzer:innen schnell zurück in einen funktionierenden Kontext zu führen und gleichzeitig sensible Interna nicht offenzulegen.
-
+Ziel ist, Nutzer:innen schnell zurück in einen funktionierenden Kontext zu führen und gleichzeitig sensible Interna bei Serverfehlern nicht offenzulegen.
 \begin{figure}[!htp]
     \centering
     \includegraphics[width=0.6\linewidth]{img/404-page.png}
-    \caption[Screenshot der 404-Fehlerseite. Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der 404-Fehlerseite}
+    \caption[Screenshot der 404-Fehlerseite.
+Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der 404-Fehlerseite}
     \label{fig:404_page}
 \end{figure}
 
-% ------------------ keep existing structure below ------------------
+\section{Testing und Usability-Evaluation}
+Um die Qualität und Zuverlässigkeit der Kanti Koala Web-App sicherzustellen, wurden zwei Arten von Tests durchgeführt: funktionale Tests zur Überprüfung der korrekten Logik und ein formativer Usability-Test zur Evaluation der Bedienbarkeit.
 
-\section{Tests}
-Um die Qualität und Zuverlässigkeit der Kanti Koala Web-App sicherzustellen, wurden verschiedene Testfälle (funktional + Usability) durchgeführt. Die funktionalen Tests decken Backend-Logik und Frontend-Funktionalität ab (Authentifizierung, Agenda, Notenverwaltung, Lerntools, UI). Der formative Usability-Test evaluierte Bedienlichkeit, Verständlichkeit und Fehlertoleranz bei der App. Die vollständigen Testprotokolle der funktionalen Tests sind im Anhang dokumentiert.
+\subsection{Funktionale Tests}
+Die funktionalen Tests decken Backend-Logik und Frontend-Funktionalität ab (Authentifizierung, Agenda, Notenverwaltung, Lerntools, UI).
+Die vollständigen Testprotokolle der funktionalen Tests sind im Anhang dokumentiert.
 
-\subsection{Usability-Test}
-Um die Anonymität der Tester:innen zu gewährleisten, lassen wir die Namen weg. Insgesamt nahmen drei Personen am Test teil, alle Schüler:innen der Kantonsschule. Die Tester:innen wurden gebeten, verschiedene Aufgaben in der App zu erledigen und danach Feedback zu geben. 
-
+\subsection{Formativer Usability-Test}
+Um die Anonymität der Tester:innen zu gewährleisten, lassen wir die Namen weg.
+Insgesamt nahmen drei Personen am Test teil, alle Schüler:innen der Kantonsschule.
+Die Tester:innen wurden gebeten, verschiedene Aufgaben in der App zu erledigen und danach qualitatives Feedback zu geben.
 \subsubsection{Testbericht Person 1 -- 08.11.2025}
 \textbf{Pros:}
 \begin{itemize}
-\item Alles an einem Ort, was ich für mein Lernen brauche. Ich muss nicht 100 Tabs offen haben.
+\item Alles an einem Ort, was ich für mein Lernen brauche.
+Ich muss nicht 100 Tabs offen haben.
 \item Ein schönes User-Interface.
 \end{itemize}
 
 \textbf{Cons:}
 \begin{itemize}
-    \item Es fehlt mir eine Introduktion in die App. So eine Anleitung, wie man es benutzt und was man machen kann.
+    \item Es fehlt mir eine Introduktion in die App.
+So eine Anleitung, wie man es benutzt und was man machen kann.
 \end{itemize}
 
 \subsubsection{Testbericht Person 2 -- 08.11.2025}
@@ -1323,9 +1397,10 @@ Um die Anonymität der Tester:innen zu gewährleisten, lassen wir die Namen weg.
 \textbf{Cons:}
 \begin{itemize}
     \item Ich fände es cool, zwischen Light und Dark Mode wechseln zu können, anstatt dass es nur automatisch geht.
-    \item Ich fände es cool, wenn ihr irgendwie ein Bild von euch in der \enquote{Über Uns} Page hättet.
-    \item Ich würde auch gerne ein Scroll-To-Top Button bei den Lerntipps haben.
-    \item Mir ist es unklar, wieso es bei den Lerntipps ein Section \enquote{Lernen} und dann noch \enquote{Lernmethoden} gibt. Es fühlt sich wie das Gleiche an.
+\item Ich fände es cool, wenn ihr irgendwie ein Bild von euch in der \enquote{Über Uns} Page hättet.
+\item Ich würde auch gerne ein Scroll-To-Top Button bei den Lerntipps haben.
+\item Mir ist es unklar, wieso es bei den Lerntipps ein Section \enquote{Lernen} und dann noch \enquote{Lernmethoden} gibt.
+Es fühlt sich wie das Gleiche an.
 \end{itemize}
 
 \subsubsection{Testbericht Person 3 -- 09.11.2025}
@@ -1337,6 +1412,15 @@ Um die Anonymität der Tester:innen zu gewährleisten, lassen wir die Namen weg.
 \textbf{Cons:}
 \begin{itemize}
     \item Keine, eigentlich, ich find das ganze super.
+\end{itemize}
+
+\subsubsection{Ableitungen aus den Tests}
+Das Feedback aus dieser formativen Evaluation war entscheidend für die Finalisierung der App. Die wichtigsten \enquote{Cons} wurden direkt adressiert und umgesetzt:
+\begin{itemize}
+    \item (Person 1) Die fehlende Anleitung führte zur Erstellung der Hilfe-Seite (siehe Abschnitt 3.4.8).
+    \item (Person 2) Der Wunsch nach einem manuellen Dark-Mode-Wechsel wurde in den Einstellungen implementiert (Abschnitt 3.4.7 und 3.5.2).
+    \item (Person 2) Der Scroll-To-Top Button wurde auf der Seite \enquote{Lerntipps} hinzugefügt (Abschnitt 3.4.6).
+    \item (Person 2) Die unklare Sektionsaufteilung bei den Lerntipps wurde überprüft und die Kategorien wurden klarer benannt (z.B. \enquote{Allgemeine Lerntipps} statt \enquote{Lernen}).
 \end{itemize}
 
 % Schlussfolgerung und Ausblick
