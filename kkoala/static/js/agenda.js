@@ -166,4 +166,84 @@ document.addEventListener('DOMContentLoaded', function () {
         .catch(error => { console.error('Fetch-Fehler:', error); alert('Ein Netzwerkfehler ist aufgetreten.'); })
         .finally(() => { this.disabled = false; });
     });
+
+    // Holen Sie sich die Elemente des "Termin erstellen"-Popups
+    const createPrioritySelect = document.getElementById('create-event-priority');
+    const createColorInput = document.getElementById('create-color');
+
+    // Prüfen, ob die Elemente und die eingebetteten Daten existieren
+    if (createPrioritySelect && createColorInput && typeof priorityColors !== 'undefined') {
+        
+        // Funktion zur Aktualisierung der Farbe basierend auf der Priorität
+        function updateCreateColorBasedOnPriority() {
+            const selectedPriority = createPrioritySelect.value;
+            let newColor = '#000000'; // Standardfarbe (z.B. blau-500)
+
+            // Suchen Sie die Farbe im eingebetteten Objekt
+            if (priorityColors[selectedPriority]) {
+                newColor = priorityColors[selectedPriority];
+            }
+            
+            // Aktualisieren Sie den Wert des Farbfeldes
+            createColorInput.value = newColor;
+        }
+
+        // Fügen Sie den Event-Listener hinzu
+        createPrioritySelect.addEventListener('change', updateCreateColorBasedOnPriority);
+        
+        // OPTIONAL: Beim Öffnen des Popups die Farbe initial setzen
+        // Wenn Sie eine Funktion haben, die das 'create-popup' öffnet:
+        // Fügen Sie 'updateCreateColorBasedOnPriority();' am Ende dieser Funktion hinzu.
+        // Wenn nicht, wird die Farbe beim ersten Mal, wenn der Benutzer die Priorität ändert, gesetzt.
+        
+        // Führen Sie die Funktion einmal aus, um sicherzustellen, dass die Standardpriorität
+        // beim Laden die richtige Farbe hat.
+        updateCreateColorBasedOnPriority();
+    }
+
+    // --- LOGIK FÜR DAS "TERMIN BEARBEITEN"-POPUP ---
+    
+    // Holen Sie sich die Elemente des "Termin bearbeiten"-Popups
+    const editPrioritySelect = document.getElementById('edit-event-priority');
+    const editColorInput = document.getElementById('event-color'); // Das Farbfeld hat die ID 'event-color'
+
+    // Prüfen, ob die Elemente und die eingebetteten Daten existieren
+    if (editPrioritySelect && editColorInput && typeof priorityColors !== 'undefined') {
+        
+        // Funktion zur Aktualisierung der Farbe basierend auf der Priorität
+        function updateEditColorBasedOnPriority() {
+            const selectedPriority = editPrioritySelect.value;
+            // Nutzen Sie die Farbe von Priorität 1 als Fallback, wenn nichts gefunden wird
+            let newColor = priorityColors["1"] || '#000000'; 
+
+            // Suchen Sie die Farbe im eingebetteten Objekt
+            if (priorityColors[selectedPriority]) {
+                newColor = priorityColors[selectedPriority];
+            }
+            
+            // Aktualisieren Sie den Wert des Farbfeldes
+            editColorInput.value = newColor;
+
+        }
+
+        // Fügen Sie den Event-Listener hinzu
+        editPrioritySelect.addEventListener('change', updateEditColorBasedOnPriority);
+        
+        // HINWEIS: Hier ist keine sofortige Initialisierung beim Laden nötig, da das Bearbeiten-Popup
+        // erst geöffnet wird, wenn ein Event angeklickt wird. 
+        // 
+        // WICHTIG: Sie MÜSSEN 'updateEditColorBasedOnPriority()' in Ihrer Funktion 
+        // aufrufen, die das 'event-popup' öffnet, BEVOR Sie das Farbfeld mit den 
+        // tatsächlichen Event-Daten überschreiben.
+        //
+        // Beispiel: In Ihrer Funktion 'openEditEventPopup(event)', nachdem das Dropdown
+        // mit der Priorität des Events befüllt wurde, aber bevor die Farbe des Events
+        // zugewiesen wird, sollten Sie dies aufrufen:
+        //
+        // updateEditColorBasedOnPriority(); 
+        //
+        // Der Grund dafür ist, dass die Farbe eines *existierenden* Events nicht der
+        // Standardfarbe der Priorität entsprechen muss, wenn der Benutzer sie zuvor 
+        // manuell geändert hat.
+    }
 });

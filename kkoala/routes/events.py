@@ -76,8 +76,6 @@ def create_event(user):
             )
             .first()
         )
-        if prio_setting:
-            data["color"] = prio_setting.color
 
     # Handle recurring events
     if data["recurrence"] != "none":
@@ -187,8 +185,6 @@ def update_event(user):
                     )
                     .first()
                 )
-                if prio_setting:
-                    data["color"] = prio_setting.color
 
         event.title = data["title"]
         event.start = data["start"]
