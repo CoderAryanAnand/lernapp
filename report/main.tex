@@ -106,7 +106,7 @@ language=ngerman
        \addcontentsline{lof}{figure}{\protect\numberline{\thefigure}{Logo der Kantonsschule Baden. Quelle: Wikipedia}}
        \\[1cm]
 
-    {\LARGE \textbf{Kanti Koala}}\\
+    {\LARGE \textbf{KantiKoala}}\\
     {\textbf{Die Lern- und Studienhilfsapp für Schüler:innen der Kantonsschule Baden}}\\[1cm]
 
     {Maturitätsarbeit, Kantonsschule Baden}\\
@@ -138,7 +138,7 @@ Die Arbeit zeigt die technische Machbarkeit eines integrierten, strukturierten A
 % ------------------------------Einleitung------------------------------
 \chapter[Einleitung -- unsere Vision]{Einleitung -- unsere Vision\texorpdfstring{\aifootnotemark}{}}
 \aifootnotetext{08.11.2025}{ChatGPT (Model GPT-5)}
-Der Schulalltag an der Kantonsschule Baden ist durch eine hohe Arbeitsdichte geprägt. Neben zahlreichen Prüfungen, auf die man vorbereiten muss, fallen kontinuierlich Hausaufgaben an. In Kombination mit ausserschulischen Verpflichtungen entstehen Anforderungen an Planung und Selbstorganisation, die ohne strukturierende Hilfsmittel nur begrenzt überschaubar bleiben. 
+Der Schulalltag an der Kantonsschule Baden ist durch eine hohe Arbeitsdichte geprägt. Neben zahlreichen Prüfungen, auf die man sich vorbereiten muss, fallen kontinuierlich Hausaufgaben an. In Kombination mit ausserschulischen Verpflichtungen entstehen Anforderungen an Planung und Selbstorganisation, die ohne strukturierende Hilfsmittel nur begrenzt überschaubar bleiben. 
 
 \section{Fragestellung und Zielsetzung}
 \textbf{Hauptfragestellung:}
@@ -175,7 +175,7 @@ Der Name \enquote{KantiKoala} verbindet \enquote{Kanti} (Kurzform von Kantonssch
 \section{Aufbau und Begründung des schriftlichen Kommentars}
 Der Bericht ist entlang der Entwicklungslogik aufgebaut und führt von der Ausgangslage über die Umsetzung zur Einordnung:
 \begin{enumerate}
-  \item \textbf{Recherche}: TBA
+  \item \textbf{Recherche}: Literaturstudie, Interviews und unsere Umfrage
   \item \textbf{Methodik - Programmierung}: Systemarchitektur, Datenstrukturen, Darstellung der Features, Sicherheitsaspekte und schliesslich noch Testing.
   \item \textbf{Schlussfolgerung und Ausblick}: Bilanz zur Fragestellung, gewonnene Erkenntnisse und offene Arbeitsschritte.
 \end{enumerate}
@@ -797,7 +797,7 @@ Die Domain \texttt{kantikoala.app} wurde ebenfalls über das Student Pack mit ko
 Die im Folgenden definierten Anforderungen sind das direkte Resultat der in Kapitel 2 (Recherche) durchgeführten Analyse. Die Interviews mit den PPP-Lehrpersonen und die Umfrage unter den Schüler:innen lieferten die \enquote{Must}- und \enquote{Kann}-Anforderungen (vgl. Abschnitt 2.3.5), welche die Basis für die funktionale Spezifikation der Applikation bildeten.
 Bevor wir mit dem Programmieren der Web-Applikation beginnen konnten, mussten wir uns zuerst über die Anforderungen an die Applikation klar werden.
 Da es sich um eine Web-Applikation handelt, welche den Schüler:innen der Kantonsschule Baden helfen soll, mussten wir uns überlegen, welche Funktionen die Applikation beinhalten sollte und wie diese umgesetzt werden könnten.
-Die abgeleiteten Anforderungen an die Kanti Koala Web-Applikation sind wie folgt:
+Die abgeleiteten Anforderungen an die KantiKoala Web-Applikation sind wie folgt:
 \begin{itemize}
     \item \textbf{Home-Screen}: Von dem Home-Screen sollte man auf seinen Account und die Agenda zugreifen können.
 Zusätzlich sollte hier jeden Tag ein allgemeiner Tipp für die Kantonsschule angezeigt werden.
@@ -816,10 +816,10 @@ Der Timer sollte anpassbar sein, sodass die Nutzer:innen die Länge der Lern- un
 
 \section[Systemarchitektur und Datenmodell]{Systemarchitektur und Datenmodell\texorpdfstring{\aifootnotemark}{}}
 \aifootnotetext{04.11.2025}{Gemini (Model 2.5 Pro)}
-Dieser Abschnitt beschreibt die technische Grundlage der Kanti Koala Web-Applikation, einschliesslich der Systemarchitektur, der Code-Struktur und der zugrundeliegenden Datenstruktur.
+Dieser Abschnitt beschreibt die technische Grundlage der KantiKoala Web-Applikation, einschliesslich der Systemarchitektur, der Code-Struktur und der zugrundeliegenden Datenstruktur.
 
 \subsection{Systemarchitektur und Framework-Wahl}
-Die Kanti Koala App ist als Webanwendung konzipiert, die auf einem zentralen Backend-Server läuft.
+Die KantiKoala App ist als Webanwendung konzipiert, die auf einem zentralen Backend-Server läuft.
 Das Kernstück der Anwendung ist das Python-Microframework Flask \parencite{flask_docs}. Es steuert das Routing (die Zuordnung von URLs zu Funktionen), verarbeitet HTTP-Anfragen (GET, POST, etc.) und rendert die HTML-Templates für den Benutzer.
 \subsubsection{Wichtige Komponenten und Pakete}
 \begin{itemize}
@@ -1005,7 +1005,7 @@ Bei Fehlern (z.B. E-Mail bereits vergeben, falsches Passwort) erhält der Nutzer
     \centering
     \includegraphics[width=0.6\textwidth]{img/login-screenshot.png}
     \caption[Screenshot des Anmeldeprozesses.
-Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot des Anmeldeprozesses}
+Eigener Screenshot von KantiKoala, 08.11.2025.]{Screenshot des Anmeldeprozesses}
     \label{fig:auth_flow}
 \end{figure}
 
@@ -1086,7 +1086,7 @@ Wenn man den Kalendar aus unserer Applikation exportiert und dann auch wieder in
     \centering
     \includegraphics[width=\linewidth]{img/agenda.png}
     \caption[Beispiel einer Agenda mit Lernblöcken der LZA.
-Eigener Screenshot von Kanti Koala, 31.10.2025.]{Beispiel einer Agenda mit Lernblöcken der LZA}
+Eigener Screenshot von KantiKoala, 31.10.2025.]{Beispiel einer Agenda mit Lernblöcken der LZA}
     \label{fig:placeholder}
 \end{figure}
 
@@ -1168,7 +1168,7 @@ Neue Semester werden in der Anzeige stets oben hinzugefügt, um das aktuellste S
     \centering
     \includegraphics[width=\linewidth]{img/notenorg-screenshot.png}
     \caption[Screenshot der Notenverwaltungs-Seite.
-Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Notenverwaltungs-Seite}
+Eigener Screenshot von KantiKoala, 08.11.2025.]{Screenshot der Notenverwaltungs-Seite}
     \label{fig:notenverwaltung_page}
 \end{figure}
 
@@ -1184,7 +1184,7 @@ Der Timer hat die Standard-Einstellungen von 25 Minuten Lernen und 5 Minuten Pau
     \centering
     \includegraphics[width=\linewidth]{img/lerntimer-screenshot.png}
     \caption[Screenshot der Lerntimer-Seite.
-Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Lerntimer-Seite}
+Eigener Screenshot von KantiKoala, 08.11.2025.]{Screenshot der Lerntimer-Seite}
     \label{fig:lerntimer_page}
 \end{figure}
 
@@ -1211,7 +1211,7 @@ Eigene Darstellung, 06.11.2025.]{Koala Bullet Point für Lerntipps}
     \centering
     \includegraphics[width=\linewidth]{img/lerntipps-screenshot.png}
     \caption[Screenshot der Lerntipps-Seite.
-Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Lerntipps-Seite}
+Eigener Screenshot von KantiKoala, 08.11.2025.]{Screenshot der Lerntipps-Seite}
     \label{fig:lerntipps_page}
 \end{figure}
 
@@ -1227,7 +1227,7 @@ Wie im Abschnitt 3.7.2 (Feedback Person 2) erwähnt, wurde hier auch die Einstel
     \centering
     \includegraphics[width=\linewidth]{img/einstellungen-screenshot.png}
     \caption[Screenshot der Einstellungen-Seite.
-Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Einstellungen-Seite}
+Eigener Screenshot von KantiKoala, 08.11.2025.]{Screenshot der Einstellungen-Seite}
     \label{fig:settings_page}
 \end{figure}
 
@@ -1246,7 +1246,7 @@ Als kleines \enquote{Easter Egg} haben wir auf der Teamseite ausserdem die Kanti
     \centering
     \includegraphics[width=\linewidth]{img/aboutus-easteregg.png}
     \caption[Screenshot des Easter-Eggs auf der Über uns-Seite.
-Eigener Screenshot von Kanti Koala, 09.11.2025.]{Screenshot des Easter-Eggs auf der Über uns-Seite}
+Eigener Screenshot von KantiKoala, 09.11.2025.]{Screenshot des Easter-Eggs auf der Über uns-Seite}
     \label{fig:about_us_page}
 \end{figure}
 
@@ -1260,7 +1260,7 @@ Sie erklärt alle Features, bietet einen Schnellstart und Best Practices zur opt
     \centering
     \includegraphics[width=\linewidth]{img/helppage.png}
     \caption[Screenshot der Hilfe-Seite.
-Eigener Screenshot von Kanti Koala, 09.11.2025.]{Screenshot der Hilfe-Seite}
+Eigener Screenshot von KantiKoala, 09.11.2025.]{Screenshot der Hilfe-Seite}
     \label{fig:help_page}
 \end{figure}
 
@@ -1387,7 +1387,7 @@ Ziel ist, Nutzer:innen schnell zurück in einen funktionierenden Kontext zu füh
     \centering
     \includegraphics[width=0.6\linewidth]{img/404-page.png}
     \caption[Screenshot der 404-Fehlerseite.
-Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der 404-Fehlerseite}
+Eigener Screenshot von KantiKoala, 08.11.2025.]{Screenshot der 404-Fehlerseite}
     \label{fig:404_page}
 \end{figure}
 
@@ -1395,7 +1395,7 @@ Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der 404-Fehlerseite}
 
 \section[Testing und Usability-Evaluation]{Testing und Usability-Evaluation\texorpdfstring{\aifootnotemark}{}}
 \aifootnotetext{10.11.2025}{Claude (Model Sonnet 4.5)}
-Um die Qualität und Zuverlässigkeit der Kanti Koala Web-App sicherzustellen, wurden zwei Arten von Tests durchgeführt: funktionale Tests zur Überprüfung der korrekten Logik und ein formativer Usability-Test zur Evaluation der Bedienbarkeit.
+Um die Qualität und Zuverlässigkeit der KantiKoala Web-App sicherzustellen, wurden zwei Arten von Tests durchgeführt: funktionale Tests zur Überprüfung der korrekten Logik und ein formativer Usability-Test zur Evaluation der Bedienbarkeit.
 
 \subsection{Funktionale Tests}
 Die funktionalen Tests decken Backend-Logik und Frontend-Funktionalität ab (Authentifizierung, Agenda, Notenverwaltung, Lerntools, UI).
@@ -1459,7 +1459,7 @@ Das Feedback aus dieser formativen Evaluation war entscheidend für die Finalisi
 \chapter[Reflexion zum Entwicklungsprozess]{Reflexion zum Entwicklungsprozess\texorpdfstring{\aifootnotemark}{}}
 \aifootnotetext{10.11.2025}{Claude (Model Sonnet 4.5)}
 
-Die Entwicklung der Kanti Koala Web-Applikation erstreckte sich über einen Zeitraum von mehreren Monaten und durchlief verschiedene Phasen, die sowohl Lernerfahrungen als auch Herausforderungen mit sich brachten.
+Die Entwicklung der KantiKoala Web-Applikation erstreckte sich über einen Zeitraum von mehreren Monaten und durchlief verschiedene Phasen, die sowohl Lernerfahrungen als auch Herausforderungen mit sich brachten.
 
 \section{Zeitmanagement und Projektplanung}
 Die ursprüngliche Zeitplanung erwies sich als zu optimistisch. Insbesondere die Recherche (Kapitel 2) war zuerst nur als kleiner Teil dieser Maturaarbeit gedacht, jedoch nahm sie schnell einen viel grösseren Umfang an, als wir gedacht hatten. 
@@ -1665,7 +1665,7 @@ Mehrere identifizierte Probleme konnten im Rahmen dieser Arbeit nicht gelöst we
 
 \section{Schlussbemerkung}
 
-Diese Maturitätsarbeit hat gezeigt, dass die Konzeption und technische Umsetzung einer Lern- und Organisationsapplikation für Kantonsschüler:innen machbar ist. Die entwickelte Web-Applikation Kanti Koala bietet eine kohärente Lösung zur zentralen Verwaltung von Terminen, automatisierten Planung von Lernzeiten und Unterstützung strukturierter Lernphasen.
+Diese Maturitätsarbeit hat gezeigt, dass die Konzeption und technische Umsetzung einer Lern- und Organisationsapplikation für Kantonsschüler:innen machbar ist. Die entwickelte Web-Applikation KantiKoala bietet eine kohärente Lösung zur zentralen Verwaltung von Terminen, automatisierten Planung von Lernzeiten und Unterstützung strukturierter Lernphasen.
 
 Die durchgeführte Recherche validierte die Relevanz der adressierten Probleme (Prokrastination, Stress, spätes Lernen) in der Zielgruppe und lieferte fundierte Anforderungen für die Implementierung. Die technische Umsetzung demonstriert die Funktionsfähigkeit der Kernkomponenten, insbesondere des Lernzeitalgorithmus als zentralem Alleinstellungsmerkmal.
 
@@ -1675,7 +1675,7 @@ Die vorliegende Arbeit schafft somit eine belastbare Ausgangsbasis für weiterf�
 
 Der Arbeitsprozess selbst war lehrreich und forderte sowohl in methodischer (Recherche, Interviews, Umfragen) als auch in technischer Hinsicht (Software-Architektur, Algorithmenentwicklung, Sicherheit). Die gewonnenen Erkenntnisse zu Projektplanung, kollaborativer Softwareentwicklung und wissenschaftlicher Arbeitsweise bieten eine wertvolle Grundlage für zukünftige Projekte und das weitere Studium.
 
-Abschliessend lässt sich festhalten: Kanti Koala ist ein funktionsfähiges Produkt, der die identifizierten Bedürfnisse technisch adressiert. Ob er sein Potenzial zur Verbesserung von Lernorganisation und -gewohnheiten in der Praxis entfalten kann, bleibt eine spannende Frage für zukünftige Untersuchungen.
+Abschliessend lässt sich festhalten: KantiKoala ist ein funktionsfähiges Produkt, der die identifizierten Bedürfnisse technisch adressiert. Ob er sein Potenzial zur Verbesserung von Lernorganisation und -gewohnheiten in der Praxis entfalten kann, bleibt eine spannende Frage für zukünftige Untersuchungen.
 
 % References
 
@@ -1695,7 +1695,7 @@ Abschliessend lässt sich festhalten: Kanti Koala ist ein funktionsfähiges Prod
 \chapter*{Anhang}
 \addcontentsline{toc}{chapter}{Anhang}
 \begin{itemize}
-    \item \textbf{Code:} Der vollständige Code der Kanti Koala Web-App ist auf GitHub verfügbar unter: \url{https://github.com/CoderAryanAnand/lernapp}.\\
+    \item \textbf{Code:} Der vollständige Code der KantiKoala Web-App ist auf GitHub verfügbar unter: \url{https://github.com/CoderAryanAnand/lernapp}.\\
                          Der Code wird aber auch noch separat beigefügt.
     \item \textbf{KI-Nachweis}
     \item \textbf{Tests}
@@ -1704,6 +1704,5 @@ Abschliessend lässt sich festhalten: Kanti Koala ist ein funktionsfähiges Prod
     \item \textbf{Interviewtranskripte}
     \item \textbf{Interview- und Umfrageanalysen}
 \end{itemize}
-
 
 \end{document}
