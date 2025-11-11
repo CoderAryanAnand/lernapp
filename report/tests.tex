@@ -196,6 +196,24 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
+\begin{testcase}{AUTH-11}
+    \textbf{Ziel:} Sicherstellen, dass ausgeloggte (nicht angemeldete) Benutzer keinen Zugriff auf geschützte (login-pflichtige) Seiten haben.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Stellen Sie sicher, dass Sie ausgeloggt sind.
+        \item Versuchen Sie, eine geschützte Seite direkt über die URL aufzurufen, z.B.:
+            \begin{itemize}
+                \item \texttt{/agenda}
+                \item \texttt{/noten}
+                \item \texttt{/todo}
+                \item \texttt{/settings}
+            \end{itemize}
+        \item Wiederholen Sie dies für alle weiteren Seiten, die eine Anmeldung voraussetzen.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} In allen Fällen wird der Benutzer zur Login-Seite weitergeleitet. Kein Zugriff auf geschützte Inhalte ohne vorherige Anmeldung möglich.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
 \subsection[Notenverwaltung]{Notenverwaltung\texorpdfstring{\aifootnotemark}{}}
 \aifootnotetext
 
