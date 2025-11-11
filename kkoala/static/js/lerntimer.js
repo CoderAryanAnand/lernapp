@@ -1,3 +1,4 @@
+// Global timer variables and default settings
 let timer;
 let isRunning = false;
 let isWork = true;
@@ -9,10 +10,12 @@ let rounds = 4;
 let currentRound = 1;
 let secondsLeft = workMinutes * 60;
 
+// DOM elements for timer display and status
 const timerEl = document.getElementById('timer');
 const statusEl = document.getElementById('status');
 const roundInfoEl = document.getElementById('round-info');
 
+// Updates timer settings from user input fields
 function updateSettings() {
     workMinutes = parseInt(document.getElementById('work-minutes').value) || 25;
     breakMinutes = parseInt(document.getElementById('break-minutes').value) || 5;
@@ -20,6 +23,7 @@ function updateSettings() {
     rounds = parseInt(document.getElementById('rounds').value) || 4;
 }
 
+// Updates the timer display, status, and round info in the UI
 function updateDisplay() {
     const min = Math.floor(secondsLeft / 60).toString().padStart(2, '0');
     const sec = (secondsLeft % 60).toString().padStart(2, '0');
@@ -38,6 +42,7 @@ function updateDisplay() {
     }
 }
 
+// Starts the timer countdown and handles session transitions
 function startTimer() {
     if (isRunning) return;
     updateSettings();
@@ -82,11 +87,13 @@ function startTimer() {
     }, 1000);
 }
 
+// Pauses the timer countdown
 function pauseTimer() {
     clearInterval(timer);
     isRunning = false;
 }
 
+// Resets the timer to initial state and updates the display
 function resetTimer() {
     clearInterval(timer);
     isRunning = false;
@@ -98,9 +105,10 @@ function resetTimer() {
     updateDisplay();
 }
 
+// Resets timer when any settings input changes
 document.querySelectorAll('.settings input').forEach(input => {
     input.addEventListener('change', resetTimer);
 });
 
-// Initialize display
+// Initialize timer display on page load
 updateDisplay();

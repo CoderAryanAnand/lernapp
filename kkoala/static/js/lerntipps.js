@@ -1,15 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Add event listeners to all accordion toggle buttons
+    // Add click event listeners to all accordion toggle buttons
     document.querySelectorAll('.accordion-toggle').forEach(button => {
         button.addEventListener('click', () => {
-            // Find the content panel and the icon
+            // Get the content panel and the chevron icon inside the button
             const content = button.nextElementSibling;
             const icon = button.querySelector('svg');
 
-            // Toggle the 'hidden' class on the content
+            // Toggle visibility of the accordion content
             content.classList.toggle('hidden');
 
-            // Rotate the icon
+            // Rotate the chevron icon based on the content's visibility
             if (content.classList.contains('hidden')) {
                 icon.classList.remove('rotate-180');
             } else {
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrollTopBtn = document.getElementById('scrollTopBtn');
 
     if (scrollTopBtn) {
-        // Show or hide the button based on scroll position
+        // Show or hide the scroll-to-top button based on scroll position
         window.onscroll = function() {
             if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
                 scrollTopBtn.classList.remove('hidden');
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        // Scroll to the top when the button is clicked
+        // Smoothly scroll to the top when the button is clicked
         scrollTopBtn.addEventListener('click', function() {
             window.scrollTo({
                 top: 0,

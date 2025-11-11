@@ -1,28 +1,29 @@
+# Import Flask modules for routing, request handling, and responses
 from flask import Blueprint, request, jsonify, current_app, session, Response
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 import uuid
 import icalendar
 
+# Import application extensions and models
 from ..extensions import db
 from ..models import Event, User, Settings, PrioritySetting
 from ..utils import csrf_protect, login_required, str_to_bool
 from ..algorithms import learning_time_algorithm
 from ..consts import DEFAULT_IMPORT_COLOR
 
+# Define the blueprint for event-related API routes
 events_bp = Blueprint("events", __name__)
-
 
 @events_bp.route("/", methods=["GET"])
 @login_required
 def get_events(user):
     """
-    API endpoint to fetch all calendar events for the logged-in user.
+    Fetch all calendar events for the logged-in user.
 
     Returns:
-        JSON: A list of all user events formatted for the calendar (FullCalendar).
+        JSON: List of all user events formatted for the calendar (FullCalendar).
     """
-    # The 'user' object is now provided by the @login_required decorator
     user_events = Event.query.filter_by(user_id=user.id).all()
     # Format events into a dictionary list for JSON response
     events = [
@@ -41,30 +42,28 @@ def get_events(user):
     ]
     return jsonify(events), 200
 
-
 @events_bp.route("/", methods=["POST"])
 @csrf_protect
 @login_required
 def create_event(user):
     """
-    API endpoint to create a new event.
+    Create a new event (single or recurring).
 
     Handles creation of single events, or multiple events for a recurrence series
     ('daily', 'weekly', 'monthly'). Sets color for exams based on priority settings.
 
     Returns:
-        JSON: A success message and status code 201.
+        JSON: Success message and status code 201.
     """
     data = request.json
     all_day = str_to_bool(data.get("all_day", False))
     end_str = data.get("end")
 
-    # --- FIX: Adjust end date for all-day events ---
+    # Adjust end date for all-day events (add one day)
     if all_day and end_str:
         end_dt = datetime.fromisoformat(end_str)
         end_dt += timedelta(days=1)
         end_str = end_dt.isoformat()
-    # --- END FIX ---
 
     # Set event color if it's an exam based on user settings
     if int(data["priority"]) > 0:
@@ -81,11 +80,10 @@ def create_event(user):
     if data["recurrence"] != "none":
         recurrence_id = str(uuid.uuid4().int)  # Generate a unique ID for the series
         start_dt = datetime.fromisoformat(data["start"])
-        # Use the potentially adjusted end_str from the fix above
         end_dt = datetime.fromisoformat(end_str) if end_str else None
         duration = end_dt - start_dt if end_dt else None
 
-        # Logic to create multiple instances for daily, weekly, or monthly recurrence
+        # Determine number of instances based on recurrence pattern
         num_instances = (
             365
             if data["recurrence"] == "daily"
@@ -124,7 +122,7 @@ def create_event(user):
     new_event = Event(
         title=data["title"],
         start=data["start"],
-        end=end_str,  # Use the potentially adjusted end_str
+        end=end_str,
         color=data["color"],
         user_id=user.id,
         priority=data["priority"],
@@ -138,30 +136,28 @@ def create_event(user):
     db.session.commit()
     return jsonify({"message": "Event created"}), 201
 
-
 @events_bp.route("/", methods=["PUT"])
 @csrf_protect
 @login_required
 def update_event(user):
     """
-    API endpoint to update an existing event.
+    Update an existing event (single or entire recurrence series).
 
     Handles updating a single event instance, or updating the entire recurrence series.
     Adjusts dates/times for recurring events based on their pattern.
 
     Returns:
-        JSON: A success message and status code 200.
+        JSON: Success message and status code 200.
     """
     data = request.json
     all_day = str_to_bool(data.get("all_day", False))
     end_str = data.get("end")
 
-    # --- FIX: Adjust end date for all-day events ---
+    # Adjust end date for all-day events (add one day)
     if all_day and end_str:
         end_dt = datetime.fromisoformat(end_str)
         end_dt += timedelta(days=1)
         end_str = end_dt.isoformat()
-    # --- END FIX ---
 
     # Case 1: Update a single event (or one that becomes a single event)
     if (
@@ -187,7 +183,7 @@ def update_event(user):
 
         event.title = data["title"]
         event.start = data["start"]
-        event.end = end_str  # Use the potentially adjusted end_str
+        event.end = end_str
         event.color = data["color"]
         event.priority = data["priority"]
         event.recurrence = "None"  # Update a recurring event instance to a single event
@@ -208,7 +204,6 @@ def update_event(user):
             )
 
         new_start_datetime = datetime.fromisoformat(data["start"])
-        # Use the potentially adjusted end_str to calculate the new duration
         new_end_datetime = datetime.fromisoformat(end_str) if end_str else None
         new_duration = (
             new_end_datetime - new_start_datetime if new_end_datetime else None
@@ -253,19 +248,18 @@ def update_event(user):
         db.session.commit()
         return jsonify({"message": "Recurring events updated"}), 200
 
-
 @events_bp.route("/<int:event_id>", methods=["DELETE"])
 @csrf_protect
 @login_required
 def delete_event(user, event_id):
     """
-    API endpoint to delete a single event by its ID.
+    Delete a single event by its ID.
 
     Args:
         event_id (int): The ID of the event to delete.
 
     Returns:
-        JSON: A success message and status code 200, or a 404 error.
+        JSON: Success message and status code 200, or a 404 error.
     """
     event = Event.query.get(event_id)
     if event and event.user_id == user.id:
@@ -274,19 +268,18 @@ def delete_event(user, event_id):
         return jsonify({"message": "Event deleted"}), 200
     return jsonify({"message": "Event not found or unauthorized"}), 404
 
-
 @events_bp.route("/recurring/<recurrence_id>", methods=["DELETE"])
 @csrf_protect
 @login_required
 def delete_recurring_events(user, recurrence_id):
     """
-    API endpoint to delete all events associated with a specific recurrence ID.
+    Delete all events associated with a specific recurrence ID.
 
     Args:
         recurrence_id (str): The unique ID of the recurrence series to delete.
 
     Returns:
-        JSON: A success message and status code 200, or a 401 error.
+        JSON: Success message and status code 200.
     """
     Event.query.filter_by(
         recurrence_id=recurrence_id, user_id=user.id
@@ -294,24 +287,21 @@ def delete_recurring_events(user, recurrence_id):
     db.session.commit()
     return jsonify({"message": "Recurring events deleted"}), 200
 
-
 @events_bp.route("/run-learning-algorithm", methods=["POST"])
 @csrf_protect
 @login_required
 def run_learning_algorithm(user):
     """
-    API endpoint to trigger the study scheduling algorithm.
+    Trigger the study scheduling algorithm for the user.
 
     Fetches all user events, runs the algorithm, and returns the scheduling results.
 
     Returns:
-        JSON: A dictionary containing the scheduling summary and results per exam.
+        JSON: Dictionary containing the scheduling summary and results per exam.
     """
     try:
         events = Event.query.filter_by(user_id=user.id).all()
-
         summary, successes = learning_time_algorithm(events, user)
-
         return (
             jsonify({"status": "success", "summary": summary, "results": successes}),
             200,
@@ -321,19 +311,18 @@ def run_learning_algorithm(user):
         current_app.logger.exception("Error running learning_time_algorithm")
         return jsonify({"error": "Internal server error", "details": str(e)}), 500
 
-
 @events_bp.route("/import-ics", methods=["POST"])
 @csrf_protect
 @login_required
 def import_ics(user):
     """
-    API endpoint to import events from an .ics file using the icalendar library.
+    Import events from an .ics file using the icalendar library.
 
     Parses the ICS content and creates new Event records for each VEVENT found.
     Imported events are given a default priority (4) and color.
 
     Returns:
-        JSON: A success message and status code 200, or a 400/500 error.
+        JSON: Success message and status code 200, or a 400/500 error.
     """
     data = request.json
     ics_content = data.get("ics")
@@ -350,10 +339,9 @@ def import_ics(user):
                 start = component.get("dtstart").dt
                 end = component.get("dtend").dt if component.get("dtend") else None
                 is_all_day = not isinstance(start, datetime)
-                # --- Read custom Kanti Koala tags if present ---
+                # Read custom Kanti Koala tags if present
                 priority = component.get("X-KKOALA-PRIORITY")
                 color = component.get("X-KKOALA-COLOR")
-                # Fallbacks if not present
 
                 settings = Settings.query.filter_by(user_id=user.id).first()
 
@@ -366,10 +354,9 @@ def import_ics(user):
                 if priority is not None:
                     priority = int(priority)
                 else:
-                    priority = lowest_priority  # define this as needed
+                    priority = lowest_priority
                 if color is None:
-                    color = DEFAULT_IMPORT_COLOR  # define this as needed
-                # ----------------------------------------------
+                    color = DEFAULT_IMPORT_COLOR
 
                 new_event = Event(
                     title=title,
@@ -391,149 +378,11 @@ def import_ics(user):
         db.session.rollback()
         return jsonify({"message": f"Failed to import .ics file: {str(e)}"}), 500
 
-
-# @events_bp.route("/populate_test_algorithm", methods=["POST", "GET"])
-# @csrf_protect
-# @login_required
-# def populate_test_algorithm(user):
-#     """
-#     Utility route to clear all existing events and populate the database
-#     with a standard set of test exams (P1, P2, P3) and busy events.
-
-#     This is intended for development and testing of the algorithm.
-
-#     Returns:
-#         str: A confirmation message and status code 201.
-#     """
-#     user_id = user.id
-
-#     # Clear all existing events for this user before populating
-#     Event.query.filter_by(user_id=user_id).delete()
-#     db.session.commit()
-
-#     # Define test data relative to today
-#     today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-
-#     # ... (event creation code omitted for brevity) ...
-#     # Events are created here: exam1 (P1, 10 days out), exam2 (P2, 7 days out), exam3 (P3, 4 days out), and busy events.
-
-#     exam1 = Event(
-#         user_id=user_id,
-#         title="Math Exam",
-#         start=(today + timedelta(days=10, hours=9)).isoformat(),
-#         end=(today + timedelta(days=10, hours=11)).isoformat(),
-#         color="#770000",
-#         priority=1,
-#         recurrence="None",
-#         recurrence_id="0",
-#         all_day=False,
-#         locked=True,
-#         exam_id=None,
-#     )
-#     exam2 = Event(
-#         user_id=user_id,
-#         title="History Exam",
-#         start=(today + timedelta(days=7, hours=13)).isoformat(),
-#         end=(today + timedelta(days=7, hours=15)).isoformat(),
-#         color="#ca8300",
-#         priority=2,
-#         recurrence="None",
-#         recurrence_id="0",
-#         all_day=False,
-#         locked=True,
-#         exam_id=None,
-#     )
-#     exam3 = Event(
-#         user_id=user_id,
-#         title="Biology Exam",
-#         start=(today + timedelta(days=4, hours=8)).isoformat(),
-#         end=(today + timedelta(days=4, hours=10)).isoformat(),
-#         color="#097200",
-#         priority=3,
-#         recurrence="None",
-#         recurrence_id="0",
-#         all_day=False,
-#         locked=True,
-#         exam_id=None,
-#     )
-
-#     busy1 = Event(
-#         user_id=user_id,
-#         title="Class: English",
-#         start=(today + timedelta(days=1, hours=10)).isoformat(),
-#         end=(today + timedelta(days=1, hours=12)).isoformat(),
-#         color="#4287f5",
-#         priority=5,
-#         recurrence="None",
-#         recurrence_id="0",
-#         all_day=False,
-#         locked=True,
-#         exam_id=None,
-#     )
-#     busy2 = Event(
-#         user_id=user_id,
-#         title="Doctor Appointment",
-#         start=(today + timedelta(days=2, hours=15)).isoformat(),
-#         end=(today + timedelta(days=2, hours=16)).isoformat(),
-#         color="#8e44ad",
-#         priority=5,
-#         recurrence="None",
-#         recurrence_id="0",
-#         all_day=False,
-#         locked=True,
-#         exam_id=None,
-#     )
-#     busy3 = Event(
-#         user_id=user_id,
-#         title="Class: Chemistry",
-#         start=(today + timedelta(days=5, hours=9)).isoformat(),
-#         end=(today + timedelta(days=5, hours=11)).isoformat(),
-#         color="#16a085",
-#         priority=5,
-#         recurrence="None",
-#         recurrence_id="0",
-#         all_day=False,
-#         locked=True,
-#         exam_id=None,
-#     )
-#     busy4 = Event(
-#         user_id=user_id,
-#         title="Sports Practice",
-#         start=(today + timedelta(days=6, hours=17)).isoformat(),
-#         end=(today + timedelta(days=6, hours=19)).isoformat(),
-#         color="#e67e22",
-#         priority=5,
-#         recurrence="None",
-#         recurrence_id="0",
-#         all_day=False,
-#         locked=True,
-#         exam_id=None,
-#     )
-
-#     non_exam = Event(
-#         user_id=user_id,
-#         title="Read a book",
-#         start=(today + timedelta(days=3, hours=18)).isoformat(),
-#         end=(today + timedelta(days=3, hours=19)).isoformat(),
-#         color="#888888",
-#         priority=0,
-#         recurrence="None",
-#         recurrence_id="0",
-#         all_day=False,
-#         locked=True,
-#         exam_id=None,
-#     )
-
-#     db.session.add_all([exam1, exam2, exam3, busy1, busy2, busy3, busy4, non_exam])
-#     db.session.commit()
-#     return "Test events for the learning time algorithm have been populated!", 201
-
-
 @events_bp.route("/export-ics", methods=["GET"])
 @login_required
 def export_ics(user):
     """
-    API endpoint to export all user events as an .ics file.
+    Export all user events as an .ics file.
 
     Returns:
         Response: A downloadable .ics file containing all user events.

@@ -3,14 +3,27 @@
 {% block title %}Agenda{% endblock %}
 
 {% block meta %}
+<!--
+    CSRF token meta tag for AJAX requests.
+    Ensures secure POST/PUT/DELETE operations from JavaScript.
+-->
 <meta name="csrf-token" content="{{ session.get('csrf_token', '') }}">
 {% endblock %}
 
 {% block head %}
+<!--
+    FullCalendar library for interactive calendar UI.
+    Loaded from CDN for convenience.
+-->
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
 {% endblock %}
 
 {% block extra_css %}
+<!--
+    Custom CSS variables and overrides for FullCalendar.
+    - Supports light and dark mode.
+    - Adjusts colors for calendar background, text, events, and borders.
+-->
 <style>
     /* Light Mode Variables */
     :root {
@@ -48,8 +61,16 @@
 {% endblock %}
 
 {% block content %}
+<!--
+    Agenda Page Content
+    - Displays the user's weekly agenda/calendar.
+    - Includes buttons for importing/exporting .ics files and running the learning algorithm.
+    - Contains modals/popups for event editing, creation, and confirmation.
+-->
+
 <h1 class="text-4xl font-bold text-zinc-800 dark:text-white mb-8">Deine wöchentliche Agenda</h1>
 
+<!-- Action buttons for calendar import/export and algorithm -->
 <div class="flex flex-wrap gap-3 mb-6">
     <button id="import-ics-button" onclick="document.getElementById('ics-file-input').click()" class="px-4 py-2 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700">.ics-Datei importieren</button>
     <input type="file" id="ics-file-input" accept=".ics" class="hidden" onchange="importICSFile(event)">
@@ -57,12 +78,15 @@
     <button onclick="exportICS()" class="px-4 py-2 font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-700 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-600">.ics exportieren</button>
 </div>
 
+<!-- Calendar container -->
 <div id="calendar-container" class="bg-white dark:bg-zinc-900 p-4 rounded-xl shadow-md">
     <div id="calendar"></div>
 </div>
 
+<!-- Overlay for popups -->
 <div id="overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40"></div>
 
+<!-- Scheduler results popup/modal -->
 <div id="scheduler-popup" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-lg z-50 border border-zinc-200 dark:border-zinc-700">
     <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">Planungsergebnisse</h3>
     <div id="scheduler-message" class="text-sm text-zinc-700 dark:text-zinc-300 max-h-80 overflow-y-auto pr-2"></div>
@@ -71,18 +95,22 @@
     </div>
 </div>
 
+<!-- Event edit popup/modal -->
 <div id="event-popup" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg p-8 bg-white dark:bg-zinc-800 rounded-xl shadow-2xl z-50 border border-zinc-200 dark:border-zinc-700 max-h-[90vh] overflow-y-auto">
     <h3 class="text-3xl font-bold text-zinc-900 dark:text-white mb-6 pb-4 border-b border-zinc-200 dark:border-zinc-700">Termin bearbeiten</h3>
     <form id="edit-event-form" class="space-y-5">
+        <!-- Hidden fields for event ID and recurrence -->
         <input type="hidden" id="event-id" name="id">
         <input type="hidden" id="recurrence-id" name="recurrence-id">
         
+        <!-- Event title input -->
         <div>
             <label for="event-title" class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Titel</label>
             <input type="text" id="event-title" name="title" maxlength="500" required 
                    class="w-full px-4 py-3 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
         </div>
 
+        <!-- Color and priority selection -->
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label for="event-color" class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
@@ -105,6 +133,7 @@
             </div>
         </div>
 
+        <!-- Start and end time inputs -->
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label for="event-start" class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Startzeit</label>
@@ -118,12 +147,15 @@
             </div>
         </div>
 
+        <!-- All-day event checkbox -->
         <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-700/50 cursor-pointer transition-colors">
             <input type="checkbox" id="edit-all-day" name="all_day" class="h-5 w-5 rounded border-zinc-300 dark:border-zinc-600 text-blue-600 focus:ring-blue-500 focus:ring-offset-0">
             <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Ganztägiger Termin</span>
         </label>
 
-        <div id="edit-recurrence-container" class="hidden"> <div>
+        <!-- Recurrence edit options (shown only for recurring events) -->
+        <div id="edit-recurrence-container" class="hidden">
+            <div>
                 <label for="edit-recurrence" class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Wiederholung bearbeiten</label>
                 <select id="edit-recurrence" name="edit-recurrence" 
                         class="w-full px-4 py-3 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all">
@@ -133,6 +165,7 @@
             </div>
         </div>
 
+        <!-- Action buttons for event editing -->
         <div class="pt-6 flex flex-wrap gap-3 justify-end border-t border-zinc-200 dark:border-zinc-700">
             <button type="button" onclick="closeAllPopups()" 
                     class="px-5 py-2.5 font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-700 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors">
@@ -149,15 +182,18 @@
     </form>
 </div>
 
+<!-- Event creation popup/modal -->
 <div id="create-popup" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-lg p-8 bg-white dark:bg-zinc-800 rounded-xl shadow-2xl z-50 border border-zinc-200 dark:border-zinc-700 max-h-[90vh] overflow-y-auto">
     <h3 class="text-3xl font-bold text-zinc-900 dark:text-white mb-6 pb-4 border-b border-zinc-200 dark:border-zinc-700">Termin erstellen</h3>
     <form id="create-event-form" class="space-y-5">
+        <!-- Event title input -->
         <div>
             <label for="create-title" class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Titel</label>
             <input type="text" id="create-title" name="title" maxlength="500" required 
                    class="w-full px-4 py-3 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
         </div>
 
+        <!-- Color and priority selection -->
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label for="create-color" class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">
@@ -179,6 +215,7 @@
             </div>
         </div>
 
+        <!-- Start and end time inputs -->
         <div class="grid grid-cols-2 gap-4">
             <div>
                 <label for="create-start" class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Startzeit</label>
@@ -192,6 +229,7 @@
             </div>
         </div>
 
+        <!-- Recurrence selection -->
         <div>
             <label for="recurrence" class="block text-sm font-semibold text-zinc-700 dark:text-zinc-300 mb-2">Wiederholung</label>
             <select id="recurrence" name="recurrence" 
@@ -203,11 +241,13 @@
             </select>
         </div>
 
+        <!-- All-day event checkbox -->
         <label class="flex items-center space-x-3 p-3 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-700/50 cursor-pointer transition-colors">
             <input type="checkbox" id="all-day" name="all_day" class="h-5 w-5 rounded border-zinc-300 dark:border-zinc-600 text-blue-600 focus:ring-blue-500 focus:ring-offset-0">
             <span class="text-sm font-medium text-zinc-700 dark:text-zinc-300">Ganztägiger Termin</span>
         </label>
 
+        <!-- Action buttons for event creation -->
         <div class="pt-6 flex flex-wrap gap-3 justify-end border-t border-zinc-200 dark:border-zinc-700">
             <button type="button" onclick="closeAllPopups()" 
                     class="px-5 py-2.5 font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-100 dark:bg-zinc-700 rounded-lg hover:bg-zinc-200 dark:hover:bg-zinc-600 transition-colors">
@@ -221,7 +261,7 @@
     </form>
 </div>
 
-<!-- Event Delete Confirmation Modal -->
+<!-- Event delete confirmation modal -->
 <div id="delete-event-confirm-popup" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-lg z-50 text-center">
     <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">Termin löschen bestätigen</h3>
     <div id="delete-event-confirm-message" class="text-zinc-600 dark:text-zinc-300 mb-6"></div>
@@ -233,6 +273,11 @@
 {% endblock %}
 
 {% block scripts %}
+<!--
+    JavaScript for Agenda Page
+    - Embeds priority colors for use in agenda.js.
+    - Loads the main agenda.js script for calendar logic and event handling.
+-->
 <script>
     // Embed priority colors for use in agenda.js
     // This assumes priority_levels is a list of objects like: 

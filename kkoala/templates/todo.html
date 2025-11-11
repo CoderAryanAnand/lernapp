@@ -3,15 +3,24 @@
 {% block title %}To-Do Listen{% endblock %}
 
 {% block meta %}
+<!--
+    CSRF token meta tag for AJAX requests and form security.
+    Ensures secure POST/PUT/DELETE operations from JavaScript.
+-->
 <meta name="csrf-token" content="{{ session.get('csrf_token', '') }}">
 {% endblock %}
 
 {% block extra_css %}
+<!--
+    Custom CSS for To-Do List animations and UI effects.
+    - Strikethrough animation for completed items.
+    - Collapsible category sections.
+    - Rotating icons for expand/collapse.
+-->
 <style>
     .strikethrough-animation {
         animation: strikethrough 0.3s ease-out forwards;
     }
-    
     @keyframes strikethrough {
         0% {
             text-decoration: none;
@@ -26,21 +35,17 @@
             opacity: 0;
         }
     }
-    
     .category-collapse {
         max-height: 0;
         overflow: hidden;
         transition: max-height 0.3s ease-out;
     }
-    
     .category-collapse.expanded {
         max-height: 2000px;
     }
-    
     .rotate-icon {
         transition: transform 0.3s ease;
     }
-    
     .rotate-icon.rotated {
         transform: rotate(180deg);
     }
@@ -48,6 +53,13 @@
 {% endblock %}
 
 {% block content %}
+<!--
+    To-Do List Page
+    - Allows users to organize tasks into categories.
+    - Supports adding, completing, and deleting tasks and categories.
+    - Categories are collapsible for better overview.
+    - Uses Tailwind CSS for styling and supports dark mode.
+-->
 <h1 class="text-4xl font-bold text-zinc-800 dark:text-white mb-8">To-Do Listen</h1>
 
 <!-- Add Category Button -->
@@ -62,15 +74,17 @@
     {% if categories %}
         {% for category in categories %}
         <div class="bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700" data-category-id="{{ category.id }}">
-            <!-- Category Header -->
+            <!-- Category Header (collapsible) -->
             <div class="p-4 flex items-center justify-between cursor-pointer hover:bg-zinc-50 dark:hover:bg-zinc-700/50 transition-colors rounded-t-xl" onclick="toggleCategory({{ category.id }})">
                 <div class="flex items-center space-x-3 min-w-0 flex-1 mr-3">
+                    <!-- Expand/Collapse Icon -->
                     <svg class="w-5 h-5 flex-shrink-0 text-zinc-600 dark:text-zinc-400 rotate-icon" id="icon-{{ category.id }}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                     </svg>
                     <h3 class="text-xl font-bold text-zinc-900 dark:text-white truncate">{{ category.name }}</h3>
                     <span class="text-sm text-zinc-500 dark:text-zinc-400 whitespace-nowrap">({{ category.items|length }})</span>
                 </div>
+                <!-- Delete Category Button -->
                 <button onclick="event.stopPropagation(); deleteCategory({{ category.id }})" class="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors flex-shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
@@ -81,7 +95,7 @@
             <!-- Category Content (Collapsible) -->
             <div class="category-collapse" id="category-{{ category.id }}">
                 <div class="p-4 pt-0 space-y-3">
-                    <!-- Todo Items -->
+                    <!-- Todo Items List -->
                     <div class="space-y-2" id="items-{{ category.id }}">
                         {% for item in category.items %}
                         <div class="flex items-start space-x-3 p-3 bg-zinc-50 dark:bg-zinc-700/50 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-colors group cursor-pointer"
@@ -115,16 +129,17 @@
         </div>
         {% endfor %}
     {% else %}
+        <!-- No Categories Message -->
         <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700 text-center">
             <p class="text-zinc-500 dark:text-zinc-400">Noch keine Kategorien erstellt.</p>
         </div>
     {% endif %}
 </div>
 
-<!-- Overlay -->
+<!-- Overlay for popups -->
 <div id="overlay" class="hidden fixed inset-0 bg-black bg-opacity-50 z-40" onclick="closeAllPopups()"></div>
 
-<!-- Create Category Popup -->
+<!-- Create Category Popup Modal -->
 <div id="create-category-popup" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-8 bg-white dark:bg-zinc-800 rounded-xl shadow-2xl z-50 border border-zinc-200 dark:border-zinc-700">
     <h3 class="text-3xl font-bold text-zinc-900 dark:text-white mb-6 pb-4 border-b border-zinc-200 dark:border-zinc-700">Neue Kategorie</h3>
     <form id="create-category-form" class="space-y-5">
@@ -151,9 +166,13 @@
         </div>
     </form>
 </div>
-
 {% endblock %}
 
 {% block scripts %}
+<!--
+    JavaScript for To-Do List functionality.
+    - Handles category expand/collapse, item completion, adding, and deleting.
+    - Manages popup modals and UI interactions.
+-->
 <script src="{{ url_for('static', filename='js/todo.js') }}"></script>
 {% endblock %}

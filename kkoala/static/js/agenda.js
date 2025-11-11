@@ -1,4 +1,15 @@
+/**
+ * agenda.js
+ * Handles all logic for the Agenda (calendar) page.
+ * - Initializes FullCalendar and manages events (CRUD).
+ * - Handles popups for event creation, editing, and scheduling results.
+ * - Supports .ics import/export and learning algorithm execution.
+ * - Manages color selection based on priority.
+ * - Uses CSRF tokens for secure API requests.
+ */
+
 document.addEventListener('DOMContentLoaded', function () {
+    // --- GLOBAL VARIABLES ---
     let calendar;
     const overlay = document.getElementById('overlay');
     const popups = {
@@ -8,6 +19,8 @@ document.addEventListener('DOMContentLoaded', function () {
     };
 
     // --- HELPER FUNCTIONS ---
+
+    // Opens a popup by key and shows the overlay. Closes all other popups first.
     function openPopup(popupKey) {
         closeAllPopups();
         overlay.classList.remove('hidden');
@@ -16,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Closes all popups and hides the overlay.
     window.closeAllPopups = function() {
         overlay.classList.add('hidden');
         for (const key in popups) {
@@ -23,12 +37,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Opens the event edit popup and fills it with event data.
     function openEventPopup(event) {
         document.getElementById('event-id').value = event.id;
         document.getElementById('recurrence-id').value = event.extendedProps.recurrence_id;
         document.getElementById('edit-event-priority').value = event.extendedProps.priority;
         document.getElementById('event-title').value = event.title;
         document.getElementById('event-color').value = event.backgroundColor;
+        // Helper to format date for input fields
         function toLocalInputValue(date) {
             if (!date) return '';
             const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
@@ -38,11 +54,10 @@ document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('event-end').value = event.end ? toLocalInputValue(event.end) : '';
         document.getElementById('edit-all-day').checked = !!event.allDay;
 
-        // *** MODIFIED: Show/hide recurrence options based on event ***
+        // Show/hide recurrence options based on event
         const isRecurring = event.extendedProps.recurrence_id !== '0' && event.extendedProps.recurrence_id != null;
         const recurrenceContainer = document.getElementById('edit-recurrence-container');
         const recurrenceSelect = document.getElementById('edit-recurrence');
-        
         if (isRecurring) {
             recurrenceContainer.classList.remove('hidden');
             recurrenceSelect.value = 'this'; // Default to 'this'
@@ -50,11 +65,11 @@ document.addEventListener('DOMContentLoaded', function () {
             recurrenceContainer.classList.add('hidden');
             recurrenceSelect.value = 'this'; // Reset to 'this' for safety
         }
-        // *** END MODIFICATION ***
 
         openPopup('event');
     }
 
+    // Opens the event creation popup and sets start/end time.
     function openCreatePopup(dateStr, endTime) {
         document.getElementById('create-event-form').reset();
         document.getElementById('create-start').value = dateStr;
@@ -62,6 +77,7 @@ document.addEventListener('DOMContentLoaded', function () {
         openPopup('create');
     }
 
+    // Displays the scheduling algorithm results in a popup.
     function displaySchedulingPopup(summary, results) {
         const messageContainer = document.getElementById('scheduler-message');
         let messageHTML = `<h3>Globale Zusammenfassung:</h3>`;
@@ -81,7 +97,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // --- GLOBAL FUNCTIONS (ATTACHED TO WINDOW) ---
 
-    // *** MODIFIED: Replaced deleteEvent and deleteRecurringEvents with a single handleDelete ***
+    // Handles delete button click in event edit popup.
     window.handleDelete = function() {
         const recurrenceId = document.getElementById('recurrence-id').value;
         const isRecurring = recurrenceId !== '0' && recurrenceId != null;
@@ -90,8 +106,8 @@ document.addEventListener('DOMContentLoaded', function () {
         const deleteType_ = recurrenceSelect.value;
         openDeleteEventConfirm(isRecurring, eventId, recurrenceId, deleteType_);
     }
-    // *** END MODIFICATION ***
 
+    // Handles .ics file import and sends it to the backend.
     window.importICSFile = async function(event) {
         const file = event.target.files[0];
         if (!file) return;
@@ -109,9 +125,12 @@ document.addEventListener('DOMContentLoaded', function () {
         reader.readAsText(file);
     }
 
+    // Triggers .ics export by redirecting to the export endpoint.
     window.exportICS = function() { window.location.href = '/api/events/export-ics'; }
 
     // --- INITIALIZE THE CALENDAR ---
+
+    // Initializes FullCalendar with configuration and event handlers.
     const calendarEl = document.getElementById('calendar');
     calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'timeGridWeek',
@@ -133,6 +152,8 @@ document.addEventListener('DOMContentLoaded', function () {
     calendar.render();
 
     // --- EVENT LISTENERS ---
+
+    // Handles event edit form submission (PUT)
     document.getElementById('edit-event-form').addEventListener('submit', async function (e) {
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -146,6 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
         closeAllPopups();
     });
 
+    // Handles event creation form submission (POST)
     document.getElementById('create-event-form').addEventListener('submit', async function (e) {
         e.preventDefault();
         const formData = new FormData(e.target);
@@ -159,6 +181,7 @@ document.addEventListener('DOMContentLoaded', function () {
         closeAllPopups();
     });
 
+    // Handles learning algorithm execution
     document.getElementById('run-scheduler-btn').addEventListener('click', function() {
         this.disabled = true;
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -176,85 +199,44 @@ document.addEventListener('DOMContentLoaded', function () {
         .finally(() => { this.disabled = false; });
     });
 
-    // Holen Sie sich die Elemente des "Termin erstellen"-Popups
+    // --- COLOR PICKER LOGIC FOR CREATE POPUP ---
+
+    // Syncs color input with selected priority for create event popup.
     const createPrioritySelect = document.getElementById('create-event-priority');
     const createColorInput = document.getElementById('create-color');
-
-    // Prüfen, ob die Elemente und die eingebetteten Daten existieren
     if (createPrioritySelect && createColorInput && typeof priorityColors !== 'undefined') {
-        
-        // Funktion zur Aktualisierung der Farbe basierend auf der Priorität
         function updateCreateColorBasedOnPriority() {
             const selectedPriority = createPrioritySelect.value;
-            let newColor = '#000000'; // Standardfarbe (z.B. blau-500)
-
-            // Suchen Sie die Farbe im eingebetteten Objekt
+            let newColor = '#000000'; // Default color
             if (priorityColors[selectedPriority]) {
                 newColor = priorityColors[selectedPriority];
             }
-            
-            // Aktualisieren Sie den Wert des Farbfeldes
             createColorInput.value = newColor;
         }
-
-        // Fügen Sie den Event-Listener hinzu
         createPrioritySelect.addEventListener('change', updateCreateColorBasedOnPriority);
-        
-        // OPTIONAL: Beim Öffnen des Popups die Farbe initial setzen
-        // Wenn Sie eine Funktion haben, die das 'create-popup' öffnet:
-        // Fügen Sie 'updateCreateColorBasedOnPriority();' am Ende dieser Funktion hinzu.
-        // Wenn nicht, wird die Farbe beim ersten Mal, wenn der Benutzer die Priorität ändert, gesetzt.
-        
-        // Führen Sie die Funktion einmal aus, um sicherzustellen, dass die Standardpriorität
-        // beim Laden die richtige Farbe hat.
         updateCreateColorBasedOnPriority();
     }
 
-    // --- LOGIK FÜR DAS "TERMIN BEARBEITEN"-POPUP ---
-    
-    // Holen Sie sich die Elemente des "Termin bearbeiten"-Popups
-    const editPrioritySelect = document.getElementById('edit-event-priority');
-    const editColorInput = document.getElementById('event-color'); // Das Farbfeld hat die ID 'event-color'
+    // --- COLOR PICKER LOGIC FOR EDIT POPUP ---
 
-    // Prüfen, ob die Elemente und die eingebetteten Daten existieren
+    // Syncs color input with selected priority for edit event popup.
+    const editPrioritySelect = document.getElementById('edit-event-priority');
+    const editColorInput = document.getElementById('event-color');
     if (editPrioritySelect && editColorInput && typeof priorityColors !== 'undefined') {
-        
-        // Funktion zur Aktualisierung der Farbe basierend auf der Priorität
         function updateEditColorBasedOnPriority() {
             const selectedPriority = editPrioritySelect.value;
-            // Nutzen Sie die Farbe von Priorität 1 als Fallback, wenn nichts gefunden wird
-            let newColor = priorityColors["1"] || '#000000'; 
-
-            // Suchen Sie die Farbe im eingebetteten Objekt
+            let newColor = priorityColors["1"] || '#000000';
             if (priorityColors[selectedPriority]) {
                 newColor = priorityColors[selectedPriority];
             }
-            
-            // Aktualisieren Sie den Wert des Farbfeldes
             editColorInput.value = newColor;
-
         }
-
-        // Fügen Sie den Event-Listener hinzu
         editPrioritySelect.addEventListener('change', updateEditColorBasedOnPriority);
-        
-        // HINWEIS: Hier ist keine sofortige Initialisierung beim Laden nötig, da das Bearbeiten-Popup
-        // erst geöffnet wird, wenn ein Event angeklickt wird. 
-        // 
-        // WICHTIG: Sie MÜSSEN 'updateEditColorBasedOnPriority()' in Ihrer Funktion 
-        // aufrufen, die das 'event-popup' öffnet, BEVOR Sie das Farbfeld mit den 
-        // tatsächlichen Event-Daten überschreiben.
-        //
-        // Beispiel: In Ihrer Funktion 'openEditEventPopup(event)', nachdem das Dropdown
-        // mit der Priorität des Events befüllt wurde, aber bevor die Farbe des Events
-        // zugewiesen wird, sollten Sie dies aufrufen:
-        //
-        // updateEditColorBasedOnPriority(); 
-        //
-        // Der Grund dafür ist, dass die Farbe eines *existierenden* Events nicht der
-        // Standardfarbe der Priorität entsprechen muss, wenn der Benutzer sie zuvor 
-        // manuell geändert hat.
     }
+
+    // --- ESCAPE KEY HANDLER FOR POPUPS ---
+
+    // Closes popups when Escape key is pressed.
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' || e.key === 'Esc') {
             try {
@@ -264,21 +246,22 @@ document.addEventListener('DOMContentLoaded', function () {
                     e.preventDefault();
                 }
             } catch (err) {
-                // fail silently
+                // Fail silently
                 console.error('Escape handler error:', err);
             }
         }
     });
 
+    // --- DELETE EVENT LOGIC ---
+
     let eventToDelete = null;
     let deleteType = "single"; // "single" or "all"
 
+    // Opens the delete confirmation popup for single or recurring events.
     window.openDeleteEventConfirm = function(isRecurring, eventId, recurrenceId, deleteAllorSingle) {
         eventToDelete = eventId;
-        // Show overlay and popup
         document.getElementById('overlay').classList.remove('hidden');
         document.getElementById('delete-event-confirm-popup').classList.remove('hidden');
-        // Set message depending on recurring or not
         const msgDiv = document.getElementById('delete-event-confirm-message');
         if (isRecurring && deleteAllorSingle == 'all') {
             eventToDelete = recurrenceId; // Use recurrence ID to delete whole series
@@ -291,12 +274,14 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     };
 
+    // Closes the delete confirmation popup.
     window.closeDeleteEventConfirm = function() {
         document.getElementById('overlay').classList.add('hidden');
         document.getElementById('delete-event-confirm-popup').classList.add('hidden');
         eventToDelete = null;
     };
 
+    // Confirms deletion of an event or recurring series. Sends DELETE request to backend and refreshes calendar.
     window.confirmDeleteEvent = async function() {
         if (!eventToDelete) return;
         const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
@@ -313,7 +298,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 headers: { 'X-CSRF-Token': csrfToken } 
             });
         }
-        // Refresh calendar and close
+        // Refresh calendar and close popups
         if (typeof calendar !== "undefined") calendar.refetchEvents();
         closeDeleteEventConfirm();
         closeAllPopups();

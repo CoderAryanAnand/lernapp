@@ -1,4 +1,5 @@
 // --- Hardcoded Data ---
+// Semester names and default subjects for each semester
 const SEMESTER_NAMES = ["1. Semester", "2. Semester", "3. Semester", "4. Semester", "5. Semester", "6. Semester", "7. Semester", "8. Semester"];
 const subjectsBySemesterName = {
     "1. Semester": ["Deutsch", "Mathematik", "Biologie", "Chemie", "Geografie", "Sport", "Englisch", "Französisch", "Informatik", "Wirtschaft und Recht", "Geschichte"],
@@ -12,6 +13,7 @@ const subjectsBySemesterName = {
 };
 
 // --- Global State Variables ---
+// Track counters and currently edited elements
 let semesterCounter = 0; 
 let currentSubjectForGrade = null;
 let editingGradeRow = null;
@@ -21,13 +23,20 @@ let semesterToDelete = null;
 let currentSubjectForDreamCalc = null;
 
 // --- Helper Functions ---
+// Overlay element for modals
 const overlay = document.getElementById("overlay");
+
+// Rounds a grade to the nearest 0.5
 function roundToHalf(grade) { return Math.round(grade * 2) / 2; }
+
+// Calculates plus points based on rounded grade
 function calculatePlusPoints(roundedGrade) {
     return roundedGrade >= 4.0 ? roundedGrade - 4.0 : 2 * (roundedGrade - 4.0);
 }
 
 // --- Modal/Popup Functions ---
+
+// Opens the semester delete confirmation popup
 function openDeleteConfirm(semesterDiv) {
     semesterToDelete = semesterDiv; 
     const semesterName = semesterDiv.querySelector('.semester-name').textContent.trim();
@@ -35,11 +44,15 @@ function openDeleteConfirm(semesterDiv) {
     overlay.classList.remove("hidden");
     document.getElementById("delete-confirm-popup").classList.remove("hidden");
 }
+
+// Closes the semester delete confirmation popup
 function closeDeleteConfirm() {
     overlay.classList.add("hidden");
     document.getElementById("delete-confirm-popup").classList.add("hidden");
     semesterToDelete = null; 
 }
+
+// Confirms and deletes the selected semester
 function confirmDeleteSemester() {
     if (semesterToDelete) {
         semesterToDelete.remove(); 
@@ -47,6 +60,8 @@ function confirmDeleteSemester() {
     }
     closeDeleteConfirm();
 }
+
+// Opens the dream grade calculator popup for a subject
 function openDreamCalcPopup(subjectDiv) {
     currentSubjectForDreamCalc = subjectDiv;
     const subjectName = subjectDiv.querySelector('.subject-title').textContent;
@@ -57,11 +72,15 @@ function openDreamCalcPopup(subjectDiv) {
     overlay.classList.remove("hidden");
     document.getElementById("dream-calc-popup").classList.remove("hidden");
 }
+
+// Closes the dream grade calculator popup
 function closeDreamCalcPopup() {
     overlay.classList.add("hidden");
     document.getElementById("dream-calc-popup").classList.add("hidden");
     currentSubjectForDreamCalc = null;
 }
+
+// Opens the grade add/edit popup, optionally pre-filling for edit
 function openGradePopup(editRow = null) {
     overlay.classList.remove("hidden");
     document.getElementById("grade-popup").classList.remove("hidden");
@@ -82,10 +101,14 @@ function openGradePopup(editRow = null) {
         document.getElementById("grade-popup-save-btn").textContent = "Hinzufügen";
     }
 }
+
+// Closes the grade popup
 function closeGradePopup() {
     overlay.classList.add("hidden");
     document.getElementById("grade-popup").classList.add("hidden");
 }
+
+// Opens the subject edit popup
 function openSubjectPopup(subjectDiv) {
     editingSubjectHeader = subjectDiv.querySelector('.subject-title');
     editingSubjectContainer = subjectDiv; 
@@ -94,12 +117,14 @@ function openSubjectPopup(subjectDiv) {
     overlay.classList.remove("hidden");
     document.getElementById("subject-popup").classList.remove("hidden");
 }
+
+// Closes the subject edit popup
 function closeSubjectPopup() {
     overlay.classList.add("hidden");
     document.getElementById("subject-popup").classList.add("hidden");
 }
 
-// Add: Semester Rename Popup
+// Opens the semester rename popup
 function openSemesterRenamePopup(semesterDiv) {
     window._semesterDivToRename = semesterDiv;
     const headerSpan = semesterDiv.querySelector('.semester-name');
@@ -107,11 +132,15 @@ function openSemesterRenamePopup(semesterDiv) {
     overlay.classList.remove("hidden");
     document.getElementById("semester-rename-popup").classList.remove("hidden");
 }
+
+// Closes the semester rename popup
 function closeSemesterRenamePopup() {
     overlay.classList.add("hidden");
     document.getElementById("semester-rename-popup").classList.add("hidden");
     window._semesterDivToRename = null;
 }
+
+// Saves the new semester name after renaming
 function saveSemesterRename() {
     const newName = document.getElementById("semesterNameEdit").value.trim();
     if (window._semesterDivToRename && newName) {
@@ -123,6 +152,8 @@ function saveSemesterRename() {
 }
 
 // --- Calculation and Core Logic ---
+
+// Calculates the required grade for a desired average and displays it
 function calculateDreamGradeFromPopup() {
     const wishedAvg = parseFloat(document.getElementById('wishedAvgInput').value);
     const nextWeight = parseFloat(document.getElementById('nextWeightInput').value);
@@ -141,9 +172,13 @@ function calculateDreamGradeFromPopup() {
     const neededGrade = ((wishedAvg * (currentWeightSum + nextWeight)) - currentTotalScore) / nextWeight;
     outputP.textContent = `Benötigte Note: ${neededGrade.toFixed(2)}` + (neededGrade > 6 ? ' (Unmöglich)' : (neededGrade < 1 ? ' (Jede Note)' : ''));
 }
+
+// Opens the semester rename popup for a given semester
 function renameSemester(semesterDiv) {
     openSemesterRenamePopup(semesterDiv);
 }
+
+// Saves subject edits and updates averages
 async function saveSubjectEdit() {
     if (editingSubjectHeader && editingSubjectContainer) {
         const newName = document.getElementById("subjectNameEdit").value.trim();
@@ -153,13 +188,14 @@ async function saveSubjectEdit() {
             editingSubjectContainer.dataset.countsAverage = newCountsAverage;
             const gradesList = editingSubjectContainer.querySelector(".grades-list");
             const avgSpan = editingSubjectContainer.querySelector(".subject-average");
-            // Recalculate and display Schnitt consistently (will append '(zählt nicht)' if needed)
             updateSubjectAverage(gradesList, avgSpan, editingSubjectContainer.closest('.semester'));
         }
     }
     closeSubjectPopup();
     await saveAllSemestersToBackend();
 }
+
+// Adds or edits a grade for a subject and updates averages
 async function addOrEditGradeToSubject() {
     const name = document.getElementById("gradeName").value.trim();
     const value = parseFloat(document.getElementById("gradeValue").value);
@@ -172,6 +208,8 @@ async function addOrEditGradeToSubject() {
     closeGradePopup();
     await saveAllSemestersToBackend();
 }
+
+// Updates the subject average and semester average
 function updateSubjectAverage(gradesList, avgSpan, semesterDiv) {
     const subjectDiv = gradesList.closest('.subject');
     if (!subjectDiv || !avgSpan) return;
@@ -185,10 +223,11 @@ function updateSubjectAverage(gradesList, avgSpan, semesterDiv) {
         }
     });
     const avg = (weightSum && hasGrade) ? (total / weightSum).toFixed(2) : 0;
-    // Always show Schnitt; append " (zählt nicht)" when the subject does not count
     avgSpan.textContent = `Schnitt: ${hasGrade ? avg : 0}${countsAverage ? '' : ' (zählt nicht)'}`;
     updateSemesterAverage(semesterDiv);
 }
+
+// Updates the semester average and plus points
 function updateSemesterAverage(semesterDiv) {
     if (!semesterDiv) return;
     const semesterAvgSpan = semesterDiv.querySelector(".semester-average");
@@ -209,6 +248,8 @@ function updateSemesterAverage(semesterDiv) {
 }
 
 // --- HTML Rendering Functions ---
+
+// Creates a new semester and renders it
 function createSemester() {
     if (semesterCounter >= SEMESTER_NAMES.length) { alert("Maximale Anzahl an Semestern erreicht."); return; }
     const semesterName = SEMESTER_NAMES[semesterCounter];
@@ -220,6 +261,8 @@ function createSemester() {
     semesterCounter++;
     saveAllSemestersToBackend();
 }
+
+// Prompts for a new subject name and adds it to the container
 function addSubjectPrompt(container) {
     const subjectName = prompt("Fachname eingeben:");
     if (subjectName) {
@@ -227,6 +270,8 @@ function addSubjectPrompt(container) {
         saveAllSemestersToBackend();
     }
 }
+
+// Adds a subject to the container and sets up its UI and event handlers
 function addSubject(container, subjectName, grades = [], countsAverage = true) {
     const subjectDiv = document.createElement("div");
     subjectDiv.className = "subject bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg";
@@ -261,11 +306,11 @@ function addSubject(container, subjectName, grades = [], countsAverage = true) {
     gradesList.className = "grades-list space-y-2";
     content.appendChild(gradesList);
     
-    // Append to DOM FIRST before rendering grades
+    // Append to DOM before rendering grades
     subjectDiv.append(header, content);
     container.appendChild(subjectDiv);
     
-    // NOW render grades (after subjectDiv is in the DOM)
+    // Render grades for the subject
     grades.forEach(grade => renderGradeRow(gradesList, grade.name, grade.value, grade.weight, grade.counts));
     
     const actionsDiv = document.createElement("div");
@@ -277,6 +322,7 @@ function addSubject(container, subjectName, grades = [], countsAverage = true) {
     `;
     content.appendChild(actionsDiv);
     
+    // Toggle dropdown and set up event handlers
     header.onclick = (e) => {
         if (!e.target.closest('button') && !e.target.classList.contains('drag-handle')) {
             content.classList.toggle("hidden");
@@ -294,6 +340,8 @@ function addSubject(container, subjectName, grades = [], countsAverage = true) {
     };
     updateSubjectAverage(gradesList, header.querySelector(".subject-average"), subjectDiv.closest('.semester'));
 }
+
+// Renders a grade row in the grades list, or updates an existing row
 function renderGradeRow(gradesList, name, value, weight, counts, gradeRow = null) {
     const isNew = !gradeRow;
     if (isNew) {
@@ -303,8 +351,6 @@ function renderGradeRow(gradesList, name, value, weight, counts, gradeRow = null
     }
     
     const countsText = counts ? "" : " (Zählt nicht)";
-    
-    // Use a CSS Grid for perfect, stable column alignment
     gradeRow.className = "grade-row grid grid-cols-[1fr_auto_auto_auto] items-center gap-x-4 p-2 rounded-md bg-zinc-50 dark:bg-zinc-700/50";
     gradeRow.innerHTML = `
         <div class="truncate">
@@ -324,6 +370,8 @@ function renderGradeRow(gradesList, name, value, weight, counts, gradeRow = null
         openDeleteGradeConfirm(gradeRow, subjectContext);
     };
 }
+
+// Renders a semester and its subjects, and sets up drag-and-drop
 function renderSemester(sem, isNew = false) {
     const container = document.getElementById("semesters");
     const semesterDiv = document.createElement("div");
@@ -367,7 +415,7 @@ function renderSemester(sem, isNew = false) {
     actionsDiv.querySelector('.delete-semester-btn').onclick = () => openDeleteConfirm(semesterDiv);
     updateSemesterAverage(semesterDiv);
 
-    // --- Make subjects reorderable with SortableJS ---
+    // Make subjects reorderable with SortableJS
     if (typeof Sortable !== "undefined") {
         new Sortable(subjectsContainer, {
             animation: 150,
@@ -387,6 +435,8 @@ function renderSemester(sem, isNew = false) {
 }
 
 // --- Backend and Initialization ---
+
+// Loads all semesters from the backend and renders them
 async function loadSemestersFromBackend() {
     try {
         const response = await fetch("/api/noten");
@@ -399,6 +449,8 @@ async function loadSemestersFromBackend() {
         console.error("Fehler beim Abrufen der Semester:", error);
     }
 }
+
+// Saves all semesters to the backend
 async function saveAllSemestersToBackend() {
     const semesters = [];
     document.querySelectorAll('.semester').forEach(semesterDiv => {
@@ -496,8 +548,11 @@ document.addEventListener('keydown', function (e) {
         }
     }
 });
-// Subject Delete Confirm
+
+// --- Subject Delete Confirm ---
 let subjectToDelete = null;
+
+// Opens the subject delete confirmation popup
 function openDeleteSubjectConfirm(subjectDiv) {
     subjectToDelete = subjectDiv;
     const subjectName = subjectDiv.querySelector('.subject-title').textContent.trim();
@@ -505,11 +560,15 @@ function openDeleteSubjectConfirm(subjectDiv) {
     overlay.classList.remove("hidden");
     document.getElementById("delete-subject-confirm-popup").classList.remove("hidden");
 }
+
+// Closes the subject delete confirmation popup
 function closeDeleteSubjectConfirm() {
     overlay.classList.add("hidden");
     document.getElementById("delete-subject-confirm-popup").classList.add("hidden");
     subjectToDelete = null;
 }
+
+// Confirms and deletes the selected subject
 function confirmDeleteSubject() {
     if (subjectToDelete) {
         subjectToDelete.remove();
@@ -518,8 +577,10 @@ function confirmDeleteSubject() {
     closeDeleteSubjectConfirm();
 }
 
-// Grade Delete Confirm
+// --- Grade Delete Confirm ---
 let gradeToDelete = null;
+
+// Opens the grade delete confirmation popup
 function openDeleteGradeConfirm(gradeRow, subjectContext) {
     gradeToDelete = { gradeRow, subjectContext };
     const gradeName = gradeRow.dataset.name;
@@ -527,11 +588,15 @@ function openDeleteGradeConfirm(gradeRow, subjectContext) {
     overlay.classList.remove("hidden");
     document.getElementById("delete-grade-confirm-popup").classList.remove("hidden");
 }
+
+// Closes the grade delete confirmation popup
 function closeDeleteGradeConfirm() {
     overlay.classList.add("hidden");
     document.getElementById("delete-grade-confirm-popup").classList.add("hidden");
     gradeToDelete = null;
 }
+
+// Confirms and deletes the selected grade, then updates averages
 function confirmDeleteGrade() {
     if (gradeToDelete) {
         gradeToDelete.gradeRow.remove();

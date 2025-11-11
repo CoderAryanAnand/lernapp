@@ -1,3 +1,4 @@
+# Import Flask modules for routing, request handling, session management, and rendering
 from flask import (
     Blueprint,
     request,
@@ -10,14 +11,15 @@ from flask import (
     flash,
 )
 
+# Import application extensions and models
 from ..extensions import db, bcrypt
 from ..models import User, Event, Settings, PrioritySetting
 from ..utils import csrf_protect, login_required
 
+# Define the blueprint for settings-related routes
 settings_bp = Blueprint(
     "settings", __name__, template_folder="../templates", static_folder="../static"
 )
-
 
 @settings_bp.route("/", methods=["GET", "POST"])
 @csrf_protect
@@ -45,7 +47,7 @@ def settings_view(user):
 
         # Handle adding a new priority level
         if "add_priority" in request.form:
-            # ... (priority addition logic, including shifting existing events/settings) ...
+            # Determine the next priority level
             existing_levels = [p.priority_level for p in settings.priority_settings]
             next_level = max(existing_levels, default=0) + 1
 
@@ -56,7 +58,7 @@ def settings_view(user):
             for event in user_events:
                 event.priority += 1
 
-            # Add the new priority setting
+            # Add the new priority setting with default values
             new_prio = PrioritySetting(
                 settings_id=settings.id,
                 priority_level=next_level,
@@ -90,7 +92,7 @@ def settings_view(user):
                     p.priority_level -= 1
                 db.session.commit()
             
-            # shift all user events a priority up, if their priority was below the one deleted
+            # Shift all user events a priority down, if their priority was above the one deleted
             user_events = Event.query.filter(
                 Event.user_id == user.id, Event.priority > level_to_remove
             ).all()
@@ -113,7 +115,7 @@ def settings_view(user):
         )
         settings.dark_mode = request.form.get("dark_mode", "system") # Save the dark mode setting
 
-        # Update specific priority settings (color, days_to_learn, etc.)
+        # Update specific priority settings (color, max hours, total hours, etc.)
         for prio in settings.priority_settings:
             prio.color = request.form.get(
                 f"priority{prio.priority_level}_color", prio.color
@@ -151,7 +153,6 @@ def settings_view(user):
         study_block_color=settings.study_block_color,
         import_color=settings.import_color,
     )
-
 
 @settings_bp.route("/change_password", methods=["GET", "POST"])
 @csrf_protect

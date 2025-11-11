@@ -2,12 +2,20 @@
 {% block title %}Datenschutzerklärung{% endblock %}
 
 {% block content %}
+<!--
+    Datenschutzerklärung (Privacy Policy) Page
+    - Explains how user data is collected, processed, and protected.
+    - Lists contact information, data categories, purposes, rights, and legal notes.
+    - Uses Tailwind CSS for styling and supports dark mode.
+-->
 <div class="max-w-2xl mx-auto p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700 mt-8">
+    <!-- Main Heading -->
     <h1 class="text-3xl font-bold mb-6 text-zinc-900 dark:text-white">Datenschutzerklärung</h1>
     <p class="mb-4 text-zinc-700 dark:text-zinc-300">
         Der Schutz deiner persönlichen Daten ist uns ein wichtiges Anliegen. In dieser Datenschutzerklärung informieren wir dich darüber, wie deine personenbezogenen Daten im Rahmen der Nutzung von KantiKoala verarbeitet werden.
     </p>
 
+    <!-- Verantwortliche Stelle -->
     <h2 class="text-xl font-semibold mt-6 mb-2 text-zinc-900 dark:text-white">1. Verantwortliche Stelle</h2>
     <p class="mb-4 text-zinc-700 dark:text-zinc-300">
         Aryan Anand, Simon Haddon<br>
@@ -15,6 +23,7 @@
         E-Mail: kantikoala@gmail.com
     </p>
 
+    <!-- Erhobene Daten -->
     <h2 class="text-xl font-semibold mt-6 mb-2 text-zinc-900 dark:text-white">2. Erhobene Daten</h2>
     <ul class="list-disc ml-6 mb-4 text-zinc-700 dark:text-zinc-300">
         <li>Registrierungsdaten (z.B. Benutzername, Passwort, E-Mail)</li>
@@ -22,28 +31,33 @@
         <li>Technische Daten (z.B. IP-Adresse, Cookies; Browser-Informationen werden nicht dauerhaft gespeichert)</li>
     </ul>
 
+    <!-- Zweck der Datenverarbeitung -->
     <h2 class="text-xl font-semibold mt-6 mb-2 text-zinc-900 dark:text-white">3. Zweck der Datenverarbeitung</h2>
     <p class="mb-4 text-zinc-700 dark:text-zinc-300">
         Benutzername, E-Mail und Passwort werden ausschliesslich zur Authentifizierung und Verwaltung deines Nutzerkontos verwendet.
         Nutzungsdaten (wie Einträge, Einstellungen und To-Dos) werden nur gespeichert, damit sie dir bei der Nutzung der Plattform wieder angezeigt werden können.
     </p>
 
+    <!-- Weitergabe an Dritte -->
     <h2 class="text-xl font-semibold mt-6 mb-2 text-zinc-900 dark:text-white">4. Weitergabe an Dritte</h2>
     <p class="mb-4 text-zinc-700 dark:text-zinc-300">
         Deine Daten werden nicht an Dritte weitergegeben, es sei denn, dies ist gesetzlich vorgeschrieben oder zur Erfüllung des Dienstes notwendig (z.B. Hosting-Provider).
     </p>
 
+    <!-- Cookies -->
     <h2 class="text-xl font-semibold mt-6 mb-2 text-zinc-900 dark:text-white">5. Cookies</h2>
     <p class="mb-4 text-zinc-700 dark:text-zinc-300">
         KantiKoala verwendet Cookies, um die Anmeldung und die Nutzung der Plattform zu ermöglichen. Du kannst Cookies in deinem Browser deaktivieren, allerdings kann dann die Funktionalität eingeschränkt sein. Es werden keine Tracking- oder Analyse-Cookies eingesetzt.
     </p>
 
+    <!-- Speicherung der Daten und Speicherdauer -->
     <h2 class="text-xl font-semibold mt-6 mb-2 text-zinc-900 dark:text-white">6. Speicherung der Daten und Speicherdauer</h2>
     <p class="mb-4 text-zinc-700 dark:text-zinc-300">
         Die Speicherung der personenbezogenen Daten erfolgt auf Servern des Hosting-Providers DigitalOcean in Frankfurt am Main, Deutschland (EU).
         Deine Daten werden nur so lange gespeichert, wie dies für die Nutzung der Plattform erforderlich ist oder gesetzliche Aufbewahrungspflichten bestehen.
     </p>
 
+    <!-- Deine Rechte -->
     <h2 class="text-xl font-semibold mt-6 mb-2 text-zinc-900 dark:text-white">7. Deine Rechte</h2>
     <ul class="list-disc ml-6 mb-4 text-zinc-700 dark:text-zinc-300">
         <li>Auskunft über deine gespeicherten Daten</li>
@@ -54,14 +68,17 @@
         Für Anfragen wende dich bitte an die oben genannte Kontaktadresse.
     </p>
 
+    <!-- Änderungen -->
     <h2 class="text-xl font-semibold mt-6 mb-2 text-zinc-900 dark:text-white">8. Änderungen</h2>
     <p class="mb-4 text-zinc-700 dark:text-zinc-300">
         Wir behalten uns vor, diese Datenschutzerklärung bei Bedarf anzupassen. Die jeweils aktuelle Version findest du auf dieser Seite.
     </p>
 
+    <!-- Weitere Informationen -->
     <h2 class="text-xl font-semibold mt-6 mb-2 text-zinc-900 dark:text-white">9. Weitere Informationen</h2>
     <p class="mb-4 text-zinc-700 dark:text-zinc-300">
-        Weitere Informationen zum Datenschutz in der Schweiz findest du auf der Website des <a href="https://www.edoeb.admin.ch/de/datenschutzerklaerungen-im-internet" class="text-blue-600 dark:text-blue-400 underline" target="_blank" rel="noopener">EDÖB</a>.
+        Weitere Informationen zum Datenschutz in der Schweiz findest du auf der Website des 
+        <a href="https://www.edoeb.admin.ch/de/datenschutzerklaerungen-im-internet" class="text-blue-600 dark:text-blue-400 underline" target="_blank" rel="noopener">EDÖB</a>.
     </p>
 </div>
 {% endblock %}

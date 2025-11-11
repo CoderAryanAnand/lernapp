@@ -3,17 +3,25 @@
 {% block title %}Einstellungen{% endblock %}
 
 {% block content %}
+<!--
+    Einstellungen (Settings) Page
+    - Allows users to configure account, agenda, and priority settings.
+    - Includes options for password change, account deletion, dark mode, learning days, colors, and priority levels.
+    - Uses Tailwind CSS for styling and supports dark mode.
+    - All settings are submitted in a single form.
+-->
 <h1 class="text-4xl font-bold text-zinc-800 dark:text-white mb-8">Einstellungen</h1>
 
 <form method="post" class="space-y-8">
+    <!-- CSRF token for form security -->
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
 
     <!-- Grid for settings cards -->
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-        <!-- Left Column -->
+        <!-- Left Column: Account and Agenda Settings -->
         <div class="space-y-8">
-             <!-- Save Button -->
+            <!-- Save Button -->
             <div class="flex justify-start">
                 <input type="submit" value="Alle Einstellungen speichern" class="px-6 py-3 font-bold text-white bg-blue-600 rounded-lg hover:bg-blue-700 cursor-pointer">
             </div>
@@ -21,12 +29,15 @@
             <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-md">
                 <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-6">Konto</h2>
                 <div class="space-y-4">
+                    <!-- Change Password Link -->
                     <a href="/settings/change_password" class="block w-full text-center px-4 py-2 font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-700 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-600">
                         Passwort ändern
                     </a>
+                    <!-- Delete Account Button -->
                     <button type="submit" name="delete_account" value="1" onclick="return confirm('Sind Sie sicher, dass Sie Ihr Konto löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.');" class="w-full px-4 py-2 font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700">
                         Konto löschen
                     </button>
+                    <!-- Dark Mode Setting -->
                     <label class="block text-zinc-700 dark:text-zinc-300">
                         <span>Aussehen:</span>
                         <select name="dark_mode" class="mt-1 block w-full px-3 py-2 bg-zinc-100 dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -42,35 +53,38 @@
             <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-md">
                 <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-6">Agenda</h2>
                 <div class="space-y-4">
+                    <!-- Learn on Saturday Checkbox -->
                     <label class="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
                         <span>Samstag zum Lernen einbeziehen</span>
                         <input type="checkbox" id="saturday" name="learn_on_saturday" {% if learn_on_saturday %}checked{% endif %} class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                     </label>
+                    <!-- Learn on Sunday Checkbox -->
                     <label class="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
                         <span>Sonntag zum Lernen einbeziehen</span>
                         <input type="checkbox" id="sunday" name="learn_on_sunday" {% if learn_on_sunday %}checked{% endif %} class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
                     </label>
+                    <!-- Weekend Warning -->
                     <div id="weekend-warning" class="hidden text-sm text-amber-700 dark:text-amber-400 mt-2 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
                         Es wird empfohlen, mindestens einen freien Tag pro Woche zur Erholung einzuplanen.
                     </div>
+                    <!-- Preferred Learning Time -->
                     <label class="block text-zinc-700 dark:text-zinc-300">
                         <span>Bevorzugte Lernstartzeit:</span>
                         <input type="time" id="learning_time" name="learning_time" value="{{ preferred_learning_time }}" class="mt-1 block w-full px-3 py-2 bg-zinc-100 dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </label>
+                    <!-- Study Block Color -->
                     <label class="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
                         <span>Lernblock-Farbe:</span>
                         <input type="color" id="study_block_color" name="study_block_color" value="{{ study_block_color }}" class="w-10 h-10 p-0 border-none rounded-md bg-transparent">
                     </label>
+                    <!-- Import Event Color -->
                     <label class="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
                         <span>Importierte Events-Farbe:</span>
                         <input type="color" id="import_color" name="import_color" value="{{ import_color }}" class="w-10 h-10 p-0 border-none rounded-md bg-transparent">
                     </label>
                 </div>
             </div>
-            
         </div>
-
-       
 
         <!-- Right Column: Priority Settings -->
         <div class="bg-white dark:bg-zinc-800 p-6 rounded-xl shadow-md">
@@ -83,14 +97,17 @@
                         <button type="submit" name="remove_priority" value="{{ prio.priority_level }}" class="px-3 py-1 text-sm font-semibold text-white bg-red-600 rounded-md hover:bg-red-700">Entfernen</button>
                     </div>
                     <div class="space-y-3">
+                        <!-- Priority Color -->
                         <label class="flex items-center justify-between text-zinc-700 dark:text-zinc-300">
                             <span>Farbe:</span>
                             <input type="color" name="priority{{ prio.priority_level }}_color" value="{{ prio.color }}" class="w-10 h-10 p-0 border-none rounded-md bg-transparent">
                         </label>
+                        <!-- Max Hours Per Day -->
                         <label class="block text-zinc-700 dark:text-zinc-300">
                             <span>Max. Stunden pro Tag:</span>
                             <input type="number" step="0.1" name="priority{{ prio.priority_level }}_max_hours_per_day" value="{{ prio.max_hours_per_day }}" class="mt-1 block w-full px-3 py-2 bg-zinc-100 dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         </label>
+                        <!-- Total Hours To Learn -->
                         <label class="block text-zinc-700 dark:text-zinc-300">
                             <span>Totale Stundenanzahl:</span>
                             <input type="number" step="0.1" name="priority{{ prio.priority_level }}_total_hours_to_learn" value="{{ prio.total_hours_to_learn }}" class="mt-1 block w-full px-3 py-2 bg-zinc-100 dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -98,17 +115,20 @@
                     </div>
                 </div>
                 {% endfor %}
+                <!-- Add Priority Button -->
                 <button type="submit" name="add_priority" value="1" class="w-full px-4 py-2 font-semibold text-zinc-700 dark:text-zinc-200 bg-zinc-200 dark:bg-zinc-700 rounded-lg hover:bg-zinc-300 dark:hover:bg-zinc-600">
                     Prioritätsebene hinzufügen
                 </button>
             </div>
         </div>
     </div>
-
-    
 </form>
 {% endblock %}
 
 {% block scripts %}
+<!--
+    JavaScript for settings page interactivity.
+    Handles weekend warning and other dynamic UI features.
+-->
 <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
 {% endblock %}

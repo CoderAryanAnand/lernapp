@@ -1,11 +1,14 @@
+# Import Flask modules for routing, session management, and request/response handling
 from flask import Blueprint, session, current_app, jsonify, request
 from datetime import datetime
 import os
 
+# Import application models and utilities
 from ..models import Subject, Grade, User, Semester
 from ..utils import login_required, csrf_protect
 from ..extensions import db
 
+# Define the blueprint for grades-related API routes
 grades_bp = Blueprint(
     "grades", __name__, template_folder="../templates", static_folder="../static"
 )
@@ -53,7 +56,25 @@ def get_noten(user):
 def save_noten(user):
     """
     Replace all semesters/subjects/grades for the current user with the provided payload.
-    Payload: [{ name, subjects: [{ name, counts_average, grades: [{ name, value, weight, counts }] }] }]
+
+    Payload format:
+    [
+        {
+            name,
+            subjects: [
+                {
+                    name,
+                    counts_average,
+                    grades: [
+                        { name, value, weight, counts }
+                    ]
+                }
+            ]
+        }
+    ]
+
+    Returns:
+        JSON: Status message and HTTP code.
     """
     payload = request.get_json(silent=True)
     if not isinstance(payload, list):

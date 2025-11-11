@@ -7,22 +7,22 @@
     <!-- Page-specific title -->
     <title>{% block title %}KantiKoala{% endblock %}</title>
     
-    <!-- Common CSS -->
+    <!-- Common CSS (Tailwind output) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
     
-    <!-- Page-specific CSS -->
+    <!-- Page-specific CSS (optional) -->
     {% block extra_css %}{% endblock %}
     
-    <!-- Page-specific meta tags -->
+    <!-- Page-specific meta tags (optional) -->
     {% block meta %}{% endblock %}
     
-    <!-- Page-specific head content -->
+    <!-- Page-specific head content (optional) -->
     {% block head %}{% endblock %}
 </head>
 <body class="bg-zinc-100 dark:bg-zinc-900 font-sans">
-    <!-- Main layout container -->
+    <!-- Main layout container: flex for sidebar + content on desktop -->
     <div class="md:flex">
-        <!-- Include the reusable navbar component -->
+        <!-- Sidebar navigation (included as a reusable component) -->
         {% include '_navbar.html' %}
 
         <!-- Main Content Area -->
@@ -33,16 +33,17 @@
         </main>
     </div>
 
+    <!-- Footer with Datenschutzerklärung link -->
     <footer class="w-full mt-8 py-4 bg-zinc-200 dark:bg-zinc-800 text-center text-sm text-zinc-600 dark:text-zinc-300">
         <a href="{{ url_for('main.datenschutzerklaerung') }}" class="hover:underline text-blue-600 dark:text-blue-400">
             Datenschutzerklärung
         </a>
     </footer>
 
-    <!-- Common scripts -->
+    <!-- Common scripts (e.g. dark mode toggle) -->
     <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
     
-    <!-- Page-specific scripts -->
+    <!-- Page-specific scripts (optional) -->
     {% block scripts %}{% endblock %}
 </body>
 </html>

@@ -1,22 +1,24 @@
+# Import Flask modules for routing, request handling, and session management
 from flask import Blueprint, render_template, request, jsonify, session
 from datetime import datetime, timedelta
 import os, json
 
+# Import application models and utilities
 from ..models import Settings, User, ToDoCategory, ToDoItem
 from ..utils import login_required, csrf_protect
 from ..extensions import db
 
+# Define the blueprint for ToDo-related API routes
 todo_bp = Blueprint(
     "todo", __name__, template_folder="../templates", static_folder="../static"
 )
-
 
 @todo_bp.route("/categories", methods=["POST"])
 @csrf_protect
 @login_required
 def create_category(user):
     """
-    API endpoint to create a new to-do category.
+    API endpoint to create a new to-do category for the logged-in user.
 
     Returns:
         JSON: The newly created category with its ID and status code 201.
@@ -43,7 +45,6 @@ def create_category(user):
         }
     }), 201
 
-
 @todo_bp.route("/categories/<int:category_id>", methods=["DELETE"])
 @csrf_protect
 @login_required
@@ -66,7 +67,6 @@ def delete_category(user, category_id):
     db.session.commit()
     
     return jsonify({"message": "Category deleted"}), 200
-
 
 @todo_bp.route("/categories/<int:category_id>/items", methods=["POST"])
 @csrf_protect
@@ -106,7 +106,6 @@ def create_todo_item(user, category_id):
             "description": new_item.description
         }
     }), 201
-
 
 @todo_bp.route("/items/<int:item_id>", methods=["DELETE"])
 @csrf_protect

@@ -2,25 +2,32 @@
 
 {% block title %}Lerntipps{% endblock %}
 
-
 {% block content %}
+<!--
+    Lerntipps Page
+    - Displays categorized learning tips in an interactive accordion.
+    - Each category can be expanded/collapsed to show its tips.
+    - Includes a disclaimer about the source of the tips.
+    - Provides a scroll-to-top button for user convenience.
+    - Uses Tailwind CSS for styling and supports dark mode.
+-->
 <h1 class="text-4xl font-bold text-zinc-800 dark:text-white mb-8">Lerntipps</h1>
 
-<!-- Accordion Container -->
+<!-- Accordion Container for all tip categories -->
 <div id="tips-accordion" class="space-y-4">
     {% for category, tips_list in tips.items() %}
         <div class="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden">
-            <!-- Accordion Header/Button -->
+            <!-- Accordion Header/Button for category -->
             <button class="accordion-toggle flex justify-between items-center w-full p-5 text-left font-semibold text-zinc-800 dark:text-white hover:bg-zinc-50 dark:hover:bg-zinc-700/50 focus:outline-none">
                 <span>{{ category }}</span>
-                <!-- Chevron Icon -->
+                <!-- Chevron Icon for expand/collapse -->
                 <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </button>
-            <!-- Accordion Content (Initially hidden) -->
+            <!-- Accordion Content: List of tips (hidden by default) -->
             <div class="accordion-content hidden p-5 border-t border-zinc-200 dark:border-zinc-700">
                 <div class="space-y-4">
                 {% for tip in tips_list %}
-                    <!-- Alignment changed to items-center and spacing to space-x-4 -->
+                    <!-- Single tip row with koala icon and tip text -->
                     <div class="flex items-center space-x-4">
                         <img src="{{ url_for('static', filename='img/koala.svg') }}" alt="Tipp-Symbol" class="w-16 h-16 flex-shrink-0 dark:invert">
                         <p class="text-zinc-700 dark:text-zinc-300">{{ tip }}</p>
@@ -31,22 +38,26 @@
         </div>
     {% endfor %}
 
-    <!-- SOURCE DISCLAIMER -->
+    <!-- Source Disclaimer Section -->
     <div class="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden">
         <div class="bg-white dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700 overflow-hidden">
             <label class="accordion-toggle flex justify-between items-center w-full p-5 text-left font-semibold text-zinc-600 dark:text-zinc-100 focus:outline-none">
-                    <span class="text-sm">DISCLAIMER: Diese Lerntipps wurden aus unserer Recherche zusammengestellt.</span>
+                <span class="text-sm">DISCLAIMER: Diese Lerntipps wurden aus unserer Recherche zusammengestellt.</span>
             </label>
         </div>
     </div>
 </div>
 
-<!-- Scroll to Top Button -->
+<!-- Scroll to Top Button (appears after scrolling) -->
 <button id="scrollTopBtn" class="hidden fixed bottom-8 right-8 bg-blue-600 text-white p-3 rounded-full shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-zinc-900 z-50 transition-opacity">
     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path></svg>
 </button>
 {% endblock %}
 
 {% block scripts %}
+<!--
+    JavaScript for accordion functionality and scroll-to-top button.
+    Handles expand/collapse of categories and smooth scrolling.
+-->
 <script src="{{ url_for('static', filename='js/lerntipps.js') }}"></script>
 {% endblock %}

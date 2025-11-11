@@ -7,37 +7,43 @@
     <!-- Page-specific title -->
     <title>{% block title %}KantiKoala{% endblock %}</title>
     
-    <!-- Common CSS -->
+    <!-- Common CSS (Tailwind output) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
     
-    <!-- Page-specific CSS -->
+    <!-- Page-specific CSS (optional) -->
     {% block extra_css %}{% endblock %}
 </head>
 <body class="bg-zinc-200 dark:bg-zinc-900 font-sans">
 
-    <!-- Header Section -->
+    <!-- Header Section with Logo -->
     <header class="w-full h-[10vh] flex items-center justify-center relative border-b border-zinc-300 dark:border-zinc-700">
         <a href="{{ url_for('main.index') }}">
             <img class="h-[8vh] dark:invert" src="{{ url_for('static', filename='img/KantiKoalaLogoVar2.png') }}" alt="KantiKoala Logo">
         </a>
     </header>
 
-    <!-- Main Content - Centered -->
+    <!-- Main Content - Centered Form Container -->
     <main class="w-full h-[90vh] flex items-center justify-center p-4">
         
         <!-- Form Container -->
         <div class="w-full max-w-sm p-8 space-y-6 bg-white dark:bg-zinc-800 rounded-xl shadow-lg">
             
+            <!-- Page-specific Heading -->
             <h1 class="text-3xl font-bold text-center text-zinc-900 dark:text-white">
                 {% block heading %}{% endblock %}
             </h1>
 
-            <!-- Flash Messages -->
+            <!-- Flash Messages for errors, info, success, etc. -->
             {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
                     <div class="mb-6">
                         {% for category, message in messages %}
-                            <div class="flash-message {{ category }} p-4 rounded-lg mb-3 {% if category == 'error' %}bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 border border-red-300 dark:border-red-700{% elif category == 'success' %}bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 border border-green-300 dark:border-green-700{% elif category == 'info' %}bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 border border-blue-100 dark:border-blue-800{% else %}bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700{% endif %}">
+                            <div class="flash-message {{ category }} p-4 rounded-lg mb-3 
+                                {% if category == 'error' %}bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-200 border border-red-300 dark:border-red-700
+                                {% elif category == 'success' %}bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-200 border border-green-300 dark:border-green-700
+                                {% elif category == 'info' %}bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 border border-blue-100 dark:border-blue-800
+                                {% else %}bg-zinc-100 dark:bg-zinc-800 text-zinc-800 dark:text-zinc-200 border border-zinc-200 dark:border-zinc-700
+                                {% endif %}">
                                 {{ message }}
                             </div>
                         {% endfor %}
@@ -45,18 +51,22 @@
                 {% endif %}
             {% endwith %}
 
-            <!-- Page-specific content -->
+            <!-- Page-specific content (form, etc.) -->
             {% block content %}{% endblock %}
         </div>
     </main>
+
+    <!-- Footer with Datenschutzerklärung link -->
     <footer class="w-full mt-8 py-4 bg-zinc-200 dark:bg-zinc-800 text-center text-sm text-zinc-600 dark:text-zinc-300">
         <a href="{{ url_for('main.datenschutzerklaerung') }}" class="hover:underline text-blue-600 dark:text-blue-400">
             Datenschutzerklärung
         </a>
     </footer>
+
+    <!-- Dark mode toggle script -->
     <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
     
-    <!-- Page-specific scripts -->
+    <!-- Page-specific scripts (optional) -->
     {% block scripts %}{% endblock %}
 </body>
 </html>

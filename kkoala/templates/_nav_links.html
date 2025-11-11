@@ -1,4 +1,12 @@
+<!--
+    Navigation links partial template.
+    Shows different navigation options depending on login status.
+    - If logged in: main app features.
+    - If not logged in: only public/help/about links.
+-->
+
 {% if session.username %}
+    <!-- Main navigation for authenticated users -->
     <a href="{{ url_for('main.agenda') }}" class="flex items-center px-4 py-2 text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700">Agenda</a>
     <a href="{{ url_for('main.noten') }}" class="flex items-center px-4 py-2 text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700">Noten</a>
     <a href="{{ url_for('main.todo_index') }}" class="flex items-center px-4 py-2 text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700">To-Do Liste</a>
@@ -8,6 +16,7 @@
     <a href="{{ url_for('main.hilfe') }}" class="flex items-center px-4 py-2 text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700">Hilfe</a>
     <a href="{{ url_for('settings.settings_view') }}" class="flex items-center px-4 py-2 text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700">Einstellungen</a>
 {% else %}
+    <!-- Navigation for guests (not logged in) -->
     <a href="{{ url_for('auth.login') }}" class="flex items-center px-4 py-2 text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700">Login</a>
     <a href="{{ url_for('auth.register') }}" class="flex items-center px-4 py-2 text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700">Registrieren</a>
     <a href="{{ url_for('main.hilfe') }}" class="flex items-center px-4 py-2 text-zinc-700 dark:text-zinc-300 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-700">Hilfe</a>

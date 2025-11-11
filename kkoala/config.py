@@ -14,7 +14,7 @@ class BaseConfig:
 
 
 class ProdConfig(BaseConfig):
-    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL") or "sqlite:///data.db"
+    SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
     # Heroku/old url fix
     if SQLALCHEMY_DATABASE_URI.startswith("postgres://"):
         SQLALCHEMY_DATABASE_URI = SQLALCHEMY_DATABASE_URI.replace(

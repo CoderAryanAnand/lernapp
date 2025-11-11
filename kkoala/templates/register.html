@@ -5,8 +5,15 @@
 {% block heading %}Konto erstellen{% endblock %}
 
 {% block content %}
-<!-- Form -->
+<!--
+    Registration Page
+    - Allows users to create a new account with username, email, and password.
+    - Includes CSRF protection for security.
+    - Provides a link to the login page for existing users.
+    - Uses Tailwind CSS for styling and supports dark mode.
+-->
 <form action="{{ url_for('auth.register') }}" method="post" class="space-y-6">
+    <!-- CSRF token for form security -->
     <input type="hidden" name="csrf_token" value="{{ session.csrf_token }}">
     
     <!-- Username Field -->

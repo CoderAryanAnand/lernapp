@@ -1,5 +1,8 @@
+# Import standard libraries for date and time handling
 from datetime import datetime, timedelta, time as dtime, timezone
 from zoneinfo import ZoneInfo
+
+# Import utility functions and extensions from the application
 from .utils import to_dt, to_iso, free_slots
 from .extensions import db
 from .models import Settings, Event
@@ -7,17 +10,36 @@ from .models import Settings, Event
 
 def learning_time_algorithm(events, user):
     """
-    The core algorithm to schedule optimal learning blocks for upcoming exams.
-    This version is idempotent and performs a single database commit for efficiency.
+    Core algorithm to schedule optimal learning blocks for upcoming exams.
+
+    This function:
+    - Reads user settings and priorities.
+    - Removes previously generated (non-locked) learning blocks.
+    - Schedules new learning blocks for each upcoming exam, respecting user preferences and constraints.
+    - Commits all changes in a single database transaction.
+
+    Args:
+        events (list): List of all Event objects for the user (including exams and existing learning blocks).
+        user (User): The user object for whom the scheduling is performed.
+
+    Returns:
+        tuple: (summary dict, successes dict)
+            summary: Statistics about the scheduling process.
+            successes: Per-exam status (success/failure and message).
     """
+
     # --- Configuration and Initialization ---
+    # Load user settings from the database
     settings = Settings.query.filter_by(user_id=user.id).first()
     if not settings:
+        # No settings found for user; return empty results
         return {}, {}
 
+    # Build a dictionary of priority settings for quick lookup
     priority_settings = {p.priority_level: p for p in settings.priority_settings}
     max_exam_priority = max(priority_settings.keys()) if priority_settings else 0
 
+    # Prepare a settings dictionary for easy access
     settings_dict = {
         "sat_learn": settings.learn_on_saturday,
         "sun_learn": settings.learn_on_sunday,
@@ -26,11 +48,11 @@ def learning_time_algorithm(events, user):
         ).time(),
         "study_block_color": settings.study_block_color or "#0000FF",
         "DAY_END": dtime(22, 0),
-        "SESSION": 0.5,
-        "user_tz": ZoneInfo("Europe/Zurich"),  # Add user's timezone
+        "SESSION": 0.5,  # Minimum session length in hours
+        "user_tz": ZoneInfo("Europe/Zurich"),  # User's timezone
     }
 
-    # Filter out past exams and sort remaining exams
+    # Filter out past exams and sort remaining exams by priority and date
     now = datetime.now(timezone.utc)
     exams = sorted(
         [
@@ -44,19 +66,19 @@ def learning_time_algorithm(events, user):
     )
 
     # --- GLOBAL CLEANUP PHASE ---
-    # Find all non-locked learning blocks created by the algorithm.
+    # Find all non-locked learning blocks created by the algorithm (to be replaced)
     all_recyclable_blocks = [
         event
         for event in events
         if not event.locked and event.title.startswith("Learning for")
     ]
 
-    # Stage all recyclable blocks for deletion.
+    # Stage all recyclable blocks for deletion
     if all_recyclable_blocks:
         for block in all_recyclable_blocks:
             db.session.delete(block)
 
-    # Create a clean list of events for scheduling, containing only locked/user-created events.
+    # Prepare a clean list of events for scheduling (locked/user-created only)
     events_for_scheduling = [e for e in events if e not in all_recyclable_blocks]
 
     summary = {"exams_processed": 0, "blocks_added": 0, "hours_added": 0.0}
@@ -67,7 +89,7 @@ def learning_time_algorithm(events, user):
         prio = int(exam.priority)
         prio_setting = priority_settings.get(prio)
         if not prio_setting:
-            continue
+            continue  # Skip if no settings for this priority
 
         summary["exams_processed"] += 1
         total = prio_setting.total_hours_to_learn
@@ -95,6 +117,7 @@ def learning_time_algorithm(events, user):
         hours_left = max(0, total - hours_done - hours_scheduled_locked)
 
         if hours_left <= 0:
+            # All required hours are already scheduled
             successes[exam.title] = [True, f"All required hours are scheduled."]
             continue
 
@@ -102,6 +125,7 @@ def learning_time_algorithm(events, user):
         new_scheduled = 0.0
         days_left_until_exam = (window_end.date() - datetime.now().date()).days
 
+        # Try to schedule learning blocks on each day before the exam
         for day_offset in range(1, min(22, days_left_until_exam + 1)):
             if new_scheduled >= hours_left:
                 break
@@ -111,7 +135,8 @@ def learning_time_algorithm(events, user):
             if current_day.date() < datetime.now().date():
                 continue
 
-            # Day Pre-Checks
+            # --- Day Pre-Checks ---
+            # Skip if the day is blocked by an all-day event
             is_day_blocked = any(
                 e.all_day
                 and to_dt(e.start).date()
@@ -125,12 +150,13 @@ def learning_time_algorithm(events, user):
             )
             if is_day_blocked:
                 continue
+            # Skip if learning on this day is not allowed by user settings
             if (not settings_dict["sat_learn"] and current_day.weekday() == 5) or (
                 not settings_dict["sun_learn"] and current_day.weekday() == 6
             ):
                 continue
 
-            # Calculate max hours for today
+            # Calculate how many hours are already scheduled for this exam on this day
             scheduled_today_for_exam = sum(
                 (to_dt(b.end) - to_dt(b.start)).total_seconds() / 3600
                 for b in events_for_scheduling
@@ -144,10 +170,11 @@ def learning_time_algorithm(events, user):
                 continue
 
             # --- Preferred Slot Check ---
+            # Try to schedule at the user's preferred learning time
             naive_preferred_start = datetime.combine(
                 current_day.date(), settings_dict["preferred_time"]
             )
-            # Localize to user timezone FIRST, then convert to UTC
+            # Localize to user timezone, then convert to UTC
             local_preferred_start = naive_preferred_start.replace(tzinfo=settings_dict["user_tz"])
             preferred_start = local_preferred_start.astimezone(timezone.utc)
             preferred_end = preferred_start + timedelta(hours=today_max)
@@ -170,10 +197,11 @@ def learning_time_algorithm(events, user):
                     if to_dt(event.start).date() != current_day.date():
                         continue
                     
-                    # FIX: Handle events without end times
+                    # Handle events without end times
                     event_start = to_dt(event.start)
                     event_end = to_dt(event.end) if event.end else event_start
                     
+                    # Check for overlap (with 30 min buffer)
                     if not (
                         preferred_end <= event_start - timedelta(minutes=30)
                         or preferred_start >= event_end + timedelta(minutes=30)
@@ -184,11 +212,11 @@ def learning_time_algorithm(events, user):
                 is_preferred_slot_free = False
 
             if is_preferred_slot_free:
-                # Events are stored in UTC in the database, so keep them in UTC
+                # Schedule a new learning block at the preferred time
                 new_block = Event(
                     title=f"Learning for {exam.title}",
-                    start=to_iso(preferred_start),  # preferred_start is already in UTC
-                    end=to_iso(preferred_end),      # preferred_end is already in UTC
+                    start=to_iso(preferred_start),  # UTC
+                    end=to_iso(preferred_end),      # UTC
                     color=settings_dict["study_block_color"],
                     user_id=exam.user_id,
                     exam_id=exam.id,
@@ -198,7 +226,7 @@ def learning_time_algorithm(events, user):
                     recurrence_id="0",
                     all_day=False,
                 )
-                db.session.add(new_block)  # Stage the new block for addition
+                db.session.add(new_block)  # Stage for addition
                 events_for_scheduling.append(new_block)
                 new_scheduled += preferred_slot_duration
                 summary["blocks_added"] += 1
@@ -206,6 +234,7 @@ def learning_time_algorithm(events, user):
                 continue
 
             # --- General Free Slot Search ---
+            # If preferred slot is not available, find any free slot that fits
             slots = free_slots(events_for_scheduling, current_day.date())
             slots.sort(key=lambda s: s[1] - s[0], reverse=True)
             if slots:
@@ -214,11 +243,10 @@ def learning_time_algorithm(events, user):
                 allocatable = min(slot_duration, hours_left - new_scheduled, today_max)
                 if allocatable >= settings_dict["SESSION"]:
                     block_end = slot_start + timedelta(hours=allocatable)
-                    # slot_start and block_end are already in UTC from free_slots()
                     new_block = Event(
                         title=f"Learning for {exam.title}",
-                        start=to_iso(slot_start),   # Already UTC
-                        end=to_iso(block_end),      # Already UTC
+                        start=to_iso(slot_start),   # UTC
+                        end=to_iso(block_end),      # UTC
                         color=settings_dict["study_block_color"],
                         user_id=exam.user_id,
                         exam_id=exam.id,
@@ -228,7 +256,7 @@ def learning_time_algorithm(events, user):
                         recurrence_id="0",
                         all_day=False,
                     )
-                    db.session.add(new_block)  # Stage the new block for addition
+                    db.session.add(new_block)  # Stage for addition
                     events_for_scheduling.append(new_block)
                     new_scheduled += allocatable
                     summary["blocks_added"] += 1
@@ -249,7 +277,7 @@ def learning_time_algorithm(events, user):
             ]
 
     # --- FINAL COMMIT ---
-    # Commit all staged deletions and additions in a single transaction.
+    # Commit all staged deletions and additions in a single transaction
     db.session.commit()
 
     return summary, successes

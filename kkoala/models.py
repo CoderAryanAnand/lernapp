@@ -1,26 +1,29 @@
 from .extensions import db
 
+# -------------------------------
+# User authentication and profile
+# -------------------------------
 
 class User(db.Model):
     """
-    SQLAlchemy model for storing user authentication details.
+    Stores user authentication and profile information.
 
     Attributes:
         id (int): Primary key.
-        username (str): Unique username.
+        username (str): Unique username for login.
         password (str): Hashed password.
         email (str): Unique email address.
-        events (relationship): One-to-many relationship with Event model.
-        semesters (relationship): One-to-many relationship with Semester model.
-        settings (relationship): One-to-many relationship with Settings model.
+        events (relationship): All calendar events for the user.
+        semesters (relationship): All semesters for the user (grades).
+        settings (relationship): User's settings (one-to-one).
+        todo_categories (relationship): User's to-do list categories.
     """
-
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)  # Hashed password
     email = db.Column(db.String(100), unique=True, nullable=False)
 
-    # Relationships (enables easy retrieval of user data and cascade deletion)
+    # Relationships
     events = db.relationship(
         "Event", backref="user", lazy=True, cascade="all, delete-orphan"
     )
@@ -34,21 +37,25 @@ class User(db.Model):
         "ToDoCategory", backref="user", lazy=True, cascade="all, delete-orphan"
     )
 
+# -------------------------------
+# User settings and priorities
+# -------------------------------
 
 class Settings(db.Model):
     """
-    SQLAlchemy model for storing user-specific scheduling preferences.
+    Stores user-specific scheduling and display preferences.
 
     Attributes:
         id (int): Primary key.
-        user_id (int): Foreign key to the User model.
-        learn_on_saturday (bool): Flag for weekend study preference.
-        learn_on_sunday (bool): Flag for weekend study preference.
-        preferred_learning_time (str): User's preferred time of day for study blocks (HH:MM).
-        study_block_color (str): Hex code for algorithm-generated study blocks.
-        priority_settings (relationship): One-to-many relationship with PrioritySetting model.
+        user_id (int): Foreign key to User.
+        learn_on_saturday (bool): Allow learning on Saturday.
+        learn_on_sunday (bool): Allow learning on Sunday.
+        preferred_learning_time (str): Preferred start time for learning blocks (HH:MM).
+        study_block_color (str): Color for algorithm-generated study blocks.
+        import_color (str): Color for imported events.
+        dark_mode (str): User's dark mode preference.
+        priority_settings (relationship): Priority rules for learning algorithm.
     """
-
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     learn_on_saturday = db.Column(db.Boolean, default=False)
@@ -58,147 +65,123 @@ class Settings(db.Model):
     import_color = db.Column(db.String(7), default="#6C757D")
     dark_mode = db.Column(db.String(10), default="system")
 
-    # Relationship to detailed priority rules
+    # Priority settings for learning algorithm
     priority_settings = db.relationship(
         "PrioritySetting", backref="settings", lazy=True, cascade="all, delete-orphan"
     )
 
-
 class PrioritySetting(db.Model):
     """
-    SQLAlchemy model for storing user-specific priority rules (e.g., P1, P2, P3)
-    used by the learning time algorithm.
+    Stores user-specific rules for each exam priority level.
 
     Attributes:
         id (int): Primary key.
-        settings_id (int): Foreign key to the Settings model.
-        priority_level (int): The numerical priority level (e.g., 1, 2, 3).
-        color (str): Hex color code for exams of this priority.
-        days_to_learn (int): The size of the scheduling window before the exam.
-        max_hours_per_day (float): Maximum study time allowed per day for this priority.
-        total_hours_to_learn (float): Total required study time for this priority's exams.
+        settings_id (int): Foreign key to Settings.
+        priority_level (int): Priority (e.g., 1, 2, 3).
+        color (str): Color for exams of this priority.
+        max_hours_per_day (float): Max learning hours per day.
+        total_hours_to_learn (float): Total hours to schedule for this priority.
     """
-
     id = db.Column(db.Integer, primary_key=True)
     settings_id = db.Column(db.Integer, db.ForeignKey("settings.id"), nullable=False)
     priority_level = db.Column(db.Integer, nullable=False)  # e.g., 1, 2, 3
-    color = db.Column(
-        db.String(7), nullable=False
-    )  # Color to display exams of this priority
-    # days_to_learn = db.Column(
-    #     db.Integer, nullable=False
-    # )  # Scheduling window size before exam
-    max_hours_per_day = db.Column(
-        db.Float, nullable=False
-    )  # Max study time per day for this priority
-    total_hours_to_learn = db.Column(
-        db.Float, nullable=False
-    )  # Total required study time
+    color = db.Column(db.String(7), nullable=False)
+    max_hours_per_day = db.Column(db.Float, nullable=False)
+    total_hours_to_learn = db.Column(db.Float, nullable=False)
 
+# -------------------------------
+# Calendar events (agenda)
+# -------------------------------
 
 class Event(db.Model):
     """
-    SQLAlchemy model for storing user calendar entries (classes, exams, study blocks).
+    Stores calendar entries (classes, exams, study blocks).
 
     Attributes:
         id (int): Primary key.
-        user_id (int): Foreign key to the User model.
+        user_id (int): Foreign key to User.
         title (str): Event title.
-        start (str): Start datetime in ISO format.
-        end (str): End datetime in ISO format.
-        color (str): Hex color code for the event display.
-        priority (int): 0 for study blocks; >0 for user events/exams.
-        recurrence (str): Recurrence pattern ('daily', 'weekly', 'monthly', 'None').
-        recurrence_id (str): Unique ID linking recurring events.
-        all_day (bool): True if an all-day event.
-        locked (bool): True if user-created (will not be deleted by the algorithm).
-        exam_id (int): Links a study block (priority=0) to its parent exam.
+        start (str): Start datetime (ISO format).
+        end (str): End datetime (ISO format).
+        color (str): Display color.
+        priority (int): 0 for study blocks, >0 for user events/exams.
+        recurrence (str): Recurrence pattern.
+        recurrence_id (str): ID for recurring events.
+        all_day (bool): All-day event flag.
+        locked (bool): True if user-created (not deleted by algorithm).
+        exam_id (int): Links a study block to its parent exam.
     """
-
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(
         db.Integer, db.ForeignKey("user.id", onupdate="CASCADE"), nullable=False
     )
     title = db.Column(db.String(500), nullable=False)
     start = db.Column(db.String(50), nullable=False)  # ISO format datetime
-    end = db.Column(db.String(50), nullable=True)  # ISO format datetime
+    end = db.Column(db.String(50), nullable=True)     # ISO format datetime
     color = db.Column(db.String(7), nullable=False)
-    priority = db.Column(
-        db.Integer, nullable=False
-    )  # 0 for algorithm-generated study blocks; >0 for user events/exams
-    recurrence = db.Column(
-        db.String(50), nullable=True
-    )  # e.g., 'daily', 'weekly', 'monthly', 'None'
-    recurrence_id = db.Column(
-        db.String(50), nullable=True
-    )  # Unique ID for linked recurring events
+    priority = db.Column(db.Integer, nullable=False)  # 0: study block, >0: exam/event
+    recurrence = db.Column(db.String(50), nullable=True)
+    recurrence_id = db.Column(db.String(50), nullable=True)
     all_day = db.Column(db.Boolean, nullable=False, default=False)
+    locked = db.Column(db.Boolean, default=True)      # True: user-created, False: algorithm
+    exam_id = db.Column(db.Integer, nullable=True)    # Link to parent exam
 
-    # Fields specifically for the learning algorithm
-    locked = db.Column(
-        db.Boolean, default=True
-    )  # True: user-created, False: algorithm-created (can be recycled)
-    exam_id = db.Column(
-        db.Integer, nullable=True
-    )  # Links a study block (priority=0) back to its parent exam
-
+# -------------------------------
+# Grades (Noten) feature
+# -------------------------------
 
 class Semester(db.Model):
     """
-    SQLAlchemy model for storing academic semesters (part of the Grades feature).
+    Stores academic semesters for the grades feature.
 
     Attributes:
         id (int): Primary key.
-        user_id (int): Foreign key to the User model.
-        name (str): Semester name (e.g., 'Fall 2023').
-        subjects (relationship): One-to-many relationship with Subject model.
+        user_id (int): Foreign key to User.
+        name (str): Semester name.
+        subjects (relationship): All subjects in this semester.
     """
-
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     name = db.Column(db.String(100), nullable=False)
 
-    # Relationship to subjects with cascade delete
+    # Subjects in this semester
     subjects = db.relationship(
         "Subject", backref="semester", lazy=True, cascade="all, delete-orphan"
     )
 
-
 class Subject(db.Model):
     """
-    SQLAlchemy model for storing subjects within a semester.
+    Stores subjects within a semester.
 
     Attributes:
         id (int): Primary key.
-        semester_id (int): Foreign key to the Semester model.
-        name (str): Subject name (e.g., 'Calculus I').
-        grades (relationship): One-to-many relationship with Grade model.
+        semester_id (int): Foreign key to Semester.
+        name (str): Subject name.
+        counts_towards_average (bool): Whether subject counts for average.
+        grades (relationship): All grades for this subject.
     """
-
     id = db.Column(db.Integer, primary_key=True)
     semester_id = db.Column(db.Integer, db.ForeignKey("semester.id"), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     counts_towards_average = db.Column(db.Boolean, nullable=False, default=True)
 
-    # Relationship to grades with cascade delete
+    # Grades for this subject
     grades = db.relationship(
         "Grade", backref="subject", lazy=True, cascade="all, delete-orphan"
     )
 
-
 class Grade(db.Model):
     """
-    SQLAlchemy model for storing individual grades for subjects (Noten).
+    Stores individual grades for subjects.
 
     Attributes:
         id (int): Primary key.
-        subject_id (int): Foreign key to the Subject model.
+        subject_id (int): Foreign key to Subject.
         name (str): Grade name (e.g., 'Midterm Exam').
-        value (float): The grade score/value.
-        weight (float): The weight/percentage of the grade.
-        counts (bool): Whether the grade is included in the final calculation.
+        value (float): Grade value.
+        weight (float): Weight of the grade.
+        counts (bool): Whether grade is included in calculation.
     """
-
     id = db.Column(db.Integer, primary_key=True)
     subject_id = db.Column(db.Integer, db.ForeignKey("subject.id"), nullable=False)
     name = db.Column(db.String(100), nullable=False)
@@ -206,38 +189,39 @@ class Grade(db.Model):
     weight = db.Column(db.Float, nullable=False)
     counts = db.Column(db.Boolean, nullable=False, default=True)
 
+# -------------------------------
+# ToDo list feature
+# -------------------------------
 
 class ToDoCategory(db.Model):
     """
-    SQLAlchemy model for storing user-specific to-do list categories.
+    Stores user-specific to-do list categories.
 
     Attributes:
         id (int): Primary key.
-        user_id (int): Foreign key to the User model.
-        name (str): Category name (e.g., 'Work', 'Personal').
-        color (str): Hex color code for the category display.
+        user_id (int): Foreign key to User.
+        name (str): Category name.
+        items (relationship): All to-do items in this category.
     """
-
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     name = db.Column(db.String(100), nullable=False)
 
+    # To-do items in this category
     items = db.relationship(
         "ToDoItem", backref="category", lazy=True, cascade="all, delete-orphan"
     )
 
-
 class ToDoItem(db.Model):
     """
-    SQLAlchemy model for storing individual to-do list items.
+    Stores individual to-do list items.
 
     Attributes:
         id (int): Primary key.
-        category_id (int): Foreign key to the ToDoCategory model.
+        category_id (int): Foreign key to ToDoCategory.
         description (str): Description of the to-do item.
-        completed (bool): Completion status of the to-do item.
+        completed (bool): Completion status.
     """
-
     id = db.Column(db.Integer, primary_key=True)
     category_id = db.Column(db.Integer, db.ForeignKey("to_do_category.id"), nullable=False)
     description = db.Column(db.String(500), nullable=False)

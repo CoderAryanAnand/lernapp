@@ -3,10 +3,23 @@
 {% block title %}Notenverwaltung{% endblock %}
 
 {% block meta %}
+<!--
+    CSRF token meta tag for AJAX requests and form security.
+    Ensures secure POST/PUT/DELETE operations from JavaScript.
+-->
 <meta name="csrf-token" content="{{ session.get('csrf_token', '') }}">
 {% endblock %}
 
 {% block content %}
+<!--
+    Notenverwaltung (Grade Management) Page
+    - Allows users to manage semesters, subjects, and grades.
+    - Provides modals for adding/editing/deleting grades, subjects, and semesters.
+    - Includes a dream grade calculator and supports drag-and-drop sorting.
+    - Uses Tailwind CSS for styling and supports dark mode.
+-->
+
+<!-- Header with page title and add semester button -->
 <div class="flex justify-between items-center flex-wrap gap-4 mb-8">
     <h1 class="text-3xl sm:text-4xl font-bold text-zinc-800 dark:text-white">Notenverwaltung</h1>
     <button onclick="createSemester()" class="px-4 py-2 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-zinc-900 shrink-0">
@@ -54,7 +67,7 @@
     </div>
 </div>
 
-<!-- Delete Confirmation Modal -->
+<!-- Delete Confirmation Modal for Semester -->
 <div id="delete-confirm-popup" class="hidden fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-lg z-50 text-center">
     <h3 id="confirm-semester-name" class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">Löschen bestätigen</h3>
     <p class="text-zinc-600 dark:text-zinc-300 mb-6">Sind Sie sicher, dass Sie dies und alle Inhalte löschen möchten?</p>
@@ -112,6 +125,11 @@
 {% endblock %}
 
 {% block scripts %}
+<!--
+    JavaScript for Notenverwaltung functionality.
+    - Handles all grade/subject/semester CRUD operations and modals.
+    - Enables drag-and-drop sorting with SortableJS.
+-->
 <script src="{{ url_for('static', filename='js/noten.js') }}"></script>
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 {% endblock %}

@@ -2,8 +2,14 @@
 
 {% block title %}Lerntimer - KantiKoala{% endblock %}
 
-
 {% block content %}
+<!--
+    Lerntimer (Pomodoro Timer) Page
+    - Provides a customizable Pomodoro-style timer for focused study sessions.
+    - Allows users to set work, break, long break durations, and number of rounds.
+    - Displays timer, status, round info, and control buttons.
+    - Uses Tailwind CSS for styling and supports dark mode.
+-->
 <div class="w-full">
     <h1 class="text-4xl font-bold text-zinc-800 dark:text-white mb-8">Lerntimer</h1>
 </div>
@@ -30,18 +36,22 @@
     <!-- Settings Section -->
     <div class="settings pt-4 border-t border-zinc-200 dark:border-zinc-700">
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+            <!-- Work Minutes Input -->
             <label class="flex flex-col items-center space-y-1 text-zinc-600 dark:text-zinc-300">
                 <span>Arbeit (min)</span>
                 <input type="number" id="work-minutes" value="25" min="1" class="w-20 p-2 text-center bg-zinc-100 dark:bg-zinc-700 rounded-md border border-zinc-300 dark:border-zinc-600 focus:ring-2 focus:ring-blue-500 focus:outline-none">
             </label>
+            <!-- Break Minutes Input -->
             <label class="flex flex-col items-center space-y-1 text-zinc-600 dark:text-zinc-300">
                 <span>Pause (min)</span>
                 <input type="number" id="break-minutes" value="5" min="1" class="w-20 p-2 text-center bg-zinc-100 dark:bg-zinc-700 rounded-md border border-zinc-300 dark:border-zinc-600 focus:ring-2 focus:ring-blue-500 focus:outline-none">
             </label>
+            <!-- Long Break Minutes Input -->
             <label class="flex flex-col items-center space-y-1 text-zinc-600 dark:text-zinc-300">
                 <span>Lange Pause</span>
                 <input type="number" id="longbreak-minutes" value="15" min="1" class="w-20 p-2 text-center bg-zinc-100 dark:bg-zinc-700 rounded-md border border-zinc-300 dark:border-zinc-600 focus:ring-2 focus:ring-blue-500 focus:outline-none">
             </label>
+            <!-- Rounds Input -->
             <label class="flex flex-col items-center space-y-1 text-zinc-600 dark:text-zinc-300">
                 <span>Runden</span>
                 <input type="number" id="rounds" value="4" min="1" class="w-20 p-2 text-center bg-zinc-100 dark:bg-zinc-700 rounded-md border border-zinc-300 dark:border-zinc-600 focus:ring-2 focus:ring-blue-500 focus:outline-none">
@@ -52,5 +62,9 @@
 {% endblock %}
 
 {% block scripts %}
+<!--
+    JavaScript for Lerntimer functionality.
+    Handles timer logic, controls, and user settings.
+-->
 <script src="{{ url_for('static', filename='js/lerntimer.js') }}"></script>
 {% endblock %}

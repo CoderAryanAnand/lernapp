@@ -2,132 +2,138 @@
 
 {% block title %}KantiKoala{% endblock %}
 
-
 {% block content %}
-            {% if logged_in %}
-            <!-- Logged-in Dashboard View -->
-            <h1 class="text-3xl sm:text-4xl font-bold text-zinc-800 dark:text-white mb-8">
-                Willkommen zurück, <span class="text-blue-600">{{ username }}</span>!
-            </h1>
+<!--
+    Home/Dashboard Page Template
+    - Shows a personalized dashboard if the user is logged in, including grade stats, today's events, upcoming exams, and a daily tip.
+    - If not logged in, displays a landing page with a call to action and the daily tip.
+    - Uses Tailwind CSS for responsive and dark mode styling.
+-->
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                <!-- Left Column -->
-                <div class="lg:col-span-2 space-y-6">
-                    <!-- Grade Statistics Card -->
-                    <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
-                        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">Notenübersicht</h3>
-                        {% if stats.current_semester_name %}
-                            <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-4">Aktuelles Semester: <strong>{{ stats.current_semester_name }}</strong></p>
-                            <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-                                <div>
-                                    <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ '%.2f'|format(stats.average) }}</p>
-                                    <p class="text-sm text-zinc-600 dark:text-zinc-300">Schnitt</p>
-                                </div>
-                                <div>
-                                    <p class="text-2xl font-bold {{ 'text-green-600' if stats.plus_points >= 1 else 'text-orange-500' if stats.plus_points >= -1 else 'text-red-600' }}">{{ '%.2f'|format(stats.plus_points) }}</p>
-                                    <p class="text-sm text-zinc-600 dark:text-zinc-300">Pluspunkte</p>
-                                </div>
-                                {% if stats.best_subject %}
-                                <div>
-                                    <p class="text-2xl font-bold text-green-500">{{ '%.2f'|format(stats.best_subject.average) }}</p>
-                                    <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 truncate" title="{{ stats.best_subject.name }}">{{ stats.best_subject.name }}</p>
-                                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Bestes Fach</p>
-                                </div>
-                                {% endif %}
-                                {% if stats.worst_subject %}
-                                <div>
-                                    <p class="text-2xl font-bold text-red-500">{{ '%.2f'|format(stats.worst_subject.average) }}</p>
-                                    <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 truncate" title="{{ stats.worst_subject.name }}">{{ stats.worst_subject.name }}</p>
-                                    <p class="text-xs text-zinc-500 dark:text-zinc-400">Schwächstes Fach</p>
-                                </div>
-                                {% endif %}
+    {% if logged_in %}
+    <!-- Logged-in Dashboard View -->
+    <h1 class="text-3xl sm:text-4xl font-bold text-zinc-800 dark:text-white mb-8">
+        Willkommen zurück, <span class="text-blue-600">{{ username }}</span>!
+    </h1>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Left Column: Grade Stats & Today's Events -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Grade Statistics Card -->
+            <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
+                <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">Notenübersicht</h3>
+                {% if stats.current_semester_name %}
+                    <p class="text-sm text-zinc-500 dark:text-zinc-400 mb-4">Aktuelles Semester: <strong>{{ stats.current_semester_name }}</strong></p>
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                        <div>
+                            <p class="text-2xl font-bold text-blue-600 dark:text-blue-400">{{ '%.2f'|format(stats.average) }}</p>
+                            <p class="text-sm text-zinc-600 dark:text-zinc-300">Schnitt</p>
+                        </div>
+                        <div>
+                            <p class="text-2xl font-bold {{ 'text-green-600' if stats.plus_points >= 1 else 'text-orange-500' if stats.plus_points >= -1 else 'text-red-600' }}">{{ '%.2f'|format(stats.plus_points) }}</p>
+                            <p class="text-sm text-zinc-600 dark:text-zinc-300">Pluspunkte</p>
+                        </div>
+                        {% if stats.best_subject %}
+                        <div>
+                            <p class="text-2xl font-bold text-green-500">{{ '%.2f'|format(stats.best_subject.average) }}</p>
+                            <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 truncate" title="{{ stats.best_subject.name }}">{{ stats.best_subject.name }}</p>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Bestes Fach</p>
+                        </div>
+                        {% endif %}
+                        {% if stats.worst_subject %}
+                        <div>
+                            <p class="text-2xl font-bold text-red-500">{{ '%.2f'|format(stats.worst_subject.average) }}</p>
+                            <p class="text-sm font-semibold text-zinc-700 dark:text-zinc-300 truncate" title="{{ stats.worst_subject.name }}">{{ stats.worst_subject.name }}</p>
+                            <p class="text-xs text-zinc-500 dark:text-zinc-400">Schwächstes Fach</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p class="text-zinc-500 dark:text-zinc-400">Noch keine Noten erfasst. <a href="{{ url_for('main.noten') }}" class="text-blue-600 hover:underline">Jetzt anlegen!</a></p>
+                {% endif %}
+            </div>
+
+            <!-- Today's Events Card -->
+            <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
+                <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">Heutige Termine</h3>
+                {% if todays_events %}
+                    <ul class="space-y-3">
+                    {% for event in todays_events %}
+                        <li class="flex items-center space-x-3">
+                            <span class="h-2 w-2 rounded-full" style="background-color: {{ event.color }};"></span>
+                            <span class="font-semibold text-zinc-800 dark:text-zinc-200">{{ event.title }}</span>
+                            {% if event.start and event.end %}
+                                <span class="text-sm text-zinc-500 dark:text-zinc-400">{{ event.start.strftime('%H:%M') }} - {{ event.end.strftime('%H:%M') }}</span>
+                            {% elif event.start %}
+                                <span class="text-sm text-zinc-500 dark:text-zinc-400">{{ event.start.strftime('%H:%M') }}</span>
+                            {% else %}
+                                <span class="text-sm text-zinc-500 dark:text-zinc-400">Alltägig</span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-zinc-500 dark:text-zinc-400">Keine Termine für heute geplant. Zeit zum Entspannen!</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Column: Upcoming Exams, Tip of the Day, Quick Start -->
+        <div class="space-y-6">
+            <!-- Upcoming Exams Card -->
+            <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
+                <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">Nächste Prüfungen</h3>
+                {% if upcoming_exams %}
+                    <ul class="space-y-4">
+                    {% for exam in upcoming_exams %}
+                        {% set days_until = (exam.start.date() - today).days %}
+                        <li class="flex justify-between items-center">
+                            <div>
+                                <p class="font-semibold text-zinc-800 dark:text-zinc-200">{{ exam.title }}</p>
+                                <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ exam.start.strftime('%d. %b %Y') }}</p>
                             </div>
-                        {% else %}
-                            <p class="text-zinc-500 dark:text-zinc-400">Noch keine Noten erfasst. <a href="{{ url_for('main.noten') }}" class="text-blue-600 hover:underline">Jetzt anlegen!</a></p>
-                        {% endif %}
-                    </div>
-
-                    <!-- Today's Events Card -->
-                    <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
-                        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">Heutige Termine</h3>
-                        {% if todays_events %}
-                            <ul class="space-y-3">
-                            {% for event in todays_events %}
-                                <li class="flex items-center space-x-3">
-                                    <span class="h-2 w-2 rounded-full" style="background-color: {{ event.color }};"></span>
-                                    <span class="font-semibold text-zinc-800 dark:text-zinc-200">{{ event.title }}</span>
-                                    {% if event.start and event.end %}
-                                        <span class="text-sm text-zinc-500 dark:text-zinc-400">{{ event.start.strftime('%H:%M') }} - {{ event.end.strftime('%H:%M') }}</span>
-                                    {% elif event.start %}
-                                        <span class="text-sm text-zinc-500 dark:text-zinc-400">{{ event.start.strftime('%H:%M') }}</span>
-                                    {% else %}
-                                        <span class="text-sm text-zinc-500 dark:text-zinc-400">Alltägig</span>
-                                    {% endif %}
-                                </li>
-                            {% endfor %}
-                            </ul>
-                        {% else %}
-                            <p class="text-zinc-500 dark:text-zinc-400">Keine Termine für heute geplant. Zeit zum Entspannen!</p>
-                        {% endif %}
-                    </div>
-                </div>
-
-                <!-- Right Column -->
-                <div class="space-y-6">
-                    <!-- Upcoming Exams Card -->
-                    <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
-                        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">Nächste Prüfungen</h3>
-                        {% if upcoming_exams %}
-                            <ul class="space-y-4">
-                            {% for exam in upcoming_exams %}
-                                {% set days_until = (exam.start.date() - today).days %}
-                                <li class="flex justify-between items-center">
-                                    <div>
-                                        <p class="font-semibold text-zinc-800 dark:text-zinc-200">{{ exam.title }}</p>
-                                        <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ exam.start.strftime('%d. %b %Y') }}</p>
-                                    </div>
-                                    <span class="text-sm font-bold {{ 'text-red-700' if days_until <= 0 else 'text-red-600' if days_until <= 7 else 'text-orange-500' }}">{{ 'Heute' if days_until == 0 else days_until}} {{'' if days_until == 0 else 'Tag' if days_until == 1 else 'Tage' }}</span>
-                                </li>
-                            {% endfor %}
-                            </ul>
-                        {% else %}
-                            <p class="text-zinc-500 dark:text-zinc-400">Keine Prüfungen in den nächsten 21 Tagen.</p>
-                        {% endif %}
-                    </div>
-
-                    <!-- Tip of the Day Card -->
-                    <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
-                        <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Tip of the Day</h3>
-                        <p class="text-zinc-700 dark:text-zinc-300">{{ tip }}</p>
-                    </div>
-
-                    <!-- Quick Start / Help Callout -->
-                    <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-lg shadow-sm">
-                        <h4 class="text-lg font-semibold text-blue-700 dark:text-blue-300">Nicht sicher, wo du anfangen sollst?</h4>
-                        <p class="text-sm text-zinc-700 dark:text-zinc-300 mt-1">Unsere Schritt-für-Schritt-Anleitung führt dich durch alle Funktionen — Agenda, Notenverwaltung, Lerntimer und mehr.</p>
-                        <a href="{{ url_for('main.hilfe') }}" class="inline-block mt-3 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">Zur Hilfe &amp; Anleitung</a>
-                    </div>
-                </div>
+                            <span class="text-sm font-bold {{ 'text-red-700' if days_until <= 0 else 'text-red-600' if days_until <= 7 else 'text-orange-500' }}">{{ 'Heute' if days_until == 0 else days_until}} {{'' if days_until == 0 else 'Tag' if days_until == 1 else 'Tage' }}</span>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-zinc-500 dark:text-zinc-400">Keine Prüfungen in den nächsten 21 Tagen.</p>
+                {% endif %}
             </div>
 
-            {% else %}
-            <!-- Logged-out Landing Page View -->
-            <div class="text-center max-w-3xl mx-auto py-16">
-                <h1 class="text-5xl font-bold text-zinc-800 dark:text-white mb-4">Organisiere deinen Schulalltag an der Kantonsschule mit KantiKoala</h1>
-                <p class="text-lg text-zinc-600 dark:text-zinc-300 mb-8">
-                    Behalte Stundenplan, Noten, Prüfungen und Lernzeiten im Blick – alles an einem Ort.
-                </p>
-                <div class="flex justify-center gap-4">
-                    <a href="{{ url_for('auth.login') }}" class="px-6 py-3 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700">Anmelden</a>
-                    <a href="{{ url_for('auth.register') }}" class="px-6 py-3 font-semibold text-zinc-800 bg-zinc-200 rounded-lg hover:bg-zinc-300 dark:bg-zinc-700 dark:text-white dark:hover:bg-zinc-600">Registrieren</a>
-                </div>
-                <div class="mt-12 p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
-                    <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Tip of the Day</h3>
-                    <p class="text-zinc-700 dark:text-zinc-300">{{ tip }}</p>
-                </div>
+            <!-- Tip of the Day Card -->
+            <div class="p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
+                <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Tip of the Day</h3>
+                <p class="text-zinc-700 dark:text-zinc-300">{{ tip }}</p>
             </div>
-            {% endif %}
+
+            <!-- Quick Start / Help Callout -->
+            <div class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 rounded-lg shadow-sm">
+                <h4 class="text-lg font-semibold text-blue-700 dark:text-blue-300">Nicht sicher, wo du anfangen sollst?</h4>
+                <p class="text-sm text-zinc-700 dark:text-zinc-300 mt-1">Unsere Schritt-für-Schritt-Anleitung führt dich durch alle Funktionen — Agenda, Notenverwaltung, Lerntimer und mehr.</p>
+                <a href="{{ url_for('main.hilfe') }}" class="inline-block mt-3 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md">Zur Hilfe &amp; Anleitung</a>
+            </div>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Logged-out Landing Page View -->
+    <div class="text-center max-w-3xl mx-auto py-16">
+        <h1 class="text-5xl font-bold text-zinc-800 dark:text-white mb-4">Organisiere deinen Schulalltag an der Kantonsschule mit KantiKoala</h1>
+        <p class="text-lg text-zinc-600 dark:text-zinc-300 mb-8">
+            Behalte Stundenplan, Noten, Prüfungen und Lernzeiten im Blick – alles an einem Ort.
+        </p>
+        <div class="flex justify-center gap-4">
+            <a href="{{ url_for('auth.login') }}" class="px-6 py-3 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700">Anmelden</a>
+            <a href="{{ url_for('auth.register') }}" class="px-6 py-3 font-semibold text-zinc-800 bg-zinc-200 rounded-lg hover:bg-zinc-300 dark:bg-zinc-700 dark:text-white dark:hover:bg-zinc-600">Registrieren</a>
+        </div>
+        <div class="mt-12 p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
+            <h3 class="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Tip of the Day</h3>
+            <p class="text-zinc-700 dark:text-zinc-300">{{ tip }}</p>
+        </div>
+    </div>
+    {% endif %}
 
 <!-- Add other dashboard widgets here -->
 {% endblock %}

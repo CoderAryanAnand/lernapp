@@ -1,31 +1,46 @@
+<!--
+    500 Error Page Template
+    - Displays a user-friendly message when an internal server error occurs.
+    - Uses Tailwind CSS for styling and supports dark mode.
+    - Shows the KantiKoala logo, error code, and a button to return to the homepage.
+-->
+
 <!DOCTYPE html>
 <html lang="de" data-theme-setting="{{ dark_mode_setting }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Interner Serverfehler</title>
+    <!-- Main stylesheet (Tailwind CSS output) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='output.css') }}">
 </head>
 <body class="bg-zinc-100 dark:bg-zinc-900 font-sans">
+    <!-- Main content area centered vertically and horizontally -->
     <main class="flex flex-col items-center justify-center h-screen text-center p-6">
         <div class="max-w-md">
+            <!-- KantiKoala Logo -->
             <img src="{{ url_for('static', filename='img/KantiKoalaLogoVar2.png') }}" alt="KantiKoala Logo" class="h-24 mx-auto mb-8 dark:invert">
             
+            <!-- Large 500 error code -->
             <h1 class="text-8xl font-extrabold text-red-600 dark:text-red-500 tracking-tight">500</h1>
             
+            <!-- Error message headline -->
             <h2 class="mt-4 text-3xl font-bold text-zinc-800 dark:text-white sm:text-4xl">
                 Interner Serverfehler
             </h2>
             
+            <!-- Explanatory message -->
             <p class="mt-4 text-base text-zinc-600 dark:text-zinc-400">
                 Entschuldigung, bei uns ist etwas schiefgelaufen. Wir arbeiten daran, das Problem so schnell wie möglich zu beheben.
             </p>
             
+            <!-- Button to return to the homepage -->
             <a href="{{ url_for('main.index') }}" class="inline-block mt-8 px-6 py-3 font-semibold text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-zinc-900">
                 Zurück zur Startseite
             </a>
         </div>
     </main>
+    <!-- Script for dark mode support -->
     <script src="{{ url_for('static', filename='js/darkmode.js') }}"></script>
 </body>
 </html>

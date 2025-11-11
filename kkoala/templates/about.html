@@ -3,7 +3,14 @@
 {% block title %}Über uns{% endblock %}
 
 {% block content %}
+<!--
+    About Page Template
+    - Provides information about the KantiKoala project, its mission, unique features, research background, team, and contact details.
+    - Uses Tailwind CSS for responsive and dark mode styling.
+-->
+
 <div class="max-w-4xl mx-auto">
+    <!-- Main Heading -->
     <h1 class="text-4xl sm:text-5xl font-bold text-zinc-800 dark:text-white mb-6">Über KantiKoala</h1>
     
     <div class="space-y-6 text-zinc-700 dark:text-zinc-300">
@@ -22,7 +29,7 @@
             </p>
         </section>
 
-        <!-- Why KantiKoala Section -->
+        <!-- Unique Features Section -->
         <section class="p-6 bg-white dark:bg-zinc-800 rounded-xl shadow-md border border-zinc-200 dark:border-zinc-700">
             <h2 class="text-2xl font-bold text-zinc-900 dark:text-white mb-4">Was macht KantiKoala besonders?</h2>
             <p class="leading-relaxed mb-3">
@@ -60,18 +67,19 @@
                 Softwareentwicklung und User Experience Design.
             </p>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 items-start">
+                <!-- Aryan Anand Profile -->
                 <div class="text-center">
                     <img src="{{ url_for('static', filename='img/aryanpic.png') }}" alt="Aryan Anand" class="mx-auto h-36 w-36 rounded-full object-cover shadow-md dark:shadow-none">
                     <h3 class="mt-3 font-semibold text-zinc-800 dark:text-white">Aryan Anand</h3>
                     <p class="text-sm text-zinc-600 dark:text-zinc-400">Mitgründer</p>
                 </div>
-
+                <!-- Simon Haddon Profile -->
                 <div class="text-center">
                     <img src="{{ url_for('static', filename='img/simonpic.png') }}" alt="Simon Haddon" class="mx-auto h-36 w-36 rounded-full object-cover shadow-md dark:shadow-none">
                     <h3 class="mt-3 font-semibold text-zinc-800 dark:text-white">Simon Haddon</h3>
                     <p class="text-sm text-zinc-600 dark:text-zinc-400">Mitgründer</p>
                 </div>
-
+                <!-- Mascot Profile -->
                 <div class="text-center">
                     <img src="{{ url_for('static', filename='img/cats/cat_on_table.png') }}" alt="Cat on table (Maskottchen)" class="mx-auto h-36 w-36 rounded-full object-cover shadow-md dark:shadow-none">
                     <h3 class="mt-3 font-semibold text-zinc-800 dark:text-white">Kanti-Chatz</h3>
@@ -82,7 +90,6 @@
                 Unser Ansatz ist praxisorientiert: Von Schüler, für Schüler:innen – mit dem Ziel,
                 Lösungen für alltägliche Herausforderungen im Schulalltag zu schaffen.
             </p>
-
             <p class="mt-4 text-sm text-zinc-600 dark:text-zinc-400">Fotos: © Team KantiKoala.</p>
         </section>
 

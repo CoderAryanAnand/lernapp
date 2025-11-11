@@ -1,3 +1,4 @@
+# Import Flask and related modules for routing, sessions, and rendering
 from flask import (
     Blueprint,
     render_template,
@@ -8,18 +9,24 @@ from flask import (
     current_app,
     flash,
 )
+# Import extensions for database and password hashing
 from ..extensions import db, bcrypt
+# Import models for user and settings management
 from ..models import User, Settings, PrioritySetting
+# Import utility decorators for CSRF protection and login checks
 from ..utils import csrf_protect, login_required
+# Import default settings and email sender address
 from ..consts import DEFAULT_SETTINGS, FROM_EMAIL
+# Import for secure token generation (password reset)
 from itsdangerous import URLSafeTimedSerializer
+# Import for sending emails
 import resend
 import re
 
+# Define the authentication blueprint for all auth-related routes
 auth_bp = Blueprint(
     "auth", __name__, template_folder="../templates", static_folder="../static"
 )
-
 
 @auth_bp.route("/login", methods=["GET", "POST"])
 @csrf_protect
@@ -47,7 +54,6 @@ def login():
         return render_template("login.html")
     return render_template("login.html")
 
-
 @auth_bp.route("/forgot_password", methods=["GET", "POST"])
 @csrf_protect
 def forgot_password():
@@ -55,7 +61,7 @@ def forgot_password():
     Forgot password route: Handles password reset requests.
 
     POST: Finds the user by email, generates a secure, time-sensitive token,
-          and sends a password reset link via email using Flask-Mailman.
+          and sends a password reset link via email using Resend.
     GET: Renders the request form.
 
     Returns:
@@ -87,7 +93,6 @@ def forgot_password():
     else:
         return render_template("forgot_password.html")
 
-
 @auth_bp.route("/reset_password/<token>", methods=["GET", "POST"])
 @csrf_protect
 def reset_password(token):
@@ -112,10 +117,10 @@ def reset_password(token):
             user = User.query.filter_by(username=request.form["username"]).first()
             # Loads email from token, validating signature (salt) and max age (e.g., 15 min)
             email = serializer.loads(
-                request.form["token"], salt=user.password, max_age=900
+                token, salt=user.password, max_age=900
             )
         except Exception:
-            # FIX: Replace string return with flash and redirect
+            # Handle invalid or expired token
             flash(
                 "Ungültiger oder abgelaufener Token. Bitte fordere einen neuen Link an.",
                 "error",
@@ -147,7 +152,6 @@ def reset_password(token):
     else:
         return render_template("reset_password.html", token=token)
 
-
 @auth_bp.route("/register", methods=["GET", "POST"])
 @csrf_protect
 def register():
@@ -167,19 +171,23 @@ def register():
         confirm_password = request.form["confirm_password"]
         email = request.form["email"]
 
+        # Check if passwords match
         if password != confirm_password:
             flash("Die Passwörter stimmen nicht überein. Bitte erneut versuchen.", "error")
             return render_template("register.html")
 
+        # Validate email format
         if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
             flash("Ungültige E‑Mail-Adresse. Bitte gib eine gültige E‑Mail ein.", "error")
             return render_template("register.html")
 
+        # Check if username is already taken
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
             flash("Benutzername bereits vergeben. Wähle einen anderen.", "error")
             return render_template("register.html")
 
+        # Check if email is already registered
         existing_email = User.query.filter_by(email=email).first()
         if existing_email:
             flash("E‑Mail bereits registriert. Verwende eine andere E‑Mail.", "error")
@@ -210,7 +218,6 @@ def register():
                     settings_id=default_settings.id,
                     priority_level=level,
                     color=priority["color"],
-                    # days_to_learn=priority["days_to_learn"],
                     max_hours_per_day=priority["max_hours_per_day"],
                     total_hours_to_learn=priority["total_hours_to_learn"],
                 )
@@ -221,7 +228,6 @@ def register():
         return redirect(url_for("main.index"))
 
     return render_template("register.html")
-
 
 @auth_bp.route("/logout")
 @login_required
