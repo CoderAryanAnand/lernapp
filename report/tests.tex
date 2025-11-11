@@ -36,10 +36,10 @@
 
 % Define a new environment for Test Cases
 \newenvironment{testcase}[1]{%
-    \par\vspace{1em}\noindent\begin{minipage}{\linewidth}
+    \par\vspace{1em}\noindent
     \textbf{Testfall ID:} #1 \\
     \vspace{0.2em}
-}{\end{minipage}\par\vspace{1em}}
+}{\par\vspace{1em}}
 
 \title{\textbf{Manuelle Testspezifikation: KantiKoala Studienhilfsapp}}
 \author{Dokumentation zur Maturaarbeit}
@@ -51,15 +51,14 @@
 
 \section[Einführung]{Einführung\texorpdfstring{\aifootnotemark}{}}
 \aifootnoteintro
-Dieses Dokument dient als Protokoll für die manuelle Qualitätssicherung der KantiKoala Webanwendung. Der Testplan ist darauf ausgerichtet, die Kernfunktionen der App zu validieren, darunter Benutzer-Authentifizierung, Notenverwaltung, Kalenderfunktionen, Lern-Tools und die User Interface. Jeder Testfall ist klar definiert mit Ziel, Schritten zur Durchführung, erwarteten Resultaten und dem Status (Bestanden/Nicht Bestanden).
+Dieses Dokument dient als Protokoll für die manuelle Qualitätssicherung der KantiKoala Webanwendung. Der Testplan ist darauf ausgerichtet, die Kernfunktionen der App zu validieren, darunter Benutzer-Authentifizierung, Notenverwaltung, Kalenderfunktionen, Lern-Tools, To-Do Listen, Informationsseiten und die User Interface. Jeder Testfall ist klar definiert mit Ziel, Schritten zur Durchführung, erwarteten Resultaten und dem Status (Bestanden/Nicht Bestanden).
 
 \section[Abdeckung der Bewertungskriterien (Produkt)]{Abdeckung der Bewertungskriterien (Produkt)\texorpdfstring{\aifootnotemark}{}}
 \aifootnoteintro
 Die manuelle Testspezifikation zielt primär auf die Überprüfung der folgenden Bewertungskriterien ab:
 
 \begin{itemize}
-    \item \textbf{Funktionalität (Vollständigkeit und Korrektheit)}: Überprüfung, ob alle implementierten Features (Noten, Kalender, Timer, Login) wie erwartet funktionieren.
-    \item \textbf{Benutzerfreundlichkeit (Ergonomie, Logik, Verständlichkeit)}: Fokus auf intuitive Navigation, klare Fehlermeldungen und logische Abläufe.
+    \item \textbf{Funktionalität (Vollständigkeit und Korrektheit)}: Überprüfung, ob alle implementierten Features (Noten, Kalender, Timer, Login, etc.) wie erwartet funktionieren.
     \item \textbf{Ästhetik (Gestaltung, Layout, Typografie)}: Visuelle Überprüfung der Konsistenz, Responsive Design und ansprechenden Darstellung auf verschiedenen Geräten.
 \end{itemize}
 
@@ -90,7 +89,7 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
         \item Versuchen Sie sich mit einem unbekannten Benutzernamen und einem Passwort anzumelden.
         \item Versuchen Sie sich mit korrektem Benutzernamen, aber falschem Passwort anzumelden.
     \end{enumerate}
-    \textbf{Erwartetes Resultat:} In beiden Fällen wird eine klare, nicht diskriminierende Fehlermeldung angezeigt (z.B. "Ungültiger Benutzername oder falsches Passwort").\\
+    \textbf{Erwartetes Resultat:} In beiden Fällen wird eine klare, nicht diskriminierende Fehlermeldung angezeigt.\\
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
@@ -167,7 +166,7 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
         \item Warten Sie eine Zeitspanne, die länger ist als die im Code definierte \texttt{max\_age}, welche 15 Minuten beträgt (z.B. 15 Minuten + 1 Minute).
         \item Versuchen Sie, den Link zu verwenden oder den Token manuell zu validieren.
     \end{enumerate}
-    \textbf{Erwartetes Resultat:} Der Token wird als abgelaufen zurückgewiesen, und eine entsprechende Fehlermeldung wird angezeigt (z.B. "Der Link ist abgelaufen. Bitte fordern Sie einen neuen an.").\\
+    \textbf{Erwartetes Resultat:} Der Token wird als abgelaufen zurückgewiesen, und eine entsprechende Fehlermeldung wird angezeigt.\\
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
@@ -179,7 +178,7 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
         \item Füllen Sie alle Felder aus, aber geben Sie unterschiedliche Werte in die Felder "Passwort" und "Passwort bestätigen" ein.
         \item Klicken Sie auf den Registrierungsbutton.
     \end{enumerate}
-    \textbf{Erwartetes Resultat:} Die Registrierung wird blockiert. Eine klare Fehlermeldung ("Die Passwörter stimmen nicht überein.") wird angezeigt, und der Benutzer bleibt auf der Registrierungsseite.\\
+    \textbf{Erwartetes Resultat:} Die Registrierung wird blockiert. Eine klare Fehlermeldung wird angezeigt, und der Benutzer bleibt auf der Registrierungsseite.\\
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
@@ -204,14 +203,14 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
     \textbf{Ziel:} Korrekte Berechnung des gewichteten Durchschnitts.\\
     \textbf{Schritte:}
     \begin{enumerate}[label=\arabic*.]
-        \item Navigieren Sie zur Notenverwaltungsseite (\texttt{/grades}).
-        \item Erstellen Sie ein neues Fach (z.B. "Mathematik").
-        \item Fügen Sie folgende Noten hinzu:
+        \item Navigieren Sie zur Notenverwaltungsseite (\texttt{/noten}).
+        \item Erstellen Sie ein neues Semester.
+        \item Fügen Sie folgende Noten einem beliebigen Fach hinzu:
             \begin{itemize}
                 \item Note 1: Wert 5.0, Gewichtung 1 (z.B. Hausaufgaben)
                 \item Note 2: Wert 4.0, Gewichtung 2 (z.B. Prüfung)
             \end{itemize}
-        \item Fügen Sie eine Note hinzu, die NICHT in den Durchschnitt zählt (setzen Sie die Gewichtung auf 0 oder das 'counts'-Flag auf False).
+        \item Fügen Sie eine Note hinzu, die NICHT in den Durchschnitt zählt (setzen Sie das 'counts'-Flag auf False).
     \end{enumerate}
     \textbf{Erwartetes Resultat:} Der gewichtete Durchschnitt für das Fach sollte korrekt berechnet werden: $$ \frac{(5.0 \cdot 1) + (4.0 \cdot 2)}{1+2} = \frac{13}{3} \approx 4.33 $$ Nicht zählende Noten dürfen die Berechnung nicht beeinflussen.\\
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
@@ -221,12 +220,14 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
     \textbf{Ziel:} CRUD-Funktionalität für Noten, Fächer und Semester.\\
     \textbf{Schritte:}
     \begin{enumerate}[label=\arabic*.]
-        \item \textbf{Erstellen:} Fügen Sie ein Semester, ein Fach in diesem Semester und drei Noten zum Fach hinzu.
+        \item \textbf{Erstellen:} Fügen Sie ein Semester hinzu (maximal 8 Semester sind insgesamt möglich, jeder Benutzer kann nur bis zu 8 Semester anlegen).
+        \item Überprüfen Sie, ob das neue Semester automatisch mit den vordefinierten Fächern befüllt wird.
+        \item Fügen Sie in einem dieser Fächer drei Noten hinzu.
         \item \textbf{Lesen/Anzeigen:} Überprüfen Sie, ob alle hinzugefügten Daten korrekt auf der Übersichtsseite angezeigt werden.
-        \item \textbf{Aktualisieren:} Bearbeiten Sie den Wert einer Note und den Namen eines Fachs. Überprüfen Sie, ob die Änderung korrekt gespeichert wird und die Durchschnittsberechnung sich anpasst (siehe GRADE-01).
+        \item \textbf{Aktualisieren:} Bearbeiten Sie den Wert einer Note und den Namen eines Faches. Überprüfen Sie, ob die Änderung korrekt gespeichert wird und die Durchschnittsberechnung sich anpasst (siehe GRADE-01).
         \item \textbf{Löschen:} Löschen Sie eine einzelne Note. Löschen Sie das gesamte Semester.
     \end{enumerate}
-    \textbf{Erwartetes Resultat:} Alle Operationen (Erstellen, Lesen, Aktualisieren, Löschen) sind erfolgreich und die Datenkonsistenz bleibt erhalten.\\
+    \textbf{Erwartetes Resultat:} Es können maximal 8 Semester angelegt werden, jedes neue Semester enthält automatisch die notwendigen Fächer. Alle Operationen (Erstellen, Lesen, Aktualisieren, Löschen) sind erfolgreich und die Datenkonsistenz bleibt erhalten.\\
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
@@ -273,6 +274,21 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
+\begin{testcase}{GRADE-04}
+    \textbf{Ziel:} Fächer innerhalb eines Semesters können per Drag-and-Drop umsortiert werden.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Navigieren Sie zur Notenverwaltungsseite (\texttt{/noten}).
+        \item Erstellen Sie ein Semester.
+        \item Bewegen Sie den Mauszeiger auf das Drag-Handle-Symbol eines Faches.
+        \item Ziehen Sie das Fach an eine andere Position innerhalb des Semesters und lassen Sie es dort los.
+        \item Wiederholen Sie den Vorgang mit weiteren Fächern.
+        \item Laden Sie die Seite neu und überprüfen Sie, ob die Reihenfolge der Fächer erhalten bleibt.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Die Reihenfolge der Fächer kann per Drag-and-Drop beliebig verändert werden. Nach dem Neuladen bleibt die neue Reihenfolge erhalten.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
 \subsection[Kalender und Agenda]{Kalender und Agenda\texorpdfstring{\aifootnotemark}{}}
 \aifootnotetext
 
@@ -306,7 +322,7 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
 \end{testcase}
 
 \begin{testcase}{CAL-03}
-    \textbf{Ziel:} Import von ICS-Dateien (z.B. Stundenplan).\\
+    \textbf{Ziel:} Import von ICS-Dateien.\\
     \textbf{Schritte:}
     \begin{enumerate}[label=\arabic*.]
         \item Besorgen Sie sich eine einfache, gültige \texttt{.ics}-Datei mit einigen Terminen.
@@ -413,6 +429,47 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
+\subsection[To-Do Listen]{To-Do Listen\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext
+
+\begin{testcase}{TODO-01}
+    \textbf{Ziel:} Kategorien für To-Do Listen können erstellt und gelöscht werden.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Navigieren Sie zur To-Do Listen Seite (\texttt{/todo}).
+        \item Klicken Sie auf den Button "Neue Kategorie".
+        \item Geben Sie einen Namen für die Kategorie ein und bestätigen Sie.
+        \item Überprüfen Sie, ob die neue Kategorie erscheint.
+        \item Löschen Sie die Kategorie wieder.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Kategorien können erfolgreich erstellt und gelöscht werden. Nach dem Löschen verschwindet die Kategorie aus der Liste.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{TODO-02}
+    \textbf{Ziel:} Aufgaben können zu Kategorien hinzugefügt, abgehakt (erledigt) und gelöscht werden.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Erstellen Sie eine neue Kategorie.
+        \item Fügen Sie mehrere Aufgaben (To-Do Items) hinzu.
+        \item Haken Sie eine Aufgabe als erledigt ab.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Aufgaben werden korrekt hinzugefügt, können als erledigt markiert werden und somit auch gelöscht werden. Die Anzeige aktualisiert sich entsprechend.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{TODO-03}
+    \textbf{Ziel:} Kategorien lassen sich ein- und ausklappen (Accordion-Funktion).\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Erstellen Sie mehrere Kategorien mit Aufgaben.
+        \item Klicken Sie auf den Kopfbereich einer Kategorie.
+        \item Überprüfen Sie, ob die Aufgabenliste der Kategorie ein- bzw. ausgeklappt wird.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Die Accordion-Funktion funktioniert zuverlässig. Kategorien können unabhängig voneinander ein- und ausgeklappt werden.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
 \subsection[Ästhetik/User Interface]{Ästhetik/User Interface\texorpdfstring{\aifootnotemark}{}}
 \aifootnotetext
 
@@ -421,8 +478,8 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
     \textbf{Schritte:}
     \begin{enumerate}[label=\arabic*.]
         \item Testen Sie die Anwendung auf einem Desktop-Browser und einem mobilen Emulator/Gerät (oder verkleinern Sie das Browserfenster).
-        \item Überprüfen Sie, ob alle Elemente (Navigation, Formulare, Tabellen) sich an die Bildschirmgröße anpassen (keine horizontalen Scrollbalken).
-        \item Überprüfen Sie, ob die primäre Navigation auf dem Mobilgerät über ein Hamburger-Menü oder eine andere mobilefreundliche Lösung erreichbar ist.
+        \item Überprüfen Sie, ob alle Elemente (Navigation, Formulare, Tabellen) sich an die Bildschirmgröße anpassen.
+        \item Überprüfen Sie, ob die primäre Navigation auf dem Mobilgerät über ein Hamburger-Menü erreichbar ist.
     \end{enumerate}
     \textbf{Erwartetes Resultat:} Die App ist auf allen Geräten vollständig funktional und ästhetisch ansprechend (\textbf{Ästhetik}, \textbf{Benutzerfreundlichkeit}).\\
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
@@ -435,7 +492,58 @@ Die Testfälle sind nach funktionalen Bereichen gruppiert.
         \item Navigieren Sie durch alle Hauptseiten (Home, Grades, Calendar, Timer, Tips).
         \item Achten Sie auf die Einheitlichkeit von Farben, Schriftarten (Typografie) und Button-Stilen.
     \end{enumerate}
-    \textbf{Erwartetes Resultat:} Die visuelle Gestaltung ist über die gesamte App hinweg konsistent und entspricht einem definierten Designkonzept (\textbf{Ästhetik}).\\
+    \textbf{Erwartetes Resultat:} Die visuelle Gestaltung ist über die gesamte App hinweg konsistent und entspricht einem definierten Designkonzept.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{UI-03}
+    \textbf{Ziel:} Überprüfung der Dark-Mode-Funktionalität und visuellen Konsistenz.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Navigieren Sie zu einer beliebigen Hauptseite der Anwendung (z.B. Dashboard, Notenverwaltung, Agenda).
+        \item Wechseln Sie in den Einstellungen (\texttt{/settings}) das Aussehen auf "Dunkel" (Dark Mode).
+        \item Überprüfen Sie, ob die gesamte Benutzeroberfläche in den dunklen Farben dargestellt wird.
+        \item Navigieren Sie durch verschiedene Seiten und prüfen Sie, ob alle Komponenten (Navigation, Buttons, Tabellen, Popups, Formulare) korrekt im Dark Mode angezeigt werden.
+        \item Wechseln Sie zurück auf "Hell" (Light Mode) und überprüfen Sie, ob die Oberfläche wieder korrekt dargestellt wird.
+        \item Testen Sie die Einstellung "Systemeinstellung" und prüfen Sie, ob sich die App an die Systemeinstellung des Betriebssystems anpasst.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Die App wechselt zuverlässig zwischen Light und Dark Mode. Alle UI-Elemente sind im Dark Mode gut lesbar, die Farben sind konsistent, und es treten keine Darstellungsfehler auf. Die Einstellung "Systemeinstellung" funktioniert wie erwartet.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\subsection[Informationsseiten]{Informationsseiten\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext
+
+\begin{testcase}{INFO-01}
+    \textbf{Ziel:} Die Seite "Über uns" (\texttt{/about}) ist erreichbar und zeigt die vorgesehenen Informationen an.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Navigieren Sie zur Seite \texttt{/about} über das Menü oder direkt per URL.
+        \item Überprüfen Sie, ob die Seite geladen wird und die Informationen über das KantiKoala-Projekt angezeigt werden.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Die Seite "Über uns" wird korrekt angezeigt und enthält die relevanten Informationen zum Projekt.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{INFO-02}
+    \textbf{Ziel:} Die Hilfeseite (\texttt{/hilfe}) ist erreichbar und stellt Unterstützung für Benutzer bereit.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Navigieren Sie zur Seite \texttt{/hilfe} über das Menü oder direkt per URL.
+        \item Überprüfen Sie, ob die Seite geladen wird und Hilfetexte bzw. Anleitungen angezeigt werden.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Die Hilfeseite wird korrekt angezeigt und bietet verständliche Unterstützung für Benutzer.\\
+    \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
+\end{testcase}
+
+\begin{testcase}{INFO-03}
+    \textbf{Ziel:} Die Datenschutzerklärung (\texttt{/datenschutzerklaerung}) ist erreichbar und vollständig einsehbar.\\
+    \textbf{Schritte:}
+    \begin{enumerate}[label=\arabic*.]
+        \item Navigieren Sie zur Seite \texttt{/datenschutzerklaerung} über den Footer oder direkt per URL.
+        \item Überprüfen Sie, ob die Datenschutzerklärung vollständig angezeigt wird.
+    \end{enumerate}
+    \textbf{Erwartetes Resultat:} Die Datenschutzerklärung ist vollständig und korrekt sichtbar.\\
     \vspace{0.5em}\textbf{Status:} \textcolor{passcolor}{Bestanden}
 \end{testcase}
 
