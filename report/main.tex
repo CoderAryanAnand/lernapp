@@ -78,11 +78,11 @@ language=ngerman
 \makeatother
 
 % Create a command to add a footnote for AI assistance, you can add dates or versions if needed
-\newcommand{\aifootnote}[1]{\footnote{ChatGPT (Version GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, #1. Antwort ganz übernommen.}}
+\newcommand{\aifootnote}[2]{\footnote{#2: \enquote{Korrigiere diesen Abschnitt - behalte den Text so gut bei wie möglich, aber korrigiere alle grammatischen Fehler und markiere die Korrekturen. Mach auch Vorschläge, wie man problematische Sätze besser formulieren könnte. Schau, dass es wissenschaftlich formuliert ist. [...]. }, #1. Antwort als Basis.}}
 \newcommand{\aifootnotemark}{\footnotemark}
-\newcommand{\aifootnotetext}[1]{\footnotetext{ChatGPT (Version GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, #1. Antwort ganz übernommen.}}
-\newcommand{\aifootnotebasis}[1]{\footnotetext{ChatGPT (Version GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, #1. Antwort als Basis.}}
-\newcommand{\aifootnotegrammar}[1]{\footnotetext{Claude (Version Sonnet 4.5): \enquote{Korrigiere bitte diesen Abschnitt - behalte den Text so gut bei wie möglich, aber korrigiere alle grammatischen Fehler und markiere die Korrekturen. Mach auch Vorschläge, wie man problematische Sätze besser formulieren könnte. [...]. }, #1. Antwort als Basis.}}
+\newcommand{\aifootnotetext}[2]{\footnotetext{#2: \enquote{Korrigiere diesen Abschnitt - behalte den Text so gut bei wie möglich, aber korrigiere alle grammatischen Fehler und markiere die Korrekturen. Mach auch Vorschläge, wie man problematische Sätze besser formulieren könnte. Schau, dass es wissenschaftlich formuliert ist. [...]. }, #1. Antwort als Basis.}}
+\newcommand{\aifootnotebasis}[1]{\footnotetext{ChatGPT (Model GPT-5): \enquote{Überarbeite den folgenden Text, damit er sprachlich und stilistisch den Standards einer wissenschaftlichen Maturitätsarbeit entspricht. Achte auf korrekte Grammatik, präzisen Ausdruck, logische Argumentation und sachlichen Stil. Behalte den ursprünglichen Sinn und Stil des Textes bei, aber formuliere ihn wissenschaftlicher und grammatikalisch korrekt. [...]. }, #1. Antwort als Basis.}}
+\newcommand{\aifootnotegrammar}[1]{\footnotetext{Claude (Model Sonnet 4.5): \enquote{Korrigiere bitte diesen Abschnitt - behalte den Text so gut bei wie möglich, aber korrigiere alle grammatischen Fehler und markiere die Korrekturen. Mach auch Vorschläge, wie man problematische Sätze besser formulieren könnte. [...]. }, #1. Antwort als Basis.}}
 
 % Fix for font issue
 \DeclareRobustCommand{\ttfamily}{\fontencoding{T1}\fontfamily{lmtt}\selectfont}
@@ -129,7 +129,7 @@ Zur Ableitung der Anforderungen und Validation unserer Arbeit wurden eine fokuss
 
 Die Applikation wurde mit Flask, ein Python-Modul, SQL, einem relationalen Datenmodell, und modularer Architektur implementiert. Kernfunktionen sind eine Agenda mit manueller Ereigniserfassung, Import, sowie Export, von \texttt{.ics}-Stundenplänen und algorithmischer Lernblock-Generierung nach Prioritäten; Notenverwaltung; ein konfigurierbarer Pomodoro-basiertes Lerntimer-Modul; tägliche Tipps, sowie auch allgemeine Lerntipps; Authentifizierung mit Basis-Schutzmassnahmen, sowie Schutzmassnahmen für die ganze App.
 
-Die Arbeit zeigt die technische Machbarkeit eines integrierten, strukturierten Ansatzes zur Lern- und Organisationsunterstützung; eine weitergehende Wirkungsevaluation (über die durchgeführte Usability-Prüfung hinaus) steht aus und bildet zukünftige Arbeit. Das Produkt bildet eine erweiterbare Grundlage für nachfolgende empirische Validierung. \aifootnote{06.11.2025}
+Die Arbeit zeigt die technische Machbarkeit eines integrierten, strukturierten Ansatzes zur Lern- und Organisationsunterstützung; eine weitergehende Wirkungsevaluation (über die durchgeführte Usability-Prüfung hinaus) steht aus und bildet zukünftige Arbeit. Das Produkt bildet eine erweiterbare Grundlage für nachfolgende empirische Validierung. \aifootnote{06.11.2025}{ChatGPT (Model GPT-5)}
 \clearpage
 % Table of Contents
 \tableofcontents
@@ -137,7 +137,7 @@ Die Arbeit zeigt die technische Machbarkeit eines integrierten, strukturierten A
 \break
 % ------------------------------Einleitung------------------------------
 \chapter[Einleitung -- unsere Vision]{Einleitung -- unsere Vision\texorpdfstring{\aifootnotemark}{}}
-\aifootnotetext{04.11.2025}
+\aifootnotetext{08.11.2025}{ChatGPT (Model GPT-5)}
 Der Schulalltag an der Kantonsschule Baden ist durch eine hohe Arbeitsdichte geprägt. Neben zahlreichen Prüfungen, auf die man vorbereiten muss, fallen kontinuierlich Hausaufgaben an. In Kombination mit ausserschulischen Verpflichtungen entstehen Anforderungen an Planung und Selbstorganisation, die ohne strukturierende Hilfsmittel nur begrenzt überschaubar bleiben. 
 
 \section{Fragestellung und Zielsetzung}
@@ -776,7 +776,7 @@ Somit ergaben sich einige gute Anforderungen und Empfehlungen an die Web-Applika
 \chapter{Methodik -- Programmieren der Web-Applikation}
 
 \section[Technologie- und Plattformwahl]{Technologie- und Plattformwahl\texorpdfstring{\aifootnotemark}{}}
-\aifootnotetext{04.11.2025}
+\aifootnotetext{04.11.2025}{Gemini (Model 2.5 Pro)}
 Zu Beginn stand die grundsätzliche Plattformwahl im Zentrum: eine native Applikation (z.\,B. für Smartphones) oder eine webbasierte Lösung.
 Unter Berücksichtigung der Geräteunabhängigkeit, dem Verteil- und Updateaufwand, Entwicklungsressourcen sowie dem verfügbaren Zeitrahmen erwies sich eine Web-Applikation als zweckmässig.
 Sie ist plattformagnostisch im Browser nutzbar, benötigt keine Installation und lässt sich zentral aktualisieren.
@@ -792,7 +792,7 @@ Ausschlaggebend waren die Verfügbarkeit kostenloser Credits über das GitHub St
 Die Domain \texttt{kantikoala.app} wurde ebenfalls über das Student Pack mit kostenloser \texttt{.app}-TLD registriert.
 
 \section[Anforderungsanalyse und -definition]{Anforderungsanalyse und -definition\texorpdfstring{\aifootnotemark}{}}
-\aifootnotetext{04.11.2025}
+\aifootnotetext{04.11.2025}{Gemini (Model 2.5 Pro)}
 Die im Folgenden definierten Anforderungen sind das direkte Resultat der in Kapitel 2 (Recherche) durchgeführten Analyse. Die Interviews mit den PPP-Lehrpersonen und die Umfrage unter den Schüler:innen lieferten die \enquote{Must}- und \enquote{Kann}-Anforderungen (vgl. Abschnitt 2.3.5), welche die Basis für die funktionale Spezifikation der Applikation bildeten.
 Bevor wir mit dem Programmieren der Web-Applikation beginnen konnten, mussten wir uns zuerst über die Anforderungen an die Applikation klar werden.
 Da es sich um eine Web-Applikation handelt, welche den Schüler:innen der Kantonsschule Baden helfen soll, mussten wir uns überlegen, welche Funktionen die Applikation beinhalten sollte und wie diese umgesetzt werden könnten.
@@ -814,7 +814,7 @@ Der Timer sollte anpassbar sein, sodass die Nutzer:innen die Länge der Lern- un
 \end{itemize}
 
 \section[Systemarchitektur und Datenmodell]{Systemarchitektur und Datenmodell\texorpdfstring{\aifootnotemark}{}}
-\aifootnotetext{04.11.2025}
+\aifootnotetext{04.11.2025}{Gemini (Model 2.5 Pro)}
 Dieser Abschnitt beschreibt die technische Grundlage der Kanti Koala Web-Applikation, einschliesslich der Systemarchitektur, der Code-Struktur und der zugrundeliegenden Datenstruktur.
 
 \subsection{Systemarchitektur und Framework-Wahl}
@@ -957,7 +957,8 @@ Speichert einzelne Aufgaben (To-Dos) innerhalb einer Kategorie.
     \item[\textbf{description}] Beschreibung der Aufgabe (notwendig).
 \end{description}
 
-\subsubsection{Beziehungsstruktur}
+\subsubsection[Beziehungsstruktur]{Beziehungsstruktur\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext{04.11.2025}{Gemini (Model 2.5 Pro)}
 Die Tabellen in der Datenbank sind durch Fremdschlüssel (Foreign Keys) miteinander verbunden, um die Beziehungen zwischen den verschiedenen Datenmodellen abzubilden.
 Beispielsweise verknüpft der Fremdschlüssel \texttt{user\_id} in der \texttt{Event}-Tabelle jedes Ereignis mit dem zugehörigen Nutzer.
 Dadurch wird sichergestellt, dass jeder Kalendertermin eindeutig einem Benutzerkonto zugeordnet ist.
@@ -975,7 +976,7 @@ Die zentralen Verbindungen sind:
 \section{Implementierung der Kernfunktionen}
 
 \subsection[Authentifizierung und Account Management]{Authentifizierung und Account Management\texorpdfstring{\aifootnotemark}{}}
-\aifootnotebasis{04.11.2025}
+\aifootnotetext{04.11.2025}{ChatGPT (Model GPT-5)}
 Ein sicheres Authentifizierungssystem ist die Voraussetzung für eine personalisierte App.
 Dies umfasst Anmelde- und Registrierungsfunktionen, eine \enquote{Passwort vergessen}-Option, eine Option zum Ändern des Passworts und zum Löschen des Kontos.
 
@@ -1010,8 +1011,8 @@ Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot des Anmeldeprozesses
 \FloatBarrier
 
 \subsection[Homescreen / Dashboard]{Homescreen / Dashboard\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text.
-[...]. }, 09.11.2025. Antwort ganz übernommen.}
+\footnotetext{ChatGPT (Model GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text.
+[...]. }, 09.11.2025. Antwort als Basis.}
 Der Homescreen (Dashboard) ist die zentrale Einstiegsseite nach dem Login.
 Er fasst die wichtigsten Informationen kompakt zusammen, um Nutzer:innen einen schnellen Überblick über ihren aktuellen Stand zu geben.
 Der Homescreen ist auch für nicht angemeldete Besucher:innen verfügbar.
@@ -1064,7 +1065,7 @@ Eigener Screenshot von KantiKoala, 09.11.2025.]{Homescreen für nicht angemeldet
 \FloatBarrier
 
 \subsection[Agenda und Kalenderverwaltung]{Agenda und Kalenderverwaltung\texorpdfstring{\aifootnotemark}{}}
-\aifootnotebasis{04.11.2025}
+\aifootnotetext{04.11.2025}{ChatGPT (Model GPT-5)}
 Die Agenda ist eine zentrale Kernfunktion der Anwendung.
 Sie ermöglicht das Erstellen, Bearbeiten und Löschen von Terminen mit minimalem Aufwand.
 Jedes Ereignis umfasst die Attribute Titel, Start- und Endzeit, eine optionale Wiederholungsregel, eine Farbe sowie eine Priorität, die für den Lernzeitalgorithmus relevant ist.
@@ -1089,8 +1090,8 @@ Eigener Screenshot von Kanti Koala, 31.10.2025.]{Beispiel einer Agenda mit Lernb
 \end{figure}
 
 \subsection[Der Lernzeitalgorithmus]{Der Lernzeitalgorithmus\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text.
-[...]. }, 04.11.2025. Antwort ganz übernommen.}
+\footnotetext{ChatGPT (Model GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text.
+[...]. }, 04.11.2025. Antwort als Basis.}
 Der Lernzeitalgorithmus (LZA) ist der Kern unserer Web-App.
 Er automatisiert die Planung der notwendigen Lernzeiten für die anstehenden Prüfungen eines Nutzers.
 Wir bezeichnen unseren Mechanismus als Algorithmus, da er die formalen Kriterien eines Algorithmus erfüllt: Jeder Planungsschritt ist ausführbar (existierende Funktionen), deterministisch und determiniert (gleiche Eingabedaten führen stets zur gleichen Priorisierung und Planung).
@@ -1231,10 +1232,9 @@ Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der Einstellungen-Se
 
 \FloatBarrier
 
-\subsection{Informationsseiten}
-\subsubsection[Über uns-Seite]{Über uns-Seite\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5 mini): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text.
-[...]. }, 09.11.2025. Antwort ganz übernommen.}
+\subsection[Informationsseiten]{Informationsseiten\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext{09.11.2025}{Claude (Model Sonnet 4.5)}
+\subsubsection{Über uns-Seite}
 
 Auf der \enquote{Über uns}-Seite stellen wir das Team hinter KantiKoala vor.
 Wir geben einen Einblick in unsere Motivation, die App zu entwickeln, und erläutern die Ziele, die wir mit KantiKoala verfolgen.
@@ -1251,9 +1251,7 @@ Eigener Screenshot von Kanti Koala, 09.11.2025.]{Screenshot des Easter-Eggs auf 
 
 \FloatBarrier
 
-\subsubsection[Hilfe-Seite]{Hilfe-Seite\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5 mini): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text.
-[...]. }, 09.11.2025. Antwort ganz übernommen.}
+\subsubsection{Hilfe-Seite}
 Basierend auf dem Feedback aus den Usability-Tests (siehe Abschnitt 3.7.2, Person 1) wurde deutlich, dass eine Anleitung für die App fehlte.
 Deshalb haben wir die Hilfeseite angelegt, die eine vollständige Anleitung zur Nutzung der Anwendung enthält.
 Sie erklärt alle Features, bietet einen Schnellstart und Best Practices zur optimalen Nutzung der App.
@@ -1267,9 +1265,7 @@ Eigener Screenshot von Kanti Koala, 09.11.2025.]{Screenshot der Hilfe-Seite}
 
 \FloatBarrier
 
-\subsubsection[Datenschutz-Seite]{Datenschutz-Seite\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5 mini): \enquote{Korrigiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 10.11.2025. Antwort ganz übernommen.}
-
+\subsubsection{Datenschutz-Seite}
 Als rechtlich verpflichtender Bestandteil der Web-Applikation wurde eine Datenschutzerklärung gemäss den Vorgaben des Eidgenössischen Datenschutz- und Öffentlichkeitsbeauftragten (EDÖB) erstellt \parencite{edoeb_datenschutzerklaerung}.
 
 Die Datenschutz-Seite informiert die Nutzer:innen über die Erhebung, Verarbeitung und Speicherung ihrer personenbezogenen Daten.
@@ -1286,7 +1282,8 @@ Wichtige Inhalte der Datenschutzerklärung umfassen:
     \item Kontaktmöglichkeit für Datenschutzanfragen
 \end{itemize}
 
-\subsection{To-Do Liste}
+\subsection[To-Do Liste]{To-Do Liste\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext{10.11.2025}{Claude (Model Sonnet 4.5)}
 Als direkte Umsetzung einer \enquote{Kann}-Anforderung aus den Interviews (vgl. Abschnitt 2.3.5) wurde eine To-Do-Listen-Funktion implementiert. Diese Funktion dient der einfachen Organisation von Hausaufgaben oder anderen anstehenden Aufgaben.
 
 Die Funktionalität ermöglicht es Nutzer:innen:
@@ -1298,24 +1295,19 @@ Die Funktionalität ermöglicht es Nutzer:innen:
 Dies bietet eine grundlegende Struktur zur Aufgabenverwaltung, wie sie in der Recherche als nützlich identifiziert wurde.
 
 \section[Übergreifende Aspekte: Sicherheit und Design]{Übergreifende Aspekte: Sicherheit und Design\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text.
-[...]. }, 04.11.2025. Antwort ganz übernommen.}
+\aifootnotetext{10.11.2025}{Claude (Model Sonnet 4.5)}
 Neben den Kernfunktionen wurden übergreifende Aspekte wie Sicherheit und ein konsistentes Design implementiert, die die gesamte Anwendung betreffen.
 
 \subsection{Sicherheitskonzept}
 Zusätzlich zur Passwortsicherheit (behandelt in Abschnitt 3.4.1) wurden weitere Massnahmen zum Schutz der Nutzerdaten und der Anwendungsintegrität implementiert.
 
-\subsubsection[Transportverschlüsselung (HTTPS)]{Transportverschlüsselung (HTTPS)\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025.
-Antwort ganz übernommen.}
+\subsubsection{Transportverschlüsselung (HTTPS)}
 Die gesamte Kommunikation zwischen dem Browser des Nutzers und unserem Server wird durch das HTTPS-Protokoll verschlüsselt.
 Dies wird durch ein SSL/TLS-Zertifikat realisiert, das auf unserem Server bei DigitalOcean installiert ist.
 Die Verschlüsselung stellt sicher, dass alle übertragenen Daten – von Login-Informationen über Kalendereinträge bis hin zu Noten – vor dem Abhören durch Dritte geschützt sind.
 Ein Angreifer in einem öffentlichen WLAN könnte beispielsweise die Daten nicht mitlesen.
 Der Browser zeigt dies durch ein Schlosssymbol in der Adressleiste an und stellt so eine verschlüsselte Verbindung zur Domain \texttt{kantikoala.app} sicher \parencite{cloudflare_https}.
-\subsubsection[CSRF-Schutz]{CSRF-Schutz\texorpdfstring{\aifootnotemark}{}}
-\footnotetext{ChatGPT (Version GPT-5): \enquote{Korriegiere Grammatik und Rechtschreibfehler im folgenden Text. [...]. }, 04.11.2025.
-Antwort ganz übernommen.}
+\subsubsection{CSRF-Schutz}
 Neben der reinen Authentifizierung ist es entscheidend, die Aktionen eines angemeldeten Benutzers abzusichern.
 Eine häufige Schwachstelle ist Cross-Site Request Forgery (CSRF) \parencite{rapid7_csrf}.
 Bei einem CSRF-Angriff bringt ein Angreifer den Browser eines authentifizierten Benutzers dazu, eine unerwünschte Aktion auszuführen (z.B. Konto löschen), ohne dass der Benutzer es merkt, etwa durch Klick auf einen bösartigen Link \parencite{TestDriven_CSRF}.
@@ -1398,7 +1390,10 @@ Eigener Screenshot von Kanti Koala, 08.11.2025.]{Screenshot der 404-Fehlerseite}
     \label{fig:404_page}
 \end{figure}
 
-\section{Testing und Usability-Evaluation}
+\FloatBarrier
+
+\section[Testing und Usability-Evaluation]{Testing und Usability-Evaluation\texorpdfstring{\aifootnotemark}{}}
+\aifootnotetext{10.11.2025}{Claude (Model Sonnet 4.5)}
 Um die Qualität und Zuverlässigkeit der Kanti Koala Web-App sicherzustellen, wurden zwei Arten von Tests durchgeführt: funktionale Tests zur Überprüfung der korrekten Logik und ein formativer Usability-Test zur Evaluation der Bedienbarkeit.
 
 \subsection{Funktionale Tests}
@@ -1461,7 +1456,7 @@ Das Feedback aus dieser formativen Evaluation war entscheidend für die Finalisi
 
 % Reflexion in Kapitel 3 (nach Abschnitt 3.7)
 \chapter[Reflexion zum Entwicklungsprozess]{Reflexion zum Entwicklungsprozess\texorpdfstring{\aifootnotemark}{}}
-\aifootnotetext{10.11.2025}
+\aifootnotetext{10.11.2025}{Claude (Model Sonnet 4.5)}
 
 Die Entwicklung der Kanti Koala Web-Applikation erstreckte sich über einen Zeitraum von mehreren Monaten und durchlief verschiedene Phasen, die sowohl Lernerfahrungen als auch Herausforderungen mit sich brachten.
 
@@ -1524,8 +1519,7 @@ Trotz der genannten Herausforderungen konnten nicht nur alle Kernfunktionen erfo
 
 % ------------------------------Schlussfolgerung und Ausblick------------------------------
 \chapter[Schlussfolgerung und Ausblick]{Schlussfolgerung und Ausblick\texorpdfstring{\aifootnotemark}{}}
-\aifootnotetext{10.11.2025}
-
+\aifootnotetext{10.11.2025}{Claude (Model Sonnet 4.5)}
 \section{Zusammenfassung der Arbeit}
 Diese Maturitätsarbeit hatte zum Ziel, eine webbasierte Applikation zu konzipieren und umzusetzen, die Schüler:innen der Kantonsschule Baden eine übersichtliche Organisation von Terminen, Aufgaben und Lernzeiten ermöglicht und Funktionen bereitstellt, die regelmässige Lerngewohnheiten unterstützen.
 
